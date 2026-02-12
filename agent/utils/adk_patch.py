@@ -197,19 +197,13 @@ def _patch_contents():
     # We must REWRITE _get_contents because the logic is INSIDE the loop.
     # We cannot wrap it.
     
-    def patched_get_contents(current_branch: Optional[str], events: List[Event], agent_name: str = '') -> List[types.Content]:
-        # ... (Re-implementation of _get_contents up to line 410) ...
-        # To avoid copying 100 lines of filtering/rearranging logic, 
-        # let's call the original private methods since they are imported!
-        
-        accumulated_input_transcription = ''
-        accumulated_output_transcription = ''
-
-        # ... (Rewind filtering) ...
-        # This part relies on logic not easily exposed unless we import it or copy it.
-        # I imported `_process_compaction_events` etc at the top.
-        
-        # COPYING THE LOGIC FROM contents.py EXACTLY
+    def patched_get_contents(
+        current_branch: Optional[str],
+        events: List[Event],
+        agent_name: str = '',
+        *,
+        preserve_function_call_ids: bool = False
+    ) -> List[types.Content]:
         # Filter out events that are annulled by a rewind.
         rewind_filtered_events = []
         i = len(events) - 1
@@ -226,22 +220,27 @@ def _patch_contents():
             i -= 1
         rewind_filtered_events.reverse()
 
-        raw_filtered_events = []
-        has_compaction_events = False
-        for event in rewind_filtered_events:
-            if _contains_empty_content(event): continue
-            if not _is_event_belongs_to_branch(current_branch, event): continue
-            if _is_auth_event(event): continue
-            if _is_request_confirmation_event(event): continue
-            if event.actions and event.actions.compaction: has_compaction_events = True
-            raw_filtered_events.append(event)
+        # Parse the events, using the updated filtering logic from ADK
+        from google.adk.flows.llm_flows.contents import _should_include_event_in_context
+        
+        raw_filtered_events = [
+            e for e in rewind_filtered_events 
+            if _should_include_event_in_context(current_branch, e)
+        ]
+
+        has_compaction_events = any(
+            e.actions and e.actions.compaction for e in raw_filtered_events
+        )
 
         if has_compaction_events:
             events_to_process = _process_compaction_events(raw_filtered_events)
         else:
             events_to_process = raw_filtered_events
 
+        accumulated_input_transcription = ''
+        accumulated_output_transcription = ''
         filtered_events = []
+        
         for i in range(len(events_to_process)):
             event = events_to_process[i]
             if not event.content:
@@ -269,34 +268,30 @@ def _patch_contents():
         result_events = _rearrange_events_for_latest_function_response(filtered_events)
         result_events = _rearrange_events_for_async_function_responses_in_history(result_events)
 
-        # --- PATCHED LOGIC ---
+        # --- SIGNATURE PROPAGATION PATCH ---
         contents_list = []
-        last_signature = None # PATCH: Outer scope
+        last_signature = None 
 
         for event in result_events:
             content = copy.deepcopy(event.content)
             if content:
                 if content.parts:
-                    # Look for signature
+                    # Propagate signature backward for tools
                     for part in content.parts:
                         if getattr(part, 'thought_signature', None):
                             last_signature = part.thought_signature
-                            break
                     
                     for part in content.parts:
-                         if getattr(part, 'thought_signature', None):
-                             last_signature = part.thought_signature
-                         
-                         if part.function_call:
-                             sig = getattr(part, 'thought_signature', None)
-                             thought = getattr(part, 'thought', None)
-                             if sig is None and thought is None:
-                                 if last_signature:
-                                     part.thought_signature = last_signature
-                                 else:
-                                     pass 
+                        if part.function_call:
+                            sig = getattr(part, 'thought_signature', None)
+                            thought = getattr(part, 'thought', None)
+                            if sig is None and thought is None:
+                                if last_signature:
+                                    part.thought_signature = last_signature
 
-                remove_client_function_call_id(content)
+                if not preserve_function_call_ids:
+                    remove_client_function_call_id(content)
+                    
                 contents_list.append(content)
         return contents_list
 

@@ -9,10 +9,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY agent.py .
+COPY main.py .
 
 # Expose the port
-EXPOSE 8000
+EXPOSE 8001
 
 # Run the application
-CMD ["python", "agent.py"]
+CMD ["python", "main.py"]

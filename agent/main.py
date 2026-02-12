@@ -168,6 +168,6 @@ if __name__ == "__main__":
     if not os.getenv("GOOGLE_API_KEY"):
         logger.warning("GOOGLE_API_KEY environment variable not set!")
     
-    port = int(os.getenv("PORT", 8000))
+    port = int(os.getenv("PORT", 8001))
     logger.info(f"Starting Master Agent on port {port}")
     uvicorn.run(app, host="0.0.0.0", port=port)
