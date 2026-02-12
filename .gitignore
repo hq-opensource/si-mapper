@@ -14,8 +14,6 @@ Thumbs.db
 # AI Tools
 .cursorignore
 .cursorindexingignore
-.agent/
-.planning/
 
 # Global Languages / Frameworks (Fallback)
 __pycache__/
