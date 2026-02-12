@@ -1,0 +1,42 @@
+{:description "Press ctrl-h to enter historical mode",
+ :org-id "public",
+ :grid-id "G-NC4K3VbOZ8",
+ :title "Historical mode",
+ :last-update #inst "2025-11-18T16:11:11.780-00:00",
+ :comps
+ {[:obj "0LJ2gpN3pY"]
+  {:symbol "duct.sensor.temperature",
+   :pos [8 4],
+   :name "SY-1AR T-ALIM",
+   :txt "@bac.present-value °C",
+   :bacnet
+   {:ref
+    {:device-id "10122", :object-type "0", :object-instance "2"}}},
+  [:duct "j7r3594U7Z"] {:n1 {:pos [7 2]}, :n2 {:pos [3 2]}},
+  [:obj "nJRHPviEzj"]
+  {:symbol "duct.fan",
+   :pos [6 4],
+   :name "SY-1AR AD-V-ALIM",
+   :txt "@bac.present-value",
+   :bacnet
+   {:ref
+    {:device-id "10122", :object-type "4", :object-instance "1"}}},
+  [:obj "oPAGT8wqy2"]
+  {:symbol "duct.damper",
+   :pos [3 4],
+   :name "SY-1AR POS-VOL-AN",
+   :txt "@bac.present-value %",
+   :bacnet
+   {:ref
+    {:device-id "10122", :object-type "0", :object-instance "4"}}},
+  [:obj "KNaAYOeXGk"]
+  {:symbol "duct.damper",
+   :pos [4 2],
+   :name "SY-1AR POS-VOL-RET",
+   :txt "@bac.present-value %",
+   :bacnet
+   {:ref
+    {:device-id "10122", :object-type "0", :object-instance "6"}}},
+  [:duct "UpxH1MU81P"] {:n1 {:pos [2 4]}, :n2 {:pos [9 4]}}},
+ :project-id "P-cBZ5F9AJC3",
+ :created-at #inst "2017-03-24T00:27:12.422-00:00"}

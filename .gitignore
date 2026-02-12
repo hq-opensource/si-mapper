@@ -1,0 +1,31 @@
+# General / OS
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# AI Tools
+.cursorignore
+.cursorindexingignore
+.agent/
+.planning/
+
+# Global Languages / Frameworks (Fallback)
+__pycache__/
+*.py[cod]
+node_modules/
+.env
+.env.local
+
+# Project Specific Directories (managed by their own .gitignores)
+# /agent/ (has its own .gitignore)
+# /mapper/ (has its own .gitignore)
+# /mcp_server/ (has its own .gitignore)
+

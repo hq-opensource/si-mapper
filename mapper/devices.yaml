@@ -1,0 +1,15 @@
+devices:
+  "Ventilateur": 3
+  "Controle a vitesse variable": 2
+  "Volet avec actuateur": 5
+  "Sonde de temperature de gaine": 2
+  "Sonde d'humidite": 1
+  "Humidificateur": 1
+  "Serpentin electrique": 1
+  "Filtre": 1
+  "Sonde de pression differentiel": 1
+  "Sonde de temperature de melange": 1
+  "Basse Limite": 1
+  "Sonde de pression statique": 1
+  "Serpentin de refroidissement": 1
+  "Valve trois voies avec actuateur": 1

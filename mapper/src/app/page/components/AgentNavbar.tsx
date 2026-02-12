@@ -1,0 +1,160 @@
+"use client";
+
+import { FileText, ListTodo, Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database } from "lucide-react";
+import { AgentState } from "./AgentStateOverlay";
+import { useState, useEffect } from "react";
+import { useThoughts } from "@/context/ThoughtsContext";
+import { formatAgentName } from "@/lib/utils";
+
+interface AgentNavbarProps {
+    agentState: AgentState;
+    activeTab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state';
+    onTabChange: (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state') => void;
+}
+
+export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarProps) {
+
+    // Derived state for the status indicator
+    // const isActive = agentState?.status && agentState.status !== 'idle';
+    // const agentName = agentState?.active_agent || 'Agent';
+    // const status = agentState?.status || 'Idle';
+
+    const navItems = [
+        { id: 'view', label: 'View', icon: Eye },
+        { id: 'edit', label: 'Edit', icon: Edit3 },
+        { id: 'graph', label: 'Graph', icon: BarChart2 },
+        { id: 'thoughts', label: 'Thoughts', icon: Brain },
+        { id: 'plans', label: 'Plans', icon: FileText },
+        { id: 'todo', label: 'Tasks', icon: ListTodo },
+        { id: 'state', label: 'State', icon: Database },
+        { id: 'tools', label: 'Tools', icon: Wrench },
+        { id: 'files', label: 'Files', icon: Folder },
+        { id: 'debug', label: 'Debug', icon: BarChart2 }, // Reusing an icon for debug
+    ] as const;
+
+    const { events, tasks, data } = useThoughts();
+
+    const [hasNewThoughts, setHasNewThoughts] = useState(false);
+    const [hasNewPlan, setHasNewPlan] = useState(false);
+    const [hasNewTodo, setHasNewTodo] = useState(false);
+    const [hasNewTools, setHasNewTools] = useState(false);
+    const [hasNewState, setHasNewState] = useState(false);
+    const [lastEventCount, setLastEventCount] = useState(0);
+    const [lastTaskCount, setLastTaskCount] = useState(0);
+    const [lastPlanContent, setLastPlanContent] = useState("");
+    const [lastDataHash, setLastDataHash] = useState("");
+
+    // Track new events (Thoughts/Tools)
+    useEffect(() => {
+        if (events.length > lastEventCount) {
+            const newEvents = events.slice(lastEventCount);
+
+            const hasThoughts = newEvents.some(e => e.event_type === 'BRAINSTORM' || e.event_type === 'DELEGATION');
+            const hasTools = newEvents.some(e => e.event_type === 'ACTION_TRIGGER' || e.event_type === 'ACTION_RESULT' || e.event_type === 'STATE_MUTATION');
+
+            if (activeTab !== 'thoughts' && hasThoughts) setHasNewThoughts(true);
+            if (activeTab !== 'tools' && hasTools) setHasNewTools(true);
+
+            setLastEventCount(events.length);
+        }
+    }, [events.length, activeTab, lastEventCount]);
+
+    // Track new tasks
+    useEffect(() => {
+        if (tasks.length > lastTaskCount) {
+            if (activeTab !== 'todo') {
+                setHasNewTodo(true);
+            }
+            setLastTaskCount(tasks.length);
+        }
+    }, [tasks.length, activeTab, lastTaskCount]);
+
+    // Track new plans
+    useEffect(() => {
+        if (agentState.plan && agentState.plan !== lastPlanContent) {
+            if (activeTab !== 'plans') {
+                setHasNewPlan(true);
+            }
+            setLastPlanContent(agentState.plan);
+        }
+    }, [agentState.plan, lastPlanContent, activeTab]);
+
+    // Track new state data
+    useEffect(() => {
+        const currentHash = JSON.stringify(data);
+        if (currentHash !== "{}" && currentHash !== lastDataHash) {
+            if (activeTab !== 'state') {
+                setHasNewState(true);
+            }
+            setLastDataHash(currentHash);
+        }
+    }, [data, lastDataHash, activeTab]);
+
+    // Reset markers when visiting tabs
+    useEffect(() => {
+        if (activeTab === 'thoughts') setHasNewThoughts(false);
+        if (activeTab === 'plans') setHasNewPlan(false);
+        if (activeTab === 'todo') setHasNewTodo(false);
+        if (activeTab === 'tools') setHasNewTools(false);
+        if (activeTab === 'state') setHasNewState(false);
+    }, [activeTab]);
+
+
+
+
+    return (
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-24 flex items-center z-30">
+            <div className="
+                flex items-center gap-1 p-1.5
+                rounded-2xl border border-[var(--muted-foreground)]/20
+                shadow-[0_8px_30px_rgb(0,0,0,0.04)]
+            "
+                style={{ backgroundColor: 'var(--background)' }}>
+
+                {/* Status indicator (Left side of nav) */}
+                <div className="flex items-center gap-3 px-4 py-1.5 border-r border-[var(--muted-foreground)]/20 mr-1">
+                    <div className="relative flex h-2 w-2">
+                        {agentState?.status && agentState.status !== 'idle' && (
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75"></span>
+                        )}
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent)]"></span>
+                    </div>
+                    <div className="w-32 flex items-center overflow-hidden">
+                        <span className="text-[12px] font-black uppercase tracking-widest truncate text-[var(--foreground)]">
+                            {agentState.active_agent ? formatAgentName(agentState.active_agent) : 'SI-MAPPER'}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Navigation Items */}
+                {navItems.map((item) => {
+                    const isNew =
+                        (item.id === 'thoughts' && hasNewThoughts) ||
+                        (item.id === 'plans' && hasNewPlan) ||
+                        (item.id === 'todo' && hasNewTodo) ||
+                        (item.id === 'state' && hasNewState) ||
+                        (item.id === 'tools' && hasNewTools);
+
+                    return (
+                        <button
+                            key={item.id}
+                            onClick={() => onTabChange(item.id)}
+                            className={`
+                            relative px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300
+                            flex items-center gap-2 border border-transparent
+                            ${activeTab === item.id
+                                    ? 'text-[var(--accent)] bg-[var(--accent)]/15 border-[var(--accent)]/10 shadow-sm'
+                                    : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5'
+                                }
+                        `}
+                        >
+                            <span className={`relative z-10 ${isNew ? 'animate-soft-glow text-[var(--accent)]' : ''}`}>
+                                {item.label}
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}

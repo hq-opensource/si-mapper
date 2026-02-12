@@ -1,0 +1,83 @@
+services:
+  si-mapper-mcp:
+    build:
+      context: .
+      dockerfile: mcp_server/server/Dockerfile
+    image: si-mapper-mcp:latest
+    container_name: si-mapper-mcp
+    # network_mode: host removes the need for port mapping
+    network_mode: host
+    env_file:
+      - mcp_server/server/mcp.env
+    profiles:
+      - deploy
+      - build
+
+  mcp-inspector:
+    image: ghcr.io/modelcontextprotocol/inspector:latest
+    container_name: mcp-inspector
+    # Inspector listens on 5173 (UI) and 3000 (Proxy) inside container. 
+    # Current docs say it might use different ports, but host networking exposes them all.
+    # We will access it typically on http://localhost:5173
+    network_mode: host
+    environment:
+      - DANGEROUSLY_OMIT_AUTH=true
+    profiles:
+      - deploy
+      - tools
+    depends_on:
+      - si-mapper-mcp
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    # Portainer listens on 9000
+    network_mode: host
+    volumes:
+
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    profiles:
+      - deploy
+      - tools
+
+#  toolbox_postgres:
+#    image: us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:latest
+#    container_name: toolbox_postgres
+#    # network_mode: host removes the need for port mapping
+#    network_mode: host
+#    volumes:
+#      - ./mcp_server/db_toolbox/tools.yaml:/config/tools.yaml
+#    # Explicitly setting port to 8081 for this second MCP server
+#    command: [ "toolbox", "--tools-file", "/config/tools.yaml", "--address", "0.0.0.0", "--port", "8081"]
+#    depends_on:
+#      db_postgres:
+#        condition: service_healthy
+#    profiles:
+#      - deploy
+#      - tools
+#
+#  db_postgres:
+#    image: postgres:15
+#    container_name: db_postgres
+#    # network_mode: host removes the need for port mapping
+#    # Note: This will expose port 5432 on the host machine.
+#    network_mode: host
+#    environment:
+#      POSTGRES_USER: toolbox_user
+#      POSTGRES_PASSWORD: my-password
+#      POSTGRES_DB: toolbox_db
+#    volumes:
+#      - ./mcp_server/db_toolbox/db_data:/var/lib/postgresql/data
+#      - ./mcp_server/db_toolbox/init.sql:/docker-entrypoint-initdb.d/init.sql
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U toolbox_user -d toolbox_db"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    profiles:
+#      - deploy
+#      - tools
+
+volumes:
+  portainer_data:

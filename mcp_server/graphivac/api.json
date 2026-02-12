@@ -1,0 +1,1258 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Graphivac API",
+        "version": "1.0",
+        "description": "API to retrieve and edit HVAC diagrams",
+        "contact": {
+            "name": "HVAC.IO",
+            "url": "https://hvac.io",
+            "email": "contact@hvac.io"
+        }
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "paths": {
+        "/orgs/{org-id}/themes": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Themes list",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Body163",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Body163"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Create new theme",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}/themes/{theme-id}/symbols": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "theme-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Symbols list",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Symbol",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Symbol"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "theme-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Add a symbol under the hierachical ID given by the \"symbol-id\" field.",
+                "summary": "Add symbol",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/modes/wacnet/orgs/{org-id}/projects/{project-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Wacnet configs",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "Mode - Live (Wacnet)"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "wacnet-configs",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wacnet-configs"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Update Wacnet configs",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "Mode - Live (Wacnet)"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}/themes/{theme-id}/symbols/{symbol-id}/file.svg": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "theme-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "symbol-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Symbol file",
+                "produces": [
+                    "image/svg+xml"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}/projects/{project-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Detailed project info",
+                "summary": "Project info",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "ProjectData",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ProjectData"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Update the project.",
+                "summary": "Update project",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Delete the project, along with all the information it contains.",
+                "summary": "Delete project",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}/projects/{project-id}/grids": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Info about this project",
+                "summary": "Grids list",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "grid"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Grid",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Grid"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Create a grid and return its info.",
+                "summary": "Create a grid",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "grid"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/modes/vigilia/orgs/{org-id}/projects/{project-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Vigilia configs",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "Mode - Historical (Vigilia)"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "vigilia-configs",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vigilia-configs"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Update Vigilia configs",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "Mode - Historical (Vigilia)"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Info about this organization.\nThe default organization created in Graphivac is \"public\".",
+                "summary": "Org info",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "organization"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}/themes/{theme-id}/symbols/{symbol-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "theme-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "symbol-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Symbol info",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "theme-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "symbol-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Delete symbol",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}/projects": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Projects list",
+                "summary": "Project info",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Body165",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Body165"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Create new project",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}/themes/{theme-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "theme-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Themes list",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Theme",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Theme"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "theme-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Update theme info (only name for now).",
+                "summary": "Update theme info",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "theme-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Delete the theme and all its associated symbols.",
+                "summary": "Delete theme",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "symbol"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/orgs/{org-id}/projects/{project-id}/grids/{grid-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "grid-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "description": "Info about this project",
+                "summary": "Grid file and its metadata",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "grid"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "grid-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Delete grid",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "grid"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Grid",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Grid"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "project-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "org-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "grid-id",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "summary": "Update a grid",
+                "produces": [
+                    "application/json",
+                    "application/edn",
+                    "text/html",
+                    "application/transit+json"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/edn",
+                    "application/transit+json"
+                ],
+                "tags": [
+                    "grid"
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "grid",
+            "description": "representation of HVAC systems"
+        },
+        {
+            "name": "project",
+            "description": "Project configurations"
+        },
+        {
+            "name": "symbols",
+            "description": "visual representation of grid objects"
+        }
+    ],
+    "basePath": "/api/v1",
+    "definitions": {
+        "Body163": {
+            "type": "object",
+            "properties": {
+                "theme-name": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "theme-name"
+            ]
+        },
+        "Body165": {
+            "type": "object",
+            "properties": {
+                "project-name": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "project-name"
+            ]
+        },
+        "FontConfigs": {
+            "type": "object",
+            "properties": {
+                "family": {
+                    "type": "string",
+                    "enum": [
+                        "Serif",
+                        "Monospace",
+                        "Sans-serif"
+                    ]
+                },
+                "style": {
+                    "type": "string",
+                    "enum": [
+                        "Oblique",
+                        "Italic",
+                        "Normal"
+                    ]
+                },
+                "size": {
+                    "type": "integer",
+                    "format": "int64",
+                    "enum": [
+                        20,
+                        12,
+                        16
+                    ]
+                },
+                "weight": {
+                    "type": "string",
+                    "enum": [
+                        "Lighter",
+                        "Normal",
+                        "Bold",
+                        "Bolder"
+                    ]
+                },
+                "color": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "Grid": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "font": {
+                    "$ref": "#/definitions/FontConfigs"
+                }
+            },
+            "additionalProperties": {}
+        },
+        "ProjectData": {
+            "type": "object",
+            "properties": {
+                "project-name": {
+                    "type": "string"
+                },
+                "font": {
+                    "$ref": "#/definitions/FontConfigs"
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "project-name"
+            ]
+        },
+        "Symbol": {
+            "type": "object",
+            "properties": {
+                "symbol-name": {
+                    "type": "string"
+                },
+                "symbol-id": {
+                    "type": "string"
+                },
+                "svg-string": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "symbol-name",
+                "symbol-id",
+                "svg-string"
+            ]
+        },
+        "Theme": {
+            "type": "object",
+            "properties": {
+                "theme-name": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "theme-name"
+            ]
+        },
+        "vigilia-configs": {
+            "type": "object",
+            "properties": {
+                "vigilia-url": {
+                    "type": "string"
+                },
+                "vigilia-project-id": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "wacnet-configs": {
+            "type": "object",
+            "properties": {
+                "wacnet-url": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}
