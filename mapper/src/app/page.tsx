@@ -1,11 +1,10 @@
 "use client";
 
 import { useCopilotAction, useCoAgent } from "@copilotkit/react-core";
-import { CopilotKitCSSProperties } from "@copilotkit/react-ui";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { SplitSidebar } from "@/components/SplitSidebar";
 import { YourMainContent } from "@/app/page/components/YourMainContent";
-import { ThoughtsProvider, useThoughts } from "@/context/ThoughtsContext";
+import { ThoughtsProvider, useThoughts, type Thought, type ToolCall, type AgentEvent, type AgentTask } from "@/context/ThoughtsContext";
 import { useAgentPolling } from "@/hooks/useAgentPolling";
 
 type AgentState = {
@@ -14,11 +13,11 @@ type AgentState = {
   observed_steps: string[];
   data: Record<string, unknown>;
   active_agent?: string;
-  tasks?: any[];
+  tasks?: AgentTask[];
   plan?: string;
-  thoughts?: any[];
-  tool_calls?: any[];
-  events?: any[];
+  thoughts?: Thought[];
+  tool_calls?: ToolCall[];
+  events?: AgentEvent[];
 };
 
 // Internal component to handle syncing to context
@@ -42,20 +41,18 @@ function StateSyncer({ pooledState }: { pooledState: AgentState | null }) {
     }
 
     // Extract custom data keys (not managed by specific context-syncers)
-    const {
-      status, current_step, observed_steps, active_agent,
-      tasks, plan, thoughts, tool_calls, events, data, ...rest
-    } = pooledState;
+    const { data } = pooledState;
 
-    // Filter out internal control flags (EXIT_...)
+    // Filter out internal control flags (EXIT_...) and keys handled by context-syncers
+    const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'tasks', 'plan', 'thoughts', 'tool_calls', 'events', 'data'];
     const filteredRest = Object.fromEntries(
-      Object.entries(rest).filter(([key]) => !key.startsWith('EXIT_'))
+      Object.entries(pooledState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
     );
 
     // Prepare custom data for display:
     // 1. Keep 'data' as a key ONLY if it has content
     // 2. Add any other extra keys found in 'rest' (filtered to remove internal flags)
-    const customData: Record<string, any> = { ...filteredRest };
+    const customData: Record<string, unknown> = { ...filteredRest };
 
     if (data && Object.keys(data).length > 0) {
       customData.data = data;
@@ -75,10 +72,12 @@ export default function CopilotKitPage() {
 
   // 1. Polling Agent State (Backup/Sub-agent visibility)
   // We use 8001 as seen in api/copilotkit/route.ts
-  const { pooledState } = useAgentPolling({
+  const pollingConfig = useMemo(() => ({
     baseUrl: "http://localhost:8001",
     interval: 2000
-  });
+  }), []);
+
+  const { pooledState } = useAgentPolling<AgentState>(pollingConfig);
 
   // 2. Co-Agent State (Primary/Streaming)
   const { state: agentState } = useCoAgent<AgentState>({
@@ -125,7 +124,7 @@ export default function CopilotKitPage() {
   });
 
   return (
-    <main className="flex h-screen" style={{ "--copilot-kit-primary-color": themeColor, "--accent": themeColor } as any}>
+    <main className="flex h-screen" style={{ "--copilot-kit-primary-color": themeColor, "--accent": themeColor } as React.CSSProperties}>
       <ThoughtsProvider currentAgentName={combinedState.active_agent || "SI-MAPPER"}>
         <StateSyncer pooledState={pooledState} />
         <SplitSidebar isEditMode={isEditMode} toggleEditMode={() => setIsEditMode(!isEditMode)} />

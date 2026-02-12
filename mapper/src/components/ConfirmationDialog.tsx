@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, Info, CheckCircle, Trash2, X } from 'lucide-react';
+import { AlertTriangle, Info, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ConfirmationDialogProps {

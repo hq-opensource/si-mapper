@@ -22,7 +22,7 @@ export interface AgentEvent {
     agent_name: string;
     event_type: string;
     content: string;
-    metadata: Record<string, any>;
+    metadata: Record<string, unknown>;
     trace_id?: string;
 }
 
@@ -36,7 +36,7 @@ export interface AgentTask {
     retry_count: number;
     created_at?: string;
     updated_at?: string;
-    metadata?: any;
+    metadata?: unknown;
 }
 
 interface ThoughtsContextType {
@@ -50,8 +50,8 @@ interface ThoughtsContextType {
     syncEvents: (newEvents: AgentEvent[]) => void;
     tasks: AgentTask[];
     syncTasks: (newTasks: AgentTask[]) => void;
-    data: Record<string, any>;
-    syncData: (newData: Record<string, any>) => void;
+    data: Record<string, unknown>;
+    syncData: (newData: Record<string, unknown>) => void;
 }
 
 const ThoughtsContext = createContext<ThoughtsContextType | undefined>(undefined);
@@ -74,7 +74,7 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
     const [toolCalls, setToolCalls] = useState<ToolCall[]>([]);
     const [events, setEvents] = useState<AgentEvent[]>([]);
     const [tasks, setTasks] = useState<AgentTask[]>([]);
-    const [data, setData] = useState<Record<string, any>>({});
+    const [data, setData] = useState<Record<string, unknown>>({});
 
     const addThought = useCallback((id: string, content: string, agentName?: string) => {
         setThoughts(prev => {
@@ -106,15 +106,21 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
             : Object.values(newThoughts)) as Thought[];
 
         setThoughts(prev => {
+            let changed = false;
             const merged = [...prev];
             thoughtsArray.forEach(nt => {
                 const idx = merged.findIndex(t => t.id === nt.id);
                 if (idx >= 0) {
-                    merged[idx] = nt;
+                    if (JSON.stringify(merged[idx]) !== JSON.stringify(nt)) {
+                        merged[idx] = nt;
+                        changed = true;
+                    }
                 } else {
                     merged.push(nt);
+                    changed = true;
                 }
             });
+            if (!changed) return prev;
             return merged.sort((a, b) => a.timestamp - b.timestamp);
         });
     }, []);
@@ -149,15 +155,21 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
             : Object.values(newToolCalls)) as ToolCall[];
 
         setToolCalls(prev => {
+            let changed = false;
             const merged = [...prev];
             callsArray.forEach(nc => {
                 const idx = merged.findIndex(c => c.id === nc.id);
                 if (idx >= 0) {
-                    merged[idx] = nc;
+                    if (JSON.stringify(merged[idx]) !== JSON.stringify(nc)) {
+                        merged[idx] = nc;
+                        changed = true;
+                    }
                 } else {
                     merged.push(nc);
+                    changed = true;
                 }
             });
+            if (!changed) return prev;
             return merged.sort((a, b) => a.timestamp - b.timestamp);
         });
     }, []);
@@ -168,19 +180,24 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
             : Object.values(newEvents)) as AgentEvent[];
 
         setEvents(prev => {
+            let changed = false;
             const merged = [...prev];
             eventsArray.forEach(ne => {
-                // Deduplicate by trace_id if present, otherwise by id
                 const idx = merged.findIndex(e =>
                     (ne.trace_id && e.trace_id === ne.trace_id) || (e.id === ne.id)
                 );
 
                 if (idx >= 0) {
-                    merged[idx] = ne;
+                    if (JSON.stringify(merged[idx]) !== JSON.stringify(ne)) {
+                        merged[idx] = ne;
+                        changed = true;
+                    }
                 } else {
                     merged.push(ne);
+                    changed = true;
                 }
             });
+            if (!changed) return prev;
             return merged.sort((a, b) => a.timestamp - b.timestamp);
         });
     }, []);
@@ -191,21 +208,36 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
             : Object.values(newTasks)) as AgentTask[];
 
         setTasks(prev => {
+            let changed = false;
             const merged = [...prev];
             tasksArray.forEach(nt => {
                 const idx = merged.findIndex(t => t.id === nt.id);
                 if (idx >= 0) {
-                    merged[idx] = { ...merged[idx], ...nt };
+                    // Check if anything actually changed
+                    const existing = merged[idx];
+                    const isDifferent = Object.entries(nt).some(([key, value]) => existing[key as keyof AgentTask] !== value);
+                    if (isDifferent) {
+                        merged[idx] = { ...existing, ...nt };
+                        changed = true;
+                    }
                 } else {
                     merged.push(nt);
+                    changed = true;
                 }
             });
-            return [...merged]; // Keep order from backend for tasks
+            if (!changed) return prev;
+            return [...merged];
         });
     }, []);
 
-    const syncData = useCallback((newData: Record<string, any>) => {
-        setData(prev => ({ ...prev, ...newData }));
+    const syncData = useCallback((newData: Record<string, unknown>) => {
+        setData(prev => {
+            const hasChange = Object.entries(newData).some(([key, value]) => {
+                return JSON.stringify(prev[key]) !== JSON.stringify(value);
+            });
+            if (!hasChange) return prev;
+            return { ...prev, ...newData };
+        });
     }, []);
 
     return (

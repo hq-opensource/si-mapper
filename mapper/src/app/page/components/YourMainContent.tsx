@@ -6,7 +6,7 @@ import { AgentNavbar } from "./AgentNavbar"; // New component
 import { type AgentState } from "./AgentStateOverlay";
 import { ChonkyFileManager } from "@/components/ChonkyFileManager";
 import { Markdown } from "@copilotkit/react-ui";
-import { ListTodo, CheckCircle2, AlertTriangle, Loader2, Circle, Clock, RefreshCw, FileText, BarChart2, Folder, Eye, Edit3 } from "lucide-react";
+import { FileText, BarChart2, Folder, Eye, Edit3 } from "lucide-react";
 import { ThoughtsWindow } from "./ThoughtsWindow";
 import { ToolCallsWindow } from "./ToolCallsWindow";
 import { TasksWindow } from "./TasksWindow";

@@ -9,11 +9,10 @@ Identify and list all **horizontal ducts** in HVAC drawings as authoritative spa
 
 ### What to Identify
 - **Only horizontal duct segments** (ignore vertical portions)
-- Count chevron-tail arrows (the 'Σ' shape) to know the number of horizontal ducts: N chevrons = N horizontal ducts
 - Each distinct horizontal track = separate duct (even if functionally similar)
 - Ducts continue through inline equipment (filters, coils, fans, mixing boxes)
 
-### What Ends a Duct
+### How a Duct Ends
 - The arrow style mark '>' for left-to-right air flow.
 - The arrow style mark '<' for right-to-left air flow.
 - **90-degree turn to vertical** (horizontal ends, vertical begins)
@@ -49,6 +48,7 @@ You will be provided with drawing artifacts. Use the available tool `load_artifa
 - Check legends for duct symbols and flow arrows
 - Identify vertical track ordering (top to bottom)
 - Map horizontal spans: (x1, y1) to (x2, y1) where y1 indicates the vertical position of the duct
+- Verify the airflow direction of each duct using the chevron-tail style mark 'Σ', and the arrow style marks '<' and '>' symbols. 'Σ>' for left-to-right flow, '<Σ' for right-to-left flow.
 
 ### 3. Register Findings
 Register all your findings using the following json structure:

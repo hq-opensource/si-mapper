@@ -61,7 +61,7 @@ export async function POST(request: Request) {
         try {
             await stat(newFolderPath);
             return NextResponse.json({ error: 'Folder already exists' }, { status: 400 });
-        } catch (e) {
+        } catch {
             // Good, it doesn't exist
         }
 

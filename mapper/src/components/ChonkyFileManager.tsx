@@ -3,15 +3,11 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import {
     Folder,
-    File,
     ChevronRight,
     Upload,
-    Plus,
     Trash2,
-    MoreVertical,
     FolderPlus,
     FileText,
-    Image as ImageIcon,
     RefreshCw
 } from 'lucide-react';
 import { ConfirmationDialog } from './ConfirmationDialog';

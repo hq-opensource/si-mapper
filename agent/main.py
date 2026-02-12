@@ -24,7 +24,7 @@ apply_adk_patches()
 load_dotenv()
 logger = configure_logging()
 
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8080/mcp")
+MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8080/mcp/")
 AGENT_MODEL_NAME = os.getenv("AGENT_MODEL_NAME", "gemini-3.0-flash")
 APP_TITLE = "SI-MAPPER Agent"
 AGENT_NAME = "si_mapper_agent"

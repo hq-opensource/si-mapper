@@ -103,9 +103,9 @@ export function ThoughtsWindow() {
                                                 ${event.event_type === 'DELEGATION' ? 'italic opacity-80 border-amber-500/30' : 'border-[var(--accent)]/10'}`}>
                                     <Markdown content={event.content} />
 
-                                    {event.metadata?.pretty_args && (
+                                    {!!event.metadata?.pretty_args && (
                                         <pre className="mt-4 p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 overflow-x-auto text-[13px] font-mono leading-relaxed">
-                                            <code className="text-[var(--foreground)]">{event.metadata.pretty_args}</code>
+                                            <code className="text-[var(--foreground)]">{event.metadata.pretty_args as string}</code>
                                         </pre>
                                     )}
                                 </div>

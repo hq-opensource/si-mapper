@@ -7,7 +7,7 @@ interface SplitSidebarProps {
     toggleEditMode?: () => void;
 }
 
-export function SplitSidebar({ isEditMode, toggleEditMode }: SplitSidebarProps) {
+export function SplitSidebar({ }: SplitSidebarProps) {
     return (
         <div className="my-split-sidebar h-full w-[28rem] flex-shrink-0 flex flex-col bg-[var(--background)] border-r border-[var(--muted-foreground)]/20 shadow-xl z-40 transition-colors duration-500">
             <div className="flex-1 relative bg-[var(--background)] overflow-hidden px-6 pb-6 pt-24">

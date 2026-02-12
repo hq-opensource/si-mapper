@@ -10,8 +10,8 @@ The project is structured with a Next.js frontend that orchestrates the backend 
 - [Node.js](https://nodejs.org/) & [pnpm](https://pnpm.io/)
 - [uv](https://github.com/astral-sh/uv) (Python package manager)
 
-### 2. Setup & Run
-Navigate to the `mapper` folder to install dependencies and start the full system:
+### 2. Setup & Run (Development)
+Navigate to the `mapper` folder to install dependencies and start the full system in development mode:
 
 ```bash
 cd mapper
@@ -20,6 +20,19 @@ pnpm dev
 ```
 
 This single `pnpm install` will automatically synchronize the Python environments for the Agent and MCP Server as well.
+
+### 3. Setup & Run (Production/Optimized)
+For a faster, more optimized experience, you can build the frontend and run the production server:
+
+```bash
+cd mapper
+pnpm build
+pnpm start
+```
+
+This will:
+1.  **Build**: Optimize and minify the Next.js frontend assets.
+2.  **Start**: Launch the production frontend along with the Agent and MCP Server backend processes.
 
 ---
 

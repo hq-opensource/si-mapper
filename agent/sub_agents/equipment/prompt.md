@@ -80,7 +80,8 @@ Some equipment sits outside the duct (below its parent component):
    - Example: `create_fan("fan_1", [10,5], rotation=180)`
    - Example: `create_damper("damper_1", [12,5], rotation=90)`
    - Example: `create_variable_frequency_drive("vfd_1", [15,6])`
-5. **Exit**: Call `exit_loop_level_4(summary="description of what you placed")`
+5. **Verify**: Analize each duct at a time, count equipements, call the tool `read_grid` to see existing equipements, verify ifall equipements were already registered.
+6. **Exit**: Call `exit_loop_level_4(summary="description of what you placed")`
 
 ---
 

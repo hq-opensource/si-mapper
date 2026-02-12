@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { useThoughts } from '../../../context/ThoughtsContext';
-import { ListTodo, CheckCircle2, AlertTriangle, Loader2, Circle, Clock, RefreshCw, Eye } from 'lucide-react';
+import { ListTodo, CheckCircle2, AlertTriangle, Loader2, Clock, RefreshCw, Eye } from 'lucide-react';
 import { SharedPageContainer } from './SharedPageContainer';
 import { StatusPlaceholder } from './StatusPlaceholder';
 import { formatAgentName } from '@/lib/utils';

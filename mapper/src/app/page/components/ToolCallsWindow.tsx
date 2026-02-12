@@ -101,16 +101,16 @@ export function ToolCallsWindow() {
                                                 prose-strong:text-indigo-500 prose-strong:font-black">
                                     <Markdown content={event.content} />
 
-                                    {event.metadata?.pretty_args && (
+                                    {!!event.metadata?.pretty_args && (
                                         <div className="mt-4">
                                             <div className="text-[11px] font-black uppercase text-[var(--muted-foreground)]/50 mb-2 tracking-widest pl-1">Configuration Parameters</div>
                                             <pre className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-indigo-500/10 overflow-x-auto text-[13px] font-mono leading-relaxed">
-                                                <code className="text-[var(--foreground)]">{event.metadata.pretty_args}</code>
+                                                <code className="text-[var(--foreground)]">{event.metadata.pretty_args as string}</code>
                                             </pre>
                                         </div>
                                     )}
 
-                                    {event.metadata?.result && (
+                                    {!!event.metadata?.result && (
                                         <div className="mt-4">
                                             <div className="text-[11px] font-black uppercase text-[var(--muted-foreground)]/50 mb-2 tracking-widest pl-1">Execution Result</div>
                                             <pre className="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-emerald-500/10 overflow-x-auto text-[13px] font-mono leading-relaxed">

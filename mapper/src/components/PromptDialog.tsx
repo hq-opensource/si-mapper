@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { FolderPlus, X } from 'lucide-react';
+import { FolderPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PromptDialogProps {

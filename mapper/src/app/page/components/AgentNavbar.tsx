@@ -57,7 +57,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
 
             setLastEventCount(events.length);
         }
-    }, [events.length, activeTab, lastEventCount]);
+    }, [events, activeTab, lastEventCount]);
 
     // Track new tasks
     useEffect(() => {
