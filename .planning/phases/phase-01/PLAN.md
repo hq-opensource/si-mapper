@@ -25,14 +25,14 @@
 - [x] **[TASK-1.3.1] Implement Vertical Duct Agent Prompt** ✅
 - [x] **[TASK-1.3.2] Implement Vertical Duct Loop** ✅
 
-## Wave 4: Equipment Placement & Alignment (Current Step)
+## Wave 4: Equipment Placement & Alignment (Completed)
 **Trigger:** Wave 3 Complete
 **Focus:** Functional equipment placement with mandatory center-line alignment.
 
-- **[TASK-1.4.1] Implement Equipment Alignment Prompt** (Part of Wave 4)
+- [x] **[TASK-1.4.1] Implement Equipment Alignment Prompt** ✅
     - Enforce "Y-Coordinate Sync" with parent ducts.
     - Logic: "Find Fan SF-1, identify parent Duct-X, sync Fan.Y with Duct.Y".
-- **[TASK-1.4.2] Implement Equipment Placement Loop** (Part of Wave 4)
+- [x] **[TASK-1.4.2] Implement Equipment Placement Loop** ✅
     - Handle conflict resolution (don't overlap coils and fans).
     - Support unique naming based on text recognition.
     - **Verification:** Equipment appears exactly centered within its parent duct on the frontend.
@@ -41,11 +41,11 @@
 **Trigger:** Wave 4 Complete
 **Focus:** Engineering validation and final polishing.
 
-- **[TASK-1.5.1] Human Verification**
+- [x] **[TASK-1.5.1] Human Verification** ✅
     - Master Agent requests user confirmation instead of automated Review Agent.
 
 ## Must-Haves (DoD)
-- [ ] Agents execute in order: Horizontal -> Vertical -> Equipment.
-- [ ] All horizontal components share a single Y-coordinate with their parent duct.
-- [ ] Zero overlapping components on the grid.
-- [ ] Review agent successfully runs and fixes at least one connectivity error.
+- [x] Agents execute in order: Horizontal -> Vertical -> Equipment.
+- [x] All horizontal components share a single Y-coordinate with their parent duct.
+- [x] Zero overlapping components on the grid.
+- [x] Review agent successfully runs and fixes at least one connectivity error.
