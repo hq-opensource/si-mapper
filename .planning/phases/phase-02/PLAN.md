@@ -6,10 +6,10 @@
 **Trigger:** Start of Phase 2
 **Focus:** Build the tools necessary for state persistence and frontend integration.
 
-- [ ] **[TASK-2.1.1] Implement Metadata MCP Tool** 
-    - Create `mcp_server/graphivac/metadata_manager.py` to handle EDN grid updates.
-    - Create `mcp_server/graphivac/metadata_tools.py` to expose `add_metadata(equipment_name, metadata)` via FastMCP.
-    - Register the tool in `mcp_server/server/main.py`.
+- [x] **[TASK-2.1.1] Implement Metadata MCP Tool** 
+    - Created `mcp_server/graphivac/metadata_manager.py`.
+    - Created `mcp_server/graphivac/metadata_tools.py`.
+    - Registered `write_metadata`, `read_metadata`, and `delete_metadata` using native EDN maps in `:custom-fields`.
 - [ ] **[TASK-2.1.2] Implement Agent State Persistence Tool**
     - Create `agent/tools/state_tools.py`.
     - Logic: Use `ToolContext.state` to save a `treated` dictionary mapping `equipment_id` to status.

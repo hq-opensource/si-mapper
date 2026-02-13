@@ -48,7 +48,7 @@ def read_grid(api_instance) -> List[Dict[str, Any]]:
         parsed_comps = []
         
         for key, value in comps.items():
-            # Expected key format: (Keyword("type"), "Name")
+            # Expected key format: (Keyword("obj"), "Name")
             if not (isinstance(key, (list, tuple, ImmutableList)) and len(key) == 2):
                 continue
                 
@@ -78,9 +78,12 @@ def read_grid(api_instance) -> List[Dict[str, Any]]:
                 # Extract 'pos' -> 'position'
                 symbol = value.get(Keyword("symbol"))
                 pos = value.get(Keyword("pos"))
+                custom_fields = value.get(Keyword("custom-fields"))
                 if pos:
                     comp_data["type"] = _to_json_friendly(symbol)
                     comp_data["position"] = _to_json_friendly(pos)
+                if custom_fields:
+                    comp_data["custom-fields"] = _to_json_friendly(custom_fields)
             
             # If neither (or default fallback), we could add more generic parsing here
             # For now, adhering to user request for 'duct' and 'obj' specific fields.

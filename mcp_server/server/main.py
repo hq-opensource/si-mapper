@@ -21,10 +21,11 @@ if project_root not in sys.path:
 
 from mcp_server.graphivac.custom_manager import CustomManager #noqa
 from mcp_server.graphivac.duct_manager import DuctManager #noqa
-from mcp_server.graphivac import custom_tools, duct_tools, pipe_tools, grid_tools, electric_tools #noqa
 from mcp_server.graphivac.pipe_manager import PipeManager #noqa
 from mcp_server.graphivac.grid_manager import GridManager #noqa
 from mcp_server.graphivac.electric_manager import ElectricManager #noqa
+from mcp_server.graphivac.metadata_manager import MetadataManager #noqa
+from mcp_server.graphivac import custom_tools, duct_tools, pipe_tools, grid_tools, electric_tools, metadata_tools #noqa
 
 from dotenv import load_dotenv
 
@@ -59,6 +60,7 @@ pipe_manager = PipeManager(ORG_ID, PROJECT_ID, GRID_ID, GRID_TITLE, FONT_CONFIGS
 custom_manager = CustomManager(ORG_ID, PROJECT_ID, GRID_ID, GRID_TITLE, FONT_CONFIGS, BASE_URL)
 grid_manager = GridManager(ORG_ID, PROJECT_ID, GRID_ID, GRID_TITLE, FONT_CONFIGS, BASE_URL)
 electric_manager = ElectricManager(ORG_ID, PROJECT_ID, GRID_ID, GRID_TITLE, FONT_CONFIGS, BASE_URL)
+metadata_manager = MetadataManager(ORG_ID, PROJECT_ID, GRID_ID, GRID_TITLE, FONT_CONFIGS, BASE_URL)
 
 # --- 2. REGISTER TOOLS ---
 duct_tools.register_duct_tools(mcp, duct_manager)
@@ -66,6 +68,7 @@ pipe_tools.register_pipe_tools(mcp, pipe_manager)
 custom_tools.register_custom_tools(mcp, custom_manager)
 grid_tools.register_grid_tools(mcp, grid_manager)
 electric_tools.register_electric_tools(mcp, electric_manager)
+metadata_tools.register_metadata_tools(mcp, metadata_manager)
 
 # --- 3. STREAMABLE HTTP TRANSPORT ---
 

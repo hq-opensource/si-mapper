@@ -20,8 +20,8 @@
 **Goal:** Extract technical data from source files and map them as raw components to the frontend for human verification.
 
 - **Phase 2.1: Infrastructure & MCP Tools**
-    - [ ] Implement `add_metadata` tool in `mcp_server/graphivac/metadata_tools.py`.
-    - [ ] Create `MetadataManager` in `mcp_server/graphivac/metadata_manager.py`.
+    - [x] Implement `write_metadata` tool in `mcp_server/graphivac/metadata_tools.py`.
+    - [x] Create `MetadataManager` in `mcp_server/graphivac/metadata_manager.py`.
     - [ ] Implement `save_agent_state` in `agent/tools/state_tools.py` using `ToolContext.state`.
     - [ ] Verify `read_grid` integration with multimodal sub-agents.
 - **Phase 2.2: Specialized Raw Data Agents (Multimodal)**
@@ -42,7 +42,7 @@
 # Requirements Mapping
 | Req ID | Phase | Plan Status |
 | :--- | :--- | :--- |
-| REQ-1 | Phase 2.1 | Pending |
+| REQ-1 | Phase 2.1 | Completed |
 | REQ-2 | Phase 1.1, 1.2, 1.3 | Completed |
 | REQ-3 | Phase 1.1 | Completed |
 | REQ-4 | Phase 1.4 | Completed |
