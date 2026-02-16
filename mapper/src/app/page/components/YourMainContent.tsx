@@ -112,7 +112,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
             fullWidth
             fullHeight
           >
-            <ExternalPageIframe src="https://graphivac.hvac.io/o/public/p/P-6SmwhNfpbC/g/G-lEO5dF1PtP?iframe=t&init-zoom=t" />
+            <ExternalPageIframe src="https://graphivac.hvac.io/o/public/p/P-j8QIvTGH7p/g/G-LAiRS3mgp6?iframe=t&init-zoom=t" />
           </SharedPageContainer>
         );
       case 'edit':
@@ -124,7 +124,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
             fullWidth
             fullHeight
           >
-            <ExternalPageIframe src="https://graphivac.hvac.io/o/public/p/P-6SmwhNfpbC/g/G-lEO5dF1PtP?=t&init-zoom=t" />
+            <ExternalPageIframe src="https://graphivac.hvac.io/o/public/p/P-j8QIvTGH7p/g/G-LAiRS3mgp6?mode=editor&init-zoom=t" />
           </SharedPageContainer>
         );
       case 'files':
