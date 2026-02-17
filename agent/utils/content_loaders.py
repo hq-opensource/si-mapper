@@ -29,9 +29,11 @@ def load_csv_part(file_path: str) -> types.Part:
          if path.suffix.lower() != ".csv":
             raise ValueError(f"File is not a CSV or MIME type could not be determined: {file_path}. Deteted: {mime_type}")
 
-    with open(path, "rb") as f:
-        data = f.read()
-    return types.Part.from_bytes(data=data, mime_type=mime_type)
+    with open(path, "r", encoding="utf-8") as f:
+        data = f.read()  # Read as text
+    
+    # Return as text/plain so the model sees the raw content directly
+    return types.Part.from_text(text=data)
 
 def load_pdf_part(file_path: str) -> types.Part:
     """
