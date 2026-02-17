@@ -167,8 +167,13 @@ class TaskService:
         """Creates tasks for each equipment found on the grid if they don't exist."""
         tasks_created = []
         for item in grid_items:
-            equipment_name = item.get("name")
             equipment_type = item.get("type")
+            
+            # Skip "pure" ducts as they are conduits, not technical equipment
+            if equipment_type == "duct":
+                continue
+                
+            equipment_name = item.get("name")
             position = item.get("position") or item.get("start")
             
             existing = TaskService.find_task_by_equipment(context, equipment_name)
