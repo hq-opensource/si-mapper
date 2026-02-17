@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "ag-ui-adk>=0.4.0",
     "dotenv>=0.9.9",
+    "edn-format>=0.7.5",
     "fastapi>=0.127.0",
     "google-adk>=1.18.0",
     "google-genai>=1.56.0",

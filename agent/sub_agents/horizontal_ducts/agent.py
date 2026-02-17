@@ -5,6 +5,7 @@ from google.adk.tools import load_artifacts
 from sub_agents.tools.ingest_category_tool import ingest_category_files_tool
 from sub_agents.tools.loop_exit_tools import exit_loop_level_4
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
+from tools.task_tools import fetch_pending_task
 from tools.progress_tool import update_step, update_status, update_state
 from utils.callback_utils import shared_model_callback as model_callback
 from utils.prompt_utils import load_prompt_instruction
@@ -32,7 +33,6 @@ class HorizontalDuctLlmAgentInternal(LlmAgent):
         thinking_config = types.ThinkingConfig(include_thoughts=True)
         planner = BuiltInPlanner(thinking_config=thinking_config)
         
-        # Load prompt from the new location in sub_agents
         instruction = load_prompt_instruction("sub_agents/horizontal_ducts/prompt.md")
 
         default_tools = [ingest_category_files_tool, load_artifacts, update_step, update_status, update_state, exit_loop_level_4]
@@ -46,5 +46,7 @@ class HorizontalDuctLlmAgentInternal(LlmAgent):
             tools=unique_tools,
             after_model_callback=model_callback,
             planner=planner,
-            generate_content_config=types.GenerateContentConfig(temperature=0.0), # Low temperature for extraction
+            generate_content_config=types.GenerateContentConfig(
+                temperature=0.0
+            ),
         )

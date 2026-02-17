@@ -183,3 +183,82 @@ def mark_technical_progress(
             return f":::thought\n[System] {agent_type} treatment complete for {equipment_name}. ALL AGENTS DONE. Task ready for verification.\n:::\n"
         return f":::thought\n[System] {agent_type} treatment complete for {equipment_name}. Remaining agents still needed.\n:::\n"
     return f":::thought\n[System] Task for {equipment_name} not found.\n:::\n"
+
+def create_batch_tasks(tool_context: ToolContext) -> str:
+    """
+    Synchronizes the task queue with the current state of the grid.
+    Reads all components from the grid and creates a task for each one.
+    This is an internal batch tool that encapsulates reading and enqueuing.
+    """
+    logger.info("Executing create_batch_tasks tool.")
+    
+    import os
+    import sys
+    from dotenv import load_dotenv
+    
+    # 1. Setup Logic similar to tests/test_read_grid.py to ensure imports work
+    try:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # agent/tools/ -> agent/ -> si-mapper/
+        project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
+        
+        logger.info(f"debug: Project Root identified as: {project_root}")
+        
+        if project_root not in sys.path:
+            sys.path.insert(0, project_root)
+            logger.info("debug: Added project root to sys.path")
+            
+        # Try importing now that path is set
+        try:
+            from mcp_server.graphivac.grid_manager import GridManager
+            logger.info("debug: Successfully imported GridManager")
+        except ImportError as ie:
+            logger.error(f"debug: Failed to import GridManager: {ie}")
+            logger.error(f"debug: Current sys.path: {sys.path}")
+            return f":::thought\n[System] Critical Error: Could not import GridManager. Path issue. Debug info logged.\n:::\n"
+
+        # 2. Load Environment Variables
+        # Try to find the mcp.env relative to project root
+        env_path = os.path.join(project_root, 'mcp_server', 'server', 'mcp.env')
+        logger.info(f"debug: Checking env path: {env_path}")
+        
+        if os.path.exists(env_path):
+            load_dotenv(env_path)
+            logger.info("debug: Loaded mcp.env")
+        else:
+            load_dotenv()
+            logger.info("debug: Warning - mcp.env not found, using default env")
+        
+        ORG_ID = os.getenv("GRAPHIVAC_ORG_ID")
+        PROJECT_ID = os.getenv("GRAPHIVAC_PROJECT_ID")
+        GRID_ID = os.getenv("GRAPHIVAC_GRID_ID")
+        GRID_TITLE = os.getenv("GRAPHIVAC_GRID_TITLE")
+        BASE_URL = os.getenv("GRAPHIVAC_BASE_URL")
+        # Default font config is needed by the API init
+        FONT_CONFIGS = {"family": "Serif", "style": "Oblique", "size": 20, "weight": "Lighter", "color": "string"}
+        
+        logger.info(f"debug: Config - Org: {ORG_ID}, Project: {PROJECT_ID}, Grid: {GRID_ID}, URL: {BASE_URL}")
+        
+        if not all([ORG_ID, PROJECT_ID, GRID_ID]):
+            return f":::thought\n[System] Error: Missing required environment variables (Org/Project/Grid ID).\n:::\n"
+            
+        # 3. Fetch grid data
+        logger.info("debug: Initializing GridManager...")
+        manager = GridManager(ORG_ID, PROJECT_ID, GRID_ID, GRID_TITLE, FONT_CONFIGS, BASE_URL)
+        
+        logger.info("debug: Calling read_grid()...")
+        grid_data = manager.read_grid()
+        logger.info(f"debug: read_grid returned {len(grid_data)} items")
+        
+        # 4. Enqueue tasks
+        logger.info("debug: Creating tasks via TaskService...")
+        tasks = TaskService.add_grid_tasks_batch(tool_context, grid_data)
+        logger.info(f"debug: Tasks created count: {len(tasks)}")
+        
+        return f":::thought\n[System] Successfully synced with grid. Created {len(tasks)} new tasks. Total grid components processed: {len(grid_data)}.\n:::\n"
+        
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"debug: Exception in create_batch_tasks: {tb}")
+        return f":::thought\n[System] Unhandled exception in create_batch_tasks: {str(e)}\n:::\n"

@@ -16,13 +16,13 @@
 - **Average Accuracy (Geometry):** N/A
 - **Time to Reconstruct:** N/A
 
-## Session Continuity (2026-02-09)
+## Session Continuity (2026-02-17)
 ### Recent Decisions
 - Defined the 3-Step core mission (Replicate -> Extract -> Graph).
-- Established the sequential extraction order (Horizontal -> Vertical -> Equipment).
-- Mandated "Grid Reading" to ensure placement consistency.
+- Verified `read_grid` and MCP tool synchronization.
+- **Decision:** Aborted Agentic Vision Pilot due to model configuration complexity and performance trade-offs; reverting to stable Phase 2 goal.
 
 ### Next Steps
-1. Discuss Phase 1.1 implementation details.
-2. Refine the Horizontal Duct Agent prompt to support grid-awareness.
-3. Verify the `mcp_server` tools for grid state reading.
+1. /gsd-plan-phase 2.2 (Bacnet, Control, Electricity Agents).
+2. Implement multimodal analyzers for technical metadata.
+3. Establish technical mapping loop for grid components.
