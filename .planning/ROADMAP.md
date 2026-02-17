@@ -22,8 +22,8 @@
 - **Phase 2.1: Infrastructure & MCP Tools**
     - [x] Implement `write_metadata` tool in `mcp_server/graphivac/metadata_tools.py`.
     - [x] Create `MetadataManager` in `mcp_server/graphivac/metadata_manager.py`.
-    - [ ] Implement `save_agent_state` in `agent/tools/state_tools.py` using `ToolContext.state`.
-    - [ ] Verify `read_grid` integration with multimodal sub-agents.
+    - [x] Verify `read_grid` integration with multimodal sub-agents.
+    - [x] Implement `save_agent_state` in `agent/tools/state_tools.py` using `ToolContext.state`.
 - **Phase 2.2: Specialized Raw Data Agents (Multimodal)**
     - [ ] Create Bacnet, Control, and Electricity Sub-Agents capable of analyzing CSV, PDF, and Images.
 - **Phase 2.3: Iterative Technical Mapping Loop**

@@ -1,0 +1,134 @@
+[
+  {
+    "name": "aTJX1rvqoC",
+    "type": "duct.sensor.static-pressure",
+    "position": [
+      13,
+      3
+    ]
+  },
+  {
+    "name": "ZGpagnydCd",
+    "type": "duct.sensor.pressure",
+    "position": [
+      8,
+      4
+    ]
+  },
+  {
+    "name": "GKpKaqlnNG",
+    "type": "duct",
+    "start": [
+      6,
+      3
+    ],
+    "end": [
+      6,
+      -1
+    ]
+  },
+  {
+    "name": "eARpOdn9TI",
+    "type": "duct.sensor.temperature",
+    "position": [
+      11,
+      3
+    ]
+  },
+  {
+    "name": "N9EitBuk47",
+    "type": "duct.sensor.low-limit",
+    "position": [
+      12,
+      3
+    ]
+  },
+  {
+    "name": "UOBg9ZxFI9",
+    "type": "duct",
+    "start": [
+      -1,
+      3
+    ],
+    "end": [
+      14,
+      3
+    ]
+  },
+  {
+    "name": "pDwGuZpSQK",
+    "type": "duct",
+    "start": [
+      14,
+      -1
+    ],
+    "end": [
+      -1,
+      -1
+    ]
+  },
+  {
+    "name": "LhASF27EPg",
+    "type": "duct.filter",
+    "position": [
+      8,
+      3
+    ]
+  },
+  {
+    "name": "uCq0hMZv85",
+    "type": "duct.sensor.static-pressure",
+    "position": [
+      13,
+      -1
+    ]
+  },
+  {
+    "name": "JujNweXUp8",
+    "type": "electric.vfd",
+    "position": [
+      9,
+      0
+    ]
+  },
+  {
+    "name": "COC0kgbES6",
+    "type": "duct.sensor.humidity",
+    "position": [
+      2,
+      -1
+    ]
+  },
+  {
+    "name": "ETicC5eMZo",
+    "type": "electric.vfd",
+    "position": [
+      9,
+      4
+    ]
+  },
+  {
+    "name": "q8NQX3agLD",
+    "type": "duct.sensor.temperature",
+    "position": [
+      11,
+      -1
+    ]
+  },
+  {
+    "name": "nRrr81J8aa",
+    "type": "duct.fan",
+    "position": [
+      9,
+      3
+    ]
+  },
+  {
+    "name": "PiYxPQV7tz",
+    "type": "duct.fan",
+    "position": [
+      9,
+      -1
+    ]
+  }
+]

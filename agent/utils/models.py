@@ -22,3 +22,9 @@ class Task(BaseModel):
     equipment_name: Optional[str] = None
     equipment_type: Optional[str] = None
     location_description: Optional[str] = None
+
+    # Multi-agent technical mapping flags
+    bacnet_treated: bool = False
+    control_treated: bool = False
+    electricity_treated: bool = False
+    tags: list[str] = []

@@ -9,6 +9,7 @@ from google.adk.agents import LlmAgent
 from google.adk.tools import McpToolset
 from utils.logging_config import configure_logging
 from tools.task_tools import add_task, set_task_status
+from tools.state_tools import save_agent_state, get_agent_state
 
 # --- Configuration ---
 load_dotenv()
@@ -32,7 +33,7 @@ def create_master_agent(session_id: str, subagents:List[LoopAgent], model_name: 
     logger.debug(f"Creating Master Orchestrator for session {session_id}")
 
     # 1. Instantiate Level 3 Agents
-    task_tools = [add_task, set_task_status]
+    task_tools = [add_task, set_task_status, save_agent_state, get_agent_state]
     
     master_agent = MasterLlmAgent(
         model_name=model_name,
