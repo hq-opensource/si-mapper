@@ -12,9 +12,10 @@
     - Registered `write_metadata`, `read_metadata`, and `delete_metadata` using native EDN maps in `:custom-fields`.
 - [x] **[TASK-2.1.2] Verify `read_grid` Integration**
     - Successfully verified with real grid data (15 components retrieved: sensors, fans, VFDs).
-- [ ] **[TASK-2.1.3] Implement Agent State Persistence Tool**
-    - Create `agent/tools/state_tools.py`.
-    - Logic: Use `ToolContext.state` to save a `treated` dictionary mapping `equipment_id` to status.
+- [x] **[TASK-2.1.3] Implement Multi-Agent Task Persistence**
+    - Enhanced `Task` model in `agent/utils/models.py` with technical mapping flags (`bacnet_treated`, `control_treated`, `electricity_treated`).
+    - Implemented `enqueue_grid_tasks` and `mark_technical_progress` in `agent/tools/task_tools.py`.
+    - Logic: Tasks are marked as `VERIFICATION_READY` only when all three specialized agents have processed the equipment.
 
 ## Wave 2: Specialized Raw Data Sub-Agents (Multimodal)
 **Trigger:** Wave 1 Complete

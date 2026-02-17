@@ -151,3 +151,35 @@ def get_remaining_acting_tasks(tool_context: ToolContext) -> str:
         return f":::thought\n[System] Verification result: {remaining} tasks still pending. Please continue execution.\n:::\n"
     else:
         return f":::thought\n[System] All planned tasks have been processed. You can now call exit_loop_level_4() to finish the acting phase.\n:::\n"
+
+def enqueue_grid_tasks(tool_context: ToolContext, grid_data: list[dict]) -> str:
+    """
+    Creates tasks for each piece of equipment found on the grid.
+    
+    Args:
+        grid_data: List of equipment dictionaries (from read_grid).
+    """
+    logger.info("Enqueuing grid tasks.")
+    tasks = TaskService.add_grid_tasks_batch(tool_context, grid_data)
+    return f":::thought\n[System] Successfully enqueued {len(tasks)} tasks from grid.\n:::\n"
+
+def mark_technical_progress(
+    tool_context: ToolContext, 
+    equipment_name: str, 
+    agent_type: str
+) -> str:
+    """
+    Marks a piece of equipment as treated by a specific agent (bacnet, control, electricity).
+    
+    Args:
+        equipment_name: Name of the equipment.
+        agent_type: Type of agent ('bacnet', 'control', or 'electricity').
+    """
+    logger.info(f"Marking {agent_type} progress for {equipment_name}")
+    task = TaskService.update_technical_status(tool_context, equipment_name, agent_type)
+    if task:
+        # Check if it was the last one
+        if task.status == TaskStatus.VERIFICATION_READY:
+            return f":::thought\n[System] {agent_type} treatment complete for {equipment_name}. ALL AGENTS DONE. Task ready for verification.\n:::\n"
+        return f":::thought\n[System] {agent_type} treatment complete for {equipment_name}. Remaining agents still needed.\n:::\n"
+    return f":::thought\n[System] Task for {equipment_name} not found.\n:::\n"

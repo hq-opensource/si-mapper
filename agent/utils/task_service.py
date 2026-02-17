@@ -14,11 +14,21 @@ class TaskService:
         valid_tasks = []
         for t in tasks_data:
             try:
+                # Handle potential list conversion for tags if needed by Pydantic
                 valid_tasks.append(Task(**t))
             except Exception as e:
                 logger.error(f"Error deserializing task: {e}. Data: {t}")
                 continue
         return valid_tasks
+
+    @staticmethod
+    def find_task_by_equipment(context: ToolContext, equipment_name: str) -> Optional[Task]:
+        """Finds an existing task by equipment name."""
+        tasks = TaskService.get_tasks(context)
+        for task in tasks:
+            if task.equipment_name == equipment_name:
+                return task
+        return None
 
     @staticmethod
     def save_tasks(context: ToolContext, tasks: List[Task]):
@@ -148,3 +158,66 @@ class TaskService:
                 return task
         logger.info("No tasks ready for verification.")
         return None
+
+    @staticmethod
+    def add_grid_tasks_batch(
+        context: ToolContext,
+        grid_items: list[dict[str, Any]]
+    ) -> list[Task]:
+        """Creates tasks for each equipment found on the grid if they don't exist."""
+        tasks_created = []
+        for item in grid_items:
+            equipment_name = item.get("name")
+            equipment_type = item.get("type")
+            position = item.get("position") or item.get("start")
+            
+            existing = TaskService.find_task_by_equipment(context, equipment_name)
+            if not existing:
+                task = TaskService.add_task(
+                    context,
+                    description=f"Extract raw technical information for {equipment_name} ({equipment_type})",
+                    equipment_name=equipment_name,
+                    equipment_type=equipment_type,
+                    location_description=f"Grid Position: {position}"
+                )
+                tasks_created.append(task)
+        return tasks_created
+
+    @staticmethod
+    def update_technical_status(
+        context: ToolContext, 
+        equipment_name: str, 
+        agent_type: str, 
+        is_treated: bool = True
+    ) -> Optional[Task]:
+        """Updates the treatment flag for a specific agent type (bacnet, control, electricity)."""
+        tasks = TaskService.get_tasks(context)
+        updated_task = None
+        
+        agent_type = agent_type.lower()
+        
+        for task in tasks:
+            if task.equipment_name == equipment_name:
+                if agent_type == "bacnet":
+                    task.bacnet_treated = is_treated
+                    if is_treated and "treated-by-bacnet" not in task.tags:
+                        task.tags.append("treated-by-bacnet")
+                elif agent_type == "control":
+                    task.control_treated = is_treated
+                    if is_treated and "treated-by-control" not in task.tags:
+                        task.tags.append("treated-by-control")
+                elif agent_type == "electricity":
+                    task.electricity_treated = is_treated
+                    if is_treated and "treated-by-electricity" not in task.tags:
+                        task.tags.append("treated-by-electricity")
+                
+                # Auto-complete if all three are treated
+                if task.bacnet_treated and task.control_treated and task.electricity_treated:
+                    task.status = TaskStatus.VERIFICATION_READY
+                
+                updated_task = task
+                break
+        
+        if updated_task:
+            TaskService.save_tasks(context, tasks)
+        return updated_task

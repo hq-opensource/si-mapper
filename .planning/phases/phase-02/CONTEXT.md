@@ -15,9 +15,13 @@ Sub-agents must be prompted to handle diverse file formats within their domain f
 - **Metadata Management**: A new manager `MetadataManager` will manage the merging of arbitrary metadata into component dictionaries in the EDN grid.
 - **`add_metadata` Tool**: Exposes `add_metadata(equipment_name: str, metadata: dict)`. It must support nested dictionaries to organize metadata by source (e.g., `{ "bacnet": {...}, "control": {...} }`).
 
-### C. Agent State & Progress
-- **Internal Persistence**: Sub-agents use `save_agent_state` (`ToolContext.state["treated"]`) to prevent redundant analysis of the same component across different loop iterations.
-- **Incremental Extraction**: Agents can add to the metadata of a component multiple times as they find new information from different files.
+### C. Agent State & Progress (Multi-Agent Verification)
+- **Task-Based Tracking**: Every piece of equipment identified via `read_grid` is enqueued as a separate `Task`.
+- **Three-Agent Completion**: A task is only considered "Complete" (ready for verification) once it has been processed by:
+    1. **Bacnet Sub-Agent** (Sets `bacnet_treated: true`, Tags: `treated-by-bacnet`)
+    2. **Control Sub-Agent** (Sets `control_treated: true`, Tags: `treated-by-control`)
+    3. **Electricity Sub-Agent** (Sets `electricity_treated: true`, Tags: `treated-by-electricity`)
+- **Persistence**: These flags persist in the session state within the task objects, preventing redundant work if the process is interrupted.
 
 ## Claude's Discretion
 - **Tag Normalization**: Agents have discretion to normalize tag names (e.g., "Temp Alim" to "Supply Temperature") for better human readability on the frontend, while preserving the raw value.
