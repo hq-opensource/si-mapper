@@ -4,7 +4,7 @@ from google.genai import types
 from google.adk.tools import load_artifacts
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
 from sub_agents.tools.loop_exit_tools import exit_loop_level_4
-from tools.task_tools import fetch_pending_task, mark_technical_progress, create_batch_tasks
+from tools.task_tools import fetch_pending_task, mark_technical_progress, create_batch_tasks, fetch_batch_tasks, mark_technical_progress_batch
 from tools.progress_tool import update_step, update_status, update_state
 from utils.callback_utils import shared_model_callback as model_callback
 from utils.prompt_utils import load_prompt_instruction
@@ -47,7 +47,10 @@ class BacnetAgentInternal(LlmAgent):
             update_step, 
             update_status, 
             update_state, 
-            exit_loop_level_4
+            update_state, 
+            exit_loop_level_4,
+            fetch_batch_tasks,
+            mark_technical_progress_batch
         ]
         
         # Merge with any passed-in tools (like MCP write_metadata)

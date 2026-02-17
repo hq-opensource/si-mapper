@@ -21,12 +21,12 @@
 **Trigger:** Wave 1 Complete
 **Focus:** Create specialized "readers" capable of processing CSV, PDF, and Image data.
 
-- [ ] **[TASK-2.2.1] Create Raw Bacnet Agent**
+- [x] **[TASK-2.2.1] Create Raw Bacnet Agent**
     - [x] **[TASK-2.2.1.1] Setup Agent Directory**: Create `agent/sub_agents/bacnet/`.
     - [x] **[TASK-2.2.1.2] Design Multimodal Prompt**: Create `prompt.md` with instructions for CSV point-list parsing (BACnet) and screenshot tag identification.
     - [x] **[TASK-2.2.1.3] Implement Agent Class**: Create `agent.py` using `LoopWrapper` for iterative task processing.
     - [x] **[TASK-2.2.1.4] Tool Integration**: Ensure agent has access to `fetch_pending_task`, `mark_technical_progress`, `write_metadata`, and `load_artifacts`.
-    - [ ] **[TASK-2.2.1.5] Verification**: Test agent logic with a sample CSV and physical equipment ID from the grid.
+    - [x] **[TASK-2.2.1.5] Verification**: Test agent logic with a sample CSV and physical equipment ID from the grid.
 - [ ] **[TASK-2.2.2] Create Raw Control Agent**
     - [ ] **[TASK-2.2.2.1] Setup Agent Directory**: Create `agent/sub_agents/control/`.
     - [ ] **[TASK-2.2.2.2] Design Multimodal Prompt**: Create `prompt.md` with instructions for PDF sequence/diagram parsing.

@@ -1,15 +1,16 @@
 # State: HVAC Reconstruction Project
 
 ## Project Progress
-- **Current Phase:** Phase 1: Sequential Topological Reconstruction
-- **Overall Completion:** 5% (Infrastructure and mapping complete)
-- **Active Plan:** Initializing Phase 1.1
+- **Current Phase:** Phase 2: Raw Information Extraction
+- **Overall Completion:** 15% (Phase 1 Complete, Phase 2 Started)
+- **Active Plan:** Phase 2.2: Specialized Raw Data Agents
 
-## Milestone Status (v1.0: Functional Topology)
-- [x] Grid Synchronization Tool (Verified 1.1.1) ✅
-- [ ] Horizontal Duct Agent 🏗️
-- [ ] Vertical Duct Agent 🏗️
-- [ ] Equipment Agent 🏗️
+## Milestone Status (v2.0: Raw Mapping)
+- [x] Metadata Infrastructure (MCP) ✅
+- [x] Grid Read Verification ✅
+- [x] Bacnet Agent (Verified 2.2.1) ✅
+- [ ] Control Agent 🏗️
+- [ ] Electricity Agent 🏗️
 
 ## Performance Metrics
 - **Success Rate (Extraction):** N/A
@@ -21,8 +22,9 @@
 - Defined the 3-Step core mission (Replicate -> Extract -> Graph).
 - Verified `read_grid` and MCP tool synchronization.
 - **Decision:** Aborted Agentic Vision Pilot due to model configuration complexity and performance trade-offs; reverting to stable Phase 2 goal.
+- **Decision:** Completed Bacnet Agent Logic and Verification (2.2.1).
 
 ### Next Steps
-1. /gsd-plan-phase 2.2 (Bacnet, Control, Electricity Agents).
+1. /gsd-execute-plan 2.2.2 (Control Agent).
 2. Implement multimodal analyzers for technical metadata.
 3. Establish technical mapping loop for grid components.

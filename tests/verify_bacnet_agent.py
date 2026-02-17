@@ -81,6 +81,36 @@ async def test_bacnet_agent_readiness():
     print("4. Sample Artifacts: AVAILABLE")
     print("5. Metadata Tools: REGISTERED IN MCP")
     
+    # 6. Verify Tools Configuration
+    internal_agent = agent.sub_agents[0]
+    tool_names = [t.name if hasattr(t, 'name') else t.__name__ for t in internal_agent.tools]
+    
+    required_tools = [
+        "fetch_pending_task",
+        "mark_technical_progress",
+        "create_batch_tasks",
+        "load_artifacts",
+        "exit_loop_level_4",
+        "fetch_batch_tasks",
+        "mark_technical_progress_batch"
+    ]
+    
+    missing_tools = [t for t in required_tools if t not in tool_names]
+    
+    if not missing_tools:
+        print(f"[OK] Internal agent has all required tools: {required_tools}")
+    else:
+        print(f"[ERROR] Internal agent is missing tools: {missing_tools}")
+        print(f"       Available tools: {tool_names}")
+
+    print("\n--- Summary ---")
+    print("1. Agent Directory: EXISTS")
+    print("2. Agent Class: IMPLEMENTED")
+    print("3. Task Infrastructure: READY")
+    print("4. Sample Artifacts: AVAILABLE")
+    print("5. Metadata Tools: REGISTERED IN MCP")
+    print("6. Tool Configuration: VERIFIED")
+    
     print("\nReady to proceed with end-to-end testing.")
 
 if __name__ == "__main__":

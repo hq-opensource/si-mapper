@@ -140,7 +140,37 @@ class TaskService:
                 TaskService.save_tasks(context, tasks)
                 return task
         logger.info("No pending tasks found.")
+        logger.info("No pending tasks found.")
         return None
+    
+    @staticmethod
+    def fetch_batch_pending_tasks(context: ToolContext, limit: int = 20) -> List[Task]:
+        """
+        Retrieves a batch of pending tasks (up to the limit).
+        Marks them as WORKING immediately.
+        """
+        tasks = TaskService.get_tasks(context)
+        current_agent = context.state.get("active_agent", "System")
+        formatted_agent = format_agent_name(current_agent).upper()
+        
+        batch = []
+        count = 0
+        
+        for task in tasks:
+            if count >= limit:
+                break
+                
+            if task.status == TaskStatus.PENDING:
+                task.status = TaskStatus.WORKING
+                task.agent_name = formatted_agent
+                batch.append(task)
+                count += 1
+                
+        if batch:
+            logger.info(f"Batch fetch: Retrieved {len(batch)} tasks. Marked as WORKING.")
+            TaskService.save_tasks(context, tasks)
+            
+        return batch
     
     @staticmethod
     def fetch_verification_task(context: ToolContext) -> Optional[Task]:

@@ -184,6 +184,53 @@ def mark_technical_progress(
         return f":::thought\n[System] {agent_type} treatment complete for {equipment_name}. Remaining agents still needed.\n:::\n"
     return f":::thought\n[System] Task for {equipment_name} not found.\n:::\n"
 
+def fetch_batch_tasks(tool_context: ToolContext, limit: int = 20) -> str:
+    """
+    Retrieves up to 'limit' pending tasks at once.
+    Use this to process multiple items in a single iteration.
+    
+    Returns:
+        A JSON string representation of the list of tasks.
+    """
+    import json
+    logger.info(f"Fetching batch of tasks (limit={limit})...")
+    tasks = TaskService.fetch_batch_pending_tasks(tool_context, limit)
+    
+    if not tasks:
+        return ":::thought\n[System] No pending tasks found.\n:::\n []"
+    
+    # helper to make task serializable
+    serializable_tasks = [t.model_dump() for t in tasks]
+    
+    # We return raw JSON so the LLM can parse it easily
+    # We also add a thought block for the log
+    return f":::thought\n[System] Retrieved {len(tasks)} tasks.\n:::\n{json.dumps(serializable_tasks, indent=2)}"
+
+def mark_technical_progress_batch(
+    tool_context: ToolContext, 
+    updates: list[dict[str, str]]
+) -> str:
+    """
+    Marks multiple equipment items as treated by a specific agent type in a single call.
+    
+    Args:
+        updates: A list of dicts, where each dict has "equipment_name" and "agent_type".
+                 Example: [{"equipment_name": "AHU-1", "agent_type": "bacnet"}, ...]
+    """
+    logger.info(f"Marking batch technical progress for {len(updates)} items.")
+    
+    success_count = 0
+    for update in updates:
+        equipment_name = update.get("equipment_name")
+        agent_type = update.get("agent_type")
+        
+        if equipment_name and agent_type:
+            res = TaskService.update_technical_status(tool_context, equipment_name, agent_type)
+            if res:
+                success_count += 1
+                
+    return f":::thought\n[System] Successfully marked {success_count}/{len(updates)} tasks as treated.\n:::\n"
+
 def create_batch_tasks(tool_context: ToolContext) -> str:
     """
     Synchronizes the task queue with the current state of the grid.
