@@ -148,6 +148,13 @@ html {
   background-color: var(--background) !important;
 }
 
+.copilotKitMessage table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  border-collapse: collapse;
+}
+
 /* Notifications & Effects */
 @keyframes soft-glow {
   0% {
