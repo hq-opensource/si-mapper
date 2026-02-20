@@ -58,3 +58,18 @@ def register_metadata_tools(mcp: FastMCP, manager: MetadataManager):
             content=[TextContent(type="text", text=f"Metadata deletion for {equipment_name}: {result['tool_status']}")],
             structured_content=result
         )
+
+    @mcp.tool("write_metadata_batch")
+    def write_metadata_batch(updates: Dict[str, Dict[str, Any]]) -> ToolResult:
+        """
+        Updates technical metadata for multiple equipment items in a single transaction.
+        
+        Args:
+            updates: A dictionary where keys are equipment names (e.g., 'AHU-1') 
+                     and values are technical metadata dictionaries (e.g., {'control': {...}}).
+        """
+        result = manager.write_metadata_batch(updates)
+        return ToolResult(
+            content=[TextContent(type="text", text=f"Batch metadata update processed {result['processed']} items.")],
+            structured_content=result
+        )

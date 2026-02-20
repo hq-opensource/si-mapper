@@ -8,7 +8,7 @@ from google.adk.agents import LlmAgent
 from google.adk.agents import LlmAgent
 from google.adk.tools import McpToolset
 from utils.logging_config import configure_logging
-from tools.task_tools import add_task, set_task_status, enqueue_grid_tasks, mark_technical_progress
+from tools.task_tools import add_task, set_task_status, enqueue_grid_tasks, mark_technical_progress, mark_technical_progress_batch, complete_tasks_batch
 from tools.state_tools import save_agent_state, get_agent_state
 
 # --- Configuration ---
@@ -32,14 +32,15 @@ def create_master_agent(session_id: str, subagents:List[LoopAgent], model_name: 
     """Creates the Master orchestrator agent hierarchy."""
     logger.debug(f"Creating Master Orchestrator for session {session_id}")
 
-    # 1. Instantiate Level 3 Agents
     task_tools = [
         add_task, 
         set_task_status, 
         save_agent_state, 
         get_agent_state, 
         enqueue_grid_tasks, 
-        mark_technical_progress
+        mark_technical_progress,
+        mark_technical_progress_batch,
+        complete_tasks_batch
     ]
     
     master_agent = MasterLlmAgent(

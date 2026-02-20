@@ -31,6 +31,9 @@ export interface AgentTask {
     agent_name: string;
     description: string;
     status: 'pending' | 'processing' | 'working' | 'verification_ready' | 'verified' | 'failed';
+    bacnet_status?: 'pending' | 'processing' | 'working' | 'verification_ready' | 'verified' | 'failed';
+    control_status?: 'pending' | 'processing' | 'working' | 'verification_ready' | 'verified' | 'failed';
+    electricity_status?: 'pending' | 'processing' | 'working' | 'verification_ready' | 'verified' | 'failed';
     category?: string;
     priority?: number;
     retry_count: number;

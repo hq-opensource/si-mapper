@@ -4,3 +4,5 @@ from .horizontal_ducts.agent import HorizontalDuctLlmAgent
 from .vertical_ducts.agent import VerticalDuctLlmAgent
 from .equipment.agent import EquipmentLlmAgent
 from .bacnet.agent import BacnetLlmAgent
+from .control.agent import ControlLlmAgent
+from .electricity.agent import ElectricityLlmAgent

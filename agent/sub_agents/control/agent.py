@@ -5,44 +5,37 @@ from google.adk.tools import load_artifacts
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
 from sub_agents.tools.loop_exit_tools import exit_loop_level_4
 from sub_agents.tools.ingest_category_tool import ingest_category_files_tool
-from tools.task_tools import fetch_pending_task, mark_technical_progress, create_batch_tasks, fetch_batch_tasks, mark_technical_progress_batch, complete_tasks_batch, check_specialist_termination
+from tools.task_tools import fetch_pending_task, mark_technical_progress, create_batch_tasks, fetch_batch_tasks, mark_technical_progress_batch, complete_tasks_batch
 from tools.progress_tool import update_step, update_status, update_state
 from utils.callback_utils import shared_model_callback as model_callback
-from utils.prompt_utils import load_composed_prompt
+from utils.prompt_utils import load_prompt_instruction
 from typing import Any
 
-# Note: write_metadata/read_metadata are expected to be available via the MCP toolset 
-# which is passed to the Master agent. For sub-agents, we can either pass them in 
-# or they can be called if the toolset is registered globally.
-
-class BacnetLlmAgent(LoopWrapper):
+class ControlLlmAgent(LoopWrapper):
     """
-    Public Interface: Loop-wrapped Bacnet Agent.
+    Public Interface: Loop-wrapped Control Agent.
     """
     def __init__(self, model_name: str, tools: list[Any] = None, session_id: str = None):
-        internal_agent = BacnetAgentInternal(
+        internal_agent = ControlAgentInternal(
             model_name=model_name,
             tools=tools,
             session_id=session_id
         )
         super().__init__(
-            name="BacnetAgent",
+            name="ControlAgent",
             agent=internal_agent,
-            description="Extracts BACnet technical metadata.",
-            max_iterations=20 # Higher iterations to process many equipment tasks
+            description="Extracts control sequences and technical logic.",
+            max_iterations=20
         )
 
-class BacnetAgentInternal(LlmAgent):
+class ControlAgentInternal(LlmAgent):
     def __init__(self, model_name: str, tools: list[Any] = None, session_id: str = None):
         thinking_config = types.ThinkingConfig(include_thoughts=True)
         planner = BuiltInPlanner(thinking_config=thinking_config)
         
-        instruction = load_composed_prompt(
-            "sub_agents/bacnet/prompt.md", 
-            ["skills/parse_csv/SKILL.md"]
-        )
+        instruction = load_prompt_instruction("sub_agents/control/prompt.md")
 
-        # Core tools for the Bacnet extraction loop
+        # Core tools for the Control extraction loop
         default_tools = [
             fetch_pending_task, 
             mark_technical_progress,
@@ -50,7 +43,6 @@ class BacnetAgentInternal(LlmAgent):
             mark_technical_progress_batch,
             create_batch_tasks,
             complete_tasks_batch,
-            check_specialist_termination,
             ingest_category_files_tool,
             load_artifacts, 
             update_step, 
@@ -64,7 +56,7 @@ class BacnetAgentInternal(LlmAgent):
         unique_tools = list({t.__name__ if hasattr(t, '__name__') else str(t): t for t in all_tools}.values())
 
         super().__init__(
-            name="BacnetAgentInternal",
+            name="ControlAgentInternal",
             model=model_name,
             instruction=instruction,
             tools=unique_tools,

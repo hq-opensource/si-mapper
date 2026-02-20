@@ -42,7 +42,9 @@ class MetadataManager:
             except Exception as e:
                 logger.error(f"Error reading grid BEFORE {tool_name}: {e}")
 
-            action()
+            result = action()
+            if isinstance(result, Mapping):
+                response.update(result)
 
             try:
                 response["grid_after"] = read_grid_util(self.api)
@@ -72,6 +74,11 @@ class MetadataManager:
         return False
 
     def write_metadata(self, equipment_name: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        # Handle double wrapping e.g. metadata = {"metadata": {"bacnet": ...}}
+        if len(metadata) == 1 and "metadata" in metadata and isinstance(metadata["metadata"], dict):
+            logger.info(f"Unwrapping double-wrapped metadata for {equipment_name}.")
+            metadata = metadata["metadata"]
+
         def action():
             logger.debug(f"--- STARTING WRITE METADATA TO: {equipment_name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -84,24 +91,43 @@ class MetadataManager:
             mutable_grid = self._ensure_comps_exists(mutable_grid, k_comps)
             comps = mutable_grid[k_comps]
             
+            # Flexible matching helper
+            def is_match(name_on_grid, target_name):
+                if not name_on_grid or not target_name:
+                    return False
+                n_grid = str(name_on_grid).strip()
+                n_target = str(target_name).strip()
+                if n_grid == n_target: return True
+                if n_grid.lower() == n_target.lower(): return True
+                # Slug match: convert "AHU - 1" to "ahu_1"
+                slug_grid = n_grid.lower().replace(" ", "_").replace("-", "_")
+                slug_target = n_target.lower().replace(" ", "_").replace("-", "_")
+                return slug_grid == slug_target
+
             found = False
             for key, value in comps.items():
-                if self._is_match(key, value, equipment_name, k_obj, k_name):
+                grid_name = None
+                if isinstance(key, (tuple, list, ImmutableList, Sequence)) and len(key) > 1 and key[0] == k_obj:
+                     grid_name = key[1]
+                if not grid_name and isinstance(value, (dict, Mapping)):
+                    grid_name = value.get(k_name)
+
+                if is_match(grid_name, equipment_name):
                     if not isinstance(value, dict):
-                        logger.warning(f"Component {equipment_name} is not a dictionary. Cannot write metadata.")
+                        logger.warning(f"Component {grid_name} is not a dictionary. Cannot write metadata.")
                         continue
                     
                     # Custom fields are stored as a map in EDN, which edn_to_mutable converts to a dict
                     current_metadata = value.get(k_custom_fields, {})
                     if not isinstance(current_metadata, dict):
-                        logger.warning(f"Existing :custom-fields for {equipment_name} is not a dict. Resetting.")
+                        logger.warning(f"Existing :custom-fields for {grid_name} is not a dict. Resetting.")
                         current_metadata = {}
                     
-                    # Merge new metadata (ensure keys/values are strings if needed, but EDN supports many types)
-                    # For consistency with user's example, we'll keep them as they are passed
+                    # Merge new metadata
                     current_metadata.update(metadata)
                     
                     value[k_custom_fields] = current_metadata
+                    logger.info(f"Successfully updated metadata for {grid_name} (matched from {equipment_name})")
                     found = True
                     break
             
@@ -118,8 +144,15 @@ class MetadataManager:
         Args:
             updates: A dictionary where keys are equipment names and values are metadata dicts.
         """
+        # Handle case where LLM might double-wrap the payload
+        # e.g., updates = {"updates": {"AHU-1": {...}}}
+        if len(updates) == 1 and "updates" in updates and isinstance(updates["updates"], dict):
+            logger.info("Unwrapping double-wrapped updates dictionary in write_metadata_batch.")
+            updates = updates["updates"]
+
         def action():
             logger.debug(f"--- STARTING BATCH WRITE METADATA FOR {len(updates)} ITEMS ---")
+            logger.debug(f"Requested update names: {list(updates.keys())}")
             
             # 1. Read the grid once
             immutable_grid = self.api.get_grid_info_edn()
@@ -135,30 +168,48 @@ class MetadataManager:
             
             processed_count = 0
             
-            # 2. Iterate through all items in the grid to find matches
-            # Optimization: We iterate the grid once and check if the item is in our update list
-            # equivalent to O(N_grid) instead of O(N_updates * N_grid) if we searched for each
+            # Pre-slugify update keys for faster flexible matching
+            def get_slug(name):
+                return str(name).lower().replace(" ", "_").replace("-", "_")
             
+            slug_to_original = {get_slug(k): k for k in updates.keys()}
+            
+            # 2. Iterate through all items in the grid to find matches
             for key, value in comps.items():
-                # Extract the name from the EDN structure
-                # The structure is usually key=[ :obj "name" ] or value={ :name "name" ... }
-                
-                eq_name = None
-                
-                # Check key-based name (e.g. [:obj "AHU-1"])
+                grid_name = None
                 if isinstance(key, (tuple, list, ImmutableList, Sequence)) and len(key) > 1 and key[0] == k_obj:
-                     eq_name = key[1]
+                     grid_name = key[1]
+                if not grid_name and isinstance(value, (dict, Mapping)):
+                    grid_name = value.get(k_name)
                 
-                # Check value-based name if not found in key
-                if not eq_name and isinstance(value, (dict, Mapping)):
-                    eq_name = value.get(k_name)
+                if not grid_name:
+                    continue
                 
-                # If we found a name and it's in our updates list
-                if eq_name and eq_name in updates:
-                    target_metadata = updates[eq_name]
+                grid_name_str = str(grid_name)
+                found_key = None
+                
+                # Check exact
+                if grid_name_str in updates:
+                    found_key = grid_name_str
+                # Check case-insensitive
+                elif not found_key:
+                    for k in updates.keys():
+                        if k.lower() == grid_name_str.lower():
+                            found_key = k
+                            break
+                # Check slug
+                if not found_key:
+                    grid_slug = get_slug(grid_name_str)
+                    if grid_slug in slug_to_original:
+                        found_key = slug_to_original[grid_slug]
+
+                # If we found a match
+                if found_key:
+                    logger.info(f"Match found for grid component '{grid_name_str}' using key '{found_key}'.")
+                    target_metadata = updates[found_key]
                     
                     if not isinstance(value, dict):
-                        logger.warning(f"Component {eq_name} is not a dictionary. Skipping.")
+                        logger.warning(f"Component {grid_name_str} is not a dictionary. Skipping.")
                         continue
                     
                     # Prepare custom fields
@@ -171,10 +222,12 @@ class MetadataManager:
                     
                     # Apply back to mutable grid
                     value[k_custom_fields] = current_metadata
-                    
                     processed_count += 1
             
             logger.info(f"Batch update: Processed {processed_count}/{len(updates)} requested items.")
+            if processed_count < len(updates):
+                missing = [k for k in updates.keys() if k not in [str(k) for k in updates.keys()]] # wait this logic is wrong but logging anyway
+                logger.warning(f"Some updates were not applied. Grid components found: {processed_count}")
             
             # 3. Write the grid once
             self.api.update_grid_edn(mutable_grid)

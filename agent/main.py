@@ -11,7 +11,7 @@ from ag_ui_adk import ADKAgent, add_adk_fastapi_endpoint
 
 # Local imports
 from master_architecture.create_master_agent import create_master_agent
-from sub_agents import HorizontalDuctLlmAgent, VerticalDuctLlmAgent, EquipmentLlmAgent, BacnetLlmAgent
+from sub_agents import HorizontalDuctLlmAgent, VerticalDuctLlmAgent, EquipmentLlmAgent, BacnetLlmAgent, ControlLlmAgent, ElectricityLlmAgent
 from utils.logging_config import configure_logging
 from utils.mcp_utils import create_mcp_toolset
 from utils.callback_utils import GLOBAL_SESSION_STORE
@@ -60,8 +60,10 @@ def create_app() -> FastAPI:
     vertical_agent = VerticalDuctLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
     equipment_agent = EquipmentLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
     bacnet_agent = BacnetLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
+    control_agent = ControlLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
+    electricity_agent = ElectricityLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
     
-    subagents = [horizontal_agent, vertical_agent, equipment_agent, bacnet_agent]
+    subagents = [horizontal_agent, vertical_agent, equipment_agent, bacnet_agent, control_agent, electricity_agent]
     
     # Create Master Agent
     master_agent = create_master_agent(session_id=session_id, subagents=subagents, model_name=AGENT_MODEL_NAME, si_mapper_toolset=si_mapper_toolset)

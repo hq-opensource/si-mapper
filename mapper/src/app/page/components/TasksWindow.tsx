@@ -27,7 +27,7 @@ export function TasksWindow() {
                 return {
                     dot: "border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)] bg-emerald-500",
                     badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-                    text: "text-emerald-500/80",
+                    text: "text-emerald-500/80 shade-emerald",
                     icon: CheckCircle2
                 };
             case 'failed':
@@ -40,9 +40,9 @@ export function TasksWindow() {
             case 'working':
             case 'processing':
                 return {
-                    dot: "border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.5)] bg-indigo-500 animate-pulse",
-                    badge: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
-                    text: "text-indigo-500/80",
+                    dot: "border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.5)] bg-amber-500 animate-pulse",
+                    badge: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+                    text: "text-amber-500/80",
                     icon: Loader2
                 };
             case 'verification_ready':
@@ -109,28 +109,15 @@ export function TasksWindow() {
                                     <div className="absolute -left-10 top-8 bottom-[-48px] w-px bg-gradient-to-b from-[var(--muted-foreground)]/20 via-[var(--muted-foreground)]/10 to-transparent" />
                                 )}
 
-                                {/* Status indicator dot */}
-                                <div className={`absolute -left-[45px] top-1.5 h-3 w-3 rounded-full border-2 border-white dark:border-black transition-all duration-500 z-10 ${style.dot}`} />
+                                {/* Status indicator dot - now a neutral bullet or removed */}
+                                <div className={`absolute -left-[45px] top-1.5 h-3 w-3 rounded-full border-2 border-white dark:border-black transition-all duration-500 z-10 bg-[var(--muted-foreground)]/20`} />
 
                                 <div className="flex flex-col gap-5">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            {/* Agent Badge */}
-                                            <span className={`text-xs font-bold px-2 py-0.5 rounded shadow-sm uppercase tracking-wider transition-all duration-500 
-                                                ${(task.status === 'working' || task.status === 'processing')
-                                                    ? 'bg-indigo-500 text-white'
-                                                    : 'bg-[var(--muted-foreground)]/10 text-[var(--muted-foreground)]'}`}>
+                                            {/* Agent Badge (Active Agent) */}
+                                            <span className={`text-xs font-bold px-2 py-0.5 rounded shadow-sm uppercase tracking-wider transition-all duration-500 bg-indigo-500 text-white`}>
                                                 {task.agent_name ? formatAgentName(task.agent_name) : "SYSTEM"}
-                                            </span>
-
-                                            {/* Status Badge */}
-                                            <span className={`text-xs font-bold px-2 py-0.5 rounded border uppercase tracking-wider flex items-center gap-1.5 ${style.badge}`}>
-                                                {task.status === 'working' || task.status === 'processing' ? (
-                                                    <StatusIcon size={8} className="animate-spin" />
-                                                ) : (
-                                                    <StatusIcon size={8} />
-                                                )}
-                                                {task.status.replace('_', ' ')}
                                             </span>
 
                                             {task.retry_count > 0 && (
@@ -156,6 +143,28 @@ export function TasksWindow() {
                                                 </span>
                                             </div>
                                         )}
+
+                                        {/* Specialist Statuses */}
+                                        <div className="mt-4 flex items-center gap-3">
+                                            {[
+                                                { label: 'BACNET', status: task.bacnet_status },
+                                                { label: 'CONTROL', status: task.control_status },
+                                                { label: 'ELECTRIC', status: task.electricity_status }
+                                            ].map((specialist) => {
+                                                const specStyle = getStatusStyles(specialist.status || 'pending');
+                                                const SpecIcon = specStyle.icon;
+                                                return (
+                                                    <div
+                                                        key={specialist.label}
+                                                        className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[9px] font-bold tracking-tight transition-all duration-300
+                                                        ${specStyle.badge} opacity-80 hover:opacity-100`}
+                                                    >
+                                                        <SpecIcon size={8} className={specialist.status === 'working' ? 'animate-spin' : ''} />
+                                                        <span>{specialist.label}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

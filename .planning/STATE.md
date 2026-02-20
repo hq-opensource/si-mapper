@@ -2,15 +2,15 @@
 
 ## Project Progress
 - **Current Phase:** Phase 2: Raw Information Extraction
-- **Overall Completion:** 15% (Phase 1 Complete, Phase 2 Started)
-- **Active Plan:** Phase 2.2: Specialized Raw Data Agents
+- **Overall Completion:** 25% (Phase 1 Complete, Wave 2 Complete)
+- **Active Plan:** Phase 2.3: Iterative Raw Mapping Loop
 
 ## Milestone Status (v2.0: Raw Mapping)
 - [x] Metadata Infrastructure (MCP) ✅
 - [x] Grid Read Verification ✅
 - [x] Bacnet Agent (Verified 2.2.1) ✅
-- [ ] Control Agent 🏗️
-- [ ] Electricity Agent 🏗️
+- [x] Control Agent (Verified 2.2.2) ✅
+- [x] Electricity Agent (Verified 2.2.3) ✅
 
 ## Performance Metrics
 - **Success Rate (Extraction):** N/A

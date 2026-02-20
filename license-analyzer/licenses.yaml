@@ -1,0 +1,722 @@
+Apache-2.0:
+  -
+    name: jsonschema-path
+    type: Python
+  -
+    name: tzdata
+    type: Python
+  -
+    name: requests
+    type: Python
+  -
+    name: opentelemetry-resourcedetector-gcp
+    type: Python
+  -
+    name: pathable
+    type: Python
+  -
+    name: py-key-value-aio
+    type: Python
+  -
+    name: opentelemetry-exporter-gcp-trace
+    type: Python
+  -
+    name: rsa
+    type: Python
+  -
+    name: opentelemetry-exporter-gcp-monitoring
+    type: Python
+  -
+    name: propcache
+    type: Python
+  -
+    name: google-cloud-audit-log
+    type: Python
+  -
+    name: yarl
+    type: Python
+  -
+    name: opentelemetry-exporter-gcp-logging
+    type: Python
+  -
+    name: watchdog
+    type: Python
+  -
+    name: frozenlist
+    type: Python
+  -
+    name: class-variance-authority
+    type: Node.js
+  -
+    name: typescript
+    type: Node.js
+Unknown:
+  -
+    name: typing-extensions
+    type: Python
+  -
+    name: httpcore
+    type: Python
+  -
+    name: urllib3
+    type: Python
+  -
+    name: rich-rst
+    type: Python
+  -
+    name: cyclopts
+    type: Python
+  -
+    name: opentelemetry-semantic-conventions
+    type: Python
+  -
+    name: jaraco-classes
+    type: Python
+  -
+    name: cffi
+    type: Python
+  -
+    name: pyjwt
+    type: Python
+  -
+    name: pyparsing
+    type: Python
+  -
+    name: websockets
+    type: Python
+  -
+    name: ag-ui-adk
+    type: Python
+  -
+    name: jsonschema
+    type: Python
+  -
+    name: attrs
+    type: Python
+  -
+    name: python-dotenv
+    type: Python
+  -
+    name: cryptography
+    type: Python
+  -
+    name: opentelemetry-proto
+    type: Python
+  -
+    name: mdurl
+    type: Python
+  -
+    name: idna
+    type: Python
+  -
+    name: referencing
+    type: Python
+  -
+    name: pydantic
+    type: Python
+  -
+    name: alembic
+    type: Python
+  -
+    name: typing-inspection
+    type: Python
+  -
+    name: pydantic-settings
+    type: Python
+  -
+    name: fastmcp
+    type: Python
+  -
+    name: dotenv
+    type: Python
+  -
+    name: jaraco-context
+    type: Python
+  -
+    name: psycopg
+    type: Python
+  -
+    name: docutils
+    type: Python
+  -
+    name: py-key-value-shared
+    type: Python
+  -
+    name: platformdirs
+    type: Python
+  -
+    name: google-genai
+    type: Python
+  -
+    name: zipp
+    type: Python
+  -
+    name: prometheus-client
+    type: Python
+  -
+    name: rpds-py
+    type: Python
+  -
+    name: google-crc32c
+    type: Python
+  -
+    name: agent
+    type: Python
+  -
+    name: google-cloud-bigquery
+    type: Python
+  -
+    name: exceptiongroup
+    type: Python
+  -
+    name: sse-starlette
+    type: Python
+  -
+    name: jsonschema-specifications
+    type: Python
+  -
+    name: annotated-doc
+    type: Python
+  -
+    name: anyio
+    type: Python
+  -
+    name: python-multipart
+    type: Python
+  -
+    name: grpcio-status
+    type: Python
+  -
+    name: sqlparse
+    type: Python
+  -
+    name: annotated-types
+    type: Python
+  -
+    name: greenlet
+    type: Python
+  -
+    name: pycparser
+    type: Python
+  -
+    name: aiosqlite
+    type: Python
+  -
+    name: colorama
+    type: Python
+  -
+    name: more-itertools
+    type: Python
+  -
+    name: mcp-server
+    type: Python
+  -
+    name: httptools
+    type: Python
+  -
+    name: jeepney
+    type: Python
+  -
+    name: jaraco-functools
+    type: Python
+  -
+    name: markupsafe
+    type: Python
+  -
+    name: opentelemetry-api
+    type: Python
+  -
+    name: fakeredis
+    type: Python
+  -
+    name: opentelemetry-sdk
+    type: Python
+  -
+    name: click
+    type: Python
+  -
+    name: pytest
+    type: Python
+  -
+    name: pyarrow
+    type: Python
+  -
+    name: pytest-asyncio
+    type: Python
+  -
+    name: packaging
+    type: Python
+  -
+    name: keyring
+    type: Python
+  -
+    name: asyncio
+    type: Python
+  -
+    name: pydantic-core
+    type: Python
+  -
+    name: importlib-metadata
+    type: Python
+  -
+    name: google-adk
+    type: Python
+  -
+    name: fastapi
+    type: Python
+  -
+    name: psycopg-binary
+    type: Python
+  -
+    name: graphviz
+    type: Python
+  -
+    name: opentelemetry-exporter-otlp-proto-common
+    type: Python
+  -
+    name: typer
+    type: Python
+  -
+    name: iniconfig
+    type: Python
+  -
+    name: cachetools
+    type: Python
+  -
+    name: redis
+    type: Python
+  -
+    name: markdown-it-py
+    type: Python
+  -
+    name: secretstorage
+    type: Python
+  -
+    name: starlette
+    type: Python
+  -
+    name: opentelemetry-exporter-otlp-proto-http
+    type: Python
+  -
+    name: uvicorn
+    type: Python
+  -
+    name: pyrfc3339
+    type: Python
+  -
+    name: grpcio
+    type: Python
+  -
+    name: @ag-ui/client
+    type: Node.js
+  -
+    name: @ag-ui/langgraph
+    type: Node.js
+Apache 2.0:
+  -
+    name: google-cloud-discoveryengine
+    type: Python
+  -
+    name: google-cloud-secret-manager
+    type: Python
+  -
+    name: google-cloud-speech
+    type: Python
+  -
+    name: googleapis-common-protos
+    type: Python
+  -
+    name: google-cloud-bigtable
+    type: Python
+  -
+    name: aiosignal
+    type: Python
+  -
+    name: google-cloud-bigquery-storage
+    type: Python
+  -
+    name: google-cloud-monitoring
+    type: Python
+  -
+    name: diskcache
+    type: Python
+  -
+    name: proto-plus
+    type: Python
+  -
+    name: google-cloud-spanner
+    type: Python
+  -
+    name: sortedcontainers
+    type: Python
+  -
+    name: google-resumable-media
+    type: Python
+  -
+    name: google-cloud-aiplatform
+    type: Python
+  -
+    name: google-api-core
+    type: Python
+  -
+    name: google-cloud-appengine-logging
+    type: Python
+  -
+    name: grpc-google-iam-v1
+    type: Python
+  -
+    name: edn-format
+    type: Python
+  -
+    name: sqlalchemy-spanner
+    type: Python
+  -
+    name: google-auth-httplib2
+    type: Python
+  -
+    name: google-cloud-trace
+    type: Python
+  -
+    name: google-cloud-pubsub
+    type: Python
+  -
+    name: google-cloud-storage
+    type: Python
+  -
+    name: google-auth
+    type: Python
+  -
+    name: google-api-python-client
+    type: Python
+  -
+    name: google-cloud-logging
+    type: Python
+  -
+    name: google-cloud-iam
+    type: Python
+  -
+    name: google-cloud-resource-manager
+    type: Python
+  -
+    name: google-cloud-core
+    type: Python
+  -
+    name: tenacity
+    type: Python
+MIT License:
+  -
+    name: croniter
+    type: Python
+  -
+    name: pathvalidate
+    type: Python
+  -
+    name: uvloop
+    type: Python
+# Released under MIT License
+        
+        Copyright (c) 2025 Chris Guidry.
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.:
+  -
+    name: pydocket
+    type: Python
+MIT License
+        
+        Copyright (c) 2014-2025 Beartype authors.
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.:
+  -
+    name: beartype
+    type: Python
+BSD-3-Clause:
+  -
+    name: authlib
+    type: Python
+  -
+    name: httpx
+    type: Python
+  -
+    name: cloudpickle
+    type: Python
+  -
+    name: pywin32-ctypes
+    type: Python
+BSD-2-Clause:
+  -
+    name: pygments
+    type: Python
+  -
+    name: pyasn1
+    type: Python
+BSD:
+  -
+    name: pyperclip
+    type: Python
+  -
+    name: pyasn1-modules
+    type: Python
+  -
+    name: ply
+    type: Python
+MIT style:
+  -
+    name: lupa
+    type: Python
+Apache License, Version 2.0:
+  -
+    name: pyopenssl
+    type: Python
+  -
+    name: distro
+    type: Python
+Dual License:
+  -
+    name: python-dateutil
+    type: Python
+MIT:
+  -
+    name: rich
+    type: Python
+  -
+    name: sqlalchemy
+    type: Python
+  -
+    name: grpc-interceptor
+    type: Python
+  -
+    name: tzlocal
+    type: Python
+  -
+    name: mako
+    type: Python
+  -
+    name: httpx-sse
+    type: Python
+  -
+    name: pytz
+    type: Python
+  -
+    name: six
+    type: Python
+  -
+    name: openapi-pydantic
+    type: Python
+  -
+    name: jsonref
+    type: Python
+  -
+    name: charset-normalizer
+    type: Python
+  -
+    name: mcp
+    type: Python
+  -
+    name: pluggy
+    type: Python
+  -
+    name: httplib2
+    type: Python
+  -
+    name: pyyaml
+    type: Python
+  -
+    name: ag-ui-protocol
+    type: Python
+  -
+    name: h11
+    type: Python
+  -
+    name: docstring-parser
+    type: Python
+  -
+    name: watchfiles
+    type: Python
+  -
+    name: @radix-ui/react-label
+    type: Node.js
+  -
+    name: @radix-ui/react-toast
+    type: Node.js
+  -
+    name: @copilotkit/react-core
+    type: Node.js
+  -
+    name: @radix-ui/react-slot
+    type: Node.js
+  -
+    name: @tailwindcss/postcss
+    type: Node.js
+  -
+    name: chonky
+    type: Node.js
+  -
+    name: vaul
+    type: Node.js
+  -
+    name: @types/react-dom
+    type: Node.js
+  -
+    name: tailwindcss
+    type: Node.js
+  -
+    name: cmdk
+    type: Node.js
+  -
+    name: clsx
+    type: Node.js
+  -
+    name: next-themes
+    type: Node.js
+  -
+    name: @types/react
+    type: Node.js
+  -
+    name: @eslint/eslintrc
+    type: Node.js
+  -
+    name: eslint
+    type: Node.js
+  -
+    name: @radix-ui/react-separator
+    type: Node.js
+  -
+    name: next
+    type: Node.js
+  -
+    name: tailwind-merge
+    type: Node.js
+  -
+    name: @radix-ui/react-alert-dialog
+    type: Node.js
+  -
+    name: react-dom
+    type: Node.js
+  -
+    name: @radix-ui/react-scroll-area
+    type: Node.js
+  -
+    name: @types/node
+    type: Node.js
+  -
+    name: @copilotkit/react-ui
+    type: Node.js
+  -
+    name: chonky-icon-fontawesome
+    type: Node.js
+  -
+    name: @radix-ui/react-dialog
+    type: Node.js
+  -
+    name: sonner
+    type: Node.js
+  -
+    name: concurrently
+    type: Node.js
+  -
+    name: zod
+    type: Node.js
+  -
+    name: eslint-config-next
+    type: Node.js
+  -
+    name: react
+    type: Node.js
+  -
+    name: @copilotkit/runtime
+    type: Node.js
+PSF:
+  -
+    name: pywin32
+    type: Python
+Unlicense:
+  -
+    name: email-validator
+    type: Python
+ISC:
+  -
+    name: dnspython
+    type: Python
+  -
+    name: lucide-react
+    type: Node.js
+3-Clause BSD License:
+  -
+    name: protobuf
+    type: Python
+MPL-2.0:
+  -
+    name: certifi
+    type: Python
+BSD 3-Clause OR Apache-2.0:
+  -
+    name: uritemplate
+    type: Python
+BSD-2-Clause License:
+  -
+    name: python-json-logger
+    type: Python
+MIT License
+        
+        Copyright (c) 2011-2025 Hajime Senuma
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.:
+  -
+    name: mmh3
+    type: Python
+Apache-2.0 AND MIT:
+  -
+    name: aiohttp
+    type: Python
+PSF-2.0:
+  -
+    name: aiohappyeyeballs
+    type: Python
+ISC License:
+  -
+    name: shellingham
+    type: Python
+MIT OR Apache-2.0:
+  -
+    name: sniffio
+    type: Python
+Apache License 2.0:
+  -
+    name: multidict
+    type: Python

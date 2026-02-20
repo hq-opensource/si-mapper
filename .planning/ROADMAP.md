@@ -26,8 +26,8 @@
     - [x] Implement `save_agent_state` in `agent/tools/state_tools.py` using `ToolContext.state`.
 - **Phase 2.2: Specialized Raw Data Agents (Multimodal)**
     - [x] Create Bacnet Sub-Agent.
-    - [ ] Create Control Sub-Agent.
-    - [ ] Create Electricity Sub-Agent.
+    - [x] Create Control Sub-Agent.
+    - [x] Create Electricity Sub-Agent.
 - **Phase 2.3: Iterative Technical Mapping Loop**
     - [ ] Implement the loop to process all grid equipment and attach raw technical metadata.
 - **Phase 2.4: Human Verification (HITL)**

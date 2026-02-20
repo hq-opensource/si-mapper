@@ -127,20 +127,50 @@ class TaskService:
 
     @staticmethod
     def fetch_pending_task(context: ToolContext) -> Optional[Task]:
-        """Gets the next pending task (FIFO) and marks it as working."""
+        """
+        Gets the next pending task (FIFO) and marks it as working.
+        Checks for agent-specific pending states if a specialist is active.
+        """
         tasks = TaskService.get_tasks(context)
-        current_agent = context.state.get("active_agent", "System")
+        current_agent = context.state.get("active_agent", "System").upper()
         formatted_agent = format_agent_name(current_agent).upper()
         
+        # Specialist detection
+        agent_type = None
+        if "BACNET" in formatted_agent:
+            agent_type = "bacnet"
+        elif "CONTROL" in formatted_agent:
+            agent_type = "control"
+        elif "ELECTRIC" in formatted_agent:
+            agent_type = "electricity"
+
         for task in tasks:
-            if task.status == TaskStatus.PENDING:
-                logger.info(f"Next pending task found: {task.id}. Marking as WORKING by {formatted_agent}.")
+            # 1. Specialist Logic
+            if agent_type == "bacnet" and task.bacnet_status == TaskStatus.PENDING:
+                task.bacnet_status = TaskStatus.WORKING
+                task.agent_name = formatted_agent
+                TaskService.save_tasks(context, tasks)
+                return task
+            elif agent_type == "control" and task.control_status == TaskStatus.PENDING:
+                task.control_status = TaskStatus.WORKING
+                task.agent_name = formatted_agent
+                TaskService.save_tasks(context, tasks)
+                return task
+            elif agent_type == "electricity" and task.electricity_status == TaskStatus.PENDING:
+                task.electricity_status = TaskStatus.WORKING
+                task.agent_name = formatted_agent
+                TaskService.save_tasks(context, tasks)
+                return task
+            
+            # 2. Global Logic (Fallback for non-specialists)
+            elif not agent_type and task.status == TaskStatus.PENDING:
+                logger.info(f"Next pending global task found: {task.id}. Marking as WORKING by {formatted_agent}.")
                 task.status = TaskStatus.WORKING
                 task.agent_name = formatted_agent
                 TaskService.save_tasks(context, tasks)
                 return task
-        logger.info("No pending tasks found.")
-        logger.info("No pending tasks found.")
+                
+        logger.info(f"No pending tasks found for agent {formatted_agent}.")
         return None
     
     @staticmethod
@@ -148,10 +178,20 @@ class TaskService:
         """
         Retrieves a batch of pending tasks (up to the limit).
         Marks them as WORKING immediately.
+        Each specialist checks its own 'pending' state.
         """
         tasks = TaskService.get_tasks(context)
-        current_agent = context.state.get("active_agent", "System")
+        current_agent = context.state.get("active_agent", "System").upper()
         formatted_agent = format_agent_name(current_agent).upper()
+        
+        # Determine agent type from name to skip already treated tasks
+        agent_type = None
+        if "BACNET" in formatted_agent:
+            agent_type = "bacnet"
+        elif "CONTROL" in formatted_agent:
+            agent_type = "control"
+        elif "ELECTRIC" in formatted_agent:
+            agent_type = "electricity"
         
         batch = []
         count = 0
@@ -159,15 +199,30 @@ class TaskService:
         for task in tasks:
             if count >= limit:
                 break
+            
+            # Independent Status Logic
+            is_pending = False
+            if agent_type == "bacnet" and task.bacnet_status == TaskStatus.PENDING:
+                is_pending = True
+            elif agent_type == "control" and task.control_status == TaskStatus.PENDING:
+                is_pending = True
+            elif agent_type == "electricity" and task.electricity_status == TaskStatus.PENDING:
+                is_pending = True
+            elif not agent_type and task.status == TaskStatus.PENDING:
+                is_pending = True
+
+            if is_pending:
+                if agent_type == "bacnet": task.bacnet_status = TaskStatus.WORKING
+                elif agent_type == "control": task.control_status = TaskStatus.WORKING
+                elif agent_type == "electricity": task.electricity_status = TaskStatus.WORKING
+                else: task.status = TaskStatus.WORKING
                 
-            if task.status == TaskStatus.PENDING:
-                task.status = TaskStatus.WORKING
                 task.agent_name = formatted_agent
                 batch.append(task)
                 count += 1
                 
         if batch:
-            logger.info(f"Batch fetch: Retrieved {len(batch)} tasks. Marked as WORKING.")
+            logger.info(f"Batch fetch: Retrieved {len(batch)} tasks for {formatted_agent}. Marked as WORKING.")
             TaskService.save_tasks(context, tasks)
             
         return batch
@@ -225,30 +280,40 @@ class TaskService:
         agent_type: str, 
         is_treated: bool = True
     ) -> Optional[Task]:
-        """Updates the treatment flag for a specific agent type (bacnet, control, electricity)."""
+        """Updates the status for a specific specialist (bacnet, control, electricity)."""
         tasks = TaskService.get_tasks(context)
         updated_task = None
         
         agent_type = agent_type.lower()
+        new_status = TaskStatus.VERIFIED if is_treated else TaskStatus.PENDING
         
         for task in tasks:
             if task.equipment_name == equipment_name:
                 if agent_type == "bacnet":
-                    task.bacnet_treated = is_treated
+                    task.bacnet_status = new_status
                     if is_treated and "treated-by-bacnet" not in task.tags:
                         task.tags.append("treated-by-bacnet")
                 elif agent_type == "control":
-                    task.control_treated = is_treated
+                    task.control_status = new_status
                     if is_treated and "treated-by-control" not in task.tags:
                         task.tags.append("treated-by-control")
                 elif agent_type == "electricity":
-                    task.electricity_treated = is_treated
+                    task.electricity_status = new_status
                     if is_treated and "treated-by-electricity" not in task.tags:
                         task.tags.append("treated-by-electricity")
                 
-                # Auto-complete if all three are treated
-                if task.bacnet_treated and task.control_treated and task.electricity_treated:
+                # Overall status management
+                # The task stays in its current global status (PENDING or WORKING) 
+                # until ALL specialist phases are VERIFIED.
+                if task.bacnet_status == TaskStatus.VERIFIED and \
+                   task.control_status == TaskStatus.VERIFIED and \
+                   task.electricity_status == TaskStatus.VERIFIED:
                     task.status = TaskStatus.VERIFICATION_READY
+                    task.agent_name = "SYSTEM (PHASE 2 COMPLETE)"
+                else:
+                    # Keep it as PENDING so other specialists can pick it up
+                    if task.status not in [TaskStatus.VERIFIED, TaskStatus.FAILED]:
+                        task.status = TaskStatus.PENDING
                 
                 updated_task = task
                 break

@@ -23,8 +23,9 @@ class Task(BaseModel):
     equipment_type: Optional[str] = None
     location_description: Optional[str] = None
 
-    # Multi-agent technical mapping flags
-    bacnet_treated: bool = False
-    control_treated: bool = False
-    electricity_treated: bool = False
+    # Multi-agent technical mapping flags (Independent Statuses)
+    bacnet_status: TaskStatus = TaskStatus.PENDING
+    control_status: TaskStatus = TaskStatus.PENDING
+    electricity_status: TaskStatus = TaskStatus.PENDING
+    
     tags: list[str] = []

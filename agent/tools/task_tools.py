@@ -184,7 +184,7 @@ def mark_technical_progress(
         return f":::thought\n[System] {agent_type} treatment complete for {equipment_name}. Remaining agents still needed.\n:::\n"
     return f":::thought\n[System] Task for {equipment_name} not found.\n:::\n"
 
-def fetch_batch_tasks(tool_context: ToolContext, limit: int = 20) -> str:
+def fetch_batch_tasks(tool_context: ToolContext, limit: int = 5) -> str:
     """
     Retrieves up to 'limit' pending tasks at once.
     Use this to process multiple items in a single iteration.
@@ -309,3 +309,59 @@ def create_batch_tasks(tool_context: ToolContext) -> str:
         tb = traceback.format_exc()
         logger.error(f"debug: Exception in create_batch_tasks: {tb}")
         return f":::thought\n[System] Unhandled exception in create_batch_tasks: {str(e)}\n:::\n"
+def complete_tasks_batch(tool_context: ToolContext, task_ids: list[str]) -> str:
+    """
+    Finalizes multiple tasks by marking them as VERIFIED (completed).
+    This moves them out of the working queue and into the 'done' state.
+    
+    Args:
+        task_ids: A list of task IDs to mark as completed.
+    """
+    logger.info(f"Marking batch tasks as completed: {task_ids}")
+    
+    success_count = 0
+    for task_id in task_ids:
+        updated = TaskService.set_task_status(tool_context, task_id, TaskStatus.VERIFIED)
+        if updated:
+            success_count += 1
+            
+    return f":::thought\n[System] Successfully marked {success_count}/{len(task_ids)} tasks as VERIFIED.\n:::\n"
+
+def check_specialist_termination(tool_context: ToolContext) -> str:
+    """
+    Checks if there are any remaining tasks for the current specialist agent.
+    If no tasks are pending for this specific agent type, it provides the command to exit.
+    """
+    from utils.string_utils import format_agent_name
+    
+    tasks = TaskService.get_tasks(tool_context)
+    current_agent = tool_context.state.get("active_agent", "System")
+    formatted_agent = format_agent_name(current_agent).upper()
+    
+    agent_type = None
+    if "BACNET" in formatted_agent:
+        agent_type = "bacnet"
+    elif "CONTROL" in formatted_agent:
+        agent_type = "control"
+    elif "ELECTRIC" in formatted_agent:
+        agent_type = "electricity"
+    
+    if not agent_type:
+        return f":::thought\n[System] Termination check called by non-specialist agent ({formatted_agent}). Please use standard loop exit criteria.\n:::\n"
+
+    pending_count = 0
+    for task in tasks:
+        if agent_type == "bacnet" and task.bacnet_status == TaskStatus.PENDING:
+            pending_count += 1
+        elif agent_type == "control" and task.control_status == TaskStatus.PENDING:
+            pending_count += 1
+        elif agent_type == "electricity" and task.electricity_status == TaskStatus.PENDING:
+            pending_count += 1
+            
+    if pending_count > 0:
+        return f":::thought\n[System] Termination result: {pending_count} tasks still {TaskStatus.PENDING.value} for {agent_type}. Continue processing.\n:::\n"
+    else:
+        from sub_agents.tools.loop_exit_tools import exit_loop_level_4
+        # We don't call it directly to avoid potential side effects in tool calling,
+        # but we return a very strong instruction.
+        return f":::thought\n[System] ALL TASKS FOR {formatted_agent} ARE COMPLETE. You MUST now call exit_loop_level_4() to terminate your process.\n:::\n"

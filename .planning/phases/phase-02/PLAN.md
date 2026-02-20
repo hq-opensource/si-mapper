@@ -27,16 +27,16 @@
     - [x] **[TASK-2.2.1.3] Implement Agent Class**: Create `agent.py` using `LoopWrapper` for iterative task processing.
     - [x] **[TASK-2.2.1.4] Tool Integration**: Ensure agent has access to `fetch_pending_task`, `mark_technical_progress`, `write_metadata`, and `load_artifacts`.
     - [x] **[TASK-2.2.1.5] Verification**: Test agent logic with a sample CSV and physical equipment ID from the grid.
-- [ ] **[TASK-2.2.2] Create Raw Control Agent**
-    - [ ] **[TASK-2.2.2.1] Setup Agent Directory**: Create `agent/sub_agents/control/`.
-    - [ ] **[TASK-2.2.2.2] Design Multimodal Prompt**: Create `prompt.md` with instructions for PDF sequence/diagram parsing.
-    - [ ] **[TASK-2.2.2.3] Implement Agent Class**: Create `agent.py` using `LoopWrapper`.
-    - [ ] **[TASK-2.2.2.4] Tool Integration**: Ensure access to necessary task and metadata tools.
-- [ ] **[TASK-2.2.3] Create Raw Electricity Agent**
-    - [ ] **[TASK-2.2.3.1] Setup Agent Directory**: Create `agent/sub_agents/electricity/`.
-    - [ ] **[TASK-2.2.3.2] Design Multimodal Prompt**: Create `prompt.md` with instructions for Panel Schedule/Single Line Diagram parsing.
-    - [ ] **[TASK-2.2.3.3] Implement Agent Class**: Create `agent.py` using `LoopWrapper`.
-    - [ ] **[TASK-2.2.3.4] Tool Integration**: Ensure access to necessary task and metadata tools.
+- [x] **[TASK-2.2.2] Create Raw Control Agent**
+    - [x] **[TASK-2.2.2.1] Setup Agent Directory**: Create `agent/sub_agents/control/`.
+    - [x] **[TASK-2.2.2.2] Design Multimodal Prompt**: Create `prompt.md` with instructions for PDF sequence/diagram parsing.
+    - [x] **[TASK-2.2.2.3] Implement Agent Class**: Create `agent.py` using `LoopWrapper`.
+    - [x] **[TASK-2.2.2.4] Tool Integration**: Ensure access to necessary task and metadata tools.
+- [x] **[TASK-2.2.3] Create Raw Electricity Agent**
+    - [x] **[TASK-2.2.3.1] Setup Agent Directory**: Create `agent/sub_agents/electricity/`.
+    - [x] **[TASK-2.2.3.2] Design Multimodal Prompt**: Create `prompt.md` with instructions for Panel Schedule/Single Line Diagram parsing.
+    - [x] **[TASK-2.2.3.3] Implement Agent Class**: Create `agent.py` using `LoopWrapper`.
+    - [x] **[TASK-2.2.3.4] Tool Integration**: Ensure access to necessary task and metadata tools.
 
 ## Wave 3: Iterative Raw Mapping Loop
 **Trigger:** Wave 2 Complete
