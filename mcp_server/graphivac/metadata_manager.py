@@ -123,8 +123,20 @@ class MetadataManager:
                         logger.warning(f"Existing :custom-fields for {grid_name} is not a dict. Resetting.")
                         current_metadata = {}
                     
-                    # Merge new metadata
-                    current_metadata.update(metadata)
+                    # Merge new metadata with technical cleanup
+                    for m_key, m_val in metadata.items():
+                        # Clean key
+                        clean_key = str(m_key).strip("'\"")
+                        
+                        # JSON stringify complex objects for UI rendering
+                        if isinstance(m_val, (dict, list)):
+                            if isinstance(m_val, dict):
+                                m_val = {str(k).strip("'\""): v for k, v in m_val.items()}
+                            processed_val = json.dumps(m_val)
+                        else:
+                            processed_val = m_val
+                        
+                        current_metadata[clean_key] = processed_val
                     
                     value[k_custom_fields] = current_metadata
                     logger.info(f"Successfully updated metadata for {grid_name} (matched from {equipment_name})")
@@ -217,17 +229,29 @@ class MetadataManager:
                     if not isinstance(current_metadata, dict):
                         current_metadata = {}
                     
-                    # Merge updates
-                    current_metadata.update(target_metadata)
+                    # Merge updates with technical cleanup
+                    for m_key, m_val in target_metadata.items():
+                        # Clean key (LLM sometimes adds extra quotes like "'2500.AI1'")
+                        clean_key = str(m_key).strip("'\"")
+                        
+                        # CRITICAL: If the value is a complex object (dict/list), 
+                        # we must JSON stringify it so the Graphivac UI can render it.
+                        # Otherwise it shows as "[object Object]" on the frontend.
+                        if isinstance(m_val, (dict, list)):
+                            # Clean internal keys if any
+                            if isinstance(m_val, dict):
+                                m_val = {str(k).strip("'\""): v for k, v in m_val.items()}
+                            processed_val = json.dumps(m_val)
+                        else:
+                            processed_val = m_val
+                        
+                        current_metadata[clean_key] = processed_val
                     
                     # Apply back to mutable grid
                     value[k_custom_fields] = current_metadata
                     processed_count += 1
             
             logger.info(f"Batch update: Processed {processed_count}/{len(updates)} requested items.")
-            if processed_count < len(updates):
-                missing = [k for k in updates.keys() if k not in [str(k) for k in updates.keys()]] # wait this logic is wrong but logging anyway
-                logger.warning(f"Some updates were not applied. Grid components found: {processed_count}")
             
             # 3. Write the grid once
             self.api.update_grid_edn(mutable_grid)
