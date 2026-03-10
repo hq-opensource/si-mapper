@@ -39,6 +39,11 @@
 - **Phase 3.1: Ontology Mapping & Graph Construction**
 - **Phase 3.2: Export Logic & Validation**
 
+## Phase 4: Google ADK with LiteLLM (Completed)
+**Goal:** Integrate Google ADK with LiteLLM to allow agents to use multiple LLM providers (OpenAI, Anthropic, Gemini) and LiteLLM Proxy for centralized model management.
+**Depends on:** None
+**Plans:** 3 plans
+
 ---
 
 # Requirements Mapping
@@ -50,3 +55,5 @@
 | REQ-4 | Phase 1.4 | Completed |
 | REQ-5 | Phase 2.3 | Pending |
 | REQ-6 | Phase 3.1 | Pending |
+| REQ-7 | Phase 4 | Future |
+

@@ -2,7 +2,7 @@
 
 ## Project Progress
 - **Current Phase:** Phase 2: Raw Information Extraction
-- **Overall Completion:** 25% (Phase 1 Complete, Wave 2 Complete)
+- **Overall Completion:** 35% (Phase 1 Complete, Phase 4 Complete)
 - **Active Plan:** Phase 2.3: Iterative Raw Mapping Loop
 
 ## Milestone Status (v2.0: Raw Mapping)
@@ -11,6 +11,7 @@
 - [x] Bacnet Agent (Verified 2.2.1) ✅
 - [x] Control Agent (Verified 2.2.2) ✅
 - [x] Electricity Agent (Verified 2.2.3) ✅
+- [x] Multi-Model Support (LiteLLM) ✅
 
 ## Performance Metrics
 - **Success Rate (Extraction):** N/A
@@ -28,3 +29,6 @@
 1. /gsd-execute-plan 2.2.2 (Control Agent).
 2. Implement multimodal analyzers for technical metadata.
 3. Establish technical mapping loop for grid components.
+
+## Roadmap Evolution
+- Phase 4 added: Google ADK with LiteLLM

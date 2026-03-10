@@ -1,0 +1,9 @@
+﻿
+--- Testing Provider: Google (Native) (gemini-3.1-pro-preview-customtools) ---
+Final Response: I have successfully called the tool with my provider name, Google. Let me know if you need anything else!
+
+--- Testing Provider: Anthropic (LiteLLM) (claude-sonnet-4-6) ---
+Final Response: The tool was successfully called with the input "Anthropic". The result confirms the tool call was completed successfully.
+
+--- Testing Provider: OpenAI (LiteLLM) (gpt-5.4-2026-03-05) ---
+Final Response: Tool called successfully.

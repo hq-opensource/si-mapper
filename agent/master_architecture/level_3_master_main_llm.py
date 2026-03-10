@@ -10,6 +10,7 @@ from master_architecture.tools.ingest_category_tool import ingest_category_files
 from tools.progress_tool import update_step, update_status, update_plan, sync_tasks
 from master_architecture.tools.callbacks import model_callback
 from utils.prompt_utils import load_prompt_instruction
+from utils.models import get_adk_model
 from typing import Any
 
 class MasterLlmAgent(LlmAgent):
@@ -38,7 +39,7 @@ class MasterLlmAgent(LlmAgent):
 
         super().__init__(
             name="MasterAgent",
-            model=model_name,
+            model=get_adk_model(model_name),
             instruction=instruction,
             tools=final_tools,
             after_model_callback=model_callback,

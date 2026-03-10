@@ -9,6 +9,7 @@ from tools.task_tools import fetch_pending_task
 from tools.progress_tool import update_step, update_status, update_state
 from utils.callback_utils import shared_model_callback as model_callback
 from utils.prompt_utils import load_prompt_instruction
+from utils.models import get_adk_model
 from typing import Any
 
 class HorizontalDuctLlmAgent(LoopWrapper):
@@ -41,7 +42,7 @@ class HorizontalDuctLlmAgentInternal(LlmAgent):
 
         super().__init__(
             name="HorizontalDuctAgentInternal",
-            model=model_name,
+            model=get_adk_model(model_name),
             instruction=instruction,
             tools=unique_tools,
             after_model_callback=model_callback,

@@ -25,7 +25,7 @@ load_dotenv()
 logger = configure_logging()
 
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8080/mcp/")
-AGENT_MODEL_NAME = os.getenv("AGENT_MODEL_NAME", "gemini-3.0-flash")
+SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
 APP_TITLE = "SI-MAPPER Agent"
 AGENT_NAME = "si_mapper_agent"
 
@@ -56,17 +56,17 @@ def create_app() -> FastAPI:
     GLOBAL_SESSION_STORE["latest"] = GLOBAL_SESSION_STORE[session_id]
     
     # Create subagents
-    horizontal_agent = HorizontalDuctLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
-    vertical_agent = VerticalDuctLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
-    equipment_agent = EquipmentLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
-    bacnet_agent = BacnetLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
-    control_agent = ControlLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
-    electricity_agent = ElectricityLlmAgent(model_name=AGENT_MODEL_NAME, session_id=session_id, tools=[si_mapper_toolset])
+    horizontal_agent = HorizontalDuctLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
+    vertical_agent = VerticalDuctLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
+    equipment_agent = EquipmentLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
+    bacnet_agent = BacnetLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
+    control_agent = ControlLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
+    electricity_agent = ElectricityLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
     
     subagents = [horizontal_agent, vertical_agent, equipment_agent, bacnet_agent, control_agent, electricity_agent]
     
     # Create Master Agent
-    master_agent = create_master_agent(session_id=session_id, subagents=subagents, model_name=AGENT_MODEL_NAME, si_mapper_toolset=si_mapper_toolset)
+    master_agent = create_master_agent(session_id=session_id, subagents=subagents, model_name=SHARED_ADK_MODEL, si_mapper_toolset=si_mapper_toolset)
 
     # 3. Wrap with ADK
     adk_agent = ADKAgent(

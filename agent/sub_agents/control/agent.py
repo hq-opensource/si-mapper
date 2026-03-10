@@ -9,6 +9,7 @@ from tools.task_tools import fetch_pending_task, mark_technical_progress, create
 from tools.progress_tool import update_step, update_status, update_state
 from utils.callback_utils import shared_model_callback as model_callback
 from utils.prompt_utils import load_prompt_instruction
+from utils.models import get_adk_model
 from typing import Any
 
 class ControlLlmAgent(LoopWrapper):
@@ -57,7 +58,7 @@ class ControlAgentInternal(LlmAgent):
 
         super().__init__(
             name="ControlAgentInternal",
-            model=model_name,
+            model=get_adk_model(model_name),
             instruction=instruction,
             tools=unique_tools,
             after_model_callback=model_callback,
