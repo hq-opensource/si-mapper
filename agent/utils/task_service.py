@@ -132,8 +132,10 @@ class TaskService:
         Checks for agent-specific pending states if a specialist is active.
         """
         tasks = TaskService.get_tasks(context)
-        current_agent = context.state.get("active_agent", "System").upper()
+        current_agent = context.state.get("active_agent", "System")
         formatted_agent = format_agent_name(current_agent).upper()
+        
+        logger.info(f"TaskService: fetch_pending_task called by {current_agent} (formatted: {formatted_agent}). Total tasks: {len(tasks)}")
         
         # Specialist detection
         agent_type = None
@@ -143,6 +145,8 @@ class TaskService:
             agent_type = "control"
         elif "ELECTRIC" in formatted_agent:
             agent_type = "electricity"
+
+        logger.info(f"TaskService: Agent type identified as: {agent_type}")
 
         for task in tasks:
             # 1. Specialist Logic

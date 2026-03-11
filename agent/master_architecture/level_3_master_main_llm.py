@@ -21,10 +21,10 @@ class MasterLlmAgent(LlmAgent):
 
     def __init__(self, model_name: str, tools: list[Any] = None, instruction: str = None, session_id: str = None, subagents: list[Any] = None):
         # Configure native Gemini 3 thinking via Planner
-        # Note: Use thinking_level instead of thinking_budget for Gemini 3 models
-        thinking_config = types.ThinkingConfig(include_thoughts=True, thinking_level="high") # For gemini 3
-        # thinking_config = types.ThinkingConfig(include_thoughts=True, thinking_budget=10000) # For gemini 2.5
-        planner = BuiltInPlanner(thinking_config=thinking_config)
+        planner = None
+        if "thinking" in model_name.lower() or "gemini-3" in model_name.lower():
+             thinking_config = types.ThinkingConfig(include_thoughts=True)
+             planner = BuiltInPlanner(thinking_config=thinking_config)
         
         # Load instruction from markdown file only if no custom instruction is provided
         if not instruction:

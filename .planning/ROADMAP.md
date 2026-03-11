@@ -44,6 +44,13 @@
 **Depends on:** None
 **Plans:** 3 plans
 
+## Phase 5: Full System Multi-Model Validation (Current Focus)
+**Goal:** Validate the entire HVAC reconstruction and mapping system (all agents, tools, MCP integration) using optimized models from Anthropic, OpenAI, and Google through the LiteLLM architecture.
+**Depends on:** Phase 4
+**Plans:**
+- [x] Plan 5.1: Core Validation Scripts
+- [ ] Plan 5.2: Multi-Model Execution Loop
+
 ---
 
 # Requirements Mapping
@@ -55,5 +62,6 @@
 | REQ-4 | Phase 1.4 | Completed |
 | REQ-5 | Phase 2.3 | Pending |
 | REQ-6 | Phase 3.1 | Pending |
-| REQ-7 | Phase 4 | Future |
+| REQ-7 | Phase 4 | Completed |
+| REQ-8 | Phase 5 | In Progress |
 

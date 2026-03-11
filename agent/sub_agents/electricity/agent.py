@@ -31,8 +31,10 @@ class ElectricityLlmAgent(LoopWrapper):
 
 class ElectricityAgentInternal(LlmAgent):
     def __init__(self, model_name: str, tools: list[Any] = None, session_id: str = None):
-        thinking_config = types.ThinkingConfig(include_thoughts=True)
-        planner = BuiltInPlanner(thinking_config=thinking_config)
+        planner = None
+        if "thinking" in model_name.lower() or "gemini-3" in model_name.lower():
+            thinking_config = types.ThinkingConfig(include_thoughts=True)
+            planner = BuiltInPlanner(thinking_config=thinking_config)
         
         instruction = load_prompt_instruction("sub_agents/electricity/prompt.md")
 
