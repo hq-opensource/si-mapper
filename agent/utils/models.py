@@ -33,7 +33,7 @@ def get_adk_model(model_name: str) -> Union[str, Any]:
             full_model_name = f"openai/{model_name}"
     
     if LiteLlm:
-        return LiteLlm(model=full_model_name)
+        return LiteLlm(model=full_model_name, drop_params=True)
     
     return full_model_name
 

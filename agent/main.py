@@ -26,6 +26,7 @@ logger = configure_logging()
 
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8080/mcp/")
 SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
+logger.info(f"Using SHARED_ADK_MODEL: {SHARED_ADK_MODEL}")
 APP_TITLE = "SI-MAPPER Agent"
 AGENT_NAME = "si_mapper_agent"
 

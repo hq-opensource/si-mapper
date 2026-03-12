@@ -89,6 +89,8 @@ class AgentValidator:
             result.final_state = final_session.state if final_session else {}
             
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             result.error = str(e)
             result.success = False
             
