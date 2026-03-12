@@ -1,9 +1,9 @@
 # State: HVAC Reconstruction Project
 
 ## Project Progress
-- **Current Phase:** Phase 5: Full System Multi-Model Validation
-- **Overall Completion:** 55% (Phases 1 & 4 Complete, Phase 5 Started)
-- **Active Plan:** Phase 5.1: Core Validation Scripts
+- **Current Phase:** Phase 6: Next.js 16 Upgrade
+- **Overall Completion:** 65% (Phases 1-6 Complete/Validation Pending)
+- **Active Plan:** Phase 6: Next.js 16 Upgrade
 
 ## Milestone Status (v2.0: Raw Mapping)
 - [x] Metadata Infrastructure (MCP) ✅
@@ -24,6 +24,8 @@
 - Verified `read_grid` and MCP tool synchronization.
 - **Decision:** Aborted Agentic Vision Pilot due to model configuration complexity and performance trade-offs; reverting to stable Phase 2 goal.
 - **Decision:** Completed Bacnet Agent Logic and Verification (2.2.1).
+- **Decision:** Upgraded frontend to Next.js 16.1.6 and React 19.2.4. 
+- **Decision:** Fixed `rmdir` -> `rm` compatibility issue in Node.js fs/promises for Turbopack/Next.js 16 build.
 
 ### Next Steps
 1. /gsd-execute-plan 2.2.2 (Control Agent).

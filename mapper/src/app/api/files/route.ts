@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readdir, stat, mkdir, rmdir, unlink, rename } from 'fs/promises';
+import { readdir, stat, mkdir, rm, unlink, rename } from 'fs/promises';
 import path from 'path';
 
 const UPLOADS_DIR = path.join(process.cwd(), 'uploads');
@@ -101,7 +101,7 @@ export async function DELETE(request: Request) {
             const itemPath = validatePath(id);
             const stats = await stat(itemPath);
             if (stats.isDirectory()) {
-                await rmdir(itemPath, { recursive: true });
+                await rm(itemPath, { recursive: true, force: true });
             } else {
                 await unlink(itemPath);
             }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { unlink, access, constants, rmdir } from 'fs/promises';
+import { unlink, access, constants, rm } from 'fs/promises';
 import path from 'path';
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ filename: string }> }) {
@@ -26,7 +26,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ f
             await unlink(filePath);
         } catch (error: unknown) {
             if ((error as NodeJS.ErrnoException).code === 'EISDIR') {
-                await rmdir(filePath, { recursive: true });
+                await rm(filePath, { recursive: true, force: true });
             } else {
                 throw error;
             }

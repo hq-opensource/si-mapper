@@ -64,4 +64,22 @@
 | REQ-6 | Phase 3.1 | Pending |
 | REQ-7 | Phase 4 | Completed |
 | REQ-8 | Phase 5 | In Progress |
+| REQ-9 | Phase 6 | Pending |
 
+## Phase 6: Next.js 16 Upgrade (Current Focus)
+**Goal:** Upgrade the frontend (mapper) to Next.js 16, utilizing Turbopack, Cache Components, and the new `proxy.ts` system while ensuring compatibility with Python 3.13/3.14 and CopilotKit.
+
+- **Phase 6.1: Environment & Dependency Preparation**
+    - [x] Verify Node.js 20.9+ and TypeScript 5.1+ requirements.
+    - [x] Research CopilotKit compatibility with Next.js 16.
+    - [x] Create a migration branch.
+- **Phase 6.2: Automated & Manual Upgrade**
+    - [x] Execute `npx @next/codemod@canary upgrade latest`.
+    - [x] Update `next`, `react`, and `react-dom` to latest versions.
+- **Phase 6.3: Breaking Changes & Cleanup**
+    - [x] Migrate middleware to the new `proxy.ts` system (N/A).
+    - [x] Update Asynchronous Request APIs (Params/SearchParams to Promises).
+    - [x] Ensure Turbopack compatibility (Fixed `rmdir`).
+- **Phase 6.4: Validation & Testing**
+    - [x] Run production build and fix any TypeScript or hydration errors.
+    - [ ] Verify multi-model agent integration and HUD functionality.
