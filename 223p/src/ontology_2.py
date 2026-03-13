@@ -179,7 +179,7 @@ sensor_temp_melange_prop = Temperature(
     label="MixedAirTemperature",
     hasUnit=UNIT.DEG_C,
 )
-sensor_temp_melange.add_property(sensor_temp_melange_prop)
+sensor_temp_melange.observedProperty = sensor_temp_melange_prop
 
 # Return Air Temperature Sensor
 sensor_temp_retour = AirTemperatureSensor(
@@ -190,7 +190,7 @@ sensor_temp_retour_prop = Temperature(
     label="ReturnAirTemperature",
     hasUnit=UNIT.DEG_C,
 )
-sensor_temp_retour.add_property(sensor_temp_retour_prop)
+sensor_temp_retour.observedProperty = sensor_temp_retour_prop
 
 # Supply Air Temperature Sensor
 sensor_temp_alim = AirTemperatureSensor(
@@ -201,7 +201,7 @@ sensor_temp_alim_prop = Temperature(
     label="SupplyAirTemperature",
     hasUnit=UNIT.DEG_C,
 )
-sensor_temp_alim.add_property(sensor_temp_alim_prop)
+sensor_temp_alim.observedProperty = sensor_temp_alim_prop
 
 # Differential Pressure Sensor (Filter)
 sensor_diff_pressure_1 = AirDifferentialStaticPressureSensor(
@@ -212,7 +212,7 @@ sensor_diff_pressure_prop = DifferentialStaticPressure(
     label="FilterDifferentialPressure",
     hasUnit=UNIT.PA,
 )
-sensor_diff_pressure_1.add_property(sensor_diff_pressure_prop)
+sensor_diff_pressure_1.observedProperty = sensor_diff_pressure_prop
 
 # Static Pressure Sensor (Supply Duct)
 sensor_static_pressure_1 = AirDifferentialStaticPressureSensor(
@@ -223,7 +223,7 @@ sensor_static_pressure_prop = DifferentialStaticPressure(
     label="DuctStaticPressure",
     hasUnit=UNIT.PA,
 )
-sensor_static_pressure_1.add_property(sensor_static_pressure_prop)
+sensor_static_pressure_1.observedProperty = sensor_static_pressure_prop
 
 # Return Air Humidity Sensor
 sensor_humidity_retour = AirHumiditySensor(
@@ -234,7 +234,7 @@ sensor_humidity_retour_prop = RelativeHumidity(
     label="ReturnAirHumidity",
     hasUnit=UNIT.PERCENT,
 )
-sensor_humidity_retour.add_property(sensor_humidity_retour_prop)
+sensor_humidity_retour.observedProperty = sensor_humidity_retour_prop
 
 # Low Limit Temperature Sensor
 sensor_low_limit_1 = AirTemperatureSensor(
@@ -245,7 +245,7 @@ sensor_low_limit_prop = Temperature(
     label="LowLimitTemperature",
     hasUnit=UNIT.DEG_C,
 )
-sensor_low_limit_1.add_property(sensor_low_limit_prop)
+sensor_low_limit_1.observedProperty = sensor_low_limit_prop
 
 # ============================================================
 # AIR FLOW CONNECTIONS
@@ -283,11 +283,9 @@ sensor_low_limit_1 % supply_air_conn
 # VFD CONNECTIONS
 # ============================================================
 
-# Connect VFDs to fans using explicit connection points to avoid ambiguity
-# The VFD has multiple electrical outlets and the fan has multiple electrical inlets
-# We need to be explicit about which ones to connect
-vfd_1_a.electricalOutlet >> fan_1_a.electricalInlet
-vfd_1_r.electricalOutlet >> fan_1_r.electricalInlet
+# Connect VFDs to fans using >> operator
+vfd_1_a >> fan_1_a
+vfd_1_r >> fan_1_r
 
 # ============================================================
 # SERIALIZE TO TTL

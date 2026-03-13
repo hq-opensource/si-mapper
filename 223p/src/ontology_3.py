@@ -283,11 +283,9 @@ sensor_low_limit_1 % supply_air_conn
 # VFD CONNECTIONS
 # ============================================================
 
-# Connect VFDs to fans using explicit connection points to avoid ambiguity
-# The VFD has multiple electrical outlets and the fan has multiple electrical inlets
-# We need to be explicit about which ones to connect
-vfd_1_a.electricalOutlet >> fan_1_a.electricalInlet
-vfd_1_r.electricalOutlet >> fan_1_r.electricalInlet
+# Connect VFDs to fans using >> operator
+vfd_1_a >> fan_1_a
+vfd_1_r >> fan_1_r
 
 # ============================================================
 # SERIALIZE TO TTL
