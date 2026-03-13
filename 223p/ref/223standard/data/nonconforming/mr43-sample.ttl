@@ -1,0 +1,126 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/mr43-sample
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix mr43-sample: <http://data.ashrae.org/standard223/data/mr43-sample#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/mr43-sample>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+mr43-sample:C1
+  a s223:Duct ;
+  rdfs:label "C1" ;
+.
+mr43-sample:C2
+  a s223:Duct ;
+  rdfs:label "C2" ;
+.
+mr43-sample:D1
+  a s223:Equipment ;
+  rdfs:label "D1" ;
+.
+mr43-sample:D1In
+  a s223:InletConnectionPoint ;
+  s223:cnx mr43-sample:C2 ;
+  s223:cnx mr43-sample:D1 ;
+  rdfs:label "D1In" ;
+.
+mr43-sample:D2
+  a s223:Equipment ;
+  rdfs:label "D2" ;
+.
+mr43-sample:D4
+  a s223:Equipment ;
+  rdfs:label "D4" ;
+.
+mr43-sample:D6
+  a s223:Equipment ;
+  rdfs:label "D6" ;
+.
+mr43-sample:D6In
+  a s223:InletConnectionPoint ;
+  s223:cnx mr43-sample:C1 ;
+  s223:cnx mr43-sample:D6 ;
+  rdfs:label "D6In" ;
+.
+mr43-sample:D6Out
+  a s223:OutletConnectionPoint ;
+  s223:cnx mr43-sample:C2 ;
+  s223:cnx mr43-sample:D6 ;
+  rdfs:label "D6Out" ;
+.
+mr43-sample:D7
+  a s223:Equipment ;
+  rdfs:label "D7" ;
+.
+mr43-sample:D7In
+  a s223:InletConnectionPoint ;
+  s223:cnx mr43-sample:D7 ;
+  rdfs:label "D7In" ;
+.
+mr43-sample:D7Out
+  a s223:OutletConnectionPoint ;
+  s223:cnx mr43-sample:C1 ;
+  s223:cnx mr43-sample:D7 ;
+  rdfs:label "D7Out" ;
+.
+mr43-sample:S3
+  a s223:System ;
+  s223:contains mr43-sample:D1 ;
+  rdfs:label "S3" ;
+.
+mr43-sample:S3In
+  a s223:SystemConnectionPoint ;
+  s223:mapsTo mr43-sample:D1In ;
+  rdfs:label "S3In" ;
+.
+mr43-sample:S4
+  a s223:System ;
+  s223:contains mr43-sample:S3 ;
+  rdfs:label "S4" ;
+.
+mr43-sample:S4In
+  a s223:SystemConnectionPoint ;
+  s223:mapsTo mr43-sample:D1In ;
+  rdfs:label "S4In" ;
+.
+mr43-sample:S6
+  a s223:System ;
+  s223:contains mr43-sample:D2 ;
+  s223:contains mr43-sample:D6 ;
+  s223:contains mr43-sample:D7 ;
+  rdfs:label "S6" ;
+.
+mr43-sample:S6In
+  a s223:SystemConnectionPoint ;
+  s223:mapsTo mr43-sample:D7In ;
+  rdfs:label "S6In" ;
+.
+mr43-sample:S6Out
+  a s223:SystemConnectionPoint ;
+  s223:mapsTo mr43-sample:D6Out ;
+  rdfs:label "S6Out" ;
+.
+mr43-sample:S7
+  a s223:System ;
+  s223:contains mr43-sample:D4 ;
+  s223:contains mr43-sample:S6 ;
+  rdfs:label "S7" ;
+.
+mr43-sample:S7In
+  a s223:SystemConnectionPoint ;
+  s223:mapsTo mr43-sample:D7In ;
+  rdfs:label "S7In" ;
+.
+mr43-sample:S7Out
+  a s223:SystemConnectionPoint ;
+  s223:mapsTo mr43-sample:D6Out ;
+  rdfs:label "S7Out" ;
+.

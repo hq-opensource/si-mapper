@@ -1,0 +1,48 @@
+@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ifc: <https://brickschema.org/extension/ifc#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://data.ashrae.org/standard223/1.0/data/external-ref-example/> .
+
+<http://data.ashrae.org/standard223/1.0/data/external-ref-example/>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+
+:sample-device a bacnet:Device ;
+    bacnet:hasAddress [ rdfs:label "31:14" ;
+            bacnet:mac-address "0e"^^xsd:hexBinary ;
+            bacnet:network-number 31 ] ;
+    bacnet:hasObject <bacnet://3114/device,3114>,
+        <bacnet://3114/analog-input,1> .
+
+<bacnet://3114/device,3114> bacnet:description "Device Description" ;
+    bacnet:object-identifier "device,3114" ;
+    bacnet:object-name "device3114" ;
+    bacnet:object-type bacnet:ObjectType.device .
+
+<bacnet://3114/analog-input,1> bacnet:description "Actual Flow" ;
+    bacnet:object-identifier "analog-value,5" ;
+    bacnet:object-name "flow_input" ;
+    bacnet:object-type bacnet:ObjectType.analog-input ;
+    bacnet:units bacnet:EngineeringUnits.cubic-feet-per-minute .
+
+:xyz a s223:Property ;
+  s223:hasExternalReference [
+    a s223:TimeseriesReference ; # technically redundant -- can be inferred
+    s223:hasTimeseriesId "4665117e-ec75-47c2-a5ce-b71529cb159e" ;
+    s223:storedAt "postgresql://dataserver/sensordatadb" ;
+  ] ;
+  s223:hasExternalReference [
+    a s223:BACnetExternalReference ;
+    s223:device-identifier "device,123" ;
+    s223:object-identifier "analog-value,5" ;
+    s223:object-name "BLDG-Z410-ZATS" ;
+  ] ;
+.

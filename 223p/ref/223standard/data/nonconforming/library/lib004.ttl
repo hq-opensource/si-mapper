@@ -1,0 +1,98 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/library/lib004
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: lib004
+
+@prefix lib004: <http://data.ashrae.org/standard223/1.0/data/library/lib004#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/library/lib004>
+  a owl:Ontology ;
+  rdfs:comment "Pattern for a Luminaire exposing an internal Light Engine and three controlling Properties (On/Off, Brightness and Correlated Color Temperature)." ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+lib004:a001
+  a s223:Luminaire ;
+  s223:cnx lib004:a002 ;
+  s223:cnx lib004:a003 ;
+  s223:contains lib004:a004 ;
+  rdfs:label "Luminaire001" ;
+.
+lib004:a002
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Constituent-Electricity ;
+  rdfs:label "LuminaireInlet2" ;
+.
+lib004:a003
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Light-Visible ;
+  rdfs:label "LuminaireOutlet3" ;
+.
+lib004:a004
+  a s223:Equipment ;
+  s223:cnx lib004:a012 ;
+  s223:cnx lib004:a013 ;
+  s223:actuatedByProperty lib004:a009 ;
+  s223:actuatedByProperty lib004:a010 ;
+  s223:actuatedByProperty lib004:a011 ;
+  rdfs:label "LightEngine4" ;
+.
+lib004:a006
+  a s223:Function ;
+  s223:hasInput lib004:a007 ;
+  s223:hasOutput lib004:a008 ;
+  s223:hasOutput lib004:a014 ;
+  s223:hasOutput lib004:a015 ;
+  rdfs:label "Function6" ;
+.
+lib004:a007
+  a s223:FunctionInput ;
+  rdfs:label "FunctionInput7" ;
+.
+lib004:a008
+  a s223:FunctionOutput ;
+  s223:produces lib004:a009 ;
+  rdfs:label "FunctionOutput8" ;
+.
+lib004:a009
+  a s223:QuantifiableActuatableProperty ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/RelativeLuminousFlux> ;
+  rdfs:label "BrightnessProperty9" ;
+.
+lib004:a010
+  a s223:QuantifiableActuatableProperty ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/CorrelatedColorTemperature> ;
+  rdfs:label "DUVProperty10" ;
+.
+lib004:a011
+  a s223:EnumeratedActuatableProperty ;
+  s223:hasEnumerationKind s223:Binary-OnOff ;
+  rdfs:label "OnOffProperty11" ;
+.
+lib004:a012
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Constituent-Electricity ;
+  s223:mapsTo lib004:a002 ;
+  rdfs:label "LightEngineInlet12" ;
+.
+lib004:a013
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Light-Visible ;
+  s223:mapsTo lib004:a003 ;
+  rdfs:label "LightEngineOutlet13" ;
+.
+lib004:a014
+  a s223:FunctionOutput ;
+  s223:produces lib004:a010 ;
+  rdfs:label "FunctionOutput14" ;
+.
+lib004:a015
+  a s223:FunctionOutput ;
+  s223:produces lib004:a011 ;
+  rdfs:label "FunctionOutput15" ;
+.

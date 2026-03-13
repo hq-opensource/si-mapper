@@ -1,0 +1,356 @@
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix ex: <http://data.ashrae.org/standard223/reference-equipments#> .
+
+
+ex:Actuator a s223:Actuator ;
+    s223:actuatedByProperty [ a s223:QuantifiableActuatableProperty]
+.
+
+ex:AirHandlingUnit a s223:AirHandlingUnit ;
+    s223:cnx ex:ahu_in, ex:ahu_out ;
+.
+ex:ahu_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+ex:ahu_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+
+ex:Boiler a s223:Boiler ;
+    s223:cnx ex:boi_in, ex:boi_out ;
+.
+ex:boi_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water;
+.
+ex:boi_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Water-Steam ;
+.
+
+ex:Chiller a s223:Chiller ;
+    s223:cnx ex:chiller_in, ex:chiller_out ;
+.
+ex:chiller_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water;
+.
+ex:chiller_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water ;
+.
+# weiping added
+ex:Coil a s223:Coil ;
+    s223:cnx ex:coil_in, ex:coil_out ;
+.
+# weiping added
+ex:coil_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+# weiping added
+ex:coil_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+
+# weiping added
+ex:Compressor a s223:Compressor ;
+    s223:cnx ex:comp_in, ex:comp_out ;  
+.
+# weiping added
+ex:comp_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+# weiping added
+ex:comp_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+
+
+
+ex:Controller a s223:Controller ;
+.
+ex:CoolingCoil a s223:CoolingCoil ;
+.
+
+# weiping added
+ex:CoolingTower a s223:CoolingTower ;
+    s223:cnx ex:ct_in, ex:ct_out ;  
+.
+# weiping added
+ex:ct_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water ;
+.
+# weiping added
+ex:ct_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water;
+.
+# weiping added
+ex:Damper a s223:Damper ;
+    s223:cnx ex:dpr_in, ex:dpr_out ; 
+.
+# weiping added
+ex:dpr_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+# weiping added
+ex:dpr_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+
+# weiping added
+ex:Economizer a s223:Economizer ;
+    s223:cnx ex:ecomz_in, ex:ecomz_out ; 
+.
+# weiping added
+ex:ecomz_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+# weiping added
+ex:ecomz_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+# weiping added
+ex:ElectricBreaker a s223:ElectricityBreaker ;
+    s223:cnx ex:elecb_out ; 
+.
+
+ex:elecb_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Electricity-120V-60Hz ;
+.
+ex:ElectricOutlet a s223:ElectricOutlet ;
+    s223:cnx ex:elo_out ;
+.
+ex:elo_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Electricity-120V-60Hz ;
+.
+ex:ElectricTransformer a s223:ElectricTransformer ;
+    s223:cnx ex:et_in, ex:et_out ;
+.
+ex:et_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Electricity-480V-60Hz ;
+.
+ex:et_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Electricity-120V-60Hz ;
+.
+# weiping added
+ex:Fan a s223:Fan ;
+    s223:cnx ex:fan_in, ex:fan_out ; 
+.
+# weiping added
+ex:fan_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+# weiping added
+ex:fan_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+
+# weiping added
+ex:FanCoilUnit a s223:FanCoilUnit ;
+    s223:cnx ex:fcu_in, ex:fcu_out ; 
+    s223:contains ex:Fan, ex:Coil ;
+    s223:hasRole s223:Role-Cooling ;
+.
+# weiping added
+ex:fcu_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+# weiping added
+ex:fcu_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+ex:Filter a s223:Filter ;
+    # s223:cnx ex:fil_in, ex:fil_out ;
+.
+ex:fil_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+ex:fil_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+# weiping added
+ex:FumeHood a s223:FumeHood ;
+    s223:cnx ex:fh_in, ex:fh_out ; 
+.
+# weiping added
+ex:fh_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+# weiping added
+ex:fh_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+ex:Furnace a s223:Furnace ;
+    s223:cnx ex:fur_in, ex:fur_out ;
+.
+ex:fur_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+ex:fur_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+ex:Generator a s223:Generator ;
+    s223:cnx ex:gen_out ;
+.
+ex:gen_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Electricity-480V-60Hz ;
+.
+
+ex:HeatingCoil a s223:HeatingCoil ;
+.
+
+ex:HeatPump a s223:HeatPump ;
+    s223:cnx ex:hp_in, ex:hp_out ;
+.
+ex:hp_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+ex:hp_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+
+ex:Humidistat a s223:Humidistat ;
+.
+# weiping added
+ex:Luminaire a s223:Luminaire ;
+    s223:cnx ex:lmnr_in, ex:lmnr_out ; 
+.
+# weiping added
+ex:lmnr_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Constituent-Electricity ;
+.
+# weiping added
+ex:lmnr_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:EM-Light;
+.
+# weiping added
+ex:Pump a s223:Pump ;
+    s223:cnx ex:pump_in, ex:pump_out ; 
+.
+# weiping added
+ex:pump_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water ;
+.
+# weiping added
+ex:pump_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water;
+.
+
+ex:RadiantHeater a s223:RadiantHeater ;
+    s223:cnx ex:rad_in, ex:rad_out ;
+.
+ex:rad_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water;
+.
+ex:rad_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water ;
+.
+
+# weiping added
+ex:ElectricResistanceElement a s223:ElectricResistanceElement;
+.
+
+# weiping added
+ex:TerminalUnit a s223:TerminalUnit ;
+    s223:cnx ex:tu_in, ex:tu_out ; 
+.
+# weiping added
+ex:tu_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+# weiping added
+ex:tu_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+ex:TerminalUnit a s223:TerminalUnit ;
+    s223:cnx ex:vavt_in, ex:vavt_out ; 
+.
+ex:vavt_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+ex:vavt_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+
+ex:ChilledBeam a s223:ChilledBeam ;
+    s223:cnx ex:cbin, ex:cbout ;
+.
+ex:cbin a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water ;
+.
+ex:cbout a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water;
+.
+ex:RadiantHeater a s223:RadiantHeater ;
+    s223:cnx ex:radpan_in, ex:radpan_out ; 
+.
+ex:radpan_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water ;
+.
+ex:radpan_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Water;
+.
+
+ex:Radiator a s223:Radiator ;
+    s223:cnx ex:radiat_in, ex:radiat_out ; 
+.
+ex:radiat_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Constituent-Electricity ;
+.
+ex:radiat_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Water-Steam;
+.
+
+ex:DualDuctTerminal a s223:DualDuctTerminal ;
+    s223:cnx ex:dualduc_in, ex:dualduc_in2, ex:dualduc_out ; 
+.
+ex:dualduc_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+ex:dualduc_in2 a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+ex:dualduc_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+
+ex:FanPoweredTerminal a s223:FanPoweredTerminal ;
+    s223:cnx ex:fanpow_in, ex:fanpow_out ; 
+.
+ex:fanpow_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+ex:fanpow_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+
+ex:SingleDuctTerminal a s223:SingleDuctTerminal ;
+    s223:cnx ex:singduc_in, ex:singduc_out ; 
+.
+ex:singduc_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air ;
+.
+ex:singduc_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Fluid-Air;
+.
+# weiping added
+ex:VFD a s223:VFD ;
+    s223:cnx ex:vfd_in, ex:vfd_out ; 
+.
+# weiping added
+ex:vfd_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:Constituent-Electricity ;
+.
+# weiping added
+ex:vfd_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:Constituent-Electricity;
+.
+
+ex:Window a s223:Window ;
+    s223:cnx ex:w_in, ex:w_out ;
+.
+ex:w_in a s223:InletConnectionPoint; 
+    s223:hasMedium s223:EM-Light;
+.
+ex:w_out a s223:OutletConnectionPoint; 
+    s223:hasMedium s223:EM-Light ;
+.

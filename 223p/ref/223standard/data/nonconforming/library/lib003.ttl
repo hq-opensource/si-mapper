@@ -1,0 +1,34 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/library/lib003
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: lib003
+
+@prefix lib003: <http://data.ashrae.org/standard223/1.0/data/library/lib003#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/library/lib003>
+  a owl:Ontology ;
+  rdfs:comment "Pattern for a simple Luminaire. This could be used for a Luminaire that does not read or write any data (Property value), or for some kind of Luminaire modeled without exposing the internal circuitry and/or Properties. The Luminaire is modeled as an instance of s223:Equipment, and is connected to instances of s223:InletConnectionPoint and s223:OutletConnectionPoint." ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+lib003:a001
+  a s223:Luminaire ;
+  s223:cnx lib003:a002 ;
+  s223:cnx lib003:a003 ;
+  rdfs:label "Luminaire001" ;
+.
+lib003:a002
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Constituent-Electricity ;
+  rdfs:label "InletCP2" ;
+.
+lib003:a003
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Light-Visible ;
+  rdfs:label "OutletCP3" ;
+.

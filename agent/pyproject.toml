@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "bob",
+    "scratch",
     "ag-ui-adk>=0.4.0",
     "dotenv>=0.9.9",
     "edn-format>=0.7.5",
@@ -23,3 +25,11 @@ dependencies = [
     "requests>=2.32.5",
     "uvicorn[standard]>=0.40.0",
 ]
+
+[tool.setuptools]
+packages = []
+
+[tool.uv.sources]
+bob = { path = "../223p/bin/bob-0.99.8.tar.gz" }
+scratch = { path = "../223p/bin/scratch-0.2.tar.gz" }
+

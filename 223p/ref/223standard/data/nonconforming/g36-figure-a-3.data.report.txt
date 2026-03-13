@@ -1,0 +1,25 @@
+[34mConnectionPoint <http://data.ashrae.org/standard223/data/g36-figure-a-3#00009> could be missing a mapsTo relation to a ConnectionPoint of <http://data.ashrae.org/standard223/data/g36-figure-a-3#00001> because it is associated with a Junction or Equipment that is contained by <http://data.ashrae.org/standard223/data/g36-figure-a-3#00001>.[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00009
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00011
+[34mConnectionPoint <http://data.ashrae.org/standard223/data/g36-figure-a-3#00002> probably needs an association with a Connection.[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00002
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00003
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00004
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00005
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00006
+[34mThe property shape with path s223:connectsThrough for Class s223:ConnectionPoint must have an rdfs:comment.[0m
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Connection http://data.ashrae.org/standard223#Connection
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Junction http://data.ashrae.org/standard223#Junction
+    http://data.ashrae.org/standard223#Equipment http://data.ashrae.org/standard223#Equipment
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+[35mProperty needs to have at least 1 value[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00024
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00025
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00026
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00027
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00028
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00029
+    http://data.ashrae.org/standard223/data/g36-figure-a-3#00030

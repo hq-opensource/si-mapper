@@ -1,0 +1,104 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/new-junction
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix nj: <http://data.ashrae.org/standard223/data/new-junction#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/new-junction>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+nj:E1E2Connection
+  a s223:Connection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "E1E2Connection" ;
+.
+nj:E1Outlet
+  a s223:OutletConnectionPoint ;
+  s223:cnx nj:E1E2Connection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "E1Outlet" ;
+.
+nj:E1aJConnection
+  a s223:Connection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "E1aJConnection" ;
+.
+nj:E1aOutletCP
+  a s223:OutletConnectionPoint ;
+  s223:cnx nj:E1aJConnection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "E1a outlet CP" ;
+.
+nj:E1bJConnection
+  a s223:Connection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "E1bJConnection" ;
+.
+nj:E1bOutletCP
+  a s223:OutletConnectionPoint ;
+  s223:cnx nj:E1bJConnection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "E1b outlet CP" ;
+.
+nj:E2Inlet
+  a s223:InletConnectionPoint ;
+  s223:cnx nj:E1E2Connection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "E2Inlet" ;
+.
+nj:Equip1
+  a s223:Equipment ;
+  s223:cnx nj:E1Outlet ;
+  s223:contains nj:Equip1a ;
+  s223:contains nj:Equip1b ;
+  s223:contains nj:Junction ;
+  rdfs:label "Equip1" ;
+.
+nj:Equip1a
+  a s223:Equipment ;
+  s223:cnx nj:E1aOutletCP ;
+  rdfs:label "Equip1a" ;
+.
+nj:Equip1b
+  a s223:Equipment ;
+  s223:cnx nj:E1bOutletCP ;
+  rdfs:label "Equip1b" ;
+.
+nj:Equip2
+  a s223:Equipment ;
+  s223:cnx nj:E2Inlet ;
+  rdfs:label "Equip2" ;
+.
+nj:JInlet1aCP
+  a s223:InletConnectionPoint ;
+  s223:cnx nj:E1aJConnection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "JInlet1a CP" ;
+.
+nj:JInlet1bCP
+  a s223:InletConnectionPoint ;
+  s223:cnx nj:E1bJConnection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "JInlet1b CP" ;
+.
+nj:JOutletCP
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:mapsTo nj:E1Outlet ;
+  rdfs:label "JOutlet CP" ;
+.
+nj:Junction
+  a s223:Junction ;
+  s223:cnx nj:JInlet1aCP ;
+  s223:cnx nj:JInlet1bCP ;
+  s223:cnx nj:JOutletCP ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Junction" ;
+.

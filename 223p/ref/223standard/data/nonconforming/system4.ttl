@@ -1,0 +1,65 @@
+# baseURI: http://example.org/system4
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# imports: http://example.org/system3
+# prefix: system4
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix system4: <http://example.org/system4#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/system4>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:imports <http://example.org/system3> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+system4:CP11
+  a s223:InletConnectionPoint ;
+  s223:cnx system4:Equipment9 ;
+  rdfs:label "CP11" ;
+.
+system4:CP12
+  a s223:InletConnectionPoint ;
+  s223:cnx system4:Equipment8 ;
+  rdfs:label "CP12" ;
+.
+system4:Equipment8
+  a s223:Equipment ;
+  rdfs:label "Equipment8" ;
+.
+system4:Equipment9
+  a s223:Equipment ;
+  rdfs:label "Equipment9" ;
+.
+system4:Junction4
+  a s223:Junction ;
+  s223:lnx system4:Segment12 ;
+  s223:lnx system4:Segment13 ;
+  rdfs:label "Junction4" ;
+.
+system4:SCP7
+  a s223:InletSystemConnectionPoint ;
+  s223:mapsTo system4:Junction4 ;
+  rdfs:label "SCP7" ;
+.
+system4:Segment12
+  a s223:Segment ;
+  s223:lnx system4:CP12 ;
+  rdfs:label "Segment12" ;
+.
+system4:Segment13
+  a s223:Segment ;
+  s223:lnx system4:CP11 ;
+  rdfs:label "Segment13" ;
+.
+system4:System_4
+  a s223:System ;
+  s223:contains system4:Equipment8 ;
+  s223:contains system4:Equipment9 ;
+  s223:contains system4:Junction4 ;
+  s223:hasSystemConnectionPoint system4:SCP7 ;
+  rdfs:label "System_3" ;
+.

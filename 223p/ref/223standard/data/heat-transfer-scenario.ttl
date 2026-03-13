@@ -1,0 +1,197 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix ht0: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario0#> .
+@prefix ht1: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario1#> .
+@prefix ht10: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario10#> .
+@prefix ht11: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario11#> .
+@prefix ht12: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario12#> .
+@prefix ht13: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario13#> .
+@prefix ht14: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario14#> .
+@prefix ht15: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario15#> .
+@prefix ht2: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario2#> .
+@prefix ht3: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario3#> .
+@prefix ht4: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario4#> .
+@prefix ht5: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario5#> .
+@prefix ht6: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario6#> .
+@prefix ht7: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario7#> .
+@prefix ht8: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario8#> .
+@prefix ht9: <http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario9#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/heat-transfer-scenario>
+  a owl:Ontology ;
+  rdfs:comment """ht0: Electric Water Heater, high-level model
+ht1: Electric Water Heater, detailed model with just an electric element
+ht2: Electric Water Heater, detailed model with an electric element and a tank
+""" ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+ht0:ElectricInCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:AC-120VLN-1Ph-60Hz ;
+  rdfs:label "Electric in CP" ;
+.
+ht0:HotWaterHeater
+  a s223:Equipment ;
+  s223:hasConnectionPoint ht0:ElectricInCP ;
+  s223:hasConnectionPoint ht0:WaterInCP ;
+  s223:hasConnectionPoint ht0:WaterOutCP ;
+  rdfs:label "Hot water heater" ;
+.
+ht0:WaterHeaterSystem
+  a s223:System ;
+  s223:hasBoundaryConnectionPoint ht0:ElectricInCP ;
+  s223:hasBoundaryConnectionPoint ht0:WaterInCP ;
+  s223:hasBoundaryConnectionPoint ht0:WaterOutCP ;
+  s223:hasMember ht0:HotWaterHeater ;
+  rdfs:label "Water heater system" ;
+.
+ht0:WaterInCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Water in CP" ;
+.
+ht0:WaterOutCP
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Water-HotWater ;
+  rdfs:label "Water out CP" ;
+.
+ht1:ElectricElementInCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:AC-120VLN-1Ph-60Hz ;
+  s223:mapsTo ht1:ElectricInCP ;
+  rdfs:label "Electric element in CP" ;
+.
+ht1:ElectricElementWaterCP
+  a s223:BidirectionalConnectionPoint ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Electric element water CP" ;
+.
+ht1:ElectricInCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:AC-120VLN-1Ph-60Hz ;
+  rdfs:label "Electric in CP" ;
+.
+ht1:ElectricResistanceElement
+  a s223:ElectricResistanceElement ;
+  s223:hasConnectionPoint ht1:ElectricElementInCP ;
+  s223:hasConnectionPoint ht1:ElectricElementWaterCP ;
+  s223:hasRole s223:Role-Heating ;
+  rdfs:label "Electric resistance element" ;
+.
+ht1:HotWaterHeater
+  a s223:Equipment ;
+  s223:contains ht1:ElectricResistanceElement ;
+  s223:hasConnectionPoint ht1:ElectricInCP ;
+  s223:hasConnectionPoint ht1:WaterInCP ;
+  s223:hasConnectionPoint ht1:WaterOutCP ;
+  rdfs:label "Hot water heater" ;
+.
+ht1:WaterHeaterSystem
+  a s223:System ;
+  s223:hasBoundaryConnectionPoint ht1:ElectricElementWaterCP ;
+  s223:hasBoundaryConnectionPoint ht1:ElectricInCP ;
+  s223:hasBoundaryConnectionPoint ht1:WaterInCP ;
+  s223:hasBoundaryConnectionPoint ht1:WaterOutCP ;
+  s223:hasMember ht1:ElectricResistanceElement ;
+  s223:hasMember ht1:HotWaterHeater ;
+  rdfs:label "Water heater system" ;
+.
+ht1:WaterInCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Water in CP" ;
+.
+ht1:WaterOutCP
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Water out CP" ;
+.
+ht2:ElectricElementInCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:AC-120VLN-1Ph-60Hz ;
+  s223:mapsTo ht2:ElectricInCP ;
+  rdfs:label "Electric element in CP" ;
+.
+ht2:ElectricElementWaterCP
+  a s223:BidirectionalConnectionPoint ;
+  s223:cnx ht2:WaterInTankAsConnection ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Electric element water CP" ;
+.
+ht2:ElectricInCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:AC-120VLN-1Ph-60Hz ;
+  rdfs:label "Electric in CP" ;
+.
+ht2:ElectricResistanceElement
+  a s223:ElectricResistanceElement ;
+  s223:hasConnectionPoint ht2:ElectricElementInCP ;
+  s223:hasConnectionPoint ht2:ElectricElementWaterCP ;
+  s223:hasRole s223:Role-Heating ;
+  rdfs:label "Electric resistance element" ;
+.
+ht2:HotWaterHeater
+  a s223:Equipment ;
+  s223:contains ht2:ElectricResistanceElement ;
+  s223:contains ht2:WaterTank ;
+  s223:hasConnectionPoint ht2:ElectricInCP ;
+  s223:hasConnectionPoint ht2:WaterInCP ;
+  s223:hasConnectionPoint ht2:WaterOutCP ;
+  rdfs:label "Hot water heater" ;
+.
+ht2:TankCPToElement
+  a s223:BidirectionalConnectionPoint ;
+  s223:cnx ht2:WaterInTankAsConnection ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Tank CPTo element" ;
+.
+ht2:TankWaterIn
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Water ;
+  s223:mapsTo ht2:WaterInCP ;
+  rdfs:label "Tank water in" ;
+.
+ht2:TankWaterOut
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Water-HotWater ;
+  s223:mapsTo ht2:WaterOutCP ;
+  rdfs:label "Tank water out" ;
+.
+ht2:WaterHeaterSystem
+  a s223:System ;
+  s223:hasBoundaryConnectionPoint ht2:ElectricInCP ;
+  s223:hasBoundaryConnectionPoint ht2:WaterInCP ;
+  s223:hasBoundaryConnectionPoint ht2:WaterOutCP ;
+  s223:hasMember ht2:HotWaterHeater ;
+  rdfs:label "Water heater system" ;
+.
+ht2:WaterInCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Water in CP" ;
+.
+ht2:WaterInTankAsConnection
+  a s223:Connection ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Water in tank as connection" ;
+.
+ht2:WaterOutCP
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Water ;
+  rdfs:label "Water out CP" ;
+.
+ht2:WaterTank
+  a s223:Equipment ;
+  s223:hasConnectionPoint ht2:TankCPToElement ;
+  s223:hasConnectionPoint ht2:TankWaterIn ;
+  s223:hasConnectionPoint ht2:TankWaterOut ;
+  rdfs:label "Water tank" ;
+.

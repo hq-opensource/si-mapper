@@ -1,0 +1,33 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/junction-testcase-b
+# imports: http://data.ashrae.org/standard223/1.0/data/junction-testcase
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: jtb
+
+@prefix jtb: <http://data.ashrae.org/standard223/1.0/data/junction-testcase-b#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/junction-testcase-b>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/data/junction-testcase> ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+jtb:Damper1InletConnectionPoint_1
+  a s223:InletConnectionPoint ;
+  s223:cnx jtb:Damper_1 ;
+  rdfs:label "Damper 1 Inlet CP" ;
+.
+jtb:Damper_1
+  a s223:Damper ;
+  rdfs:label "Damper 1" ;
+.
+jtb:InletSystemConnectionPoint_1
+  a s223:InletSystemConnectionPoint ;
+  s223:mapsTo jtb:Damper1InletConnectionPoint_1 ;
+  s223:systemConnected <http://data.ashrae.org/standard223/data/junction-testcase#SP2> ;
+  rdfs:label "InletSystemConnectionPoint_1" ;
+.

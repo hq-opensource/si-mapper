@@ -1,0 +1,124 @@
+# baseURI: http://steve.com/sample
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: sample
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sample: <http://steve.com/sample#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix spin: <http://spinrdf.org/spin#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://steve.com/sample>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+sample:Fan1
+  a s223:Equipment ;
+  s223:hasProperty sample:Fan1OutletPressure ;
+.
+sample:Fan1OutletPressure
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PSI> ;
+  s223:hasValue sample:Fan1OutletPressureValue ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Pressure> ;
+.
+sample:Fan1OutletPressureValue
+  a s223:Value ;
+  s223:hasValue "32.1" ;
+  rdfs:label "Fan1OutletPressureValue" ;
+.
+sample:Fan2
+  a s223:Equipment ;
+  s223:hasConnectionPoint sample:Fan2AirOutletConnectionPoint ;
+.
+sample:Fan2AirOutletConnectionPoint
+  a s223:OutletConnectionPoint ;
+  s223:hasProperty sample:Fan2OutletPressure ;
+  s223:substance s223:Fluid-Air ;
+.
+sample:Fan2OutletPressure
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PSI> ;
+  s223:hasValue sample:Fan2OutletPressureValue ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Pressure> ;
+.
+sample:Fan2OutletPressureSensor
+  a s223:Sensor ;
+  s223:hasObservationLocation sample:Fan2AirOutletConnectionPoint ;
+  s223:observes sample:Fan2OutletPressure ;
+.
+sample:Fan2OutletPressureValue
+  a s223:Value ;
+  s223:hasValue "32.1" ;
+  rdfs:label "Fan2OutletPressureValue" ;
+.
+sample:PressureSensor_1
+  a s223:Sensor ;
+  s223:hasObservationLocation sample:Pump_1 ;
+.
+sample:Pump1Consumption
+  a s223:QuantifiableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/KiloW> ;
+  s223:hasValue "2.2"^^s223:hasValueUnion ;
+.
+sample:Pump1OutletPressureQuantity
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PSI> ;
+  s223:hasValue "5"^^s223:hasValueUnion ;
+.
+sample:Pump_1
+  a s223:Pump ;
+  s223:electricConsumption sample:Pump1Consumption ;
+  s223:hasOutletPressure sample:Pump1OutletPressureQuantity ;
+  s223:substance s223:Water ;
+.
+sample:Switch7Setting
+  a s223:ActuatableProperty ;
+  s223:hasValue sample:Switch7SettingValue ;
+  rdfs:label "Switch 7 Setting" ;
+.
+sample:Switch7SettingValue
+  a s223:Value ;
+  s223:hasValue "On" ;
+  rdfs:label "Switch 7 Setting Value" ;
+.
+sample:VAV1DamperPosition
+  a s223:ActuatableProperty ;
+  a s223:QuantifiableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/UNITLESS> ;
+  s223:hasValue sample:VAV1DamperPositionValue ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/AreaRatio> ;
+  rdfs:label "VAV1 Damper Position" ;
+.
+sample:VAV1DamperPositionValue
+  a s223:Value ;
+  s223:hasValue 0.7 ;
+  rdfs:label "VAV1 Damper Position Value" ;
+.
+sample:Zone5AlarmState
+  a s223:ObservableProperty ;
+  s223:hasValue sample:Zone5AlarmValue ;
+  rdfs:label "Zone 5 Alarm State" ;
+.
+sample:Zone5AlarmValue
+  a s223:Value ;
+  s223:hasValue "Leaking" ;
+  rdfs:label "Zone 5 Alarm Value" ;
+.
+sample:Zone5Temperature
+  a s223:ObservableProperty ;
+  a s223:QuantifiableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  s223:hasValue sample:Zone5TemperatureValue ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  rdfs:label "Zone 5 Temperature" ;
+.
+sample:Zone5TemperatureValue
+  a s223:Value ;
+  s223:hasValue 23.2 ;
+  rdfs:label "Zone 5 Temperature Value" ;
+.

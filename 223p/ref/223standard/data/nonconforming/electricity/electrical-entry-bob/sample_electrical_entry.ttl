@@ -1,0 +1,1223 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/sample/sample_electrical_entry
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix bob: <http://data.ashrae.org/standard223/si-builder#> .
+@prefix ex1: <urn:ex/sample_electrical_entry/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix p223: <http://data.ashrae.org/proposal-to-standard223#> .
+@prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/sample_electrical_entry>
+  a owl:Ontology ;
+  rdfs:isDefinedBy <http://data.ashrae.org/standard223/1.0/sample/sample_electrical_entry> ;
+  rdfs:label "sample_electrical_entry" ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+<http://data.ashrae.org/standard223/1.0/sample/sample_electrical_entry>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+<urn:ex/sample_electrical_entry/00001>
+  a p223:ElectricalDistributionPanel ;
+  a s223:Equipment ;
+  s223:contains <urn:ex/sample_electrical_entry/00002> ;
+  s223:contains <urn:ex/sample_electrical_entry/00012> ;
+  s223:contains <urn:ex/sample_electrical_entry/00016> ;
+  s223:contains <urn:ex/sample_electrical_entry/00020> ;
+  s223:contains <urn:ex/sample_electrical_entry/00024> ;
+  rdfs:comment "Main Entry Panel of Building at 575V" ;
+  rdfs:label "Main Entry Panel" ;
+.
+<urn:ex/sample_electrical_entry/00002>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:ThreePolesMainCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00028> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00029> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00030> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00031> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00032> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00033> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00034> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00056> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00004> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00005> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00006> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00007> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00008> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00009> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00010> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00011> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00003> ;
+  bob:currentRating <urn:ex/sample_electrical_entry/00003> ;
+  rdfs:comment "Main breaker of panel" ;
+  rdfs:label "MainBreaker" ;
+.
+<urn:ex/sample_electrical_entry/00003>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 400.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_electrical_entry/00004>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00056> ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00005>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_347V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00028> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  s223:hasMedium s223:AC-347V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletA" ;
+.
+<urn:ex/sample_electrical_entry/00006>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_347V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00029> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  s223:hasMedium s223:AC-347V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletB" ;
+.
+<urn:ex/sample_electrical_entry/00007>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_347V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00030> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  s223:hasMedium s223:AC-347V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletC" ;
+.
+<urn:ex/sample_electrical_entry/00008>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_600V1Ph_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00031> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-AB ;
+  s223:hasMedium s223:AC-600V1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletAB" ;
+.
+<urn:ex/sample_electrical_entry/00009>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_600V1Ph_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00032> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-BC ;
+  s223:hasMedium s223:AC-600V1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletBC" ;
+.
+<urn:ex/sample_electrical_entry/00010>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_600V1Ph_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00033> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-CA ;
+  s223:hasMedium s223:AC-600V1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletCA" ;
+.
+<urn:ex/sample_electrical_entry/00011>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00034> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletABC" ;
+.
+<urn:ex/sample_electrical_entry/00012>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:SinglePoleCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00028> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00014> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00015> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00013> ;
+  bob:currentRating <urn:ex/sample_electrical_entry/00013> ;
+  rdfs:comment "Lights" ;
+  rdfs:label "CB#1" ;
+.
+<urn:ex/sample_electrical_entry/00013>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 15.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_electrical_entry/00014>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_347V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00028> ;
+  s223:hasMedium s223:AC-347V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00012> ;
+  rdfs:label "CB#1.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00015>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_347V_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-347V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00012> ;
+  rdfs:label "CB#1.electricalOutlet" ;
+.
+<urn:ex/sample_electrical_entry/00016>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:ThreePolesCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00034> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00018> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00019> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00017> ;
+  bob:currentRating <urn:ex/sample_electrical_entry/00017> ;
+  rdfs:comment "Fans, AHU" ;
+  rdfs:label "CB#2" ;
+.
+<urn:ex/sample_electrical_entry/00017>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 40.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_electrical_entry/00018>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00034> ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00016> ;
+  rdfs:label "CB#2.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00019>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00016> ;
+  rdfs:label "CB#2.electricalOutlet" ;
+.
+<urn:ex/sample_electrical_entry/00020>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:ThreePolesCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00034> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00057> ;
+  s223:connectedTo <urn:ex/sample_electrical_entry/00035> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00022> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00023> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00021> ;
+  bob:currentRating <urn:ex/sample_electrical_entry/00021> ;
+  rdfs:comment "Feeds Transformer to get 120/240" ;
+  rdfs:label "CB#3" ;
+.
+<urn:ex/sample_electrical_entry/00021>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 100.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_electrical_entry/00022>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00034> ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00020> ;
+  rdfs:label "CB#3.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00023>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00057> ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00020> ;
+  rdfs:label "CB#3.electricalOutlet" ;
+.
+<urn:ex/sample_electrical_entry/00024>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:ThreePolesCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00034> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00026> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00027> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00025> ;
+  bob:currentRating <urn:ex/sample_electrical_entry/00025> ;
+  rdfs:comment "Used for Meter" ;
+  rdfs:label "CB#4" ;
+.
+<urn:ex/sample_electrical_entry/00025>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 15.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_electrical_entry/00026>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00034> ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00024> ;
+  rdfs:label "CB#4.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00027>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00024> ;
+  rdfs:label "CB#4.electricalOutlet" ;
+.
+<urn:ex/sample_electrical_entry/00028>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00005> ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00014> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00002> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00012> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  s223:hasMedium s223:AC-347V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusA" ;
+.
+<urn:ex/sample_electrical_entry/00029>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00006> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  s223:hasMedium s223:AC-347V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusB" ;
+.
+<urn:ex/sample_electrical_entry/00030>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00007> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  s223:hasMedium s223:AC-347V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusC" ;
+.
+<urn:ex/sample_electrical_entry/00031>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00008> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-AB ;
+  s223:hasMedium s223:AC-600V1Ph-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusAB" ;
+.
+<urn:ex/sample_electrical_entry/00032>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00009> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-BC ;
+  s223:hasMedium s223:AC-600V1Ph-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusBC" ;
+.
+<urn:ex/sample_electrical_entry/00033>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00010> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-CA ;
+  s223:hasMedium s223:AC-600V1Ph-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusCA" ;
+.
+<urn:ex/sample_electrical_entry/00034>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00011> ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00018> ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00022> ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00026> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00002> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00016> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00020> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00024> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusABC" ;
+.
+<urn:ex/sample_electrical_entry/00035>
+  a p223:ElectricalTransformer ;
+  a s223:Equipment ;
+  s223:connectedFrom <urn:ex/sample_electrical_entry/00020> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00057> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00058> ;
+  s223:connectedTo <urn:ex/sample_electrical_entry/00039> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00036> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00037> ;
+  rdfs:label "TX-1" ;
+.
+<urn:ex/sample_electrical_entry/00036>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_575V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00057> ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00035> ;
+  rdfs:label "TX-1.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00037>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_120V_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00058> ;
+  s223:hasMedium s223:AC-120V-240V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00035> ;
+  rdfs:label "TX-1.electricalOutlet" ;
+.
+<urn:ex/sample_electrical_entry/00038>
+  a p223:ElectricalDistributionPanel ;
+  a s223:Equipment ;
+  s223:contains <urn:ex/sample_electrical_entry/00039> ;
+  s223:contains <urn:ex/sample_electrical_entry/00045> ;
+  s223:contains <urn:ex/sample_electrical_entry/00049> ;
+  rdfs:comment "Description of my panel" ;
+  rdfs:label "My Panel" ;
+.
+<urn:ex/sample_electrical_entry/00039>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:TwoPolesMainCircuitBreaker ;
+  s223:connectedFrom <urn:ex/sample_electrical_entry/00035> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00053> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00054> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00055> ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00058> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00041> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00042> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00043> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00044> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00040> ;
+  bob:currentRating <urn:ex/sample_electrical_entry/00040> ;
+  rdfs:comment "Main breaker of panel" ;
+  rdfs:label "MainBreaker" ;
+.
+<urn:ex/sample_electrical_entry/00040>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 200.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_electrical_entry/00041>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_120V_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00058> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-AB ;
+  s223:hasMedium s223:AC-120V-240V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00039> ;
+  rdfs:label "MainBreaker.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00042>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_120V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00053> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00039> ;
+  rdfs:label "MainBreaker.electricalOutlet_LineA_Neutral" ;
+.
+<urn:ex/sample_electrical_entry/00043>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_120V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00054> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00039> ;
+  rdfs:label "MainBreaker.electricalOutlet_LineB_Neutral" ;
+.
+<urn:ex/sample_electrical_entry/00044>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00055> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-AB ;
+  s223:hasMedium s223:AC-240V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00039> ;
+  rdfs:label "MainBreaker.electricalOutlet_LineA_LineB" ;
+.
+<urn:ex/sample_electrical_entry/00045>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:SinglePoleCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00053> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00047> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00048> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00046> ;
+  bob:currentRating <urn:ex/sample_electrical_entry/00046> ;
+  rdfs:comment "Lights" ;
+  rdfs:label "CB#1" ;
+.
+<urn:ex/sample_electrical_entry/00046>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 15.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_electrical_entry/00047>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_120V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00053> ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00045> ;
+  rdfs:label "CB#1.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00048>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_120V_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00045> ;
+  rdfs:label "CB#1.electricalOutlet" ;
+.
+<urn:ex/sample_electrical_entry/00049>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:TwoPolesCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_electrical_entry/00055> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00051> ;
+  s223:hasConnectionPoint <urn:ex/sample_electrical_entry/00052> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00050> ;
+  bob:currentRating <urn:ex/sample_electrical_entry/00050> ;
+  rdfs:comment "Heater" ;
+  rdfs:label "CB#2" ;
+.
+<urn:ex/sample_electrical_entry/00050>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 20.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_electrical_entry/00051>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_electrical_entry/00055> ;
+  s223:hasMedium s223:AC-240V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00049> ;
+  rdfs:label "CB#2.electricalInlet" ;
+.
+<urn:ex/sample_electrical_entry/00052>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_240V_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-240V-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_electrical_entry/00049> ;
+  rdfs:label "CB#2.electricalOutlet" ;
+.
+<urn:ex/sample_electrical_entry/00053>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00042> ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00047> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00039> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00045> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  rdfs:label "My Panel.electricalBusA" ;
+.
+<urn:ex/sample_electrical_entry/00054>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00043> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00039> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  rdfs:label "My Panel.electricalBusB" ;
+.
+<urn:ex/sample_electrical_entry/00055>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00044> ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00051> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00039> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00049> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-AB ;
+  s223:hasMedium s223:AC-240V-60Hz ;
+  rdfs:label "My Panel.electricalBusAB" ;
+.
+<urn:ex/sample_electrical_entry/00056>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00004> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+  rdfs:comment "600V" ;
+  rdfs:label "Hydro-Québec" ;
+.
+<urn:ex/sample_electrical_entry/00057>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00023> ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00036> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00020> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00035> ;
+  s223:hasMedium s223:AC-575V-60Hz ;
+.
+<urn:ex/sample_electrical_entry/00058>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00037> ;
+  s223:connectsAt <urn:ex/sample_electrical_entry/00041> ;
+  s223:connectsFrom <urn:ex/sample_electrical_entry/00035> ;
+  s223:connectsTo <urn:ex/sample_electrical_entry/00039> ;
+  s223:hasMedium s223:AC-120V-240V-60Hz ;
+.
+<urn:ex/sample_electrical_entry/00059>
+  a p223:ElectricalMeter ;
+  a s223:Equipment ;
+  s223:contains <urn:ex/sample_electrical_entry/00093> ;
+  s223:contains <urn:ex/sample_electrical_entry/00095> ;
+  s223:contains <urn:ex/sample_electrical_entry/00097> ;
+  s223:contains <urn:ex/sample_electrical_entry/00099> ;
+  s223:contains <urn:ex/sample_electrical_entry/00101> ;
+  s223:contains <urn:ex/sample_electrical_entry/00103> ;
+  s223:contains <urn:ex/sample_electrical_entry/00105> ;
+  s223:contains <urn:ex/sample_electrical_entry/00107> ;
+  s223:contains <urn:ex/sample_electrical_entry/00109> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00060> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00061> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00062> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00063> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00064> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00065> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00066> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00067> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00068> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00069> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00070> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00071> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00072> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00073> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00074> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00075> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00076> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00077> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00078> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00079> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00080> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00081> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00082> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00083> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00084> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00085> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00086> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00087> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00088> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00089> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00090> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00091> ;
+  s223:hasProperty <urn:ex/sample_electrical_entry/00092> ;
+  rdfs:comment "Building Electrical Meter (M3)" ;
+  rdfs:label "Building Meter" ;
+.
+<urn:ex/sample_electrical_entry/00060>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricEnergy ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:Energy ;
+  qudt:hasUnit unit:KiloW-HR ;
+  rdfs:comment "Real Energy Consumption" ;
+  rdfs:label "energy" ;
+.
+<urn:ex/sample_electrical_entry/00061>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ElectricPower ;
+  qudt:hasUnit unit:KiloW ;
+  rdfs:comment "Total Real Power" ;
+  rdfs:label "kW_total" ;
+.
+<urn:ex/sample_electrical_entry/00062>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricReactivePower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ReactivePower ;
+  qudt:hasUnit unit:KiloV-A_Reactive ;
+  rdfs:comment "Total Reactive Power" ;
+  rdfs:label "kVAR_total" ;
+.
+<urn:ex/sample_electrical_entry/00063>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricApparentPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ApparentPower ;
+  qudt:hasUnit unit:KiloV-A ;
+  rdfs:comment "Total Apparent Power" ;
+  rdfs:label "kVA_total" ;
+.
+<urn:ex/sample_electrical_entry/00064>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:PowerFactor ;
+  qudt:hasQuantityKind quantitykind:PowerFactor ;
+  qudt:hasUnit unit:UNITLESS ;
+  rdfs:comment "Total Power Factor" ;
+  rdfs:label "power_factor" ;
+.
+<urn:ex/sample_electrical_entry/00065>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect p223:Dimensioned-LineLineVoltage ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:comment "Voltage L-L Average" ;
+  rdfs:label "voltage_ll_avg" ;
+.
+<urn:ex/sample_electrical_entry/00066>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect p223:Dimensioned-LineNeutralVoltage ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:comment "Voltage L-N Average" ;
+  rdfs:label "voltage_ln_avg" ;
+.
+<urn:ex/sample_electrical_entry/00067>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:comment "Current Average" ;
+  rdfs:label "current_avg" ;
+.
+<urn:ex/sample_electrical_entry/00068>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  qudt:hasQuantityKind quantitykind:ElectricPower ;
+  qudt:hasUnit unit:KiloW ;
+  rdfs:comment "Real Power Phase A" ;
+  rdfs:label "kW_A" ;
+.
+<urn:ex/sample_electrical_entry/00069>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  qudt:hasQuantityKind quantitykind:ElectricPower ;
+  qudt:hasUnit unit:KiloW ;
+  rdfs:comment "Real Power Phase B" ;
+  rdfs:label "kW_B" ;
+.
+<urn:ex/sample_electrical_entry/00070>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  qudt:hasQuantityKind quantitykind:ElectricPower ;
+  qudt:hasUnit unit:KiloW ;
+  rdfs:comment "Real Power Phase C" ;
+  rdfs:label "kW_C" ;
+.
+<urn:ex/sample_electrical_entry/00071>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:PowerFactor ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  qudt:hasQuantityKind quantitykind:PowerFactor ;
+  qudt:hasUnit unit:UNITLESS ;
+  rdfs:comment "Power Factor Phase A" ;
+  rdfs:label "power_factor_A" ;
+.
+<urn:ex/sample_electrical_entry/00072>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:PowerFactor ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  qudt:hasQuantityKind quantitykind:PowerFactor ;
+  qudt:hasUnit unit:UNITLESS ;
+  rdfs:comment "Power Factor Phase B" ;
+  rdfs:label "power_factor_B" ;
+.
+<urn:ex/sample_electrical_entry/00073>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:PowerFactor ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  qudt:hasQuantityKind quantitykind:PowerFactor ;
+  qudt:hasUnit unit:UNITLESS ;
+  rdfs:comment "Power Factor Phase C" ;
+  rdfs:label "power_factor_C" ;
+.
+<urn:ex/sample_electrical_entry/00074>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Frequency ;
+  s223:hasAspect p223:Dimensioned-NominalFrequency ;
+  qudt:hasQuantityKind quantitykind:Frequency ;
+  qudt:hasUnit unit:HZ ;
+  rdfs:comment "Frequency" ;
+  rdfs:label "frequency" ;
+.
+<urn:ex/sample_electrical_entry/00075>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricApparentEnergy ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:Energy ;
+  qudt:hasUnit unit:KiloV-A-HR ;
+  rdfs:comment "Apparent Energy Consumption" ;
+  rdfs:label "kVAh" ;
+.
+<urn:ex/sample_electrical_entry/00076>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricReactiveEnergy ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:Energy ;
+  qudt:hasUnit unit:KiloV-A_Reactive-HR ;
+  rdfs:comment "Reactive Energy Consumption" ;
+  rdfs:label "kVARh" ;
+.
+<urn:ex/sample_electrical_entry/00077>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricApparentPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  qudt:hasQuantityKind quantitykind:ApparentPower ;
+  qudt:hasUnit unit:KiloV-A ;
+  rdfs:comment "Apparent Power Phase A" ;
+  rdfs:label "kVA_A" ;
+.
+<urn:ex/sample_electrical_entry/00078>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricApparentPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  qudt:hasQuantityKind quantitykind:ApparentPower ;
+  qudt:hasUnit unit:KiloV-A ;
+  rdfs:comment "Apparent Power Phase B" ;
+  rdfs:label "kVA_B" ;
+.
+<urn:ex/sample_electrical_entry/00079>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricApparentPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  qudt:hasQuantityKind quantitykind:ApparentPower ;
+  qudt:hasUnit unit:KiloV-A ;
+  rdfs:comment "Apparent Power Phase C" ;
+  rdfs:label "kVA_C" ;
+.
+<urn:ex/sample_electrical_entry/00080>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricReactivePower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  qudt:hasQuantityKind quantitykind:ReactivePower ;
+  qudt:hasUnit unit:KiloV-A_Reactive ;
+  rdfs:comment "Reactive Power Phase A" ;
+  rdfs:label "kVAR_A" ;
+.
+<urn:ex/sample_electrical_entry/00081>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricReactivePower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  qudt:hasQuantityKind quantitykind:ReactivePower ;
+  qudt:hasUnit unit:KiloV-A_Reactive ;
+  rdfs:comment "Reactive Power Phase B" ;
+  rdfs:label "kVAR_B" ;
+.
+<urn:ex/sample_electrical_entry/00082>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricReactivePower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  qudt:hasQuantityKind quantitykind:ReactivePower ;
+  qudt:hasUnit unit:KiloV-A_Reactive ;
+  rdfs:comment "Reactive Power Phase C" ;
+  rdfs:label "kVAR_C" ;
+.
+<urn:ex/sample_electrical_entry/00083>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ElectricPower ;
+  qudt:hasUnit unit:KiloW ;
+  rdfs:comment "Total Real Power Present Demand" ;
+  rdfs:label "kW_present_demand" ;
+.
+<urn:ex/sample_electrical_entry/00084>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricReactivePower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ReactivePower ;
+  qudt:hasUnit unit:KiloV-A_Reactive ;
+  rdfs:comment "Total Reactive Power Present Demand" ;
+  rdfs:label "kVAR_present_demand" ;
+.
+<urn:ex/sample_electrical_entry/00085>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricApparentPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ApparentPower ;
+  qudt:hasUnit unit:KiloV-A ;
+  rdfs:comment "Total Apparent Power Present Demand" ;
+  rdfs:label "kVA_present_demand" ;
+.
+<urn:ex/sample_electrical_entry/00086>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ElectricPower ;
+  qudt:hasUnit unit:KiloW ;
+  rdfs:comment "Total Real Power Maximum Demand" ;
+  rdfs:label "kW_max_demand" ;
+.
+<urn:ex/sample_electrical_entry/00087>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricReactivePower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ReactivePower ;
+  qudt:hasUnit unit:KiloV-A_Reactive ;
+  rdfs:comment "Total Reactive Power Maximum Demand" ;
+  rdfs:label "kVAR_max_demand" ;
+.
+<urn:ex/sample_electrical_entry/00088>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricApparentPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ApparentPower ;
+  qudt:hasUnit unit:KiloV-A ;
+  rdfs:comment "Total Apparent Power Maximum Demand" ;
+  rdfs:label "kVA_max_demand" ;
+.
+<urn:ex/sample_electrical_entry/00089>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricEnergy ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  qudt:hasQuantityKind quantitykind:Energy ;
+  qudt:hasUnit unit:KiloW-HR ;
+  rdfs:comment "Real Energy Consumption Phase A" ;
+  rdfs:label "kWh_A" ;
+.
+<urn:ex/sample_electrical_entry/00090>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricEnergy ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  qudt:hasQuantityKind quantitykind:Energy ;
+  qudt:hasUnit unit:KiloW-HR ;
+  rdfs:comment "Real Energy Consumption Phase B" ;
+  rdfs:label "kWh_B" ;
+.
+<urn:ex/sample_electrical_entry/00091>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricEnergy ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  qudt:hasQuantityKind quantitykind:Energy ;
+  qudt:hasUnit unit:KiloW-HR ;
+  rdfs:comment "Real Energy Consumption Phase C" ;
+  rdfs:label "kWh_C" ;
+.
+<urn:ex/sample_electrical_entry/00092>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:ElectricPower ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  qudt:hasQuantityKind quantitykind:ElectricPower ;
+  qudt:hasUnit unit:KiloW ;
+  rdfs:comment "Maximum Power of Equipment" ;
+  rdfs:label "max_power" ;
+.
+<urn:ex/sample_electrical_entry/00093>
+  a p223:VoltageSensor ;
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00024> ;
+  s223:observes <urn:ex/sample_electrical_entry/00094> ;
+  rdfs:comment "Voltage reading A-B" ;
+  rdfs:label "VoltageAB" ;
+.
+<urn:ex/sample_electrical_entry/00094>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-AB ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:label "VoltageAB.Voltage" ;
+.
+<urn:ex/sample_electrical_entry/00095>
+  a p223:VoltageSensor ;
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00024> ;
+  s223:observes <urn:ex/sample_electrical_entry/00096> ;
+  rdfs:comment "Voltage reading C-A" ;
+  rdfs:label "VoltageAC" ;
+.
+<urn:ex/sample_electrical_entry/00096>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-CA ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:label "VoltageAC.Voltage" ;
+.
+<urn:ex/sample_electrical_entry/00097>
+  a p223:VoltageSensor ;
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00024> ;
+  s223:observes <urn:ex/sample_electrical_entry/00098> ;
+  rdfs:comment "Voltage reading B-C" ;
+  rdfs:label "VoltageBC" ;
+.
+<urn:ex/sample_electrical_entry/00098>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-BC ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:label "VoltageBC.Voltage" ;
+.
+<urn:ex/sample_electrical_entry/00099>
+  a p223:VoltageSensor ;
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00024> ;
+  s223:observes <urn:ex/sample_electrical_entry/00100> ;
+  rdfs:comment "Voltage reading A-N" ;
+  rdfs:label "VoltageAN" ;
+.
+<urn:ex/sample_electrical_entry/00100>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:label "VoltageAN.Voltage" ;
+.
+<urn:ex/sample_electrical_entry/00101>
+  a p223:VoltageSensor ;
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00024> ;
+  s223:observes <urn:ex/sample_electrical_entry/00102> ;
+  rdfs:comment "Voltage reading B-N" ;
+  rdfs:label "VoltageBN" ;
+.
+<urn:ex/sample_electrical_entry/00102>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:label "VoltageBN.Voltage" ;
+.
+<urn:ex/sample_electrical_entry/00103>
+  a p223:VoltageSensor ;
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00024> ;
+  s223:observes <urn:ex/sample_electrical_entry/00104> ;
+  rdfs:comment "Voltage reading C-N" ;
+  rdfs:label "VoltageCN" ;
+.
+<urn:ex/sample_electrical_entry/00104>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Volts ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:Voltage ;
+  qudt:hasUnit unit:V ;
+  rdfs:label "VoltageCN.Voltage" ;
+.
+<urn:ex/sample_electrical_entry/00105>
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00004> ;
+  s223:observes <urn:ex/sample_electrical_entry/00106> ;
+  rdfs:comment "Current reading of phase A" ;
+  rdfs:label "CurrentPhaseA" ;
+.
+<urn:ex/sample_electrical_entry/00106>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "CurrentPhaseA.Amps" ;
+.
+<urn:ex/sample_electrical_entry/00107>
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00004> ;
+  s223:observes <urn:ex/sample_electrical_entry/00108> ;
+  rdfs:comment "Current reading of phase B" ;
+  rdfs:label "CurrentPhaseB" ;
+.
+<urn:ex/sample_electrical_entry/00108>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "CurrentPhaseB.Amps" ;
+.
+<urn:ex/sample_electrical_entry/00109>
+  a s223:Equipment ;
+  a s223:Sensor ;
+  p223:hasObservationLocation <urn:ex/sample_electrical_entry/00004> ;
+  s223:observes <urn:ex/sample_electrical_entry/00110> ;
+  rdfs:comment "Current reading of phase C" ;
+  rdfs:label "CurrentPhaseC" ;
+.
+<urn:ex/sample_electrical_entry/00110>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  s223:ofMedium s223:AC-575V-60Hz ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "CurrentPhaseC.Amps" ;
+.

@@ -1,0 +1,367 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/sample/sample_highLegDelta_electrical_entry
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix bob: <http://data.ashrae.org/standard223/si-builder#> .
+@prefix ex1: <urn:ex/sample_highLegDelta_electrical_entry/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix p223: <http://data.ashrae.org/proposal-to-standard223#> .
+@prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/sample_highLegDelta_electrical_entry>
+  a owl:Ontology ;
+  rdfs:isDefinedBy <http://data.ashrae.org/standard223/1.0/sample/sample_highLegDelta_electrical_entry> ;
+  rdfs:label "sample_highLegDelta_electrical_entry" ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+<http://data.ashrae.org/standard223/1.0/sample/sample_highLegDelta_electrical_entry>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00001>
+  a p223:ElectricalDistributionPanel ;
+  a s223:Equipment ;
+  s223:contains <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:contains <urn:ex/sample_highLegDelta_electrical_entry/00012> ;
+  s223:contains <urn:ex/sample_highLegDelta_electrical_entry/00016> ;
+  s223:contains <urn:ex/sample_highLegDelta_electrical_entry/00020> ;
+  s223:contains <urn:ex/sample_highLegDelta_electrical_entry/00024> ;
+  rdfs:comment "Main Entry Panel of Building using High Leg Delta Configuration" ;
+  rdfs:label "Main Entry Panel" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00002>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:ThreePolesMainCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00028> ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00029> ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00030> ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00031> ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00032> ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00033> ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00034> ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00035> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00004> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00005> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00006> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00007> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00008> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00009> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00010> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00011> ;
+  s223:hasProperty <urn:ex/sample_highLegDelta_electrical_entry/00003> ;
+  bob:currentRating <urn:ex/sample_highLegDelta_electrical_entry/00003> ;
+  rdfs:comment "Main breaker of panel" ;
+  rdfs:label "MainBreaker" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00003>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 400.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00004>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_120V_208V_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00035> ;
+  s223:hasMedium s223:AC-240V-208V-120V-3Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalInlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00005>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_120V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00028> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  s223:hasMedium s223:AC-120V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletA" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00006>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_120V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00029> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  s223:hasMedium s223:AC-120V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletB" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00007>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_208V1Ph_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00030> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  s223:hasMedium s223:AC-208V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletC" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00008>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00031> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-AB ;
+  s223:hasMedium s223:AC-240V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletAB" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00009>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00032> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-BC ;
+  s223:hasMedium s223:AC-240V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletBC" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00010>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00033> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-CA ;
+  s223:hasMedium s223:AC-240V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletCA" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00011>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_240V3Ph_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00034> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  s223:hasMedium s223:AC-240V-3Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  rdfs:label "MainBreaker.electricalOutletABC" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00012>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:SinglePoleCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00028> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00014> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00015> ;
+  s223:hasProperty <urn:ex/sample_highLegDelta_electrical_entry/00013> ;
+  bob:currentRating <urn:ex/sample_highLegDelta_electrical_entry/00013> ;
+  rdfs:comment "120V 1 Hot Neutral" ;
+  rdfs:label "CB#1" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00013>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 15.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00014>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_120V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00028> ;
+  s223:hasMedium s223:AC-120V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00012> ;
+  rdfs:label "CB#1.electricalInlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00015>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_120V_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-120V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00012> ;
+  rdfs:label "CB#1.electricalOutlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00016>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:ThreePolesCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00034> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00018> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00019> ;
+  s223:hasProperty <urn:ex/sample_highLegDelta_electrical_entry/00017> ;
+  bob:currentRating <urn:ex/sample_highLegDelta_electrical_entry/00017> ;
+  rdfs:comment "240V 3 phases" ;
+  rdfs:label "CB#2" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00017>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 40.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00018>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_240V3Ph_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00034> ;
+  s223:hasMedium s223:AC-240V-3Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00016> ;
+  rdfs:label "CB#2.electricalInlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00019>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_240V3Ph_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-240V-3Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00016> ;
+  rdfs:label "CB#2.electricalOutlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00020>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:TwoPolesCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00031> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00022> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00023> ;
+  s223:hasProperty <urn:ex/sample_highLegDelta_electrical_entry/00021> ;
+  bob:currentRating <urn:ex/sample_highLegDelta_electrical_entry/00021> ;
+  rdfs:comment "2 Hot" ;
+  rdfs:label "CB#3" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00021>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 100.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00022>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_240V_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00031> ;
+  s223:hasMedium s223:AC-240V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00020> ;
+  rdfs:label "CB#3.electricalInlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00023>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_240V_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-240V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00020> ;
+  rdfs:label "CB#3.electricalOutlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00024>
+  a p223:ElectricalCircuitBreaker ;
+  a s223:Equipment ;
+  a bob:SinglePoleCircuitBreaker ;
+  s223:connectedThrough <urn:ex/sample_highLegDelta_electrical_entry/00030> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00026> ;
+  s223:hasConnectionPoint <urn:ex/sample_highLegDelta_electrical_entry/00027> ;
+  s223:hasProperty <urn:ex/sample_highLegDelta_electrical_entry/00025> ;
+  bob:currentRating <urn:ex/sample_highLegDelta_electrical_entry/00025> ;
+  rdfs:comment "High Leg Neutral" ;
+  rdfs:label "CB#4" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00025>
+  a s223:ObservableProperty ;
+  a s223:Property ;
+  a s223:QuantifiableObservableProperty ;
+  a s223:QuantifiableProperty ;
+  a bob:Amps ;
+  s223:hasValue 15.0 ;
+  qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+  qudt:hasUnit unit:A ;
+  rdfs:label "Current rating of breaker" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00026>
+  a s223:InletConnectionPoint ;
+  a bob:Electricity_208V1Ph_60HzConnectionPoint ;
+  s223:connectsThrough <urn:ex/sample_highLegDelta_electrical_entry/00030> ;
+  s223:hasMedium s223:AC-208V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00024> ;
+  rdfs:label "CB#4.electricalInlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00027>
+  a s223:OutletConnectionPoint ;
+  a bob:Electricity_208V1Ph_60HzConnectionPoint ;
+  s223:hasMedium s223:AC-208V-1Ph-60Hz ;
+  s223:isConnectionPointOf <urn:ex/sample_highLegDelta_electrical_entry/00024> ;
+  rdfs:label "CB#4.electricalOutlet" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00028>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00005> ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00014> ;
+  s223:connectsFrom <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:connectsTo <urn:ex/sample_highLegDelta_electrical_entry/00012> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-A ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusA" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00029>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00006> ;
+  s223:connectsFrom <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-B ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusB" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00030>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00007> ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00026> ;
+  s223:connectsFrom <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:connectsTo <urn:ex/sample_highLegDelta_electrical_entry/00024> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-C ;
+  s223:hasMedium s223:AC-208V1Ph-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusC" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00031>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00008> ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00022> ;
+  s223:connectsFrom <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:connectsTo <urn:ex/sample_highLegDelta_electrical_entry/00020> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-AB ;
+  s223:hasMedium s223:AC-240V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusAB" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00032>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00009> ;
+  s223:connectsFrom <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-BC ;
+  s223:hasMedium s223:AC-240V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusBC" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00033>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00010> ;
+  s223:connectsFrom <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-CA ;
+  s223:hasMedium s223:AC-240V-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusCA" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00034>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00011> ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00018> ;
+  s223:connectsFrom <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:connectsTo <urn:ex/sample_highLegDelta_electrical_entry/00016> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  s223:hasMedium s223:AC-240V3Ph-60Hz ;
+  rdfs:label "Main Entry Panel.electricalBusABC" ;
+.
+<urn:ex/sample_highLegDelta_electrical_entry/00035>
+  a s223:Connection ;
+  s223:connectsAt <urn:ex/sample_highLegDelta_electrical_entry/00004> ;
+  s223:connectsTo <urn:ex/sample_highLegDelta_electrical_entry/00002> ;
+  s223:hasAspect s223:ElectricalPhaseIdentifier-ABC ;
+  s223:hasMedium s223:AC-120V-208V-240V-60Hz ;
+  rdfs:label "HighLegDeltaTransfoOutput" ;
+.

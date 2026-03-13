@@ -1,0 +1,292 @@
+# baseURI: http://data.ashrae.org/standard223/data/CO2
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# imports: http://IAQOntology/IAQcore
+# prefix: co2
+
+@prefix IAQ: <http://IAQOntology/IAQcore#> .
+@prefix building: <http://bimerr.iot.linkeddata.es/def/building#> .
+@prefix co2: <http://data.ashrae.org/standard223/data/CO2#> .
+@prefix occupancy-profile: <http://bimerr.iot.linkeddata.es/def/occupancy-profile#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rec-building: <https://w3id.org/rec/building/> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+IAQ:Interval
+  rdfs:subClassOf time:TemporalEntity ;
+.
+s223:ConcentrationSensor
+  sh:property [
+      sh:path s223:hasMeasurementInterval ;
+      sh:class IAQ:Interval ;
+    ] ;
+.
+s223:PhysicalSpace
+  sh:property [
+      sh:path IAQ:hasExpectedCO2Level ;
+      sh:datatype xsd:integer ;
+    ] ;
+  sh:property [
+      sh:path IAQ:hasMeasuredCO2Level ;
+      sh:datatype xsd:integer ;
+    ] ;
+  sh:property [
+      sh:path IAQ:hasOccupancyDensity ;
+      sh:datatype xsd:integer ;
+    ] ;
+  sh:property [
+      sh:path IAQ:hasVentilationPerPerson ;
+      sh:datatype xsd:decimal ;
+    ] ;
+  sh:property [
+      sh:path building:hasSpaceType ;
+      sh:class s223:EnumerationValue ;
+    ] ;
+  sh:property [
+      sh:path s223:hasCeilingHeight ;
+      sh:class s223:QuantifiableProperty ;
+    ] ;
+  sh:property [
+      sh:path s223:hasFloorArea ;
+      sh:class s223:QuantifiableProperty ;
+    ] ;
+.
+s223:hasExpectedCO2Level
+  a rdf:Property ;
+  rdfs:label "has expected CO2Level" ;
+.
+s223:hasFloorArea
+  a rdf:Property ;
+  rdfs:label "has floor area" ;
+.
+s223:hasMeasuredCO2Level
+  a rdf:Property ;
+  rdfs:label "has measured CO2Level" ;
+.
+s223:hasMeasurementInterval
+  a rdf:Property ;
+  rdfs:label "has measurement interval" ;
+.
+s223:hasSpaceType
+  a rdf:Property ;
+  rdfs:label "has space type" ;
+.
+<http://data.ashrae.org/standard223/data/CO2>
+  a owl:Ontology ;
+  owl:imports <http://IAQOntology/IAQcore> ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+co2:Auditorim1
+  a building:Space ;
+  a s223:PhysicalSpace ;
+  a rec-building:Auditorium ;
+  IAQ:hasExpectedCO2Level 1500 ;
+  s223:encloses co2:HVACSpace_1 ;
+  s223:encloses co2:HVACSpace_2 ;
+  s223:hasMeasuredCO2Level "35" ;
+  s223:hasSpaceType <http://data.ashrae.org/standard223/1.0/vocab/enumeration#SpaceType-Auditorium> ;
+  rdfs:label "Auditorim1" ;
+.
+co2:CO2Level1Auditorium
+  a s223:QuantifiableObservableProperty ;
+  s223:ofSubstance <http://data.ashrae.org/standard223/1.0/vocab/enumeration#Constituent-CO2> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PPM> ;
+  rdfs:label "CO2Level1 auditorium" ;
+.
+co2:CO2Level2Auditorium
+  a s223:QuantifiableObservableProperty ;
+  s223:hasValue "1000"^^xsd:decimal ;
+  s223:ofSubstance <http://data.ashrae.org/standard223/1.0/vocab/enumeration#Constituent-CO2> ;
+  rdfs:label "CO2Level2 auditorium" ;
+.
+co2:CO2LevelClassroom
+  a s223:QuantifiableObservableProperty ;
+  s223:hasValue "1300"^^xsd:decimal ;
+  s223:ofSubstance <http://data.ashrae.org/standard223/1.0/vocab/enumeration#Constituent-CO2> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PPM> ;
+  rdfs:label "CO2Level classroom" ;
+.
+co2:CO2Sensor1
+  a s223:ConcentrationSensor ;
+  s223:hasObservationLocation co2:ClassRoom1 ;
+  s223:observes co2:CO2LevelClassroom ;
+  rdfs:label "CO2Sensor1" ;
+.
+co2:CO2Sensor2
+  a s223:ConcentrationSensor ;
+  s223:hasObservationLocation co2:Auditorim1 ;
+  s223:observes co2:CO2Level1Auditorium ;
+  rdfs:label "CO2Sensor2" ;
+.
+co2:CO2Sensor3
+  a s223:ConcentrationSensor ;
+  s223:hasObservationLocation co2:Auditorim1 ;
+  s223:observes co2:CO2Level2Auditorium ;
+  rdfs:label "CO2Sensor3" ;
+.
+co2:ClassRoom1
+  a building:Space ;
+  a s223:PhysicalSpace ;
+  a rec-building:Classroom ;
+  IAQ:hasExpectedCO2Level 1000 ;
+  IAQ:hasMeasuredCO2Level 1300 ;
+  occupancy-profile:maxOccupants 50 ;
+  s223:hasCeilingHeight co2:Classroom1CeilingHeight ;
+  s223:hasFloorArea co2:Classroom1FloorArea ;
+  s223:hasSpaceType rec-building:Classroom ;
+  rdfs:label "Class room1" ;
+.
+co2:Classroom1CeilingHeight
+  a s223:QuantifiableProperty ;
+  s223:hasValue "3"^^xsd:decimal ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/M> ;
+  rdfs:label "Classroom1Ceiling height" ;
+.
+co2:Classroom1FloorArea
+  a s223:QuantifiableProperty ;
+  s223:hasValue "100"^^xsd:decimal ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/M2> ;
+  rdfs:label "Classroom1Floor area" ;
+.
+co2:HVACSpace_1
+  a s223:DomainSpace ;
+  s223:hasDomain <http://data.ashrae.org/standard223/1.0/vocab/enumeration#Domain-HVAC> ;
+  rdfs:label "HVACSpace 1" ;
+.
+co2:HVACSpace_2
+  a s223:DomainSpace ;
+  s223:hasDomain <http://data.ashrae.org/standard223/1.0/vocab/domain#HVAC> ;
+  rdfs:label "HVACSpace 2" ;
+.
+co2:HVACSpace_3
+  a s223:DomainSpace ;
+  s223:hasDomain <http://data.ashrae.org/standard223/1.0/vocab/domain#HVAC> ;
+  rdfs:label "HVACSpace 3" ;
+.
+co2:InletConnectionPoint_1
+  a s223:InletConnectionPoint ;
+  rdfs:label "Inlet connection point 1" ;
+.
+co2:InletConnectionPoint_2
+  a s223:InletConnectionPoint ;
+  rdfs:label "Inlet connection point 2" ;
+.
+co2:Instant_1
+  a time:Instant ;
+  rdfs:label "Instant 1" ;
+  time:inXSDDateTime "2021-03-23T08:20:15"^^xsd:dateTime ;
+.
+co2:Instant_2
+  a time:Instant ;
+  rdfs:label "Instant 2" ;
+  time:inXSDDateTime "2021-03-23T18:20:00"^^xsd:dateTime ;
+.
+co2:Junction_1
+  a s223:Junction ;
+  s223:hasConnectionPoint co2:InletConnectionPoint_2 ;
+  s223:hasConnectionPoint co2:OutletConnectionPoint_1 ;
+  rdfs:label "Junction 1" ;
+.
+co2:Occupant1
+  a IAQ:Occupant ;
+  IAQ:hasActivityLevel 2 ;
+  IAQ:hasAgeGroup "1-40" ;
+  IAQ:hasBodyMass co2:Occupant1BodyMass ;
+  IAQ:hasInterval co2:ScheduleOcc1 ;
+  occupancy-profile:isInsideSpace co2:ClassRoom1 ;
+  occupancy-profile:occupantAge 30 ;
+  occupancy-profile:occupantGender "Female" ;
+  rdfs:label "Occupant1" ;
+.
+co2:Occupant1BodyMass
+  a s223:QuantifiableProperty ;
+  s223:hasValue "78"^^xsd:decimal ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/KiloGM> ;
+  rdfs:label "Occupant1Body mass" ;
+.
+co2:Occupant2
+  a IAQ:Occupant ;
+  IAQ:hasActivityLevel 2 ;
+  IAQ:hasAgeGroup "30-40" ;
+  IAQ:hasBodyMass co2:Occupant2BodyMass ;
+  IAQ:hasInterval co2:ScheduleOcc2 ;
+  occupancy-profile:isInsideSpace co2:Auditorim1 ;
+  occupancy-profile:isInsideSpace co2:ClassRoom1 ;
+  occupancy-profile:occupantAge 30 ;
+  occupancy-profile:occupantGender "Male" ;
+  rdfs:label "Occupant2" ;
+.
+co2:Occupant2BodyMass
+  a s223:QuantifiableProperty ;
+  s223:hasValue "50"^^xsd:decimal ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/KiloGM> ;
+  rdfs:label "Occupant2Body mass" ;
+.
+co2:OccupantSpace_1
+  a s223:DomainSpace ;
+  s223:hasDomain <http://data.ashrae.org/standard223/1.0/vocab/domain#Occupancy> ;
+  rdfs:label "Occupant space 1" ;
+.
+co2:OccupantSpace_2
+  a s223:DomainSpace ;
+  s223:hasDomain <http://data.ashrae.org/standard223/1.0/vocab/domain#Occupancy> ;
+  rdfs:label "Occupant space 2" ;
+.
+co2:OutletConnectionPoint_1
+  a s223:OutletConnectionPoint ;
+  rdfs:label "Outlet connection point 1" ;
+.
+co2:ScheduleOcc1
+  a IAQ:Interval ;
+  IAQ:isIntervalOf co2:Occupant1 ;
+  IAQ:isRelatedToSpace co2:ClassRoom1 ;
+  rdfs:label "Schedule occ1" ;
+  time:hasBeginning co2:Instant_1 ;
+  time:hasEnd co2:Instant_2 ;
+.
+co2:ScheduleOcc2
+  a IAQ:Interval ;
+  IAQ:begins "2022-01-05T12:00:00"^^xsd:dateTime ;
+  IAQ:ends "2022-01-05T16:00:00"^^xsd:dateTime ;
+  IAQ:isIntervalOf co2:Occupant2 ;
+  IAQ:isRelatedToSpace co2:ClassRoom1 ;
+  rdfs:label "Schedule occ2" ;
+  time:hasBeginning co2:Instant_1 ;
+  time:hasEnd co2:Instant_2 ;
+.
+co2:ScheduleOcc3
+  a IAQ:Interval ;
+  IAQ:begins "2022-01-06T08:00:00"^^xsd:dateTime ;
+  IAQ:ends "2022-01-06T16:00:00"^^xsd:dateTime ;
+  IAQ:isIntervalOf co2:Occupant1 ;
+  IAQ:isRelatedToSpace co2:Auditorim1 ;
+  rdfs:label "Schedule occ3" ;
+.
+co2:ScheduleOcc4
+  a IAQ:Interval ;
+  IAQ:begins "2022-01-06T08:00:00"^^xsd:dateTime ;
+  IAQ:ends "2022-01-06T16:00:00"^^xsd:dateTime ;
+  IAQ:isIntervalOf co2:Occupant2 ;
+  IAQ:isRelatedToSpace co2:Auditorim1 ;
+  rdfs:label "Schedule occ4" ;
+.
+co2:Zone_1
+  a s223:Zone ;
+  s223:contains co2:HVACSpace_1 ;
+  s223:contains co2:HVACSpace_2 ;
+  rdfs:label "Zone 1" ;
+.
+co2:hasTimeMerit
+  a rdf:Property ;
+  rdfs:label "has time merit" ;
+.
+[
+  sh:path IAQ:hasVentilationPerArea ;
+  sh:datatype xsd:decimal ;
+].

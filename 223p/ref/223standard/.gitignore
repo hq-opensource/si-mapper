@@ -1,0 +1,29 @@
+# MacOS cruft
+.DS_Store
+
+# Byte-compiled / optimized / DLL python files
+__pycache__/
+*.py[cod]
+
+# Eclipse stuff
+.project
+
+# TopBraid stuff
+*.tbc
+*.diagrams
+
+# Pyenv
+.python-version
+.ontoenv
+
+#jupyter notebook checkpoints
+.ipynb_checkpoints
+
+#publication stuff
+*.docx
+223p_publication.md
+#index.html
+full-223p.ttl
+
+
+

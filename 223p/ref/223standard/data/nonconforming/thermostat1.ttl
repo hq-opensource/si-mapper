@@ -1,0 +1,343 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/thermostat1
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix t1: <http://data.ashrae.org/standard223/data/thermostat1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/thermostat1>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+t1:Blue
+  a t1:WeirdKind ;
+  rdfs:label "Blue" ;
+.
+t1:CleaningDay
+  a s223:EnumeratedActuatableProperty ;
+  s223:hasEnumerationKind s223:DayOfWeek-Weekday ;
+  s223:hasValue s223:Weekday-Thursday ;
+  rdfs:label "Cleaning day" ;
+.
+t1:ConnectionPoint_1
+  a s223:InletConnectionPoint ;
+  s223:cnx t1:Junction_1 ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Connection point 1" ;
+.
+t1:ConnectionPoint_2
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Connection point 2" ;
+.
+t1:DomainSpace_1
+  a s223:DomainSpace ;
+  s223:hasDomain s223:Domain-Networking ;
+  s223:hasProperty t1:Room1Temperature ;
+  rdfs:label "Domain space 1" ;
+.
+t1:DomainSpace_2
+  a s223:DomainSpace ;
+  s223:hasDomain s223:Domain-HVAC ;
+  rdfs:label "Domain space 2" ;
+.
+t1:DomainSpace_3
+  a s223:DomainSpace ;
+  s223:hasDomain s223:Domain-HVAC ;
+  s223:hasProperty t1:HallwayTemperature ;
+  rdfs:label "Domain space 3" ;
+.
+t1:DomainSpace_4
+  a s223:DomainSpace ;
+  s223:hasDomain s223:Domain-Lighting ;
+  rdfs:label "Domain space 4" ;
+.
+t1:DomainSpace_5
+  a s223:DomainSpace ;
+  s223:hasDomain s223:Domain-HVAC ;
+  rdfs:label "Domain space 5" ;
+.
+t1:Duct2COExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "4"^^xsd:nonNegativeInteger ;
+  rdfs:label "Duct2COExternalSource" ;
+.
+t1:Duct2SootExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "5"^^xsd:nonNegativeInteger ;
+  rdfs:label "Duct2Soot external source" ;
+.
+t1:Duct2TemperatureExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "2"^^xsd:nonNegativeInteger ;
+  rdfs:label "Duct2TemperatureExternalSource" ;
+.
+t1:Duct2_CO
+  a s223:QuantifiableObservableProperty ;
+  s223:hasExternalReference t1:Duct2COExternalSource ;
+  s223:ofMedium s223:Fluid-Air ;
+  s223:ofSubstance s223:Constituent-CO ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/MoleFraction> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PPM> ;
+  rdfs:label "Duct2 CO" ;
+.
+t1:Duct2_SootTemperature
+  a s223:QuantifiableObservableProperty ;
+  s223:hasExternalReference t1:Duct2SootExternalSource ;
+  s223:ofMedium s223:Fluid-Air ;
+  s223:ofSubstance s223:Substance-Soot ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Duct2 Soot temperature" ;
+.
+t1:Duct2_Temperature
+  a s223:QuantifiableObservableProperty ;
+  s223:hasExternalReference t1:Duct2TemperatureExternalSource ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Duct2 Temperature" ;
+.
+t1:Duct_2
+  a s223:Duct ;
+  s223:cnx t1:ConnectionPoint_2 ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Duct 2" ;
+.
+t1:Equipment_2
+  a s223:Equipment ;
+  s223:cnx t1:ConnectionPoint_2 ;
+  rdfs:label "Equipment 2" ;
+.
+t1:GasSensor2
+  a s223:ConcentrationSensor ;
+  s223:hasObservationLocation t1:ConnectionPoint_1 ;
+  s223:observes t1:Duct2_CO ;
+  rdfs:label "Gas sensor2" ;
+.
+t1:Green
+  a t1:WeirdKind ;
+  rdfs:label "Green" ;
+.
+t1:HallwaySensor
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation t1:ConnectionPoint_1 ;
+  s223:observes t1:HallwayTemperature ;
+  rdfs:label "Hallway sensor" ;
+.
+t1:HallwayTemperature
+  a s223:QuantifiableObservableProperty ;
+  s223:hasValue 26.0 ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "Hallway temperature" ;
+.
+t1:Junction_1
+  a s223:Junction ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Junction 1" ;
+.
+t1:OperatingMode-CoolOnly
+  a s223:Class ;
+  a t1:OperatingMode-CoolOnly ;
+  a sh:NodeShape ;
+  rdfs:comment "A proprietary extension enumeration kind." ;
+  rdfs:label "OperatingMode-CoolOnly" ;
+  rdfs:subClassOf s223:Aspect-OperatingMode ;
+.
+t1:OperatingMode-HeatOnly
+  a s223:Class ;
+  a t1:OperatingMode-HeatOnly ;
+  a sh:NodeShape ;
+  rdfs:comment "A proprietary extension enumeration kind." ;
+  rdfs:label "OperatingMode-HeatOnly" ;
+  rdfs:subClassOf s223:Aspect-OperatingMode ;
+.
+t1:Room1ExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "8"^^xsd:nonNegativeInteger ;
+  rdfs:label "Room1External source" ;
+.
+t1:Room1Sensor
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation t1:ConnectionPoint_1 ;
+  s223:observes t1:Room1Temperature ;
+  rdfs:label "Room1Sensor" ;
+.
+t1:Room1Setpoint1
+  a s223:QuantifiableActuatableProperty ;
+  s223:hasAspect s223:DayOfWeek-Weekday ;
+  s223:hasAspect s223:Fluid-Air ;
+  s223:hasAspect s223:Occupancy-Occupied ;
+  s223:hasAspect t1:OperatingMode-HeatOnly ;
+  s223:hasDeadband t1:Room1Setpoint1Deadband ;
+  s223:hasExternalReference t1:Setpoint1ExternalSource ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  qudt:isDeltaQuantity false ;
+  rdfs:label "Room1Setpoint1" ;
+.
+t1:Room1Setpoint1Deadband
+  a s223:QuantifiableProperty ;
+  s223:hasAspect s223:DayOfWeek-Weekday ;
+  s223:hasAspect s223:Fluid-Air ;
+  s223:hasAspect s223:Occupancy-Occupied ;
+  s223:hasAspect t1:OperatingMode-HeatOnly ;
+  s223:hasValue "4"^^xsd:decimal ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  qudt:isDeltaQuantity false ;
+  rdfs:label "Room1Setpoint1Deadband" ;
+.
+t1:Room1Setpoint2
+  a s223:QuantifiableActuatableProperty ;
+  s223:hasAspect t1:OperatingMode-CoolOnly ;
+  s223:hasExternalReference t1:Setpoint2ExternalSource ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  qudt:isDeltaQuantity false ;
+  rdfs:label "Room1Setpoint2" ;
+.
+t1:Room1Setpoint3
+  a s223:QuantifiableActuatableProperty ;
+  s223:hasAspect s223:Occupancy-Unoccupied ;
+  s223:hasAspect t1:OperatingMode-HeatOnly ;
+  s223:hasExternalReference t1:Setpoint3ExternalSource ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  qudt:isDeltaQuantity false ;
+  rdfs:label "Room1Setpoint3" ;
+.
+t1:Room1Setpoint4
+  a s223:QuantifiableActuatableProperty ;
+  s223:hasAspect s223:Occupancy-Unoccupied ;
+  s223:hasAspect t1:OperatingMode-CoolOnly ;
+  s223:hasExternalReference t1:Setpoint4ExternalSource ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  qudt:isDeltaQuantity false ;
+  rdfs:label "Room1Setpoint4" ;
+.
+t1:Room1Setpoint5
+  a s223:QuantifiableActuatableProperty ;
+  s223:hasExternalReference t1:Setpoint5ExternalSource ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Room1Setpoint5" ;
+.
+t1:Room1Temperature
+  a s223:QuantifiableObservableProperty ;
+  s223:hasExternalReference t1:Room1ExternalSource ;
+  s223:hasSetpoint t1:Room1Setpoint1 ;
+  s223:hasSetpoint t1:Room1Setpoint2 ;
+  s223:hasSetpoint t1:Room1Setpoint3 ;
+  s223:hasSetpoint t1:Room1Setpoint4 ;
+  s223:hasSetpoint t1:Room1Setpoint5 ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Room1Temperature" ;
+.
+t1:Setpoint1ExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "9"^^xsd:nonNegativeInteger ;
+  rdfs:label "Setpoint1External source" ;
+.
+t1:Setpoint2ExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "6"^^xsd:nonNegativeInteger ;
+  rdfs:label "Setpoint2External source" ;
+.
+t1:Setpoint3ExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "1"^^xsd:nonNegativeInteger ;
+  rdfs:label "Setpoint3External source" ;
+.
+t1:Setpoint4ExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "3"^^xsd:nonNegativeInteger ;
+  rdfs:label "Setpoint4External source" ;
+.
+t1:Setpoint5ExternalSource
+  a s223:BACnetExternalReference ;
+  bacnet:priority-for-writing "7"^^xsd:nonNegativeInteger ;
+  rdfs:label "Setpoint5External source" ;
+.
+t1:System_1
+  a s223:System ;
+  s223:hasMember t1:Junction_1 ;
+  s223:hasMember t1:VirtualSensor1 ;
+  rdfs:label "System 1" ;
+.
+t1:System_2
+  a s223:System ;
+  s223:hasMember t1:Duct_2 ;
+  s223:hasMember t1:Equipment_2 ;
+  rdfs:label "System 2" ;
+.
+t1:TemperatureSensor2
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation t1:Duct_2 ;
+  s223:observes t1:Duct2_Temperature ;
+  rdfs:label "Temperature sensor2" ;
+.
+t1:TemperatureSensor2b
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation t1:Duct_2 ;
+  s223:observes t1:Duct2_SootTemperature ;
+  rdfs:label "Temperature sensor2b" ;
+.
+t1:TestRoom
+  a s223:PhysicalSpace ;
+  s223:encloses t1:DomainSpace_1 ;
+  s223:encloses t1:DomainSpace_2 ;
+  s223:encloses t1:DomainSpace_3 ;
+  s223:encloses t1:DomainSpace_4 ;
+  s223:encloses t1:DomainSpace_5 ;
+  rdfs:label "Test room" ;
+.
+t1:Thermostat
+  a s223:Thermostat ;
+  s223:actuatedByProperty t1:CleaningDay ;
+  s223:actuatedByProperty t1:Room1Setpoint1 ;
+  s223:actuatedByProperty t1:Room1Setpoint2 ;
+  s223:actuatedByProperty t1:Room1Setpoint3 ;
+  s223:actuatedByProperty t1:Room1Setpoint4 ;
+  s223:actuatedByProperty t1:Room1Setpoint5 ;
+  s223:actuatedByProperty t1:ThermostatControlSignal ;
+  s223:contains t1:Room1Sensor ;
+  s223:executes t1:VirtualSensor1 ;
+  s223:hasPhysicalLocation t1:TestRoom ;
+  rdfs:label "FunctionOutput14" ;
+.
+t1:ThermostatControlSignal
+  a s223:EnumeratedActuatableProperty ;
+  s223:hasEnumerationKind s223:Binary-OnOff ;
+  rdfs:label "FunctionOutput14" ;
+.
+t1:VirtualSensor1
+  a s223:Function ;
+  s223:hasInput t1:CleaningDay ;
+  s223:hasInput t1:HallwayTemperature ;
+  s223:hasInput t1:Room1Setpoint1 ;
+  s223:hasInput t1:Room1Setpoint2 ;
+  s223:hasInput t1:Room1Setpoint3 ;
+  s223:hasInput t1:Room1Setpoint4 ;
+  s223:hasInput t1:Room1Setpoint5 ;
+  s223:hasInput t1:Room1Temperature ;
+  s223:hasOutput t1:ThermostatControlSignal ;
+  s223:hasOutput t1:Zone1Temperature ;
+  rdfs:label "VirtualSensor1" ;
+.
+t1:Zone1Temperature
+  a s223:QuantifiableObservableProperty ;
+  s223:hasValue 24.3 ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "Zone1Temperature" ;
+.

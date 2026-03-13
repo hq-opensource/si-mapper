@@ -1,0 +1,68 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/stacked-systems
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: stacked-systems
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix stacked-systems: <http://data.ashrae.org/standard223/1.0/data/stacked-systems#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/stacked-systems>
+  a owl:Ontology ;
+  rdfs:comment "This graph is defined to test various scenarios of Systems within Systems at multiple depths." ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+stacked-systems:Equipment_1
+  a s223:Equipment ;
+  s223:hasConnectionPoint stacked-systems:InletConnectionPoint_1 ;
+  rdfs:label "Equipment 1" ;
+.
+stacked-systems:Duct_1
+  a s223:Duct ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Duct 1" ;
+.
+stacked-systems:InletConnectionPoint_1
+  a s223:InletConnectionPoint ;
+  s223:cnx stacked-systems:Duct_1 ;
+  s223:hasMedium s223:AC-277V-60Hz ;
+  rdfs:label "Inlet connection point 1" ;
+.
+stacked-systems:InletSystemConnectionPoint_1
+  a s223:InletSystemConnectionPoint ;
+  s223:hasMedium s223:AC-120V-60Hz ;
+  s223:mapsTo stacked-systems:InletSystemConnectionPoint_3 ;
+  rdfs:label "Inlet system connection point 1" ;
+.
+stacked-systems:InletSystemConnectionPoint_3
+  a s223:InletSystemConnectionPoint ;
+  s223:hasMedium s223:Constituent-Electricity ;
+  s223:mapsTo stacked-systems:InletConnectionPoint_1 ;
+  rdfs:label "Inlet system connection point 3" ;
+.
+stacked-systems:System_1
+  a s223:System ;
+  s223:contains stacked-systems:System_2 ;
+  s223:contains stacked-systems:System_3 ;
+  rdfs:label "System 1" ;
+.
+stacked-systems:System_2
+  a s223:System ;
+  s223:contains stacked-systems:System_4 ;
+  rdfs:label "System 2" ;
+.
+stacked-systems:System_3
+  a s223:System ;
+  s223:contains stacked-systems:Equipment_1 ;
+  s223:hasSystemConnectionPoint stacked-systems:InletSystemConnectionPoint_3 ;
+  rdfs:label "System 3" ;
+.
+stacked-systems:System_4
+  a s223:System ;
+  s223:contains stacked-systems:System_3 ;
+  s223:hasSystemConnectionPoint stacked-systems:InletSystemConnectionPoint_1 ;
+  rdfs:label "System 4" ;
+.

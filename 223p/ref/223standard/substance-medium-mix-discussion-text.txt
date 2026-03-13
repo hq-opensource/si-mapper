@@ -1,0 +1,47 @@
+s223:EnumerationKind-Substance
+
+    This class is the root of a taxonomy of things that are consumed, produced,
+    transported, sensed, or controlled.  It includes air, refrigerents, electrical power
+    and signaling, particulates, and fluids such as water and oil.
+
+s223:Substance-Medium
+
+    This class is the subclass of substances that allows for the transfer of
+    matter, energy, or information.  It is used to qualify `Connection`s and
+    `ConnectionPoint`s with the relation `hasMedium` (see {s223:hasMedium}).
+
+s223:Substance-Particulate
+
+    This class represents solid matter suspended within a
+    medium, where they maintain their original physical and chemical properties.
+
+s223:Medium-Constituent
+
+    This class has enumerated subclasses of substances that may be combined to
+    form a `Medium-Mix`. Constituents are distinguished from subclasses of
+    `Medium-Mix` in that constituents cannot use the `composedOf` relation to
+    reference a concentration of other constituents.
+
+s223:Medium-Mix
+
+    This is the parent class of substances that are composed of constituents,
+    see {s223:Mix-Fluid} and {s223:Mix-PowerAndSignal}.
+    The components of a `Medium-Mix` can be modeled using the relations `composedOf` and 
+    `ofConstituent`. See Figure X-Y.
+
+s223:Medium-ThermalContact
+
+    This class represents the transfer of thermodynamic energy at `ConnectionPoint`s or through `Connection`s
+    that does not involve electricity or moving a fluid such as air or water.
+
+s223:Mix-Fluid
+
+    This is the parent class of substances that are used to transport liquids or gases.
+
+s223:Mix-PowerAndSignal
+
+    This is the parent class of substances that are used to transport 
+    the combination of electric power and data.
+
+Note:  Make an additional figure that shows power over ethernet.
+

@@ -1,0 +1,65 @@
+@prefix g36: <http://data.ashrae.org/standard223/1.0/extensions/g36#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix ex: <http://data.ashrae.org/standard223/reference-equipments-g36#> .
+
+
+ex:vav_4-1
+ a g36:VAV_4-1 ;
+ a g36:VAV ;
+ s223:contains ex:damper_4-1 ;
+ s223:hasProperty [
+    a g36:AnalogIn ;
+    qudt:hasQuantityKind quantitykind:VolumeFlowRate ;
+ ] ;
+ s223:connectedTo ex:domainspace_4-1 ;
+.
+ex:damper_4-1
+ a g36:Damper ;
+ s223:hasProperty [
+    a g36:AnalogOut ;
+    qudt:hasQuantityKind s223:QuantityKind-RelativePosition
+ ]
+.
+ex:zone_4-1
+ a g36:Zone ;
+ s223:hasDomain s223:Domain-HVAC ;
+ s223:hasProperty ex:z_temp, ex:z_co2, ex:z_occ ;
+ s223:contains ex:domainspace_4-1 ;
+.
+ex:z_temp
+ a g36:AnalogIn ;
+ qudt:hasQuantityKind quantitykind:Temperature ;
+.
+ex:z_co2
+ a g36:AnalogIn ;
+ qudt:hasQuantityKind quantitykind:Concentration ;
+ s223:ofSubstance s223:Constituent-CO2 ;
+.
+ex:z_occ 
+ a g36:AnalogIn ;
+ qudt:hasQuantityKind s223:QuantityKind-Occupancy ;
+.
+ex:w_sens
+ a s223:Sensor ;
+ s223:hasObservationLocation ex:window_4-1 ;
+ s223:observes ex:w_prop_4-1 ;
+.
+ex:domainspace_4-1 
+ a s223:DomainSpace ;
+ s223:hasDomain s223:Domain-HVAC ;
+ s223:connectedTo ex:window_4-1 ;
+.
+ex:window_4-1
+ a s223:Window ;
+ s223:hasProperty ex:w_prop_4-1 ;
+.
+ex:w_prop_4-1 
+ a g36:BinaryIn ;
+.

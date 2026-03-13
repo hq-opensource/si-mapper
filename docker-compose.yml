@@ -6,7 +6,9 @@ services:
     image: si-mapper-mcp:latest
     container_name: si-mapper-mcp
     # network_mode: host removes the need for port mapping
-    network_mode: host
+#    network_mode: host
+    ports:
+      - "8080:8080"
     env_file:
       - mcp_server/server/mcp.env
     profiles:
@@ -19,7 +21,10 @@ services:
     # Inspector listens on 5173 (UI) and 3000 (Proxy) inside container. 
     # Current docs say it might use different ports, but host networking exposes them all.
     # We will access it typically on http://localhost:5173
-    network_mode: host
+#    network_mode: host
+    ports:
+        - "6274:6274"
+        - "6277:6277"
     environment:
       - DANGEROUSLY_OMIT_AUTH=true
     profiles:
@@ -34,7 +39,6 @@ services:
     # Portainer listens on 9000
     network_mode: host
     volumes:
-
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     profiles:

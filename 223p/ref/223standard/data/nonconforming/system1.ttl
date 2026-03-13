@@ -1,0 +1,112 @@
+# baseURI: http://example.org/system1
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: system1
+
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix system1: <http://example.org/system1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/system1>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+system1:CP1
+  a s223:InletConnectionPoint ;
+  s223:cnx system1:Equipment1 ;
+  rdfs:label "CP1" ;
+.
+system1:CP2
+  a s223:OutletConnectionPoint ;
+  rdfs:label "CP2" ;
+.
+system1:CP3
+  a s223:InletConnectionPoint ;
+  s223:cnx system1:Equipment2 ;
+  rdfs:label "CP3" ;
+.
+system1:CP4
+  a s223:OutletConnectionPoint ;
+  rdfs:label "CP4" ;
+.
+system1:CP5
+  a s223:OutletConnectionPoint ;
+  rdfs:label "CP5" ;
+.
+system1:CP6
+  a s223:InletConnectionPoint ;
+  s223:cnx system1:Equipment3 ;
+  rdfs:label "CP6" ;
+.
+system1:Equipment1
+  a s223:Equipment ;
+  s223:cnx system1:CP2 ;
+  rdfs:label "Equipment1" ;
+.
+system1:Equipment2
+  a s223:Equipment ;
+  s223:cnx system1:CP4 ;
+  rdfs:label "Equipment2" ;
+.
+system1:Equipment3
+  a s223:Equipment ;
+  s223:cnx system1:CP5 ;
+  rdfs:label "Equipment3" ;
+.
+system1:Junction1
+  a s223:Junction ;
+  s223:lnx system1:Segment1 ;
+  s223:lnx system1:Segment2 ;
+  s223:lnx system1:Segment3 ;
+  rdfs:label "Junction1" ;
+.
+system1:SCP1
+  a s223:InletSystemConnectionPoint ;
+  s223:mapsTo system1:CP1 ;
+  rdfs:label "SCP1" ;
+.
+system1:SCP2
+  a s223:OutletSystemConnectionPoint ;
+  s223:mapsTo system1:Junction1 ;
+  rdfs:label "SCP2" ;
+.
+system1:SCP3
+  a s223:OutletSystemConnectionPoint ;
+  s223:mapsTo system1:CP5 ;
+  rdfs:label "SCP3" ;
+.
+system1:SCP4
+  a s223:OutletSystemConnectionPoint ;
+  s223:mapsTo system1:CP4 ;
+  rdfs:label "SCP4" ;
+.
+system1:Segment1
+  a s223:Segment ;
+  s223:lnx system1:CP2 ;
+  s223:lnx system1:Junction1 ;
+  rdfs:label "Segment1" ;
+.
+system1:Segment2
+  a s223:Segment ;
+  s223:lnx system1:CP3 ;
+  rdfs:label "Segment2" ;
+.
+system1:Segment3
+  a s223:Segment ;
+  s223:lnx system1:CP6 ;
+  rdfs:label "Segment3" ;
+.
+system1:System_1
+  a s223:System ;
+  s223:contains system1:Equipment1 ;
+  s223:contains system1:Equipment2 ;
+  s223:contains system1:Equipment3 ;
+  s223:hasSystemConnectionPoint system1:SCP1 ;
+  s223:hasSystemConnectionPoint system1:SCP2 ;
+  s223:hasSystemConnectionPoint system1:SCP3 ;
+  s223:hasSystemConnectionPoint system1:SCP4 ;
+  rdfs:label "System_1" ;
+.

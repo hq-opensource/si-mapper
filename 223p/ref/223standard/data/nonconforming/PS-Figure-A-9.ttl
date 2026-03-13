@@ -1,0 +1,594 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/psfigure009
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: psm09
+
+@prefix ex: <urn:ex/> .
+@prefix g36: <http://data.ashrae.org/standard223/1.0/extensions/g36#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix psm09: <http://data.ashrae.org/standard223/1.0/data/psfigure009#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/psfigure009>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+psm09:p00001
+  a s223:AHU ;
+  s223:contains ex:ReturnSystem ;
+  s223:contains ex:SupplySystem ;
+  rdfs:label "A-9" ;
+  ex:exhaustAirOutlet psm09:p00005 ;
+  ex:outsideAirInlet psm09:p00002 ;
+  ex:returnAirInlet psm09:p00004 ;
+  ex:supplyAirOutlet psm09:p00003 ;
+.
+psm09:p00002
+  a s223:InletConnectionPoint ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.outsideAirInlet" ;
+.
+psm09:p00003
+  a s223:OutletConnectionPoint ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.supplyAirOutlet" ;
+.
+psm09:p00004
+  a s223:InletConnectionPoint ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.returnAirInlet" ;
+.
+psm09:p00005
+  a s223:OutletConnectionPoint ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.exhaustAirOutlet" ;
+.
+psm09:p00006
+  a s223:Duct ;
+  s223:cnx psm09:p00009 ;
+  s223:cnx psm09:p00018 ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:hasProperty ex:oatmp ;
+  rdfs:label "A-9.outside_air" ;
+.
+psm09:p00007
+  a s223:Damper ;
+  a s223:Equipment ;
+  s223:airInlet psm09:p00009 ;
+  s223:airOutlet psm09:p00010 ;
+  s223:cnx psm09:p00009 ;
+  s223:cnx psm09:p00010 ;
+  s223:hasProperty psm09:p00008 ;
+  s223:position psm09:p00008 ;
+  rdfs:label "A-9.min_oa_damper" ;
+.
+psm09:p00008
+  a s223:Property ;
+  a g36:AnalogOut ;
+  s223:isPropertyOf psm09:p00007 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "Minimum outdoor air damper command" ;
+.
+psm09:p00009
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00006 ;
+  s223:cnx psm09:p00007 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.min_oa_damper.airInlet" ;
+.
+psm09:p00010
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00007 ;
+  s223:cnx psm09:p00015 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.min_oa_damper.airOutlet" ;
+.
+psm09:p00011
+  a s223:Equipment ;
+  s223:airInlet psm09:p00013 ;
+  s223:airOutlet psm09:p00014 ;
+  s223:cnx psm09:p00013 ;
+  s223:cnx psm09:p00014 ;
+  s223:flow psm09:p00012 ;
+  s223:hasProperty psm09:p00012 ;
+  rdfs:label "A-9.outside_air_afms" ;
+.
+psm09:p00012
+  a s223:Property ;
+  a g36:AnalogIn ;
+  s223:isPropertyOf psm09:p00011 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/FT3-PER-MIN> ;
+  rdfs:label "Outdoor air flow" ;
+.
+psm09:p00013
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00011 ;
+  s223:cnx psm09:p00015 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.outside_air_afms.airInlet" ;
+.
+psm09:p00014
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00011 ;
+  s223:cnx psm09:p00020 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.outside_air_afms.airOutlet" ;
+.
+psm09:p00015
+  a s223:Duct ;
+  s223:cnx psm09:p00010 ;
+  s223:cnx psm09:p00013 ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+psm09:p00016
+  a s223:Damper ;
+  a s223:Equipment ;
+  s223:airInlet psm09:p00018 ;
+  s223:airOutlet psm09:p00019 ;
+  s223:cnx psm09:p00018 ;
+  s223:cnx psm09:p00019 ;
+  s223:hasProperty psm09:p00017 ;
+  s223:position psm09:p00017 ;
+  rdfs:label "A-9.economizer_oa_damper" ;
+.
+psm09:p00017
+  a s223:Property ;
+  a g36:AnalogOut ;
+  s223:isPropertyOf psm09:p00016 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "Economizer outside air damper command" ;
+.
+psm09:p00018
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00006 ;
+  s223:cnx psm09:p00016 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.economizer_oa_damper.airInlet" ;
+.
+psm09:p00019
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00016 ;
+  s223:cnx psm09:p00020 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.economizer_oa_damper.airOutlet" ;
+.
+psm09:p00020
+  a s223:Duct ;
+  s223:cnx psm09:p00014 ;
+  s223:cnx psm09:p00019 ;
+  s223:cnx psm09:p00023 ;
+  s223:cnx psm09:p00064 ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "A-9.mixed_air" ;
+.
+psm09:p00021
+  a s223:Equipment ;
+  a s223:Filter ;
+  s223:airInlet psm09:p00023 ;
+  s223:airOutlet psm09:p00024 ;
+  s223:cnx psm09:p00023 ;
+  s223:cnx psm09:p00024 ;
+  s223:dp psm09:p00022 ;
+  s223:hasProperty psm09:p00022 ;
+  rdfs:label "A-9.mixed_air_filter" ;
+.
+psm09:p00022
+  a s223:Property ;
+  a g36:AnalogIn ;
+  s223:isPropertyOf psm09:p00021 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Mixed air temperature" ;
+.
+psm09:p00023
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00020 ;
+  s223:cnx psm09:p00021 ;
+  s223:hasProperty ex:mxtmp ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.mixed_air_filter.airInlet" ;
+.
+psm09:p00024
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00021 ;
+  s223:cnx psm09:p00035 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.mixed_air_filter.airOutlet" ;
+.
+psm09:p00025
+  a s223:HeatingCoil ;
+  s223:airInlet psm09:p00026 ;
+  s223:airOutlet psm09:p00027 ;
+  s223:cnx psm09:p00026 ;
+  s223:cnx psm09:p00027 ;
+  s223:cnx psm09:p00028 ;
+  s223:cnx psm09:p00029 ;
+  s223:hasEquipment psm09:p00030 ;
+  s223:hotWaterInlet psm09:p00028 ;
+  s223:hotWaterOutlet psm09:p00029 ;
+  rdfs:label "A-9.hot_water_coil" ;
+.
+psm09:p00026
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00025 ;
+  s223:cnx psm09:p00035 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.hot_water_coil.airInlet" ;
+.
+psm09:p00027
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00025 ;
+  s223:cnx psm09:p00046 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.hot_water_coil.airOutlet" ;
+.
+psm09:p00028
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00025 ;
+  s223:cnx psm09:p00034 ;
+  s223:substance s223:HotWater ;
+  rdfs:label "A-9.hot_water_coil.hotWaterInlet" ;
+.
+psm09:p00029
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00025 ;
+  s223:substance s223:HotWater ;
+  rdfs:label "A-9.hot_water_coil.hotWaterOutlet" ;
+.
+psm09:p00030
+  a s223:Valve ;
+  s223:cnx psm09:p00032 ;
+  s223:cnx psm09:p00033 ;
+  s223:hasProperty psm09:p00031 ;
+  s223:hotWaterInlet psm09:p00032 ;
+  s223:hotWaterOutlet psm09:p00033 ;
+  s223:isEquipmentOf psm09:p00025 ;
+  s223:position psm09:p00031 ;
+  rdfs:label "A-9.hot_water_coil.hw_valve" ;
+.
+psm09:p00031
+  a s223:Property ;
+  a g36:AnalogOut ;
+  s223:isPropertyOf psm09:p00030 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "Hot water valve command" ;
+.
+psm09:p00032
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00030 ;
+  s223:substance s223:HotWater ;
+  rdfs:label "A-9.hot_water_coil.hw_valve.hotWaterInlet" ;
+.
+psm09:p00033
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00030 ;
+  s223:cnx psm09:p00034 ;
+  s223:substance s223:HotWater ;
+  rdfs:label "A-9.hot_water_coil.hw_valve.hotWaterOutlet" ;
+.
+psm09:p00034
+  a s223:Pipe ;
+  s223:cnx psm09:p00028 ;
+  s223:cnx psm09:p00033 ;
+  s223:hasMedium s223:Water-HotWater ;
+.
+psm09:p00035
+  a s223:Duct ;
+  s223:cnx psm09:p00024 ;
+  s223:cnx psm09:p00026 ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+psm09:p00036
+  a s223:CoolingCoil ;
+  s223:airInlet psm09:p00037 ;
+  s223:airOutlet psm09:p00038 ;
+  s223:chilledWaterReturn psm09:p00040 ;
+  s223:chilledWaterSupply psm09:p00039 ;
+  s223:cnx psm09:p00037 ;
+  s223:cnx psm09:p00038 ;
+  s223:cnx psm09:p00039 ;
+  s223:cnx psm09:p00040 ;
+  s223:hasEquipment psm09:p00041 ;
+  rdfs:label "A-9.chilled_water_coil" ;
+.
+psm09:p00037
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00036 ;
+  s223:cnx psm09:p00046 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.chilled_water_coil.airInlet" ;
+.
+psm09:p00038
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00036 ;
+  s223:cnx psm09:p00050 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.chilled_water_coil.airOutlet" ;
+.
+psm09:p00039
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00036 ;
+  s223:cnx psm09:p00045 ;
+  s223:substance s223:ChilledWater ;
+  rdfs:label "A-9.chilled_water_coil.chilledWaterSupply" ;
+.
+psm09:p00040
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00036 ;
+  s223:substance s223:ChilledWater ;
+  rdfs:label "A-9.chilled_water_coil.chilledWaterReturn" ;
+.
+psm09:p00041
+  a s223:Valve ;
+  s223:chilledWaterInlet psm09:p00043 ;
+  s223:chilledWaterOutlet psm09:p00044 ;
+  s223:cnx psm09:p00043 ;
+  s223:cnx psm09:p00044 ;
+  s223:hasProperty psm09:p00042 ;
+  s223:isEquipmentOf psm09:p00036 ;
+  s223:position psm09:p00042 ;
+  rdfs:label "A-9.chilled_water_coil.chilled_water_valve" ;
+.
+psm09:p00042
+  a s223:Property ;
+  a g36:AnalogOut ;
+  s223:isPropertyOf psm09:p00041 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "Chilled water valve command" ;
+.
+psm09:p00043
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00041 ;
+  s223:substance s223:ChilledWater ;
+  rdfs:label "A-9.chilled_water_coil.chilled_water_valve.chilledWaterInlet" ;
+.
+psm09:p00044
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00041 ;
+  s223:cnx psm09:p00045 ;
+  s223:substance s223:ChilledWater ;
+  rdfs:label "A-9.chilled_water_coil.chilled_water_valve.chilledWaterOutlet" ;
+.
+psm09:p00045
+  a s223:Pipe ;
+  s223:cnx psm09:p00039 ;
+  s223:cnx psm09:p00044 ;
+  s223:hasMedium s223:Water-ChilledWater ;
+.
+psm09:p00046
+  a s223:Duct ;
+  s223:cnx psm09:p00027 ;
+  s223:cnx psm09:p00037 ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+psm09:p00047
+  a s223:Equipment ;
+  a s223:Fan ;
+  s223:airInlet psm09:p00048 ;
+  s223:airOutlet psm09:p00049 ;
+  s223:cnx psm09:p00048 ;
+  s223:cnx psm09:p00049 ;
+  rdfs:label "A-9.supply_fan" ;
+.
+psm09:p00048
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00047 ;
+  s223:cnx psm09:p00050 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.supply_fan.airInlet" ;
+.
+psm09:p00049
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00047 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.supply_fan.airOutlet" ;
+.
+psm09:p00050
+  a s223:Duct ;
+  s223:cnx psm09:p00038 ;
+  s223:cnx psm09:p00048 ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+psm09:p00051
+  a s223:Equipment ;
+  a s223:Fan ;
+  s223:airInlet psm09:p00052 ;
+  s223:airOutlet psm09:p00053 ;
+  s223:cnx psm09:p00052 ;
+  s223:cnx psm09:p00053 ;
+  rdfs:label "A-9.return_fan" ;
+.
+psm09:p00052
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00051 ;
+  s223:cnx psm09:p00054 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.return_fan.airInlet" ;
+.
+psm09:p00053
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00051 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.return_fan.airOutlet" ;
+.
+psm09:p00054
+  a s223:Duct ;
+  s223:cnx psm09:p00052 ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:hasProperty ex:ratmp ;
+.
+psm09:p00055
+  a s223:Duct ;
+  s223:cnx psm09:p00053 ;
+  s223:cnx psm09:p00058 ;
+  s223:cnx psm09:p00063 ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "A-9.return_air" ;
+.
+psm09:p00056
+  a s223:Damper ;
+  a s223:Equipment ;
+  s223:airInlet psm09:p00058 ;
+  s223:airOutlet psm09:p00059 ;
+  s223:cnx psm09:p00058 ;
+  s223:cnx psm09:p00059 ;
+  s223:hasProperty psm09:p00057 ;
+  s223:position psm09:p00057 ;
+  rdfs:label "A-9.exhaust_air_damper" ;
+.
+psm09:p00057
+  a s223:Property ;
+  a g36:AnalogOut ;
+  s223:isPropertyOf psm09:p00056 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "Exhaust air damper command" ;
+.
+psm09:p00058
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00055 ;
+  s223:cnx psm09:p00056 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.exhaust_air_damper.airInlet" ;
+.
+psm09:p00059
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00056 ;
+  s223:cnx psm09:p00060 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.exhaust_air_damper.airOutlet" ;
+.
+psm09:p00060
+  a s223:Duct ;
+  s223:cnx psm09:p00059 ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+psm09:p00061
+  a s223:Damper ;
+  a s223:Equipment ;
+  s223:airInlet psm09:p00063 ;
+  s223:airOutlet psm09:p00064 ;
+  s223:cnx psm09:p00063 ;
+  s223:cnx psm09:p00064 ;
+  s223:hasProperty psm09:p00062 ;
+  s223:position psm09:p00062 ;
+  rdfs:label "A-9.return_air_damper" ;
+.
+psm09:p00062
+  a s223:Property ;
+  a g36:AnalogOut ;
+  s223:isPropertyOf psm09:p00061 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "Return air damper command" ;
+.
+psm09:p00063
+  a s223:InletConnectionPoint ;
+  s223:cnx psm09:p00055 ;
+  s223:cnx psm09:p00061 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.return_air_damper.airInlet" ;
+.
+psm09:p00064
+  a s223:OutletConnectionPoint ;
+  s223:cnx psm09:p00020 ;
+  s223:cnx psm09:p00061 ;
+  s223:substance s223:Fluid-Air ;
+  rdfs:label "A-9.return_air_damper.airOutlet" ;
+.
+psm09:p00070
+  a s223:Duct ;
+  s223:cnx psm09:p00049 ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:hasProperty ex:satmp ;
+  rdfs:label "Supply Air Duct" ;
+.
+<http://sandbox/psfigure009>
+  a owl:Ontology ;
+  rdfs:isDefinedBy <http://data.ashrae.org/standard223/1.0/data/psfigure009> ;
+  rdfs:label "figure009" ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+ex:FlowSensor1
+  a s223:FlowSensor ;
+  s223:hasObservationLocation psm09:p00052 ;
+  s223:observes ex:ReturnAirFlowRate ;
+  rdfs:label "Return air flow sensor" ;
+.
+ex:ReturnAirFlowRate
+  a g36:AnalogIn ;
+  s223:hasValue 129.3 ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/FT3-PER-MIN> ;
+  rdfs:label "Return air flow rate" ;
+.
+ex:ReturnSystem
+  a s223:System ;
+  s223:contains psm09:p00051 ;
+  s223:contains psm09:p00056 ;
+  rdfs:label "Return System" ;
+.
+ex:SupplySystem
+  a s223:System ;
+  s223:contains psm09:p00007 ;
+  s223:contains psm09:p00011 ;
+  s223:contains psm09:p00016 ;
+  s223:contains psm09:p00021 ;
+  s223:contains psm09:p00025 ;
+  s223:contains psm09:p00036 ;
+  s223:contains psm09:p00047 ;
+  rdfs:label "Supply System" ;
+.
+ex:TempSensor_1
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation psm09:p00050 ;
+  rdfs:label "Temp sensor 1" ;
+.
+ex:TempSensor_2
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation psm09:p00046 ;
+  rdfs:label "Temp sensor 2" ;
+.
+ex:masen
+  a s223:Sensor ;
+  s223:observes ex:mxtmp ;
+  rdfs:label "Mixed Air Sensor" ;
+.
+ex:mxtmp
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Mixed Air Temperature" ;
+.
+ex:oasen
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation psm09:p00013 ;
+  s223:observes ex:oatmp ;
+  rdfs:label "Outside Air Sensor" ;
+.
+ex:oatmp
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Outside Air Temperature" ;
+.
+ex:rasen
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation psm09:p00052 ;
+  s223:observes ex:ratmp ;
+  rdfs:label "Return Air Sensor" ;
+.
+ex:ratmp
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Return Air Temperature" ;
+.
+ex:sasen
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation psm09:p00049 ;
+  s223:observes ex:satmp ;
+  rdfs:label "Supply Air Sensor" ;
+.
+ex:satmp
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Supply Air Temperature" ;
+.

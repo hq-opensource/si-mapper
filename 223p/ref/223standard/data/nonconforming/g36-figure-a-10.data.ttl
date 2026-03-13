@@ -1,0 +1,879 @@
+# baseURI: http://data.ashrae.org/standard223/data/g36-figure-a-10
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix bob: <http://data.ashrae.org/standard223/si-builder#> .
+@prefix ex: <http://example/> .
+@prefix exg3610: <http://data.ashrae.org/standard223/data/g36-figure-a-10#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+
+
+<http://data.ashrae.org/standard223/data/g36-figure-a-10>
+  a owl:Ontology ;
+  rdfs:isDefinedBy <http://data.ashrae.org/standard223/data/g36-figure-a-10> ;
+  rdfs:label "g36-figure-a-10" ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> .
+
+exg3610:00001 a s223:Connectable,
+        s223:Equipment,
+        ex:AHU ;
+    rdfs:label "A-10" ;
+    s223:cnx exg3610:00002,
+        exg3610:00003,
+        exg3610:00004,
+        exg3610:00005 ;
+    s223:contains exg3610:00006,
+        exg3610:00010,
+        exg3610:00014,
+        exg3610:00021,
+        exg3610:00024,
+        exg3610:00032,
+        exg3610:00040,
+        exg3610:00054,
+        exg3610:00058,
+        exg3610:00071,
+        exg3610:00075,
+        exg3610:00079 ;
+    s223:hasConnectionPoint exg3610:00002,
+        exg3610:00003,
+        exg3610:00004,
+        exg3610:00005 ;
+    ex:exhaustAirOutlet exg3610:00005 ;
+    ex:outsideAirInlet exg3610:00002 ;
+    ex:returnAirInlet exg3610:00004 ;
+    ex:supplyAirOutlet exg3610:00003 .
+
+exg3610:00002 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.outsideAirInlet" ;
+    s223:cnx exg3610:00001 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00001 .
+
+exg3610:00003 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.supplyAirOutlet" ;
+    s223:cnx exg3610:00001 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00001 .
+
+exg3610:00004 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.returnAirInlet" ;
+    s223:cnx exg3610:00001 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00001 .
+
+exg3610:00005 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.exhaustAirOutlet" ;
+    s223:cnx exg3610:00001 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00001 .
+
+exg3610:00006 a s223:Connectable,
+        s223:Equipment,
+        ex:Damper ;
+    rdfs:label "A-10.min_oa_damper" ;
+    s223:cnx exg3610:00007,
+        exg3610:00008 ;
+    s223:connected exg3610:00014 ;
+    s223:connectedFrom exg3610:00014 ;
+    s223:connectedThrough exg3610:00016,
+        exg3610:00020 ;
+    s223:contains exg3610:00009 ;
+    s223:hasConnectionPoint exg3610:00007,
+        exg3610:00008 ;
+    ex:airInlet exg3610:00007 ;
+    ex:airOutlet exg3610:00008 .
+
+exg3610:00007 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.min_oa_damper.airInlet" ;
+    s223:cnx exg3610:00006,
+        exg3610:00016 ;
+    s223:connectsThrough exg3610:00016 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00006 .
+
+exg3610:00008 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.min_oa_damper.airOutlet" ;
+    s223:cnx exg3610:00006,
+        exg3610:00020 ;
+    s223:connectsThrough exg3610:00020 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00006 .
+
+exg3610:00009 a s223:Connectable,
+        s223:Equipment,
+        ex:DamperPositioner ;
+    rdfs:label "A-10.min_oa_damper.damper_positioner" .
+
+exg3610:00010 a s223:Connectable,
+        s223:Equipment,
+        ex:Damper ;
+    rdfs:label "A-10.economizer_oa_damper" ;
+    s223:cnx exg3610:00011,
+        exg3610:00012 ;
+    s223:connected exg3610:00014 ;
+    s223:connectedFrom exg3610:00014 ;
+    s223:connectedThrough exg3610:00018,
+        exg3610:00020 ;
+    s223:contains exg3610:00013 ;
+    s223:hasConnectionPoint exg3610:00011,
+        exg3610:00012 ;
+    ex:airInlet exg3610:00011 ;
+    ex:airOutlet exg3610:00012 .
+
+exg3610:00011 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.economizer_oa_damper.airInlet" ;
+    s223:cnx exg3610:00010,
+        exg3610:00018 ;
+    s223:connectsThrough exg3610:00018 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00010 .
+
+exg3610:00012 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.economizer_oa_damper.airOutlet" ;
+    s223:cnx exg3610:00010,
+        exg3610:00020 ;
+    s223:connectsThrough exg3610:00020 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00010 .
+
+exg3610:00013 a s223:Connectable,
+        s223:Equipment,
+        ex:DamperPositioner ;
+    rdfs:label "A-10.economizer_oa_damper.damper_positioner" .
+
+exg3610:00014 a s223:Connectable,
+        s223:Junction ;
+    s223:cnx exg3610:00015,
+        exg3610:00017,
+        exg3610:00019 ;
+    s223:connected exg3610:00006,
+        exg3610:00010 ;
+    s223:connectedThrough exg3610:00016,
+        exg3610:00018 ;
+    s223:connectedTo exg3610:00006,
+        exg3610:00010 ;
+    s223:hasConnectionPoint exg3610:00015,
+        exg3610:00017,
+        exg3610:00019 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00015 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint ;
+    s223:cnx exg3610:00014,
+        exg3610:00016 ;
+    s223:connectsThrough exg3610:00016 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00014 .
+
+exg3610:00016 a s223:Connection ;
+    s223:cnx exg3610:00007,
+        exg3610:00015 ;
+    s223:connectsAt exg3610:00007,
+        exg3610:00015 ;
+    s223:connectsFrom exg3610:00014 ;
+    s223:connectsTo exg3610:00006 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00017 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint ;
+    s223:cnx exg3610:00014,
+        exg3610:00018 ;
+    s223:connectsThrough exg3610:00018 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00014 .
+
+exg3610:00018 a s223:Connection ;
+    s223:cnx exg3610:00011,
+        exg3610:00017 ;
+    s223:connectsAt exg3610:00011,
+        exg3610:00017 ;
+    s223:connectsFrom exg3610:00014 ;
+    s223:connectsTo exg3610:00010 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00019 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    s223:cnx exg3610:00014 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00014 ;
+    s223:mapsTo exg3610:00002 .
+
+exg3610:00020 a s223:Connection ;
+    rdfs:label "A-10.mixed_air" ;
+    s223:cnx exg3610:00008,
+        exg3610:00012,
+        exg3610:00022,
+        exg3610:00073 ;
+    s223:connectsAt exg3610:00008,
+        exg3610:00012,
+        exg3610:00022,
+        exg3610:00073 ;
+    s223:connectsFrom exg3610:00006,
+        exg3610:00010,
+        exg3610:00071 ;
+    s223:connectsTo exg3610:00021 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00021 a s223:Connectable,
+        s223:Equipment,
+        ex:Filter ;
+    rdfs:label "A-10.mixed_air_filter" ;
+    s223:cnx exg3610:00022,
+        exg3610:00023 ;
+    s223:connected exg3610:00024 ;
+    s223:connectedThrough exg3610:00020,
+        exg3610:00031 ;
+    s223:connectedTo exg3610:00024 ;
+    s223:hasConnectionPoint exg3610:00022,
+        exg3610:00023 ;
+    ex:airInlet exg3610:00022 ;
+    ex:airOutlet exg3610:00023 .
+
+exg3610:00022 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.mixed_air_filter.airInlet" ;
+    s223:cnx exg3610:00020,
+        exg3610:00021 ;
+    s223:connectsThrough exg3610:00020 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00021 .
+
+exg3610:00023 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.mixed_air_filter.airOutlet" ;
+    s223:cnx exg3610:00021,
+        exg3610:00031 ;
+    s223:connectsThrough exg3610:00031 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00021 .
+
+exg3610:00024 a s223:Connectable,
+        s223:Equipment,
+        ex:HotWaterCoil ;
+    rdfs:label "A-10.hot_water_coil" ;
+    s223:cnx exg3610:00025,
+        exg3610:00026,
+        exg3610:00027,
+        exg3610:00028 ;
+    s223:connected exg3610:00021,
+        exg3610:00032 ;
+    s223:connectedFrom exg3610:00021 ;
+    s223:connectedThrough exg3610:00031,
+        exg3610:00039 ;
+    s223:connectedTo exg3610:00032 ;
+    s223:contains exg3610:00029 ;
+    s223:hasConnectionPoint exg3610:00025,
+        exg3610:00026,
+        exg3610:00027,
+        exg3610:00028 ;
+    ex:airInlet exg3610:00025 ;
+    ex:airOutlet exg3610:00026 ;
+    ex:hwInlet exg3610:00027 ;
+    ex:hwOutlet exg3610:00028 .
+
+exg3610:00025 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.hot_water_coil.airInlet" ;
+    s223:cnx exg3610:00024,
+        exg3610:00031 ;
+    s223:connectsThrough exg3610:00031 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00024 .
+
+exg3610:00026 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.hot_water_coil.airOutlet" ;
+    s223:cnx exg3610:00024,
+        exg3610:00039 ;
+    s223:connectsThrough exg3610:00039 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00024 .
+
+exg3610:00027 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:HotWaterConnectionPoint ;
+    rdfs:label "A-10.hot_water_coil.hwInlet" ;
+    s223:cnx exg3610:00024 ;
+    s223:hasMedium s223:Water-HotWater ;
+    s223:isConnectionPointOf exg3610:00024 .
+
+exg3610:00028 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:HotWaterConnectionPoint ;
+    rdfs:label "A-10.hot_water_coil.hwOutlet" ;
+    s223:cnx exg3610:00024 ;
+    s223:hasMedium s223:Water-HotWater ;
+    s223:isConnectionPointOf exg3610:00024 .
+
+exg3610:00029 a s223:Connectable,
+        s223:Equipment,
+        ex:HotWaterValve ;
+    rdfs:label "A-10.hot_water_coil.hot_water_valve" ;
+    s223:contains exg3610:00030 .
+
+exg3610:00030 a s223:Connectable,
+        s223:Equipment,
+        ex:ValvePositioner ;
+    rdfs:label "A-10.hot_water_coil.hot_water_valve.valve_positioner" .
+
+exg3610:00031 a s223:Connection ;
+    s223:cnx exg3610:00023,
+        exg3610:00025 ;
+    s223:connectsAt exg3610:00023,
+        exg3610:00025 ;
+    s223:connectsFrom exg3610:00021 ;
+    s223:connectsTo exg3610:00024 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00032 a s223:Connectable,
+        s223:Equipment,
+        ex:ChilledWaterCoil ;
+    rdfs:label "A-10.chilled_water_coil" ;
+    s223:cnx exg3610:00033,
+        exg3610:00034,
+        exg3610:00035,
+        exg3610:00036 ;
+    s223:connected exg3610:00024,
+        exg3610:00040 ;
+    s223:connectedFrom exg3610:00024 ;
+    s223:connectedThrough exg3610:00039,
+        exg3610:00053 ;
+    s223:connectedTo exg3610:00040 ;
+    s223:contains exg3610:00037 ;
+    s223:hasConnectionPoint exg3610:00033,
+        exg3610:00034,
+        exg3610:00035,
+        exg3610:00036 ;
+    ex:airInlet exg3610:00033 ;
+    ex:airOutlet exg3610:00034 ;
+    ex:chwInlet exg3610:00035 ;
+    ex:chwOutlet exg3610:00036 .
+
+exg3610:00033 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.chilled_water_coil.airInlet" ;
+    s223:cnx exg3610:00032,
+        exg3610:00039 ;
+    s223:connectsThrough exg3610:00039 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00032 .
+
+exg3610:00034 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.chilled_water_coil.airOutlet" ;
+    s223:cnx exg3610:00032,
+        exg3610:00053 ;
+    s223:connectsThrough exg3610:00053 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00032 .
+
+exg3610:00035 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ChilledWaterConnectionPoint ;
+    rdfs:label "A-10.chilled_water_coil.chwInlet" ;
+    s223:cnx exg3610:00032 ;
+    s223:hasMedium s223:Water-ChilledWater ;
+    s223:isConnectionPointOf exg3610:00032 .
+
+exg3610:00036 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ChilledWaterConnectionPoint ;
+    rdfs:label "A-10.chilled_water_coil.chwOutlet" ;
+    s223:cnx exg3610:00032 ;
+    s223:hasMedium s223:Water-ChilledWater ;
+    s223:isConnectionPointOf exg3610:00032 .
+
+exg3610:00037 a s223:Connectable,
+        s223:Equipment,
+        ex:ChilledWaterValve ;
+    rdfs:label "A-10.chilled_water_coil.chilled_water_valve" ;
+    s223:contains exg3610:00038 .
+
+exg3610:00038 a s223:Connectable,
+        s223:Equipment,
+        ex:ValvePositioner ;
+    rdfs:label "A-10.chilled_water_coil.chilled_water_valve.valve_positioner" .
+
+exg3610:00039 a s223:Connection ;
+    s223:cnx exg3610:00026,
+        exg3610:00033 ;
+    s223:connectsAt exg3610:00026,
+        exg3610:00033 ;
+    s223:connectsFrom exg3610:00024 ;
+    s223:connectsTo exg3610:00032 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00040 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan ;
+    rdfs:label "A-10.supply_fan" ;
+    s223:cnx exg3610:00041,
+        exg3610:00042,
+        exg3610:00043 ;
+    s223:connected exg3610:00032,
+        exg3610:00054 ;
+    s223:connectedFrom exg3610:00032 ;
+    s223:connectedThrough exg3610:00053,
+        exg3610:00056 ;
+    s223:connectedTo exg3610:00054 ;
+    s223:hasConnectionPoint exg3610:00041,
+        exg3610:00042,
+        exg3610:00043 ;
+    s223:hasProperty exg3610:00044,
+        exg3610:00045,
+        exg3610:00046,
+        exg3610:00047,
+        exg3610:00048,
+        exg3610:00049,
+        exg3610:00050,
+        exg3610:00051,
+        exg3610:00052 ;
+    bob:airInlet exg3610:00041 ;
+    bob:airOutlet exg3610:00042 .
+
+exg3610:00041 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.supply_fan.airInlet" ;
+    s223:cnx exg3610:00040,
+        exg3610:00053 ;
+    s223:connectsThrough exg3610:00053 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00040 .
+
+exg3610:00042 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.supply_fan.airOutlet" ;
+    s223:cnx exg3610:00040,
+        exg3610:00056 ;
+    s223:connectsThrough exg3610:00056 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00040 .
+
+exg3610:00043 a s223:ConnectionPoint,
+        s223:Electricity_600VLL_3Ph_60HzConnectionPoint,
+        s223:InletConnectionPoint ;
+    rdfs:label "A-10.supply_fan.electricalInlet" ;
+    s223:cnx exg3610:00040 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf exg3610:00040 .
+
+exg3610:00044 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "speedRatio" ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+exg3610:00045 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "staticPressure" ;
+    qudt:hasQuantityKind quantitykind:Pressure ;
+    qudt:hasUnit unit:PA .
+
+exg3610:00046 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "amps" ;
+    qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+exg3610:00047 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RPM ;
+    rdfs:label "rpm" ;
+    qudt:hasQuantityKind quantitykind:AngularVelocity ;
+    qudt:hasUnit unit:REV-PER-MIN .
+
+exg3610:00048 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Flow ;
+    rdfs:label "cfm" ;
+    qudt:hasQuantityKind quantitykind:VolumeFlowRate ;
+    qudt:hasUnit unit:FT3-PER-MIN .
+
+exg3610:00049 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:HP ;
+    rdfs:label "hp" ;
+    qudt:hasQuantityKind quantitykind:Power ;
+    qudt:hasUnit unit:HP .
+
+exg3610:00050 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind quantitykind:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+exg3610:00051 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:PowerFactor ;
+    rdfs:label "powerFactor" ;
+    qudt:hasQuantityKind quantitykind:PowerFactor ;
+    qudt:hasUnit unit:UNITLESS .
+
+exg3610:00052 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Percent ;
+    rdfs:label "efficiency" ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+exg3610:00053 a s223:Connection ;
+    s223:cnx exg3610:00034,
+        exg3610:00041 ;
+    s223:connectsAt exg3610:00034,
+        exg3610:00041 ;
+    s223:connectsFrom exg3610:00032 ;
+    s223:connectsTo exg3610:00040 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00054 a s223:Connectable,
+        s223:Junction ;
+    s223:cnx exg3610:00055,
+        exg3610:00057 ;
+    s223:connected exg3610:00040 ;
+    s223:connectedFrom exg3610:00040 ;
+    s223:connectedThrough exg3610:00056 ;
+    s223:hasConnectionPoint exg3610:00055,
+        exg3610:00057 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00055 a s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    s223:cnx exg3610:00054,
+        exg3610:00056 ;
+    s223:connectsThrough exg3610:00056 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00054 .
+
+exg3610:00056 a s223:Connection ;
+    s223:cnx exg3610:00042,
+        exg3610:00055 ;
+    s223:connectsAt exg3610:00042,
+        exg3610:00055 ;
+    s223:connectsFrom exg3610:00040 ;
+    s223:connectsTo exg3610:00054 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00057 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    s223:cnx exg3610:00054 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00054 ;
+    s223:mapsTo exg3610:00003 .
+
+exg3610:00058 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan ;
+    rdfs:label "A-10.relief_fan" ;
+    s223:cnx exg3610:00059,
+        exg3610:00060,
+        exg3610:00061 ;
+    s223:connected exg3610:00079 ;
+    s223:connectedThrough exg3610:00078,
+        exg3610:00083 ;
+    s223:connectedTo exg3610:00079 ;
+    s223:hasConnectionPoint exg3610:00059,
+        exg3610:00060,
+        exg3610:00061 ;
+    s223:hasProperty exg3610:00062,
+        exg3610:00063,
+        exg3610:00064,
+        exg3610:00065,
+        exg3610:00066,
+        exg3610:00067,
+        exg3610:00068,
+        exg3610:00069,
+        exg3610:00070 ;
+    bob:airInlet exg3610:00059 ;
+    bob:airOutlet exg3610:00060 .
+
+exg3610:00059 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.relief_fan.airInlet" ;
+    s223:cnx exg3610:00058,
+        exg3610:00078 ;
+    s223:connectsThrough exg3610:00078 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00058 .
+
+exg3610:00060 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.relief_fan.airOutlet" ;
+    s223:cnx exg3610:00058,
+        exg3610:00083 ;
+    s223:connectsThrough exg3610:00083 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00058 .
+
+exg3610:00061 a s223:ConnectionPoint,
+        s223:Electricity_600VLL_3Ph_60HzConnectionPoint,
+        s223:InletConnectionPoint ;
+    rdfs:label "A-10.relief_fan.electricalInlet" ;
+    s223:cnx exg3610:00058 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf exg3610:00058 .
+
+exg3610:00062 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "speedRatio" ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+exg3610:00063 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "staticPressure" ;
+    qudt:hasQuantityKind quantitykind:Pressure ;
+    qudt:hasUnit unit:PA .
+
+exg3610:00064 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "amps" ;
+    qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+exg3610:00065 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RPM ;
+    rdfs:label "rpm" ;
+    qudt:hasQuantityKind quantitykind:AngularVelocity ;
+    qudt:hasUnit unit:REV-PER-MIN .
+
+exg3610:00066 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Flow ;
+    rdfs:label "cfm" ;
+    qudt:hasQuantityKind quantitykind:VolumeFlowRate ;
+    qudt:hasUnit unit:FT3-PER-MIN .
+
+exg3610:00067 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:HP ;
+    rdfs:label "hp" ;
+    qudt:hasQuantityKind quantitykind:Power ;
+    qudt:hasUnit unit:HP .
+
+exg3610:00068 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind quantitykind:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+exg3610:00069 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:PowerFactor ;
+    rdfs:label "powerFactor" ;
+    qudt:hasQuantityKind quantitykind:PowerFactor ;
+    qudt:hasUnit unit:UNITLESS .
+
+exg3610:00070 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Percent ;
+    rdfs:label "efficiency" ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+exg3610:00071 a s223:Connectable,
+        s223:Equipment,
+        ex:Damper ;
+    rdfs:label "A-10.return_air_damper" ;
+    s223:cnx exg3610:00072,
+        exg3610:00073 ;
+    s223:connectedThrough exg3610:00020,
+        exg3610:00078 ;
+    s223:contains exg3610:00074 ;
+    s223:hasConnectionPoint exg3610:00072,
+        exg3610:00073 ;
+    ex:airInlet exg3610:00072 ;
+    ex:airOutlet exg3610:00073 .
+
+exg3610:00072 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.return_air_damper.airInlet" ;
+    s223:cnx exg3610:00071,
+        exg3610:00078 ;
+    s223:connectsThrough exg3610:00078 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00071 .
+
+exg3610:00073 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.return_air_damper.airOutlet" ;
+    s223:cnx exg3610:00020,
+        exg3610:00071 ;
+    s223:connectsThrough exg3610:00020 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00071 .
+
+exg3610:00074 a s223:Connectable,
+        s223:Equipment,
+        ex:DamperPositioner ;
+    rdfs:label "A-10.return_air_damper.damper_positioner" .
+
+exg3610:00075 a s223:Connectable,
+        s223:Junction ;
+    s223:cnx exg3610:00076,
+        exg3610:00077 ;
+    s223:connectedThrough exg3610:00078 ;
+    s223:hasConnectionPoint exg3610:00076,
+        exg3610:00077 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00076 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    s223:cnx exg3610:00075 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00075 ;
+    s223:mapsTo exg3610:00004 .
+
+exg3610:00077 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint ;
+    s223:cnx exg3610:00075,
+        exg3610:00078 ;
+    s223:connectsThrough exg3610:00078 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00075 .
+
+exg3610:00078 a s223:Connection ;
+    s223:cnx exg3610:00059,
+        exg3610:00072,
+        exg3610:00077 ;
+    s223:connectsAt exg3610:00059,
+        exg3610:00072,
+        exg3610:00077 ;
+    s223:connectsFrom exg3610:00075 ;
+    s223:connectsTo exg3610:00058,
+        exg3610:00071 ;
+    s223:hasMedium s223:Fluid-Air .
+
+exg3610:00079 a s223:Connectable,
+        s223:Equipment,
+        ex:Damper ;
+    rdfs:label "A-10.relief_air_damper" ;
+    s223:cnx exg3610:00080,
+        exg3610:00081 ;
+    s223:connected exg3610:00058 ;
+    s223:connectedFrom exg3610:00058 ;
+    s223:connectedThrough exg3610:00083 ;
+    s223:contains exg3610:00082 ;
+    s223:hasConnectionPoint exg3610:00080,
+        exg3610:00081 ;
+    ex:airInlet exg3610:00080 ;
+    ex:airOutlet exg3610:00081 .
+
+exg3610:00080 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.relief_air_damper.airInlet" ;
+    s223:cnx exg3610:00079,
+        exg3610:00083 ;
+    s223:connectsThrough exg3610:00083 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00079 .
+
+exg3610:00081 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-10.relief_air_damper.airOutlet" ;
+    s223:cnx exg3610:00079 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3610:00079 ;
+    s223:mapsTo exg3610:00005 .
+
+exg3610:00082 a s223:Connectable,
+        s223:Equipment,
+        ex:DamperPositioner ;
+    rdfs:label "A-10.relief_air_damper.damper_positioner" .
+
+exg3610:00083 a s223:Connection ;
+    s223:cnx exg3610:00060,
+        exg3610:00080 ;
+    s223:connectsAt exg3610:00060,
+        exg3610:00080 ;
+    s223:connectsFrom exg3610:00058 ;
+    s223:connectsTo exg3610:00079 ;
+    s223:hasMedium s223:Fluid-Air .
+

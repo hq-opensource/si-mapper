@@ -1,0 +1,630 @@
+@prefix ns0: <http://data.ashrae.org/standard223#> .
+@prefix dc11: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ns1: <http://example.com/ktc-semantic-model#> .
+@prefix ns2: <http://qudt.org/schema/qudt/> .
+@prefix ns3: <https://brickschema.org/schema/1.1/Brick#> .
+
+<urn:ex/VS01>
+  a <http://data.ashrae.org/standard223#System> ;
+  ns0:hasMember <urn:ex/VS01-HeatExchanger>, <urn:ex/VS01-InletValve>, <urn:ex/VS01-InletValveActuator>, <urn:ex/VS01-Pump>, <urn:ex/VS01-PumpActuator>, <urn:ex/VS01-ExpansionTank>, <urn:ex/VS01-HeatingWaterSupplyTemperatureSensor>, <urn:ex/VS01-HeatingWaterReturnTemperatureSensor>, <urn:ex/VS01-HeatingWaterPressureSensor>, <urn:ex/VS01-OutsideAirTemperatureSensor> ;
+  dc11:description "Heating Water System"^^xsd:string ;
+  rdfs:label "Heating Water System"^^xsd:string .
+
+<urn:ex/VS01-HeatExchanger>
+  a ns0:Equipment, ns0:HeatExchanger ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerPrimaryInlet>, <urn:ex/VS01-HeatExchangerSecondaryInlet>, <urn:ex/VS01-HeatExchangerPrimaryOutlet>, <urn:ex/VS01-HeatExchangerSecondaryOutlet> ;
+  dc11:description "Heating Loop Heat Exchanger"^^xsd:string ;
+  rdfs:label "Heating Loop Heat Exchanger"^^xsd:string .
+
+<urn:ex/VS01-InletValve>
+  a ns0:TwoWayValve, ns0:Valve, ns0:Equipment ;
+  ns0:cnx <urn:ex/VS01-InletValveInlet>, <urn:ex/VS01-InletValveOutlet> ;
+  dc11:description "Heating Loop Temperature Control Valve"^^xsd:string ;
+  rdfs:label "Heating Loop Temperature Control Valve"^^xsd:string .
+
+<urn:ex/VS01-InletValveActuator>
+  a ns0:Actuator, ns0:Equipment ;
+  ns0:actuates <urn:ex/VS01-InletValve> ;
+  ns0:actuatedByProperty <urn:ex/VS01-InletValvePosition> ;
+  rdfs:label "Heating Loop Temperature Control Valve Actuator"^^xsd:string .
+
+<urn:ex/VS01-Pump>
+  a ns0:Pump, ns0:Equipment ;
+  ns0:cnx <urn:ex/VS01-PumpInlet>, <urn:ex/VS01-PumpOutlet> ;
+  dc11:description "Heating Loop Pump"^^xsd:string ;
+  rdfs:label "Heating Loop Pump"^^xsd:string .
+
+<urn:ex/VS01-PumpActuator>
+  a ns0:Actuator, ns0:Equipment ;
+  ns0:actuates <urn:ex/VS01-Pump> ;
+  ns0:actuatedByProperty <urn:ex/VS01-PumpControl> ;
+  rdfs:label "Heating Loop Pump Actuator"^^xsd:string .
+
+<urn:ex/VS01-ExpansionTank>
+  a <https://brickschema.org/schema/1.1/Brick#Thermal_Expansion_Tank>, ns0:Equipment ;
+  ns0:cnx <urn:ex/VS01-ExpansionTankConnectionPoint> ;
+  ns0:hasRole ns0:Role-Expansion ;
+  dc11:description "Heating Loop Expansion Tank"^^xsd:string ;
+  rdfs:label "Heating Loop Expansion Tank"^^xsd:string .
+
+<urn:ex/VS01-HeatingWaterSupplyTemperatureSensor>
+  a ns0:TemperatureSensor, ns0:Sensor, ns0:Equipment ;
+  ns0:hasObservationLocation <urn:ex/VS01-BuildingHeatingWaterSupplyConnection> ;
+  ns0:observes <urn:ex/VS01-HeatingWaterSupplyTemperature> ;
+  rdfs:label "Heating Water Supply Temperature Sensor"^^xsd:string .
+
+<urn:ex/VS01-HeatingWaterReturnTemperatureSensor>
+  a ns0:TemperatureSensor, ns0:Sensor, ns0:Equipment ;
+  ns0:hasObservationLocation <urn:ex/VS01-BuildingHeatingWaterReturnConnection> ;
+  ns0:observes <urn:ex/VS01-HeatingWaterReturnTemperature> ;
+  rdfs:label "Heating Water Return Temperature Sensor"^^xsd:string .
+
+<urn:ex/VS01-HeatingWaterPressureSensor>
+  a ns0:PressureSensor, ns0:Sensor, ns0:Equipment ;
+  ns0:hasObservationLocation <urn:ex/VS01-BuildingHeatingWaterReturnConnection> ;
+  ns0:observes <urn:ex/VS01-HeatingWaterReturnPressure> ;
+  rdfs:label "Heating Water Pressure Sensor"^^xsd:string .
+
+<urn:ex/VS01-OutsideAirTemperatureSensor>
+  a ns0:TemperatureSensor, ns0:Sensor, ns0:Equipment ;
+  ns0:hasObservationLocation <urn:ex/VS01-OutsideAirSpace> ;
+  ns0:observes <urn:ex/VS01-OutsideAirTemperature> ;
+  rdfs:label "Outside Air Temperature Sensor"^^xsd:string .
+
+<urn:ex/VV01>
+  a ns0:System ;
+  ns0:hasMember <urn:ex/VV01-HeatExchanger>, <urn:ex/VV01-InletValve>, <urn:ex/VV01-InletValveActuator>, <urn:ex/VV01-Pump>, <urn:ex/VV01-PumpActuator>, <urn:ex/VS01-ExpansionTank>, <urn:ex/VV01-DomesticHotWaterSupplyTemperatureSensor>, <urn:ex/VV01-DomesticHotWaterReturnTemperatureSensor>, <urn:ex/VV01-DomesticHotWaterMakeupColdWaterMeter> ;
+  dc11:description "Domestic Hot Water System"^^xsd:string ;
+  rdfs:label "Domestic Hot Water System"^^xsd:string .
+
+<urn:ex/VV01-HeatExchanger>
+  a ns0:Equipment, ns0:HeatExchanger ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerPrimaryInlet>, <urn:ex/VV01-HeatExchangerPrimaryCenterInlet>, <urn:ex/VV01-HeatExchangerPrimaryOutlet>, <urn:ex/VV01-HeatExchangerSecondaryInlet>, <urn:ex/VV01-HeatExchangerSecondaryOutlet> ;
+  dc11:description "Domestic Hot Water Heat Exchanger"^^xsd:string ;
+  rdfs:label "Domestic Hot Water Heat Exchanger"^^xsd:string .
+
+<urn:ex/VV01-InletValve>
+  a ns0:TwoWayValve, ns0:Valve, ns0:Equipment ;
+  ns0:cnx <urn:ex/VV01-InletValveInlet>, <urn:ex/VV01-InletValveOutlet> ;
+  dc11:description "Domestic Hot Water Temperature Control Valve"^^xsd:string ;
+  rdfs:label "Domestic Hot Water Temperature Control Valve"^^xsd:string .
+
+<urn:ex/VV01-InletValveActuator>
+  a ns0:Actuator, ns0:Equipment ;
+  ns0:actuates <urn:ex/VV01-InletValve> ;
+  ns0:actuatedByProperty <urn:ex/VV01-InletValvePosition> ;
+  rdfs:label "Domestic Hot Water Temperature Control Valve Actuator"^^xsd:string .
+
+<urn:ex/VV01-Pump>
+  a ns0:Pump, ns0:Equipment ;
+  ns0:cnx <urn:ex/VV01-PumpInlet>, <urn:ex/VV01-PumpOutlet> ;
+  dc11:description "Domestic Hot Water Pump"^^xsd:string ;
+  rdfs:label "Domestic Hot Water Pump"^^xsd:string .
+
+<urn:ex/VV01-PumpActuator>
+  a ns0:Actuator, ns0:Equipment ;
+  ns0:actuates <urn:ex/VV01-Pump> ;
+  ns0:actuatedByProperty <urn:ex/VV01-PumpControl> ;
+  rdfs:label "Domestic Hot Water Pump Actuator"^^xsd:string .
+
+<urn:ex/VV01-DomesticHotWaterSupplyTemperatureSensor>
+  a ns0:TemperatureSensor, ns0:Sensor, ns0:Equipment ;
+  ns0:hasObservationLocation <urn:ex/VV01-HeatExchangerSecondaryOutletConnection> ;
+  ns0:observes <urn:ex/VV01-DomesticHotWaterSupplyTemperature> ;
+  rdfs:label "Domestic Hot Water Supply Temperature Sensor"^^xsd:string .
+
+<urn:ex/VV01-DomesticHotWaterReturnTemperatureSensor>
+  a ns0:TemperatureSensor, ns0:Sensor, ns0:Equipment ;
+  ns0:hasObservationLocation <urn:ex/VV01-BuildingDomesticHotWaterRecirculationConnection> ;
+  ns0:observes <urn:ex/VV01-DomesticHotWaterReturnTemperature> ;
+  rdfs:label "Domestic Hot Water Return Temperature Sensor"^^xsd:string .
+
+<urn:ex/VP01>
+  a ns0:System ;
+  ns0:hasMember <urn:ex/VP01-DHSupplyTemperatureSensor>, <urn:ex/VP01-DHReturnTemperatureSensor>, <urn:ex/VP01-DHDifferentialTemperatureSensor>, <urn:ex/VP01-DHSupplyPowerMeter> ;
+  dc11:description "District Heat Source System"^^xsd:string ;
+  rdfs:label "District Heat Source System"^^xsd:string .
+
+<urn:ex/VP01-DHSupplyTemperatureSensor>
+  a ns0:TemperatureSensor, ns0:Sensor, ns0:Equipment ;
+  ns0:hasObservationLocation <urn:ex/VP01-DistrictHeatSupplyConnection> ;
+  ns0:observes <urn:ex/VP01-DHSupplyTemperature> ;
+  rdfs:label "DH Supply Temperature Sensor"^^xsd:string .
+
+<urn:ex/VP01-DHReturnTemperatureSensor>
+  a ns0:TemperatureSensor, ns0:Sensor, ns0:Equipment ;
+  ns0:hasObservationLocation <urn:ex/VV01-HeatExchangerPrimaryOutletConnection> ;
+  ns0:observes <urn:ex/VP01-DHReturnTemperature> ;
+  rdfs:label "DH Return Temperature Sensor"^^xsd:string .
+
+<urn:ex/VP01-DHDifferentialTemperatureSensor>
+  a ns0:DifferentialSensor, ns0:Equipment ;
+  ns0:hasObservationLocationHigh <urn:ex/VP01-DistrictHeatSupplyConnection> ;
+  ns0:hasObservationLocationLow <urn:ex/VV01-HeatExchangerPrimaryOutletConnection> ;
+  ns0:observes <urn:ex/VP01-DHDifferentialTemperature> ;
+  rdfs:label "DH Differential Temperature Sensor"^^xsd:string .
+
+<urn:ex/KV01>
+  a ns0:System ;
+  ns0:hasMember <urn:ex/KV01-DistrictColdWaterSupplyMeter> ;
+  dc11:description "Cold Water System"^^xsd:string ;
+  rdfs:label "Cold Water System"^^xsd:string .
+
+<urn:ex/KV01-DistrictColdWaterSupplyMeter>
+  a ns0:FlowMeter, ns0:Equipment ;
+  ns0:cnx <urn:ex/KV01-MeterInlet>, <urn:ex/KV01-MeterOutlet> ;
+  ns0:hasProperty <urn:ex/KV01-DistrictColdWaterSupplyFlow> ;
+  rdfs:label "District Cold Water Supply Meter"^^xsd:string .
+
+<urn:ex/VS01-HeatExchangerPrimaryInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerPrimaryInletConnection>, <urn:ex/VS01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VS01-HeatExchangerPrimaryInletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-HeatExchanger> ;
+  rdfs:label "VS01-HeatExchangerPrimaryInlet"^^xsd:string .
+
+<urn:ex/VS01-HeatExchangerSecondaryInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-BuildingHeatingWaterReturnConnection>, <urn:ex/VS01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VS01-BuildingHeatingWaterReturnConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-HeatExchanger> ;
+  rdfs:label "VS01-HeatExchangerSecondaryInlet"^^xsd:string .
+
+<urn:ex/VS01-HeatExchangerPrimaryOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerPrimaryOutletConnection>, <urn:ex/VS01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VS01-HeatExchangerPrimaryOutletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-HeatExchanger> ;
+  rdfs:label "VS01-HeatExchangerPrimaryOutlet"^^xsd:string .
+
+<urn:ex/VS01-HeatExchangerSecondaryOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerSecondaryOutletConnection>, <urn:ex/VS01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VS01-HeatExchangerSecondaryOutletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-HeatExchanger> ;
+  rdfs:label "VS01-HeatExchangerSecondaryOutlet"^^xsd:string .
+
+<urn:ex/VS01-InletValveInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VP01-DistrictHeatSupplyConnection>, <urn:ex/VS01-InletValve> ;
+  ns0:connectsThrough <urn:ex/VP01-DistrictHeatSupplyConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-InletValve> ;
+  rdfs:label "VS01-InletValveInlet"^^xsd:string .
+
+<urn:ex/VS01-InletValveOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerPrimaryInletConnection>, <urn:ex/VS01-InletValve> ;
+  ns0:connectsThrough <urn:ex/VS01-HeatExchangerPrimaryInletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-InletValve> ;
+  rdfs:label "VS01-InletValveOutlet"^^xsd:string .
+
+<urn:ex/VS01-InletValvePosition>
+  a ns0:QuantifiableActuatableProperty, <https://brickschema.org/schema/1.1/Brick#Point>, <https://brickschema.org/schema/1.1/Brick#Actuator> ;
+  ns1:referenceDesignator "VS01-SV21"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/DimensionlessRatio> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "VS01-InletValvePosition"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VS01-InletValveActuator> .
+
+<urn:ex/VS01-PumpInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerSecondaryOutletConnection>, <urn:ex/VS01-Pump> ;
+  ns0:connectsThrough <urn:ex/VS01-HeatExchangerSecondaryOutletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-Pump> ;
+  rdfs:label "VS01-PumpInlet"^^xsd:string .
+
+<urn:ex/VS01-PumpOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-BuildingHeatingWaterSupplyConnection>, <urn:ex/VS01-Pump> ;
+  ns0:connectsThrough <urn:ex/VS01-BuildingHeatingWaterSupplyConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-Pump> ;
+  rdfs:label "VS01-PumpOutlet"^^xsd:string .
+
+<urn:ex/VS01-PumpControl>
+  a ns0:ActuatableProperty, ns0:EnumerableProperty, ns3:Point, ns3:Actuator ;
+  ns0:hasEnumerationKind ns0:Binary-OnOff ;
+  ns1:referenceDesignator "VS01-P1"^^xsd:string ;
+  rdfs:label "VS01-PumpControl"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VS01-PumpActuator> .
+
+<urn:ex/VS01-ExpansionTankConnectionPoint>
+  a ns0:BidirectionalConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-BuildingHeatingWaterReturnConnection>, <urn:ex/VS01-ExpansionTank> ;
+  ns0:connectsThrough <urn:ex/VS01-BuildingHeatingWaterReturnConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VS01-ExpansionTank> ;
+  rdfs:label "VS01-ExpansionTankConnectionPoint"^^xsd:string .
+
+<urn:ex/VS01-BuildingHeatingWaterSupplyConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VS01-PumpOutlet> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:hasProperty <urn:ex/VS01-HeatingWaterSupplyTemperature> ;
+  rdfs:label "VS01-BuildingHeatingWaterSupplyConnection"^^xsd:string .
+
+<urn:ex/VS01-HeatingWaterSupplyTemperature>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Supply ;
+  ns1:referenceDesignator "VS01-GT11"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "VS01-HeatingWaterSupplyTemperature"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VS01-BuildingHeatingWaterSupplyConnection> .
+
+<urn:ex/VS01-BuildingHeatingWaterReturnConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerSecondaryInlet>, <urn:ex/VS01-ExpansionTankConnectionPoint> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:hasProperty <urn:ex/VS01-HeatingWaterReturnTemperature>, <urn:ex/VS01-HeatingWaterReturnPressure> ;
+  rdfs:label "VS01-BuildingHeatingWaterReturnConnection"^^xsd:string .
+
+<urn:ex/VS01-HeatingWaterReturnTemperature>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Return ;
+  ns1:referenceDesignator "VS01-GT41"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "VS01-HeatingWaterReturnTemperature"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VS01-BuildingHeatingWaterReturnConnection> .
+
+<urn:ex/VS01-HeatingWaterReturnPressure>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Return ;
+  ns1:referenceDesignator "VS01-GP61"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Pressure> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/KiloPA> ;
+  rdfs:label "VS01-HeatingWaterReturnPressure"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VS01-BuildingHeatingWaterReturnConnection> .
+
+<urn:ex/VS01-OutsideAirSpace>
+  a ns0:DomainSpace ;
+  ns0:hasDomain ns0:Domain-HVAC ;
+  rdfs:label "VS01-OutsideAirSpace"^^xsd:string .
+
+<urn:ex/VS01-OutsideAirTemperature>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns1:referenceDesignator "VS01-GT31"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "VS01-OutsideAirTemperature"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VS01-OutsideAirSpace> .
+
+<urn:ex/VV01-HeatExchangerPrimaryInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerPrimaryInletConnection>, <urn:ex/VV01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerPrimaryInletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VV01-HeatExchanger> ;
+  rdfs:label "VV01-HeatExchangerPrimaryInlet"^^xsd:string .
+
+<urn:ex/VV01-HeatExchangerPrimaryCenterInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerPrimaryOutletConnection>, <urn:ex/VV01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VS01-HeatExchangerPrimaryOutletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VV01-HeatExchanger> ;
+  rdfs:label "VV01-HeatExchangerPrimaryCenterInlet"^^xsd:string .
+
+<urn:ex/VV01-HeatExchangerPrimaryOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerPrimaryOutletConnection>, <urn:ex/VV01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerPrimaryOutletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VV01-HeatExchanger> ;
+  rdfs:label "VV01-HeatExchangerPrimaryOutlet"^^xsd:string .
+
+<urn:ex/VV01-HeatExchangerSecondaryInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerSecondaryInletConnection>, <urn:ex/VV01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerSecondaryInletConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-HeatExchanger> ;
+  rdfs:label "VV01-HeatExchangerSecondaryInlet"^^xsd:string .
+
+<urn:ex/VV01-HeatExchangerSecondaryOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerSecondaryOutletConnection>, <urn:ex/VV01-HeatExchanger> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerSecondaryOutletConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-HeatExchanger> ;
+  rdfs:label "VV01-HeatExchangerSecondaryOutlet"^^xsd:string .
+
+<urn:ex/VV01-InletValveInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VP01-DistrictHeatSupplyConnection>, <urn:ex/VV01-InletValve> ;
+  ns0:connectsThrough <urn:ex/VP01-DistrictHeatSupplyConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VV01-InletValve> ;
+  rdfs:label "VV01-InletValveInlet"^^xsd:string .
+
+<urn:ex/VV01-InletValveOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerPrimaryInletConnection>, <urn:ex/VV01-InletValve> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerPrimaryInletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VV01-InletValve> ;
+  rdfs:label "VV01-InletValveOutlet"^^xsd:string .
+
+<urn:ex/VV01-InletValvePosition>
+  a ns0:QuantifiableActuatableProperty, ns3:Point, ns3:Actuator ;
+  ns1:referenceDesignator "VV01-SV21"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/DimensionlessRatio> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "VV01-InletValvePosition"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VV01-InletValveActuator> .
+
+<urn:ex/VV01-PumpInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-BuildingDomesticHotWaterRecirculationConnection>, <urn:ex/VV01-Pump> ;
+  ns0:connectsThrough <urn:ex/VV01-BuildingDomesticHotWaterRecirculationConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-Pump> ;
+  rdfs:label "VV01-PumpInlet"^^xsd:string .
+
+<urn:ex/VV01-PumpOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerSecondaryInletConnection>, <urn:ex/VV01-Pump> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerSecondaryInletConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-Pump> ;
+  rdfs:label "VV01-PumpOutlet"^^xsd:string .
+
+<urn:ex/VV01-PumpControl>
+  a ns0:ActuatableProperty, ns0:EnumerableProperty, ns3:Point, ns3:Actuator ;
+  ns0:hasEnumerationKind ns0:Binary-OnOff ;
+  ns1:referenceDesignator "VV01-P1"^^xsd:string ;
+  rdfs:label "VV01-PumpControl"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VV01-PumpActuator> .
+
+<urn:ex/VV01-HeatExchangerSecondaryOutletConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerSecondaryOutlet>, <urn:ex/VV01-BuildingDomesticHotWaterSupplyInlet> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  rdfs:label "VV01-HeatExchangerSecondaryOutletConnection"^^xsd:string .
+
+<urn:ex/VV01-DomesticHotWaterSupplyTemperature>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Supply ;
+  ns1:referenceDesignator "VV01-GT11"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "VV01-DomesticHotWaterSupplyTemperature"^^xsd:string ;
+  ns3:isPointOf <urn:ex/this:VV01-HeatExchangerSecondaryOutletConnection> .
+
+<urn:ex/VV01-BuildingDomesticHotWaterRecirculationConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VV01-PumpInlet>, <urn:ex/VV01-BuildingDomesticHotWaterRecirculation> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  rdfs:label "VV01-BuildingDomesticHotWaterRecirculationConnection"^^xsd:string .
+
+<urn:ex/VV01-DomesticHotWaterReturnTemperature>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Return ;
+  ns1:referenceDesignator "VV01-GT41"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "VV01-DomesticHotWaterReturnTemperature"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VV01-BuildingDomesticHotWaterRecirculationConnection> .
+
+<urn:ex/VV01-DomesticHotWaterMakeupColdWaterMeter>
+  a ns0:FlowMeter, ns0:Equipment ;
+  ns0:cnx <urn:ex/VV01-MeterInlet>, <urn:ex/VV01-MeterOutlet> ;
+  ns0:hasProperty <urn:ex/VV01-DomesticHotWaterMakeupColdWaterFlow> ;
+  rdfs:label "Domestic Hot Water Makeup Cold Water Meter"^^xsd:string .
+
+<urn:ex/VV01-MeterInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/KV01-BuildingColdWaterSupplyConnection>, <urn:ex/VV01-DomesticHotWaterMakeupColdWaterMeter> ;
+  ns0:connectsThrough <urn:ex/KV01-BuildingColdWaterSupplyConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-DomesticHotWaterMakeupColdWaterMeter> ;
+  rdfs:label "VV01-MeterInlet"^^xsd:string .
+
+<urn:ex/VV01-MeterOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerSecondaryInletConnection>, <urn:ex/VV01-DomesticHotWaterMakeupColdWaterMeter> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerSecondaryInletConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-DomesticHotWaterMakeupColdWaterMeter> ;
+  rdfs:label "VV01-MeterOutlet"^^xsd:string .
+
+<urn:ex/VV01-DomesticHotWaterMakeupColdWaterFlow>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns1:referenceDesignator "VV01-VM1"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/VolumeFlowRate> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/M3-PER-MIN> ;
+  rdfs:label "VV01-DomesticHotWaterMakeupColdWaterFlow"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VV01-DomesticHotWaterMakeupColdWaterMeter> .
+
+<urn:ex/VP01-DistrictHeatSupplyConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VS01-InletValveInlet>, <urn:ex/VV01-InletValveInlet> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  rdfs:label "VP01-DistrictHeatSupplyConnection"^^xsd:string .
+
+<urn:ex/VP01-DHSupplyTemperature>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Return ;
+  ns1:referenceDesignator "VP01-GT41"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "VP01-DHSupplyTemperature"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VP01-DistrictHeatSupplyConnection> .
+
+<urn:ex/VV01-HeatExchangerPrimaryOutletConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerPrimaryOutlet>, <urn:ex/VP01-MeterInlet> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  rdfs:label "VV01-HeatExchangerPrimaryOutletConnection"^^xsd:string .
+
+<urn:ex/VP01-DHReturnTemperature>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Return ;
+  ns1:referenceDesignator "VP01-GT42"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "VP01-DHReturnTemperature"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VP01-DistrictHeatReturnConnection> .
+
+<urn:ex/VP01-DHDifferentialTemperature>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Return ;
+  ns1:referenceDesignator "VP01-GT41/GT42-DT"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/TemperatureDifference> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/DEG_C> ;
+  rdfs:label "VP01-DHDifferentialTemperature"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VP01-DHDifferentialTemperatureSensor> .
+
+<urn:ex/VP01-DHSupplyPowerMeter>
+  a ns0:PowerMeter, ns0:Equipment ;
+  ns0:cnx <urn:ex/VP01-MeterInlet>, <urn:ex/VP01-MeterOutlet> ;
+  ns0:hasProperty <urn:ex/VP01-DHSupplyPower> ;
+  rdfs:label "DH Supply Power Meter"^^xsd:string .
+
+<urn:ex/VP01-MeterInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerPrimaryOutletConnection>, <urn:ex/VP01-DHSupplyPowerMeter> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerPrimaryOutletConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VP01-DHSupplyPowerMeter> ;
+  rdfs:label "VP01-MeterInlet"^^xsd:string .
+
+<urn:ex/VP01-MeterOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VP01-DistrictHeatReturnConnection>, <urn:ex/VP01-DHSupplyPowerMeter> ;
+  ns0:connectsThrough <urn:ex/VP01-DistrictHeatReturnConnection> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  ns0:isConnectionPointOf <urn:ex/VP01-DHSupplyPowerMeter> ;
+  rdfs:label "VP01-MeterOutlet"^^xsd:string .
+
+<urn:ex/VP01-DHSupplyPower>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns1:referenceDesignator "VP01-VM1"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/Power> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/KiloW> ;
+  rdfs:label "VP01-DHSupplyPower"^^xsd:string ;
+  ns3:isPointOf <urn:ex/VP01-DHSupplyPowerMeter> .
+
+<urn:ex/KV01-MeterInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/KV01-DistrictColdWaterSupplyConnection>, <urn:ex/KV01-DistrictColdWaterSupplyMeter> ;
+  ns0:connectsThrough <urn:ex/KV01-DistrictColdWaterSupplyConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/KV01-DistrictColdWaterSupplyMeter> ;
+  rdfs:label "KV01-MeterInlet"^^xsd:string .
+
+<urn:ex/KV01-MeterOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/KV01-BuildingColdWaterSupplyConnection>, <urn:ex/KV01-DistrictColdWaterSupplyMeter> ;
+  ns0:connectsThrough <urn:ex/KV01-BuildingColdWaterSupplyConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/KV01-DistrictColdWaterSupplyMeter> ;
+  rdfs:label "KV01-MeterOutlet"^^xsd:string .
+
+<urn:ex/KV01-DistrictColdWaterSupplyFlow>
+  a ns0:QuantifiableObservableProperty, ns3:Point, ns3:Sensor ;
+  ns0:hasAspect ns0:Role-Supply ;
+  ns1:referenceDesignator "VV01-VM1"^^xsd:string ;
+  ns2:hasQuantityKind <http://qudt.org/vocab/quantitykind/VolumeFlowRate> ;
+  ns2:hasUnit <http://qudt.org/vocab/unit/M3-PER-MIN> ;
+  rdfs:label "KV01-DistrictColdWaterSupplyFlow"^^xsd:string ;
+  ns3:isPointOf <urn:ex/KV01-DistrictColdWaterSupplyMeter> .
+
+<urn:ex/VV01-BuildingDomesticHotWaterSupplyJunction>
+  a ns0:Junction ;
+  ns0:cnx <urn:ex/VV01-BuildingDomesticHotWaterSupplyInlet>, <urn:ex/VV01-BuildingDomesticHotWaterSupplyOutlet>, <urn:ex/VV01-BuildingDomesticHotWaterRecirculation> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  rdfs:label "Building Domestic Hot Water Supply Junction"^^xsd:string .
+
+<urn:ex/VV01-BuildingDomesticHotWaterSupplyInlet>
+  a ns0:InletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerSecondaryOutletConnection>, <urn:ex/VV01-BuildingDomesticHotWaterSupplyJunction> ;
+  ns0:connectsThrough <urn:ex/VV01-HeatExchangerSecondaryOutletConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-BuildingDomesticHotWaterSupplyJunction> ;
+  rdfs:label "VV01-BuildingDomesticHotWaterSupplyInlet"^^xsd:string .
+
+<urn:ex/VV01-BuildingDomesticHotWaterSupplyOutlet>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-BuildingDomesticHotWaterSupplyJunction>, <urn:ex/VV01-BuildingDomesticHotWaterSupplyConnection> ;
+  ns0:connectsThrough <urn:ex/VV01-BuildingDomesticHotWaterSupplyConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-BuildingDomesticHotWaterSupplyJunction> ;
+  rdfs:label "VV01-BuildingDomesticHotWaterSupplyOutlet"^^xsd:string .
+
+<urn:ex/VV01-BuildingDomesticHotWaterRecirculation>
+  a ns0:OutletConnectionPoint ;
+  ns0:cnx <urn:ex/VV01-BuildingDomesticHotWaterRecirculationConnection>, <urn:ex/VV01-BuildingDomesticHotWaterSupplyJunction> ;
+  ns0:connectsThrough <urn:ex/VV01-BuildingDomesticHotWaterRecirculationConnection> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  ns0:isConnectionPointOf <urn:ex/VV01-BuildingDomesticHotWaterSupplyJunction> ;
+  rdfs:label "VV01-BuildingDomesticHotWaterRecirculation"^^xsd:string .
+
+<urn:ex/VV01-BuildingDomesticHotWaterSupplyConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VV01-BuildingDomesticHotWaterSupplyOutlet> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  rdfs:label "VV01-BuildingDomesticHotWaterSupplyConnection"^^xsd:string .
+
+<urn:ex/VS01-HeatExchangerPrimaryInletConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerPrimaryInlet>, <urn:ex/VS01-InletValveOutlet> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  rdfs:label "VS01-HeatExchangerPrimaryInletConnection"^^xsd:string .
+
+<urn:ex/VS01-HeatExchangerSecondaryOutletConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VS01-PumpInlet>, <urn:ex/VS01-HeatExchangerSecondaryOutlet> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  rdfs:label "VS01-HeatExchangerSecondaryOutletConnection"^^xsd:string .
+
+<urn:ex/VS01-HeatExchangerPrimaryOutletConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VS01-HeatExchangerPrimaryOutlet>, <urn:ex/VV01-HeatExchangerPrimaryCenterInlet> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  rdfs:label "VS01-HeatExchangerPrimaryOutletConnection"^^xsd:string .
+
+<urn:ex/VV01-HeatExchangerPrimaryInletConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerPrimaryInlet>, <urn:ex/VV01-InletValveOutlet> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  rdfs:label "VV01-HeatExchangerPrimaryInletConnection"^^xsd:string .
+
+<urn:ex/VV01-HeatExchangerSecondaryInletConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VV01-HeatExchangerSecondaryInlet>, <urn:ex/VV01-PumpOutlet>, <urn:ex/VV01-MeterOutlet> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  rdfs:label "VV01-HeatExchangerSecondaryInletConnection"^^xsd:string .
+
+<urn:ex/KV01-BuildingColdWaterSupplyConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VV01-MeterInlet>, <urn:ex/KV01-MeterOutlet> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  rdfs:label "KV01-BuildingColdWaterSupplyConnection"^^xsd:string .
+
+<urn:ex/VP01-DistrictHeatReturnConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/VP01-MeterOutlet> ;
+  ns0:hasMedium ns0:Water-GlycolSolution ;
+  rdfs:label "VP01-DistrictHeatReturnConnection"^^xsd:string .
+
+<urn:ex/KV01-DistrictColdWaterSupplyConnection>
+  a ns0:Connection ;
+  ns0:cnx <urn:ex/KV01-MeterInlet> ;
+  ns0:hasMedium ns0:Fluid-Water ;
+  rdfs:label "KV01-DistrictColdWaterSupplyConnection"^^xsd:string .
+
+<urn:ex/VS01-OutsideSpace>
+  a ns0:PhysicalSpace ;
+  ns0:encloses <urn:ex/VS01-OutsideAirSpace> ;
+  rdfs:label "VS01-OutsideSpace"^^xsd:string .

@@ -1,0 +1,44 @@
+stages:
+  - document
+  - test
+
+document:
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+  script:
+    - apt-get update -qy
+    - apt-get install -y python3-dev python3-pip zip unzip git
+    - apt-get clean
+    - apt-get install -y pandoc
+    - apt-get install -y librsvg2-bin
+    - apt-get clean
+    # compile 223p.ttl
+    - pip3 install --break-system-packages -r tools/requirements.txt
+    - python3 tools/compile-223p.py
+    - ls -l 223p.ttl
+    - ls
+    # build publication
+    - pushd publication
+    - pip3 install --break-system-packages -r requirements.txt
+    - bash build-documentation.sh
+    - popd
+    - mv publication/223p_publication.docx 223p_publication.docx
+    - mv publication/constraints.json constraints.json
+  artifacts:
+    paths:
+    - 223p_publication.docx
+    - constraints.json
+    - 223p.ttl
+
+test:
+  stage: test
+  script:
+    - apt-get update -qy
+    - apt-get install -y python3-dev python3-pip zip unzip git default-jre
+    - pip3 install --break-system-packages -r tests/requirements.txt
+    - ontoenv init --offline -- data models extensions imports inference models validation vocab collections
+    - cd tests
+    - pytest -s -vvvv -n auto
+  artifacts:
+   paths:
+     - data/compiled/*.ttl

@@ -1,0 +1,329 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix office: <urn:medium-office/> .
+
+<urn:medium-office/>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+
+# AHU wraps the devices inside
+office:ahu a s223:AHU ;
+    s223:contains office:cooling-coil-2stage, office:heating-coil-1stage, office:fan, office:economizer ;
+    s223:servesVAV office:vav1 ;
+    # AHU has 3 connection points: supply, return and outside air
+    s223:hasSystemConnectionPoint office:ahu-supply-conn, office:ahu-return-conn, office:ahu-outside-conn .
+office:ahu-outside-conn a s223:InletSystemConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:mapsTo office:economizer-outside-air .
+office:ahu-return-conn a s223:InletSystemConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:mapsTo office:economizer-return-air .
+office:ahu-supply-conn a s223:OutletSystemConnectionPoint ;
+    s223:mapsTo office:fan-out ;
+    s223:hasMedium s223:Fluid-Air .
+
+# economizer
+office:economizer-outside-air a s223:InletConnectionPoint ;
+    # TODO: connect to outside air
+    s223:hasProperty office:economizer-outside-air-humidity, office:economizer-outside-air-temp, office:economizer-outside-air-flow ;
+    s223:hasMedium s223:Fluid-Air .
+office:economizer-return-air a s223:InletConnectionPoint ;
+    s223:hasProperty office:economizer-return-air-temp, office:economizer-return-air-humidity ;
+    s223:hasMedium s223:Fluid-Air .
+office:economizer a s223:Economizer ;
+    s223:contains office:economizer-mix-air-flow-sensor, office:economizer-return-air-temp-sensor, office:economizer-return-air-humidity-sensor,
+                  office:economizer-outside-air-humidity-sensor, office:economizer-outside-air-temp-sensor, office:economizer-outside-air-flow-sensor ;
+    s223:cnx office:economizer-mixed-air, office:economizer-outside-air, office:economizer-return-air .
+office:economizer-mixed-air a s223:OutletConnectionPoint ;
+    # this goes to the mixed air region
+    s223:hasProperty office:economizer-mix-air-flow, office:economizer-mix-air-humidity ;
+    s223:hasMedium s223:Fluid-Air .
+office:economizer-mix-air-flow a s223:QuantifiableObservableProperty ;
+    rdfs:label "mixed air flow" ;
+    qudt:hasUnit unit:FT3-PER-MIN ;
+    qudt:hasQuantityKind quantitykind:VolumeFlowRate .
+office:economizer-mix-air-flow-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:economizer-mixed-air ;
+    s223:observes office:economizer-mix-air-flow .
+office:economizer-mix-air-humidity a s223:QuantifiableObservableProperty ;
+    rdfs:label "mixed air humidity" ;
+    qudt:hasUnit unit:PERCENT ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio .
+office:economizer-return-air-humidity a s223:QuantifiableObservableProperty ;
+    rdfs:label "return air humidity" ;
+    qudt:hasUnit unit:PERCENT ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio .
+office:economizer-return-air-humidity-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:economizer-return-air ;
+    s223:observes office:economizer-return-air-humidity .
+office:economizer-return-air-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "return air temperature" ;
+    qudt:hasUnit unit:DEG_C ;
+    qudt:hasQuantityKind quantitykind:Temperature .
+office:economizer-return-air-temp-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:economizer-return-air ;
+    s223:observes office:economizer-return-air-temp .
+office:economizer-outside-air-flow a s223:QuantifiableObservableProperty ;
+    rdfs:label "outside air flow" ;
+    qudt:hasUnit unit:FT3-PER-MIN ;
+    qudt:hasQuantityKind quantitykind:VolumeFlowRate .
+office:economizer-outside-air-flow-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:economizer-outside-air ;
+    s223:observes office:economizer-outside-air-flow .
+office:economizer-outside-air-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "outside air temperature" ;
+    qudt:hasUnit unit:DEG_C ;
+    qudt:hasQuantityKind quantitykind:Temperature .
+office:economizer-outside-air-temp-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:economizer-outside-air ;
+    s223:observes office:economizer-outside-air-temp .
+office:economizer-outside-air-humidity a s223:QuantifiableObservableProperty ;
+    rdfs:label "outside air humidity" ;
+    qudt:hasUnit unit:PERCENT ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio .
+office:economizer-outside-air-humidity-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:economizer-outside-air ;
+    s223:observes office:economizer-outside-air-humidity .
+
+# mixed air goes to the cooling coil
+office:mixed-air-duct a s223:Duct ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:cnx office:economizer-mixed-air, office:cooling-coil-in .
+
+# cooling coil
+office:cooling-coil-in a s223:InletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+office:cooling-coil-2stage a s223:CoolingCoil ;
+    s223:cnx office:cooling-coil-in, office:cooling-coil-out ;
+    s223:contains office:cooling-coil-power-sensor, office:cooling-coil-total-cooling-sensor ;
+    s223:hasProperty office:cooling-coil-power, office:cooling-coil-total-cooling .
+office:cooling-coil-power a s223:QuantifiableObservableProperty ;
+    rdfs:label "instantaneous cooling output" ;
+    qudt:hasUnit unit:W ;
+    qudt:hasQuantityKind quantitykind:Power .
+office:cooling-coil-power-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:cooling-coil-2stage ;
+    s223:observes office:cooling-coil-power .
+office:cooling-coil-total-cooling a s223:QuantifiableObservableProperty ;
+    rdfs:label "total delivered cooling" ;
+    qudt:hasUnit unit:W ;
+    qudt:hasQuantityKind quantitykind:Power .
+office:cooling-coil-total-cooling-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:cooling-coil-2stage ;
+    s223:observes office:cooling-coil-total-cooling .
+office:cooling-coil-out a s223:OutletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+
+# cooling coil connects to heating coil
+office:duct1 a s223:Duct ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:cnx office:cooling-coil-out, office:heating-coil-in ;
+.
+
+# heating coil
+office:heating-coil-in a s223:InletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+office:heating-coil-1stage a s223:HeatingCoil ;
+    s223:cnx office:heating-coil-in, office:heating-coil-out ;
+    s223:contains office:heating-coil-power-sensor, office:heating-coil-total-heating-sensor ;
+    s223:hasProperty office:heating-coil-power, office:heating-coil-total-heating, office:heating-coil-onoff .
+office:heating-coil-onoff a s223:EnumeratedActuatableProperty ;
+    rdfs:label "heating coil on/off" ;
+    s223:hasEnumerationKind s223:EnumerationKind-RunStatus .
+office:heating-coil-power a s223:QuantifiableObservableProperty ;
+    rdfs:label "instantaneous heating output" ;
+    qudt:hasUnit unit:W ;
+    qudt:hasQuantityKind quantitykind:ElectricPower .
+office:heating-coil-power-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:heating-coil-1stage ;
+    s223:observes office:heating-coil-power .
+office:heating-coil-total-heating a s223:QuantifiableObservableProperty ;
+    rdfs:label "total delivered heating" ;
+    qudt:hasUnit unit:W ;
+    qudt:hasQuantityKind quantitykind:ElectricPower .
+office:heating-coil-total-heating-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:heating-coil-1stage ;
+    s223:observes office:heating-coil-total-heating .
+office:heating-coil-out a s223:OutletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+
+# heating coil connects to fan
+office:duct2 a s223:Duct ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:cnx office:heating-coil-out, office:fan-in .
+
+# supply fan
+office:fan-in a s223:InletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+office:fan a s223:Fan ;
+    s223:cnx office:fan-in, office:fan-out ;
+    s223:contains office:fan-power-sensor ;
+    s223:hasProperty office:fan-speed, office:fan-power .
+office:fan-speed a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Fan Speed"@en ;
+    qudt:hasQuantityKind quantitykind:Frequency ;
+    qudt:hasUnit unit:HZ .
+office:fan-power a s223:QuantifiableObservableProperty ;
+    rdfs:label "fan power consumption" ;
+    qudt:hasUnit unit:W ;
+    qudt:hasQuantityKind quantitykind:ElectricPower .
+office:fan-power-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:fan ;
+    s223:observes office:fan-power .
+office:fan-out a s223:OutletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+
+# fan marks the boundary of the AHU
+
+# ducts connect the AHU to each VAV
+office:ahu-to-vav1 a s223:Duct ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:cnx office:fan-out, office:vav1-dmp-in .
+
+# VAV for each zone
+office:vav1 a s223:VAV ;
+    s223:contains office:vav1-rhc, office:vav1-dmp, office:vav1-sup-air-flow-sensor, office:vav1-sup-air-temp-sensor, office:vav1-sup-air-humidity-sensor ;
+    s223:servesZone office:zone1 ;
+    s223:hasSystemConnectionPoint office:vav1-in, office:vav1-out .
+office:vav1-in a s223:InletSystemConnectionPoint ;
+    s223:mapsTo office:vav1-dmp-in ;
+    s223:hasMedium s223:Fluid-Air .
+office:vav1-out a s223:OutletSystemConnectionPoint ;
+    s223:mapsTo office:vav1-rhc-out ;
+    s223:hasMedium s223:Fluid-Air .
+
+# vav damper
+office:vav1-dmp a s223:Damper ;
+    s223:hasProperty office:vav1-dmp-damper-pos ;
+    s223:cnx office:vav1-dmp-in, office:vav1-dmp-out .
+office:vav1-dmp-in a s223:InletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+office:vav1-dmp-out a s223:OutletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+office:vav1-dmp-damper-pos a s223:QuantifiableActuatableProperty ;
+    rdfs:label "VAV Damper Position"@en ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+# reheat coil connects to damper
+office:vav1-dmp-to-rhc a s223:Duct ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:cnx office:vav1-dmp-out, office:vav1-rhc-in .
+
+# reheat coil inside VAV
+office:vav1-rhc a s223:HeatingCoil ;
+    s223:hasProperty office:vav1-rhc-onoff ;
+    s223:cnx office:vav1-rhc-in, office:vav1-rhc-out .
+office:vav1-rhc-in a s223:InletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+office:vav1-rhc-out a s223:OutletConnectionPoint ;
+    s223:hasProperty office:vav1-sup-air-flow, office:vav1-sup-air-temp, office:vav1-sup-air-humidity ;
+    s223:hasMedium s223:Fluid-Air .
+office:vav1-rhc-onoff a s223:EnumeratedActuatableProperty ;
+    rdfs:label "reheat coil on/off" ;
+    s223:hasEnumerationKind s223:EnumerationKind-RunStatus .
+
+# properties of vav supply air
+office:vav1-sup-air-flow a s223:QuantifiableObservableProperty ;
+    rdfs:label "supply air flow" ;
+    qudt:hasUnit unit:FT3-PER-MIN ;
+    qudt:hasQuantityKind quantitykind:VolumeFlowRate .
+office:vav1-sup-air-flow-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:vav1-dmp-out ;
+    s223:observes office:vav1-sup-air-flow .
+office:vav1-sup-air-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "supply air temperature" ;
+    qudt:hasUnit unit:DEG_C ;
+    qudt:hasQuantityKind quantitykind:Temperature .
+office:vav1-sup-air-temp-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:vav1-dmp-out ;
+    s223:observes office:vav1-sup-air-temp .
+office:vav1-sup-air-humidity a s223:QuantifiableObservableProperty ;
+    rdfs:label "supply air humidity" ;
+    qudt:hasUnit unit:PERCENT ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio .
+office:vav1-sup-air-humidity-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:vav1-dmp-out ;
+    s223:observes office:vav1-sup-air-humidity .
+# end of VAV
+
+# VAV connects to the zone
+office:vav1-to-zone1  a s223:Duct ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:cnx office:vav1-rhc-out, office:zone1-hvac-space-in .
+
+# hvac zone
+office:zone1 a s223:Zone ;
+    s223:hasDomain s223:Domain-HVAC ;
+    s223:hasZoneConnectionPoint office:zone1-in, office:zone1-out ;
+    s223:contains office:zone1-hvac-space .
+office:zone1-in a s223:InletZoneConnectionPoint ;
+    s223:mapsTo office:zone1-hvac-space-in ;
+    s223:hasMedium s223:Fluid-Air .
+office:zone1-out a s223:OutletZoneConnectionPoint ;
+    s223:mapsTo office:zone1-hvac-space-out ;
+    s223:hasMedium s223:Fluid-Air .
+office:zone1-hvac-space a s223:DomainSpace ;
+    s223:hasProperty office:zone1-temp, office:zone1-flow, office:zone1-humidity ;
+    s223:cnx office:zone1-hvac-space-in, office:zone1-hvac-space-out ;
+    s223:hasDomain s223:Domain-HVAC .
+office:zone1-hvac-space-in a s223:InletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+office:zone1-hvac-space-out a s223:OutletConnectionPoint ;
+    s223:hasMedium s223:Fluid-Air .
+
+office:zone1-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Temperature"@en ;
+    s223:hasSetpoint office:zone1-temp-heating-setpoint, office:zone1-temp-cooling-setpoint ;
+    qudt:hasUnit unit:DEG_C ;
+    qudt:hasQuantityKind quantitykind:Temperature .
+office:zone1-temp-heating-setpoint a s223:Setpoint ;
+    rdfs:label "Zone Air Temperature Heating Setpoint"@en ;
+    s223:hasAspect s223:Fluid-Air, s223:HVACOperatingMode-HeatOnly ;
+    qudt:hasQuantityKind quantitykind:Temperature .
+office:zone1-temp-cooling-setpoint a s223:Setpoint ;
+    rdfs:label "Zone Air Temperature Cooling Setpoint"@en ;
+    s223:hasAspect s223:Fluid-Air, s223:HVACOperatingMode-CoolOnly ;
+    qudt:hasQuantityKind quantitykind:Temperature .
+office:zone1-temp-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:zone1-hvac-space-in ;
+    s223:observes office:zone1-temp .
+
+office:zone1-flow a s223:QuantifiableObservableProperty ;
+    rdfs:label "Zone Air Flow"@en ;
+    s223:hasSetpoint office:zone1-flow-setpoint ;
+    qudt:hasUnit unit:FT3-PER-MIN ;
+    qudt:hasQuantityKind quantitykind:VolumeFlowRate .
+office:zone1-flow-setpoint a s223:Setpoint ;
+    rdfs:label "Zone Air Flow Setpoint"@en ;
+    s223:hasAspect s223:Fluid-Air ;
+    qudt:hasQuantityKind quantitykind:VolumeFlowRate .
+office:zone1-flow-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:zone1-hvac-space-in ;
+    s223:observes office:zone1-flow .
+
+office:zone1-humidity a s223:QuantifiableObservableProperty ;
+    rdfs:label "Humidity"@en ;
+    s223:hasSetpoint office:zone1-humidity-setpoint ;
+    qudt:hasUnit unit:PERCENT ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio .
+office:zone1-humidity-setpoint a s223:Setpoint ;
+    rdfs:label "Zone Humidity Setpoint"@en ;
+    s223:hasAspect s223:Fluid-Air ;
+    qudt:hasQuantityKind quantitykind:DimensionlessRatio .
+office:zone1-humidity-sensor a s223:Sensor ;
+    s223:hasObservationLocation office:zone1-hvac-space-in ;
+    s223:observes office:zone1-humidity .
+# end of zone
+
+# return from zone
+office:return-duct a s223:Duct ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:cnx office:zone1-hvac-space-out, office:economizer-return-air .

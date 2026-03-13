@@ -1,0 +1,7 @@
+rdflib>=6.3
+pytest
+pySHACL>=0.23
+requests
+pyontoenv>=0.4.0
+brick-tq-shacl>=0.4.0a10
+pytest-xdist[psutil]

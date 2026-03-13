@@ -1,0 +1,4 @@
+rdflib
+pyontoenv>=0.4.0
+GitPython
+pytz

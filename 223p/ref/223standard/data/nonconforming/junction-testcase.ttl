@@ -1,0 +1,261 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/junction-testcase
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix jt: <http://data.ashrae.org/standard223/data/junction-testcase#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/junction-testcase>
+  a owl:Ontology ;
+  rdfs:comment "This graph is defined for testing the interactions between SystemConnectionPoints, ConnectionPoints, Junctions and Segments. It has since been rendered obsolete." ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+jt:CP2
+  a s223:InletConnectionPoint ;
+  s223:lnx jt:Segment2 ;
+  rdfs:label "CP2" ;
+.
+jt:CP3
+  a s223:InletConnectionPoint ;
+  rdfs:label "CP3" ;
+.
+jt:Chiller1
+  a s223:Chiller ;
+  s223:cnx jt:ChillerCPout ;
+  rdfs:label "Chiller1" ;
+.
+jt:ChillerCPin
+  a s223:InletConnectionPoint ;
+  s223:cnx jt:Chiller1 ;
+  rdfs:label "VCPin1" ;
+.
+jt:ChillerCPout
+  a s223:OutletConnectionPoint ;
+  s223:cnx jt:Connection1 ;
+  rdfs:label "ChillerCPout" ;
+.
+jt:Connection1
+  a s223:Connection ;
+  s223:cnx jt:FMtoHeatDumpCPin ;
+  rdfs:label "Connection1" ;
+.
+jt:Connection2
+  a s223:Connection ;
+  s223:cnx jt:HeatDumpCPin ;
+  rdfs:label "Connection2" ;
+.
+jt:Connection3
+  a s223:Connection ;
+  s223:cnx jt:VCPin1 ;
+  rdfs:label "Connection3" ;
+.
+jt:Connection4
+  a s223:Connection ;
+  s223:cnx jt:FMCPin ;
+  rdfs:label "Connection4" ;
+.
+jt:Connection5
+  a s223:Connection ;
+  s223:cnx jt:HHWP1CPin ;
+  s223:cnx jt:HHWP2CPin ;
+  rdfs:label "Connection5" ;
+.
+jt:Connection6
+  a s223:Connection ;
+  s223:cnx jt:ChillerCPin ;
+  rdfs:label "Connection6" ;
+.
+jt:Equipment2
+  a s223:Equipment ;
+  s223:cnx jt:CP2 ;
+  rdfs:label "Equipment2" ;
+.
+jt:Equipment3
+  a s223:Equipment ;
+  s223:cnx jt:CP3 ;
+  rdfs:label "Equipment3" ;
+.
+jt:FM1
+  a s223:FlowSensor ;
+  s223:cnx jt:FMCPin ;
+  s223:cnx jt:FMCPout ;
+  rdfs:label "FM1" ;
+.
+jt:FMCPin
+  a s223:InletConnectionPoint ;
+  rdfs:label "FMCPin" ;
+.
+jt:FMCPout
+  a s223:OutletConnectionPoint ;
+  s223:cnx jt:Connection5 ;
+  rdfs:label "FMCPout" ;
+.
+jt:FMtoHeatDump
+  a s223:FlowSensor ;
+  s223:cnx jt:FMtoHeatDumpCPin ;
+  s223:cnx jt:FMtoHeatDumpCPout ;
+  rdfs:label "FMtoHeatDump" ;
+.
+jt:FMtoHeatDumpCPin
+  a s223:InletConnectionPoint ;
+  rdfs:label "FMtoHeatDumpCPin" ;
+.
+jt:FMtoHeatDumpCPout
+  a s223:OutletConnectionPoint ;
+  s223:cnx jt:Connection2 ;
+  rdfs:label "FMtoHeatDumpCPout" ;
+.
+jt:HHWP1
+  a s223:Pump ;
+  s223:cnx jt:HHWP1CPin ;
+  s223:cnx jt:HHWP1CPout ;
+  rdfs:label "HHWP1" ;
+.
+jt:HHWP1CPin
+  a s223:InletConnectionPoint ;
+  rdfs:label "HHWP1CPin" ;
+.
+jt:HHWP1CPout
+  a s223:OutletConnectionPoint ;
+  s223:cnx jt:Connection6 ;
+  rdfs:label "HHWP1CPout" ;
+.
+jt:HHWP2
+  a s223:Pump ;
+  s223:cnx jt:HHWP2CPin ;
+  s223:cnx jt:HHWP2CPout ;
+  rdfs:label "HHWP2" ;
+.
+jt:HHWP2CPin
+  a s223:InletConnectionPoint ;
+  rdfs:label "HHWP1CPin" ;
+.
+jt:HHWP2CPout
+  a s223:OutletConnectionPoint ;
+  s223:cnx jt:Connection6 ;
+  rdfs:label "HHWP1CPin" ;
+.
+jt:HeatDumpCPin
+  a s223:InletConnectionPoint ;
+  s223:cnx jt:HeatDumptoCW ;
+  rdfs:label "VCPin1" ;
+.
+jt:HeatDumpCPout
+  a s223:OutletConnectionPoint ;
+  s223:cnx jt:Connection3 ;
+  rdfs:label "HeatDumpCPout" ;
+.
+jt:HeatDumptoCW
+  a s223:HeatExchanger ;
+  s223:cnx jt:HeatDumpCPin ;
+  s223:cnx jt:HeatDumpCPout ;
+  rdfs:label "HeatDumptoCW" ;
+.
+jt:Junction1
+  a s223:Junction ;
+  s223:lnx jt:Segment3 ;
+  rdfs:label "Junction1" ;
+.
+jt:SP1
+  a s223:InletSystemConnectionPoint ;
+  s223:mapsTo jt:VCPin2 ;
+  rdfs:label "SP1" ;
+.
+jt:SP2
+  a s223:OutletSystemConnectionPoint ;
+  s223:mapsTo jt:Junction1 ;
+  rdfs:label "SP2" ;
+.
+jt:SSP1
+  a s223:InletSystemConnectionPoint ;
+  s223:mapsTo jt:FMCPin ;
+  rdfs:label "SSP1" ;
+.
+jt:SSP2
+  a s223:OutletSystemConnectionPoint ;
+  s223:mapsTo jt:FMCPout ;
+  rdfs:label "SSP1" ;
+.
+jt:Segment1
+  a s223:Segment ;
+  s223:lnx jt:ChillerCPout ;
+  s223:lnx jt:Junction1 ;
+  rdfs:label "Segment1" ;
+.
+jt:Segment2
+  a s223:Segment ;
+  s223:lnx jt:Junction1 ;
+  rdfs:label "Segment2" ;
+.
+jt:Segment3
+  a s223:Segment ;
+  s223:lnx jt:CP3 ;
+  rdfs:label "Segment3" ;
+.
+jt:SubSystem1
+  a s223:System ;
+  s223:contains jt:FM1 ;
+  s223:contains jt:TSin ;
+  s223:contains jt:TSout ;
+  s223:hasSystemConnectionPoint jt:SSP1 ;
+  s223:hasSystemConnectionPoint jt:SSP2 ;
+  rdfs:label "SubSystem1" ;
+.
+jt:System1
+  a s223:System ;
+  s223:contains jt:Chiller1 ;
+  s223:contains jt:FMtoHeatDump ;
+  s223:contains jt:HHWP1 ;
+  s223:contains jt:HHWP2 ;
+  s223:contains jt:HeatDumptoCW ;
+  s223:contains jt:TSoutHeatDump ;
+  s223:contains jt:ThreeWayValve1 ;
+  s223:hasSystemConnectionPoint jt:SP1 ;
+  rdfs:label "System1" ;
+.
+jt:TSin
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation jt:Connection4 ;
+  s223:observes jt:TempConnection4 ;
+  rdfs:label "TSin" ;
+.
+jt:TSout
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation jt:Connection5 ;
+  s223:hasObservationLocation jt:Segment1 ;
+  rdfs:label "TSout" ;
+.
+jt:TSoutHeatDump
+  a s223:TemperatureSensor ;
+  s223:hasObservationLocation jt:Connection3 ;
+  rdfs:label "TSoutHeatDump" ;
+.
+jt:TempConnection4
+  a s223:QuantifiableObservableProperty ;
+  rdfs:label "TempConnection4" ;
+.
+jt:ThreeWayValve1
+  a s223:Valve ;
+  s223:cnx jt:VCPin1 ;
+  s223:cnx jt:VCPin2 ;
+  s223:cnx jt:VCPout ;
+  rdfs:label "ThreeWayValve1" ;
+.
+jt:VCPin1
+  a s223:InletConnectionPoint ;
+  rdfs:label "VCPin1" ;
+.
+jt:VCPin2
+  a s223:InletConnectionPoint ;
+  rdfs:label "VCPin2" ;
+.
+jt:VCPout
+  a s223:OutletConnectionPoint ;
+  s223:cnx jt:Connection4 ;
+  rdfs:label "VCPout" ;
+.

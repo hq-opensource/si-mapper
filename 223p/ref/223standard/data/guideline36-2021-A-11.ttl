@@ -1,0 +1,302 @@
+@prefix g36: <http://data.ashrae.org/standard223/1.0/extensions/g36#> .
+@prefix mysystem: <http://data.ashrae.org/standard223/1.0/data/guideline36-2021-A-11#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix qudtqk: <http://qudt.org/vocab/quantitykind/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+mysystem: a owl:Ontology ;
+    rdfs:label "" ;
+    owl:imports <http://data.ashrae.org/standard223/1.0/model/all> .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit a s223:AirHandlingUnit,
+        g36:DualFanDualDuctHeatingAirHandlingUnit ;
+    rdfs:label "Dualfandualductheatingairhandlingunit" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-air-in,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-air-out,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-water-in,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-water-out ;
+    s223:contains mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-differential-pressure-sensor a s223:Sensor ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Filter Differential Pressure Sensor" ;
+    s223:hasObservationLocation mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-in ;
+    s223:hasReferenceLocation mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-out ;
+    s223:observes mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-differential-pressure .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-return-water-temp-sensor a s223:Sensor ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Return Water Temp Sensor" ;
+    s223:hasObservationLocation mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-water-out ;
+    s223:observes mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-return-water-temp .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-supply-water-temp-sensor a s223:Sensor ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Supply Water Temp Sensor" ;
+    s223:hasObservationLocation mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-water-in ;
+    s223:observes mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-supply-water-temp .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-actuator a s223:Actuator ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Valve Actuator" ;
+    s223:actuatedByProperty mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-command ;
+    s223:actuates mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-return-air-temp-sensor a s223:Sensor ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Return Air Temp Sensor" ;
+    s223:hasObservationLocation mysystem:DualFanDualDuctHeatingAirHandlingUnit-air-in ;
+    s223:observes mysystem:DualFanDualDuctHeatingAirHandlingUnit-return-air-temp .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-air-temp-sensor a s223:Sensor ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Air Temp Sensor" ;
+    s223:hasObservationLocation mysystem:DualFanDualDuctHeatingAirHandlingUnit-air-out ;
+    s223:observes mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-air-temp .
+
+mysystem:PhysicalSpace a s223:PhysicalSpace ;
+    rdfs:label "Physicalspace" ;
+    s223:encloses mysystem:PhysicalSpace-hvac-domain .
+
+mysystem:zone a s223:Zone,
+        g36:Zone ;
+    rdfs:label "Zone" ;
+    s223:hasDomain s223:Domain-HVAC ;
+    s223:hasDomainSpace mysystem:PhysicalSpace-hvac-domain ;
+    s223:hasProperty mysystem:zone-co2-concentration,
+        mysystem:zone-temp .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter a s223:Filter,
+        g36:Filter ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Filter" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-in,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-out ;
+    s223:hasProperty mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-differential-pressure .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil a s223:HeatingCoil,
+        g36:HotWaterCoil ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-air-in,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-air-out,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-water-in,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-water-out ;
+    s223:hasProperty mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-return-water-temp,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-supply-water-temp ;
+    s223:hasRole s223:Role-Heating .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-air-in a s223:InletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Air In" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-duct-after-filter ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-air-out a s223:OutletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Air Out" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-duct-after-heating-coil ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-in a s223:InletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Valve In" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-pipe-hot-water-return-before-valve ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-out a s223:OutletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Valve Out" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:mapsTo mysystem:DualFanDualDuctHeatingAirHandlingUnit-water-out .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-position a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Valve Position" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-duct-static-pressure a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Duct Static Pressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN_H2O .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan a s223:Fan,
+        g36:FanWithVFD ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-in,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-out ;
+    s223:hasProperty mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-high-static-reset-cmd,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-power,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-speed-cmd,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-speed-status,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-start-cmd,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-start-status .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-high-static-reset-cmd a s223:EnumeratedActuatableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan High Static Reset Cmd" ;
+    s223:hasEnumerationKind s223:EnumerationKind-Binary .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-in a s223:InletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan In" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-duct-after-heating-coil ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-out a s223:OutletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan Out" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:mapsTo mysystem:DualFanDualDuctHeatingAirHandlingUnit-air-out .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-power a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan Power" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:W .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-speed-cmd a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan Speed Cmd" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-speed-status a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan Speed Status" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-start-cmd a s223:EnumeratedActuatableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan Start Cmd" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-fan-start-status a s223:EnumeratedObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Fan Start Status" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+mysystem:PhysicalSpace-hvac-domain-in a s223:InletConnectionPoint ;
+    rdfs:label "Physicalspace Hvac Domain In" ;
+    s223:cnx mysystem:air-handling-unit-supply-to-room-connection ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:PhysicalSpace-hvac-domain-out a s223:OutletConnectionPoint ;
+    rdfs:label "Physicalspace Hvac Domain Out" ;
+    s223:cnx mysystem:room-return-to-air-handling-unit-connection ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:zone-co2-concentration a s223:QuantifiableObservableProperty ;
+    rdfs:label "Zone Co2 Concentration" ;
+    s223:ofMedium s223:Fluid-Air ;
+    s223:ofSubstance s223:Constituent-CO2 ;
+    qudt:hasQuantityKind qudtqk:MoleFraction ;
+    qudt:hasUnit unit:PPM .
+
+mysystem:zone-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Zone Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-duct-after-filter a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Duct After Filter" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-duct-after-heating-coil a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Duct After Heating Coil" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-differential-pressure a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Filter Differential Pressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN_H2O ;
+    qudt:isDeltaQuantity true .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-in a s223:InletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Filter In" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:mapsTo mysystem:DualFanDualDuctHeatingAirHandlingUnit-air-in .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-filter-out a s223:OutletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Filter Out" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-duct-after-filter ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-return-water-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Return Water Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-supply-water-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Supply Water Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve a s223:Valve,
+        g36:HotWaterValve ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Valve" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-in,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-out ;
+    s223:hasProperty mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-command,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-position .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-valve-command a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Valve Command" ;
+    s223:hasAspect s223:Binary-Position ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-water-in a s223:InletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Water In" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:mapsTo mysystem:DualFanDualDuctHeatingAirHandlingUnit-water-in .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-heating-coil-water-out a s223:OutletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Heating Coil Water Out" ;
+    s223:cnx mysystem:DualFanDualDuctHeatingAirHandlingUnit-pipe-hot-water-return-before-valve ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-pipe-hot-water-return-before-valve a s223:Connection,
+        s223:Pipe ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Pipe Hot Water Return Before Valve" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-return-air-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Return Air Temp" ;
+    s223:hasAspect s223:Role-Return ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-air-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Supply Air Temp" ;
+    s223:hasAspect s223:Role-Supply ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-water-in a s223:InletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Water In" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-water-out a s223:OutletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Water Out" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:PhysicalSpace-hvac-domain a s223:DomainSpace ;
+    rdfs:label "Physicalspace Hvac Domain" ;
+    s223:cnx mysystem:PhysicalSpace-hvac-domain-in,
+        mysystem:PhysicalSpace-hvac-domain-out ;
+    s223:hasDomain s223:Domain-HVAC .
+
+mysystem:air-handling-unit-supply-to-room-connection a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Air Handling Unit Supply To Room Connection" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:room-return-to-air-handling-unit-connection a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Room Return To Air Handling Unit Connection" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-air-in a s223:InletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Air In" ;
+    s223:cnx mysystem:room-return-to-air-handling-unit-connection ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:hasProperty mysystem:DualFanDualDuctHeatingAirHandlingUnit-return-air-temp .
+
+mysystem:DualFanDualDuctHeatingAirHandlingUnit-air-out a s223:OutletConnectionPoint ;
+    rdfs:label "Dualfandualductheatingairhandlingunit Air Out" ;
+    s223:cnx mysystem:air-handling-unit-supply-to-room-connection ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:hasProperty mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-air-temp,
+        mysystem:DualFanDualDuctHeatingAirHandlingUnit-supply-duct-static-pressure .
+

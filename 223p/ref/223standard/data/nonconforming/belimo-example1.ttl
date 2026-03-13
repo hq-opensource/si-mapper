@@ -1,0 +1,103 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/belimo-example1
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix be1: <http://data.ashrae.org/standard223/data/belimo-example1#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+s223:QuantifiableObservableProperty_1
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Quantifiable observable property 1" ;
+.
+s223:QuantifiableObservableProperty_2
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/Temperature> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/DEG_F> ;
+  rdfs:label "Quantifiable observable property 2" ;
+.
+s223:QuantifiableObservableProperty_3
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/VolumeFlowRate> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/FT3-PER-MIN> ;
+  rdfs:label "Quantifiable observable property 3" ;
+.
+<http://data.ashrae.org/standard223/1.0/data/belimo-example1>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+be1:ApplicationSystem
+  a s223:System ;
+  s223:hasMember be1:EnergyMeterSystem ;
+  s223:hasMember be1:Valve_1 ;
+  rdfs:label "Application System" ;
+.
+be1:BidirectionalConnectionPoint_1
+  a s223:BidirectionalConnectionPoint ;
+  s223:cnx be1:Connection_1 ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf be1:Equipment_1 ;
+  rdfs:label "Bidirectional connection point 1" ;
+.
+be1:Connection_1
+  a s223:Connection ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Connection 1" ;
+.
+be1:EnergyMeterEquipment
+  a s223:Equipment ;
+  s223:contains be1:LowerFlowSensor ;
+  s223:contains be1:LowerTSensor ;
+  s223:contains be1:UpperTSensor ;
+  rdfs:label "Energy Meter Equipment" ;
+.
+be1:EnergyMeterSystem
+  a s223:System ;
+  s223:hasMember be1:EnergyMeterEquipment ;
+  rdfs:label "Energy Meter System" ;
+.
+be1:Equipment_1
+  a s223:Equipment ;
+  rdfs:label "Equipment 1" ;
+.
+be1:LowerFlowSensor
+  a s223:Sensor ;
+  s223:hasObservationLocation be1:ValveInletCP ;
+  s223:observes s223:QuantifiableObservableProperty_3 ;
+  rdfs:label "Lower Flow Sensor" ;
+.
+be1:LowerTSensor
+  a s223:Sensor ;
+  s223:hasObservationLocation be1:ValveInletCP ;
+  s223:observes s223:QuantifiableObservableProperty_1 ;
+  rdfs:label "Lower T Sensor" ;
+.
+be1:UpperTSensor
+  a s223:Sensor ;
+  s223:hasObservationLocation be1:ValveOutletCP ;
+  s223:observes s223:QuantifiableObservableProperty_2 ;
+  rdfs:label "Upper T Sensor" ;
+.
+be1:ValveInletCP
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Valve Inlet Connection Point" ;
+.
+be1:ValveOutletCP
+  a s223:OutletConnectionPoint ;
+  s223:cnx be1:Connection_1 ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Valve Outlet Connection Point" ;
+.
+be1:Valve_1
+  a s223:Valve ;
+  s223:cnx be1:ValveInletCP ;
+  s223:cnx be1:ValveOutletCP ;
+  rdfs:label "Valve 1" ;
+.

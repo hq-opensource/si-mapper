@@ -1,0 +1,84 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/mr33-sample
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# imports: http://www.w3.org/ns/shacl#
+
+@prefix mr33: <http://data.ashrae.org/standard223/data/mr33-sample#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/mr33-sample>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:imports sh: ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+mr33:AirFlowStation
+  a s223:FlowEquipment ;
+  s223:cnx mr33:C1 ;
+  s223:cnx mr33:C2 ;
+  s223:hasProperty mr33:AirFlowStation-FlowRateProperty ;
+.
+mr33:AirFlowStation-FlowRateProperty
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/VolumeFlowRate> ;
+  rdfs:label "AirFlowStation-FlowRateProperty" ;
+.
+mr33:AirFlowStationFlowSensor
+  a s223:Sensor ;
+  s223:observes mr33:AirFlowStation-FlowRateProperty ;
+.
+mr33:C1
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+mr33:C2
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+mr33:C3
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+mr33:C4
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+mr33:Damper_1
+  a s223:Damper ;
+  s223:cnx mr33:C3 ;
+  s223:cnx mr33:C4 ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:hasProperty mr33:Damper_1PositionCommand ;
+.
+mr33:Damper_1Actuator
+  a s223:Actuator ;
+  s223:actuatedByProperty mr33:Damper_1PositionCommand ;
+.
+mr33:Damper_1PositionCommand
+  a s223:QuantifiableActuatableProperty ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/DimensionlessRatio> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PERCENT> ;
+  rdfs:label "Damper_1PositionCommand" ;
+.
+mr33:Duct_1
+  a s223:Duct ;
+  s223:cnx mr33:C2 ;
+  s223:cnx mr33:C3 ;
+.
+mr33:Duct_2
+  a s223:Duct ;
+.
+mr33:VAV1
+  a s223:VAV ;
+  s223:contains mr33:AirFlowStation ;
+  s223:contains mr33:Damper_1 ;
+.
+mr33:Zone_1
+  a s223:Zone ;
+  s223:hasDomain <http://data.ashrae.org/standard223/1.0/vocab/domain#HVAC> ;
+.

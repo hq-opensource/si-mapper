@@ -1,0 +1,84 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/multisensor01
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: ms1
+
+@prefix ms1: <http://data.ashrae.org/standard223/1.0/data/multisensor01#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/multisensor01>
+  a owl:Ontology ;
+  rdfs:comment "This graph is a sample of modeling a particulate size measurement sensor platform." ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+ms1:Domain1
+  a s223:DomainSpace ;
+  s223:hasDomain s223:Domain-HVAC ;
+  rdfs:label "Domain1" ;
+.
+ms1:ExternalSource_1
+  a s223:ExternalReference ;
+  rdfs:label "External source 1" ;
+.
+ms1:ExternalSource_2
+  a s223:ExternalReference ;
+  rdfs:label "External source 2" ;
+.
+ms1:ExternalSource_3
+  a s223:ExternalReference ;
+  rdfs:label "External source 3" ;
+.
+<http://data.ashrae.org/standard223/1.0/data/multisensor01#PM1.0Count>
+  a s223:QuantifiableObservableProperty ;
+  s223:hasExternalReference ms1:ExternalSource_1 ;
+  s223:ofSubstance <http://data.ashrae.org/standard223#Particulate-PM1.0> ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/MassDensity> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/MicroGM-PER-M3> ;
+  rdfs:label "PM1.0Count" ;
+.
+<http://data.ashrae.org/standard223/1.0/data/multisensor01#PM10.0Count>
+  a s223:QuantifiableObservableProperty ;
+  s223:hasExternalReference ms1:ExternalSource_2 ;
+  s223:ofSubstance <http://data.ashrae.org/standard223#Particulate-PM10.0> ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/MassDensity> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/MicroGM-PER-M3> ;
+  rdfs:label "PM10.0Count" ;
+.
+<http://data.ashrae.org/standard223/1.0/data/multisensor01#PM2.5Count>
+  a s223:QuantifiableObservableProperty ;
+  s223:hasExternalReference ms1:ExternalSource_3 ;
+  s223:ofSubstance <http://data.ashrae.org/standard223#Particulate-PM2.5> ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/MassDensity> ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/MicroGM-PER-M3> ;
+  rdfs:label "PM2.5Count" ;
+.
+ms1:ParticulateSensorPlatform
+  a s223:Equipment ;
+  s223:contains <http://data.ashrae.org/standard223/1.0/data/multisensor01#ParticulateSensor_1.0> ;
+  s223:contains ms1:ParticulateSensor_10 ;
+  s223:contains <http://data.ashrae.org/standard223/1.0/data/multisensor01#ParticulateSensor_2.5> ;
+  rdfs:label "Particulate sensor platform" ;
+.
+<http://data.ashrae.org/standard223/1.0/data/multisensor01#ParticulateSensor_1.0>
+  a s223:ParticulateSensor ;
+  s223:hasObservationLocation ms1:Domain1 ;
+  s223:observes <http://data.ashrae.org/standard223/1.0/data/multisensor01#PM1.0Count> ;
+  rdfs:label "Particulate sensor 1.0" ;
+.
+ms1:ParticulateSensor_10
+  a s223:ParticulateSensor ;
+  s223:hasObservationLocation ms1:Domain1 ;
+  s223:observes <http://data.ashrae.org/standard223/1.0/data/multisensor01#PM10.0Count> ;
+  rdfs:label "Particulate sensor 10" ;
+.
+<http://data.ashrae.org/standard223/1.0/data/multisensor01#ParticulateSensor_2.5>
+  a s223:ParticulateSensor ;
+  s223:hasObservationLocation ms1:Domain1 ;
+  s223:observes <http://data.ashrae.org/standard223/1.0/data/multisensor01#PM2.5Count> ;
+  rdfs:label "Particulate sensor 2.5" ;
+.

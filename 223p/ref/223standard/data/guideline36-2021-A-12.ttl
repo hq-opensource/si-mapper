@@ -1,0 +1,640 @@
+@prefix g36: <http://data.ashrae.org/standard223/1.0/extensions/g36#> .
+@prefix mysystem: <http://data.ashrae.org/standard223/1.0/data/guideline36-2021-A-12#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix qudtqk: <http://qudt.org/vocab/quantitykind/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+mysystem: a owl:Ontology ;
+    rdfs:label "" ;
+    owl:imports <http://data.ashrae.org/standard223/1.0/model/all> .
+
+mysystem:PhysicalSpace a s223:PhysicalSpace ;
+    rdfs:label "Physicalspace" ;
+    s223:encloses mysystem:PhysicalSpace-hvac-domain .
+
+mysystem:SingleZoneAirHandlingUnit a s223:AirHandlingUnit,
+        g36:DualFanDualDuctHeatingAirHandlingUnit ;
+    rdfs:label "Singlezoneairhandlingunit" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-chilled-water-in,
+        mysystem:SingleZoneAirHandlingUnit-chilled-water-out,
+        mysystem:SingleZoneAirHandlingUnit-exhaust-air-out,
+        mysystem:SingleZoneAirHandlingUnit-hot-water-in,
+        mysystem:SingleZoneAirHandlingUnit-hot-water-out,
+        mysystem:SingleZoneAirHandlingUnit-outside-air-in,
+        mysystem:SingleZoneAirHandlingUnit-return-air-in,
+        mysystem:SingleZoneAirHandlingUnit-supply-air-out ;
+    s223:contains mysystem:SingleZoneAirHandlingUnit-cooling-coil,
+        mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve,
+        mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper,
+        mysystem:SingleZoneAirHandlingUnit-filter,
+        mysystem:SingleZoneAirHandlingUnit-heating-coil,
+        mysystem:SingleZoneAirHandlingUnit-heating-coil-valve,
+        mysystem:SingleZoneAirHandlingUnit-outside-air-damper,
+        mysystem:SingleZoneAirHandlingUnit-outside-supply-junction,
+        mysystem:SingleZoneAirHandlingUnit-return-air-damper,
+        mysystem:SingleZoneAirHandlingUnit-return-exhaust-junction,
+        mysystem:SingleZoneAirHandlingUnit-return-fan,
+        mysystem:SingleZoneAirHandlingUnit-supply-fan .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-return-water-temp-sensor a s223:Sensor ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Return Water Temp Sensor" ;
+    s223:hasObservationLocation mysystem:SingleZoneAirHandlingUnit-cooling-coil-water-out ;
+    s223:observes mysystem:SingleZoneAirHandlingUnit-cooling-coil-return-water-temp .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-supply-water-temp-sensor a s223:Sensor ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Supply Water Temp Sensor" ;
+    s223:hasObservationLocation mysystem:SingleZoneAirHandlingUnit-cooling-coil-water-in ;
+    s223:observes mysystem:SingleZoneAirHandlingUnit-cooling-coil-supply-water-temp .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-actuator a s223:Actuator ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Valve Actuator" ;
+    s223:actuatedByProperty mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-command ;
+    s223:actuates mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve .
+
+mysystem:SingleZoneAirHandlingUnit-filter-differential-pressure-sensor a s223:Sensor ;
+    rdfs:label "Singlezoneairhandlingunit Filter Differential Pressure Sensor" ;
+    s223:hasObservationLocation mysystem:SingleZoneAirHandlingUnit-filter-in ;
+    s223:hasReferenceLocation mysystem:SingleZoneAirHandlingUnit-filter-out ;
+    s223:observes mysystem:SingleZoneAirHandlingUnit-filter-differential-pressure .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-return-water-temp-sensor a s223:Sensor ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Return Water Temp Sensor" ;
+    s223:hasObservationLocation mysystem:SingleZoneAirHandlingUnit-heating-coil-water-out ;
+    s223:observes mysystem:SingleZoneAirHandlingUnit-heating-coil-return-water-temp .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-supply-water-temp-sensor a s223:Sensor ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Supply Water Temp Sensor" ;
+    s223:hasObservationLocation mysystem:SingleZoneAirHandlingUnit-heating-coil-water-in ;
+    s223:observes mysystem:SingleZoneAirHandlingUnit-heating-coil-supply-water-temp .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-actuator a s223:Actuator ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Valve Actuator" ;
+    s223:actuatedByProperty mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-command ;
+    s223:actuates mysystem:SingleZoneAirHandlingUnit-heating-coil-valve .
+
+mysystem:SingleZoneAirHandlingUnit-mixed-air-temp-sensor a s223:Sensor ;
+    rdfs:label "Singlezoneairhandlingunit Mixed Air Temp Sensor" ;
+    s223:hasObservationLocation mysystem:SingleZoneAirHandlingUnit-filter-in ;
+    s223:observes mysystem:SingleZoneAirHandlingUnit-mixed-air-temp .
+
+mysystem:SingleZoneAirHandlingUnit-return-air-temp-sensor a s223:Sensor ;
+    rdfs:label "Singlezoneairhandlingunit Return Air Temp Sensor" ;
+    s223:hasObservationLocation mysystem:SingleZoneAirHandlingUnit-return-air-in ;
+    s223:observes mysystem:SingleZoneAirHandlingUnit-return-air-temp .
+
+mysystem:SingleZoneAirHandlingUnit-supply-air-temp-sensor a s223:Sensor ;
+    rdfs:label "Singlezoneairhandlingunit Supply Air Temp Sensor" ;
+    s223:hasObservationLocation mysystem:SingleZoneAirHandlingUnit-supply-air-out ;
+    s223:observes mysystem:SingleZoneAirHandlingUnit-supply-air-temp .
+
+mysystem:zone a s223:Zone,
+        g36:Zone ;
+    rdfs:label "Zone" ;
+    s223:hasDomain s223:Domain-HVAC ;
+    s223:hasDomainSpace mysystem:PhysicalSpace-hvac-domain ;
+    s223:hasProperty mysystem:zone-co2-concentration,
+        mysystem:zone-temp .
+
+mysystem:PhysicalSpace-hvac-domain-in a s223:InletConnectionPoint ;
+    rdfs:label "Physicalspace Hvac Domain In" ;
+    s223:cnx mysystem:air-handling-unit-supply-to-room-connection ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:PhysicalSpace-hvac-domain-out a s223:OutletConnectionPoint ;
+    rdfs:label "Physicalspace Hvac Domain Out" ;
+    s223:cnx mysystem:room-return-to-air-handling-unit-connection ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil a s223:CoolingCoil,
+        g36:ChilledWaterCoil ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-cooling-coil-air-in,
+        mysystem:SingleZoneAirHandlingUnit-cooling-coil-air-out,
+        mysystem:SingleZoneAirHandlingUnit-cooling-coil-water-in,
+        mysystem:SingleZoneAirHandlingUnit-cooling-coil-water-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-cooling-coil-return-water-temp,
+        mysystem:SingleZoneAirHandlingUnit-cooling-coil-supply-water-temp ;
+    s223:hasRole s223:Role-Cooling .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-air-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Air In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-heating-coil ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-air-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Air Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-cooling-coil ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Valve In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-pipe-chilled-water-return-before-valve ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Valve Out" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:mapsTo mysystem:SingleZoneAirHandlingUnit-chilled-water-out .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-position a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Valve Position" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper a s223:Damper,
+        g36:Damper ;
+    rdfs:label "Singlezoneairhandlingunit Exhaust Air Damper" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper-in,
+        mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper-command,
+        mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper-position .
+
+mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper-command a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Exhaust Air Damper Command" ;
+    s223:hasAspect s223:Binary-Position ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Exhaust Air Damper In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-before-exhaust-air-damper ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Exhaust Air Damper Out" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:mapsTo mysystem:SingleZoneAirHandlingUnit-exhaust-air-out .
+
+mysystem:SingleZoneAirHandlingUnit-exhaust-air-damper-position a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Exhaust Air Damper Position" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-filter a s223:Filter,
+        g36:Filter ;
+    rdfs:label "Singlezoneairhandlingunit Filter" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-filter-in,
+        mysystem:SingleZoneAirHandlingUnit-filter-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-filter-differential-pressure .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil a s223:HeatingCoil,
+        g36:HotWaterCoil ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-heating-coil-air-in,
+        mysystem:SingleZoneAirHandlingUnit-heating-coil-air-out,
+        mysystem:SingleZoneAirHandlingUnit-heating-coil-water-in,
+        mysystem:SingleZoneAirHandlingUnit-heating-coil-water-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-heating-coil-return-water-temp,
+        mysystem:SingleZoneAirHandlingUnit-heating-coil-supply-water-temp ;
+    s223:hasRole s223:Role-Heating .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-air-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Air In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-filter ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-air-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Air Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-heating-coil ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Valve In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-pipe-hot-water-return-before-valve ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Valve Out" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:mapsTo mysystem:SingleZoneAirHandlingUnit-hot-water-out .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-position a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Valve Position" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-outside-air-damper a s223:Damper,
+        g36:Damper ;
+    rdfs:label "Singlezoneairhandlingunit Outside Air Damper" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-outside-air-damper-in,
+        mysystem:SingleZoneAirHandlingUnit-outside-air-damper-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-outside-air-damper-command,
+        mysystem:SingleZoneAirHandlingUnit-outside-air-damper-position .
+
+mysystem:SingleZoneAirHandlingUnit-outside-air-damper-command a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Outside Air Damper Command" ;
+    s223:hasAspect s223:Binary-Position ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-outside-air-damper-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Outside Air Damper In" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:mapsTo mysystem:SingleZoneAirHandlingUnit-outside-air-in .
+
+mysystem:SingleZoneAirHandlingUnit-outside-air-damper-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Outside Air Damper Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-outside-air-damper ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-outside-air-damper-position a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Outside Air Damper Position" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-outside-supply-junction a s223:Junction ;
+    rdfs:label "Singlezoneairhandlingunit Outside Supply Junction" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-outside-supply-junction-in-1,
+        mysystem:SingleZoneAirHandlingUnit-outside-supply-junction-in-2,
+        mysystem:SingleZoneAirHandlingUnit-outside-supply-junction-out ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-outside-supply-junction-in-1 a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Outside Supply Junction In 1" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-outside-air-damper ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-outside-supply-junction-in-2 a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Outside Supply Junction In 2" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-return-air-damper ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-outside-supply-junction-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Outside Supply Junction Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-before-filter ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-return-air-damper a s223:Damper,
+        g36:Damper ;
+    rdfs:label "Singlezoneairhandlingunit Return Air Damper" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-return-air-damper-in,
+        mysystem:SingleZoneAirHandlingUnit-return-air-damper-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-return-air-damper-command,
+        mysystem:SingleZoneAirHandlingUnit-return-air-damper-position .
+
+mysystem:SingleZoneAirHandlingUnit-return-air-damper-command a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Air Damper Command" ;
+    s223:hasAspect s223:Binary-Position ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-return-air-damper-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Return Air Damper In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-before-return-air-damper ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-return-air-damper-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Return Air Damper Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-return-air-damper ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-return-air-damper-position a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Air Damper Position" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-return-exhaust-junction a s223:Junction ;
+    rdfs:label "Singlezoneairhandlingunit Return Exhaust Junction" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-return-exhaust-junction-in,
+        mysystem:SingleZoneAirHandlingUnit-return-exhaust-junction-out-1,
+        mysystem:SingleZoneAirHandlingUnit-return-exhaust-junction-out-2 ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-return-exhaust-junction-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Return Exhaust Junction In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-return-fan ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-return-exhaust-junction-out-1 a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Return Exhaust Junction Out 1" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-before-exhaust-air-damper ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-return-exhaust-junction-out-2 a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Return Exhaust Junction Out 2" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-before-return-air-damper ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan a s223:Fan,
+        g36:FanWithVFD ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-return-fan-in,
+        mysystem:SingleZoneAirHandlingUnit-return-fan-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-return-fan-high-static-reset-cmd,
+        mysystem:SingleZoneAirHandlingUnit-return-fan-power,
+        mysystem:SingleZoneAirHandlingUnit-return-fan-speed-cmd,
+        mysystem:SingleZoneAirHandlingUnit-return-fan-speed-status,
+        mysystem:SingleZoneAirHandlingUnit-return-fan-start-cmd,
+        mysystem:SingleZoneAirHandlingUnit-return-fan-start-status .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan-high-static-reset-cmd a s223:EnumeratedActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan High Static Reset Cmd" ;
+    s223:hasEnumerationKind s223:EnumerationKind-Binary .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan In" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:mapsTo mysystem:SingleZoneAirHandlingUnit-return-air-in .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-return-fan ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan-power a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan Power" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:W .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan-speed-cmd a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan Speed Cmd" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan-speed-status a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan Speed Status" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan-start-cmd a s223:EnumeratedActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan Start Cmd" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+mysystem:SingleZoneAirHandlingUnit-return-fan-start-status a s223:EnumeratedObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Fan Start Status" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan a s223:Fan,
+        g36:FanWithVFD ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-supply-fan-in,
+        mysystem:SingleZoneAirHandlingUnit-supply-fan-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-supply-fan-high-static-reset-cmd,
+        mysystem:SingleZoneAirHandlingUnit-supply-fan-power,
+        mysystem:SingleZoneAirHandlingUnit-supply-fan-speed-cmd,
+        mysystem:SingleZoneAirHandlingUnit-supply-fan-speed-status,
+        mysystem:SingleZoneAirHandlingUnit-supply-fan-start-cmd,
+        mysystem:SingleZoneAirHandlingUnit-supply-fan-start-status .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan-high-static-reset-cmd a s223:EnumeratedActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan High Static Reset Cmd" ;
+    s223:hasEnumerationKind s223:EnumerationKind-Binary .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-cooling-coil ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan Out" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:mapsTo mysystem:SingleZoneAirHandlingUnit-supply-air-out .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan-power a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan Power" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:W .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan-speed-cmd a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan Speed Cmd" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan-speed-status a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan Speed Status" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan-start-cmd a s223:EnumeratedActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan Start Cmd" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+mysystem:SingleZoneAirHandlingUnit-supply-fan-start-status a s223:EnumeratedObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Supply Fan Start Status" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+mysystem:zone-co2-concentration a s223:QuantifiableObservableProperty ;
+    rdfs:label "Zone Co2 Concentration" ;
+    s223:ofMedium s223:Fluid-Air ;
+    s223:ofSubstance s223:Constituent-CO2 ;
+    qudt:hasQuantityKind qudtqk:MoleFraction ;
+    qudt:hasUnit unit:PPM .
+
+mysystem:zone-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Zone Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:PhysicalSpace-hvac-domain a s223:DomainSpace ;
+    rdfs:label "Physicalspace Hvac Domain" ;
+    s223:cnx mysystem:PhysicalSpace-hvac-domain-in,
+        mysystem:PhysicalSpace-hvac-domain-out ;
+    s223:hasDomain s223:Domain-HVAC .
+
+mysystem:SingleZoneAirHandlingUnit-chilled-water-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Chilled Water In" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-chilled-water-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Chilled Water Out" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-return-water-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Return Water Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-supply-water-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Supply Water Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve a s223:Valve,
+        g36:ChilledWaterValve ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Valve" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-in,
+        mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-command,
+        mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-position .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-valve-command a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Valve Command" ;
+    s223:hasAspect s223:Binary-Position ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-water-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Water In" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:mapsTo mysystem:SingleZoneAirHandlingUnit-chilled-water-in .
+
+mysystem:SingleZoneAirHandlingUnit-cooling-coil-water-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Cooling Coil Water Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-pipe-chilled-water-return-before-valve ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-duct-after-cooling-coil a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct After Cooling Coil" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-duct-after-filter a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct After Filter" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-duct-after-heating-coil a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct After Heating Coil" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-duct-after-outside-air-damper a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct After Outside Air Damper" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-duct-after-return-air-damper a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct After Return Air Damper" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-duct-after-return-fan a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct After Return Fan" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-duct-before-exhaust-air-damper a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct Before Exhaust Air Damper" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-duct-before-filter a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct Before Filter" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-duct-before-return-air-damper a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Singlezoneairhandlingunit Duct Before Return Air Damper" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-exhaust-air-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Exhaust Air Out" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-filter-differential-pressure a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Filter Differential Pressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN_H2O ;
+    qudt:isDeltaQuantity true .
+
+mysystem:SingleZoneAirHandlingUnit-filter-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Filter Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-after-filter ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-return-water-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Return Water Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-supply-water-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Supply Water Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-valve a s223:Valve,
+        g36:HotWaterValve ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Valve" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-in,
+        mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-out ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-command,
+        mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-position .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-valve-command a s223:QuantifiableActuatableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Valve Command" ;
+    s223:hasAspect s223:Binary-Position ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-water-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Water In" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:mapsTo mysystem:SingleZoneAirHandlingUnit-hot-water-in .
+
+mysystem:SingleZoneAirHandlingUnit-heating-coil-water-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Heating Coil Water Out" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-pipe-hot-water-return-before-valve ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-hot-water-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Hot Water In" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-hot-water-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Hot Water Out" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-mixed-air-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Mixed Air Temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:SingleZoneAirHandlingUnit-outside-air-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Outside Air In" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-pipe-chilled-water-return-before-valve a s223:Connection,
+        s223:Pipe ;
+    rdfs:label "Singlezoneairhandlingunit Pipe Chilled Water Return Before Valve" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-pipe-hot-water-return-before-valve a s223:Connection,
+        s223:Pipe ;
+    rdfs:label "Singlezoneairhandlingunit Pipe Hot Water Return Before Valve" ;
+    s223:hasMedium s223:Fluid-Water .
+
+mysystem:SingleZoneAirHandlingUnit-return-air-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Return Air Temp" ;
+    s223:hasAspect s223:Role-Return ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:SingleZoneAirHandlingUnit-supply-air-temp a s223:QuantifiableObservableProperty ;
+    rdfs:label "Singlezoneairhandlingunit Supply Air Temp" ;
+    s223:hasAspect s223:Role-Supply ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+mysystem:air-handling-unit-supply-to-room-connection a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Air Handling Unit Supply To Room Connection" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:room-return-to-air-handling-unit-connection a s223:Connection,
+        s223:Duct ;
+    rdfs:label "Room Return To Air Handling Unit Connection" ;
+    s223:hasMedium s223:Fluid-Air .
+
+mysystem:SingleZoneAirHandlingUnit-filter-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Filter In" ;
+    s223:cnx mysystem:SingleZoneAirHandlingUnit-duct-before-filter ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-mixed-air-temp .
+
+mysystem:SingleZoneAirHandlingUnit-return-air-in a s223:InletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Return Air In" ;
+    s223:cnx mysystem:room-return-to-air-handling-unit-connection ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-return-air-temp .
+
+mysystem:SingleZoneAirHandlingUnit-supply-air-out a s223:OutletConnectionPoint ;
+    rdfs:label "Singlezoneairhandlingunit Supply Air Out" ;
+    s223:cnx mysystem:air-handling-unit-supply-to-room-connection ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:hasProperty mysystem:SingleZoneAirHandlingUnit-supply-air-temp .
+

@@ -1,0 +1,28 @@
+[34mConnectionPoint <http://data.ashrae.org/standard223/data/g36-figure-a-11#00020> could be missing a mapsTo relation to a ConnectionPoint of <http://data.ashrae.org/standard223/data/g36-figure-a-11#00001> because it is associated with a Junction or Equipment that is contained by <http://data.ashrae.org/standard223/data/g36-figure-a-11#00001>.[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-11#00020
+[34mConnectionPoint <http://data.ashrae.org/standard223/data/g36-figure-a-11#00002> probably needs an association with a Connection.[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-11#00002
+    http://data.ashrae.org/standard223/data/g36-figure-a-11#00003
+    http://data.ashrae.org/standard223/data/g36-figure-a-11#00004
+    http://data.ashrae.org/standard223/data/g36-figure-a-11#00005
+[34mThe property shape with path bob:airInlet for Class s223:Fan must have an rdfs:comment.[0m
+    http://data.ashrae.org/standard223#Fan http://data.ashrae.org/standard223#Fan
+    http://data.ashrae.org/standard223#Fan http://data.ashrae.org/standard223#Fan
+    http://data.ashrae.org/standard223#ObservableProperty http://data.ashrae.org/standard223#ObservableProperty
+    http://data.ashrae.org/standard223#Fan http://data.ashrae.org/standard223#Fan
+    http://data.ashrae.org/standard223#Fan http://data.ashrae.org/standard223#Fan
+    http://data.ashrae.org/standard223#QuantifiableProperty http://data.ashrae.org/standard223#QuantifiableProperty
+    http://data.ashrae.org/standard223#QuantifiableProperty http://data.ashrae.org/standard223#QuantifiableProperty
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Connection http://data.ashrae.org/standard223#Connection
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Equipment http://data.ashrae.org/standard223#Equipment
+    http://data.ashrae.org/standard223#QuantifiableObservableProperty http://data.ashrae.org/standard223#QuantifiableObservableProperty
+    http://data.ashrae.org/standard223#Property http://data.ashrae.org/standard223#Property
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Property http://data.ashrae.org/standard223#Property
+    http://data.ashrae.org/standard223#Property http://data.ashrae.org/standard223#Property
+[35mProperty needs to have at least 1 value[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-11#00016
+    http://data.ashrae.org/standard223/data/g36-figure-a-11#00031

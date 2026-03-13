@@ -1,0 +1,180 @@
+# baseURI: http://data.ashrae.org/standard223/data/g36-figure-a-8
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix bob: <http://data.ashrae.org/standard223/si-builder#> .
+@prefix ex: <http://example/> .
+@prefix exg3608: <http://data.ashrae.org/standard223/data/g36-figure-a-8#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+
+
+<http://data.ashrae.org/standard223/data/g36-figure-a-8>
+  a owl:Ontology ;
+  rdfs:isDefinedBy <http://data.ashrae.org/standard223/data/g36-figure-a-8> ;
+  rdfs:label "g36-figure-a-8" ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> .
+
+exg3608:00001 a s223:Connectable,
+        s223:Equipment,
+        ex:VAV ;
+    rdfs:label "A-8" ;
+    s223:cnx exg3608:00002,
+        exg3608:00003,
+        exg3608:00004 ;
+    s223:contains exg3608:00005,
+        exg3608:00009,
+        exg3608:00013 ;
+    s223:hasConnectionPoint exg3608:00002,
+        exg3608:00003,
+        exg3608:00004 ;
+    ex:coldDeckAirInlet exg3608:00003 ;
+    ex:hotDeckAirInlet exg3608:00002 ;
+    ex:supplyAirOutlet exg3608:00004 .
+
+exg3608:00002 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.hotDeckAirInlet" ;
+    s223:cnx exg3608:00001 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00001 .
+
+exg3608:00003 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.coldDeckAirInlet" ;
+    s223:cnx exg3608:00001 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00001 .
+
+exg3608:00004 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.supplyAirOutlet" ;
+    s223:cnx exg3608:00001 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00001 .
+
+exg3608:00005 a s223:Connectable,
+        s223:Equipment,
+        ex:Damper ;
+    rdfs:label "A-8.hot_deck_damper" ;
+    s223:cnx exg3608:00006,
+        exg3608:00007 ;
+    s223:connectedThrough exg3608:00016 ;
+    s223:contains exg3608:00008 ;
+    s223:hasConnectionPoint exg3608:00006,
+        exg3608:00007 ;
+    ex:airInlet exg3608:00006 ;
+    ex:airOutlet exg3608:00007 .
+
+exg3608:00006 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.hot_deck_damper.airInlet" ;
+    s223:cnx exg3608:00005 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00005 ;
+    s223:mapsTo exg3608:00002 .
+
+exg3608:00007 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.hot_deck_damper.airOutlet" ;
+    s223:cnx exg3608:00005,
+        exg3608:00016 ;
+    s223:connectsThrough exg3608:00016 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00005 .
+
+exg3608:00008 a s223:Connectable,
+        s223:Equipment,
+        ex:DamperPositioner ;
+    rdfs:label "A-8.hot_deck_damper.damper_positioner" .
+
+exg3608:00009 a s223:Connectable,
+        s223:Equipment,
+        ex:Damper ;
+    rdfs:label "A-8.cold_deck_damper" ;
+    s223:cnx exg3608:00010,
+        exg3608:00011 ;
+    s223:connectedThrough exg3608:00016 ;
+    s223:contains exg3608:00012 ;
+    s223:hasConnectionPoint exg3608:00010,
+        exg3608:00011 ;
+    ex:airInlet exg3608:00010 ;
+    ex:airOutlet exg3608:00011 .
+
+exg3608:00010 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.cold_deck_damper.airInlet" ;
+    s223:cnx exg3608:00009 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00009 ;
+    s223:mapsTo exg3608:00003 .
+
+exg3608:00011 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.cold_deck_damper.airOutlet" ;
+    s223:cnx exg3608:00009,
+        exg3608:00016 ;
+    s223:connectsThrough exg3608:00016 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00009 .
+
+exg3608:00012 a s223:Connectable,
+        s223:Equipment,
+        ex:DamperPositioner ;
+    rdfs:label "A-8.cold_deck_damper.damper_positioner" .
+
+exg3608:00013 a s223:Connectable,
+        s223:Equipment,
+        ex:AirFlowStation ;
+    rdfs:label "A-8.air_flow_station" ;
+    s223:cnx exg3608:00014,
+        exg3608:00015 ;
+    s223:connectedThrough exg3608:00016 ;
+    s223:hasConnectionPoint exg3608:00014,
+        exg3608:00015 ;
+    ex:airInlet exg3608:00014 ;
+    ex:airOutlet exg3608:00015 .
+
+exg3608:00014 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.air_flow_station.airInlet" ;
+    s223:cnx exg3608:00013,
+        exg3608:00016 ;
+    s223:connectsThrough exg3608:00016 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00013 .
+
+exg3608:00015 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "A-8.air_flow_station.airOutlet" ;
+    s223:cnx exg3608:00013 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf exg3608:00013 ;
+    s223:mapsTo exg3608:00004 .
+
+exg3608:00016 a s223:Connection ;
+    rdfs:label "A-8.merge" ;
+    s223:cnx exg3608:00007,
+        exg3608:00011,
+        exg3608:00014 ;
+    s223:connectsAt exg3608:00007,
+        exg3608:00011,
+        exg3608:00014 ;
+    s223:connectsFrom exg3608:00005,
+        exg3608:00009 ;
+    s223:connectsTo exg3608:00013 ;
+    s223:hasMedium s223:Fluid-Air .
+

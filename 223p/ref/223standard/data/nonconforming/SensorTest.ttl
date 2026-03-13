@@ -1,0 +1,77 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/SensorTest
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: SensorTest
+
+@prefix SensorTest: <http://data.ashrae.org/standard223/1.0/data/SensorTest#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/SensorTest>
+  a owl:Ontology ;
+  rdfs:comment "This graph is defined to test various constraints related to Sensors." ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+SensorTest:AbstractSensor_1
+  a s223:AbstractSensor ;
+  rdfs:label "Abstract sensor 1" ;
+.
+SensorTest:ConnectionPoint_1
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:EM-Light ;
+  s223:isConnectionPointOf SensorTest:Fan_1 ;
+  rdfs:label "Connection point 1" ;
+.
+SensorTest:ConnectionPoint_2
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Light-Infrared ;
+  s223:isConnectionPointOf SensorTest:Fan_1 ;
+  rdfs:label "Connection point 2" ;
+.
+SensorTest:DifferentialSensor_1
+  a s223:DifferentialSensor ;
+  s223:hasObservationLocationHigh SensorTest:Fan_1 ;
+  s223:hasObservationLocationLow SensorTest:Fan_1 ;
+  rdfs:label "Differential sensor 1" ;
+.
+SensorTest:Fan_1
+  a s223:Fan ;
+  s223:cnx SensorTest:ConnectionPoint_1 ;
+  s223:cnx SensorTest:ConnectionPoint_2 ;
+  s223:hasConnectionPoint SensorTest:ConnectionPoint_1 ;
+  s223:hasConnectionPoint SensorTest:ConnectionPoint_2 ;
+  rdfs:label "Fan 1" ;
+.
+SensorTest:FlowSensor1Prop
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasQuantityKind <http://qudt.org/vocab/quantitykind/VolumeFlowRate> ;
+  rdfs:label "Flow sensor1Prop" ;
+.
+SensorTest:FlowSensor_1
+  a s223:AbstractSensor ;
+  a s223:FlowSensor ;
+  s223:hasObservationLocation SensorTest:Fan_1 ;
+  s223:observes SensorTest:FlowSensor1Prop ;
+  rdfs:label "Flow sensor 1" ;
+.
+SensorTest:Sensor1State
+  a s223:EnumeratedObservableProperty ;
+  s223:hasEnumerationKind s223:Binary-OnOff ;
+  rdfs:label "Sensor1State" ;
+.
+SensorTest:Sensor_1
+  a s223:AbstractSensor ;
+  a s223:Sensor ;
+  s223:hasObservationLocation SensorTest:Fan_1 ;
+  s223:observes SensorTest:Sensor1State ;
+  rdfs:label "Sensor 1" ;
+.
+SensorTest:State_1
+  a s223:State ;
+  rdfs:label "State 1" ;
+.

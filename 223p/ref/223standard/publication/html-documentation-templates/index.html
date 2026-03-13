@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+<style>
+    {% include "static/prism.min.css" %}
+    {% include "static/site.css" %}
+</style>
+</head>
+<body>
+    <h1>Docs</h1>
+    <input type="text" id="search" placeholder="Search" />
+    {% for concept in concepts %}
+    <div class="card" data-concept="{{concept.name}}">
+        <h3><a href="#{{ concept.name }}" id="{{ concept.name}}">{{ concept.label }}</a></h3>
+        <p>URI: <a href="{{ concept.class }}">{{ concept.class }}</a></p>
+        <pre><code class="language-turtle">
+{{ concept.immediate_subgraph }}
+        </code></pre>
+        {% if concept.see_alsos|length > 0 %}
+            <h4>See Also</h4>
+            <ul>
+            {% for see_also in concept.see_alsos %}
+                <li><a href="#{{ see_also }}">{{ see_also }}</a></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <script>
+        {% include "static/app.js" %}
+        {% include "static/prism.min.js" %}
+        {% include "static/prism-autoloader.min.js" %}
+        {% include "static/prism-turtle.min.js" %}
+    </script>
+</body>

@@ -1,0 +1,21 @@
+[34mConnectionPoint <http://data.ashrae.org/standard223/data/g36-figure-a-7#00002> probably needs an association with a Connection.[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00002
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00003
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00004
+[34mThe property shape with path s223:connectsThrough for Class s223:ConnectionPoint must have an rdfs:comment.[0m
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Connection http://data.ashrae.org/standard223#Connection
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Junction http://data.ashrae.org/standard223#Junction
+    http://data.ashrae.org/standard223#Equipment http://data.ashrae.org/standard223#Equipment
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+[35mProperty needs to have at least 1 value[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00012
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00020
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00021
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00022
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00023
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00024
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00025
+    http://data.ashrae.org/standard223/data/g36-figure-a-7#00026

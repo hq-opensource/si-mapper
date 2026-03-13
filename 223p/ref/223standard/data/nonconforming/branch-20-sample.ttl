@@ -1,0 +1,107 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/branch-20-sample
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix b20: <http://data.ashrae.org/standard223/branch-20-sample#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/branch-20-sample>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+b20:Fan20Actuator
+  a s223:Actuator ;
+  s223:actuatedByProperty b20:Fan20Speed ;
+  rdfs:label "Fan 20 Actuator" ;
+.
+b20:Fan20InletConnectionPoint
+  a s223:InletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:hasProperty b20:Fan20InletPressure ;
+  s223:hasmedium s223:Fluid-Air ;
+  rdfs:label "Fan20 Inlet ConnectionPoint" ;
+.
+b20:Fan20InletPressure
+  a s223:QuantifiableObservableProperty ;
+  s223:hasValue "101000"^^xsd:decimal ;
+  qudt:hasQuantityKind quantitykind:Pressure ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PA> ;
+  rdfs:label "Fan20InletPressure" ;
+.
+b20:Fan20InletPressureValue
+  a s223:Value ;
+  s223:hasValue "101000" ;
+.
+b20:Fan20OutletConnectionPoint
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:hasProperty b20:Fan20OutletFlowRate ;
+  s223:hasProperty b20:Fan20OutletPressure ;
+  s223:hasmedium s223:Fluid-Air ;
+  rdfs:label "Fan20 Outlet ConnectionPoint" ;
+.
+b20:Fan20OutletFlowRate
+  a s223:QuantifiableObservableProperty ;
+  s223:hasValue "15219"^^xsd:decimal ;
+  qudt:hasQuantityKind quantitykind:VolumeFlowRate ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/FT3-PER-MIN> ;
+  rdfs:label "Fan20OutletFlowRate" ;
+.
+b20:Fan20OutletFlowRateValue
+  a s223:Value ;
+  s223:hasValue "15219" ;
+.
+b20:Fan20OutletPressure
+  a s223:QuantifiableObservableProperty ;
+  qudt:hasQuantityKind quantitykind:Pressure ;
+  rdfs:label "Fan20OutletPressure" ;
+.
+b20:Fan20OutletPressureValue
+  a s223:Value ;
+  s223:hasValue "101300" ;
+  qudt:quantityValue b20:SIValue ;
+  qudt:quantityValue b20:USValue ;
+  rdfs:label "Fan20OutletPressure" ;
+.
+b20:Fan20Speed
+  a s223:QuantifiableActuatableProperty ;
+  s223:hasValue "1500"^^xsd:decimal ;
+  qudt:hasQuantityKind quantitykind:AngularVelocity ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/REV-PER-MIN> ;
+  rdfs:label "Fan20Speed" ;
+.
+b20:Fan20SpeedValue
+  a s223:Value ;
+  s223:hasValue "1500" ;
+.
+b20:Fan_20
+  a s223:Fan ;
+  s223:hasConnectionPoint b20:Fan20InletConnectionPoint ;
+  s223:hasConnectionPoint b20:Fan20OutletConnectionPoint ;
+  s223:hasProperty b20:Fan20Speed ;
+  s223:hasProperty b20:StartStopCommand ;
+  rdfs:label "Fan 20" ;
+.
+b20:SIValue
+  a qudt:QuantityValue ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/PA> ;
+  s223:hasValue 19123 ;
+  rdfs:label "SIValue" ;
+.
+b20:StartStopCommand
+  a s223:EnumeratedActuatableProperty ;
+  s223:hasEnumerationKind s223:Binary-OnOff ;
+  rdfs:label "Start stop command" ;
+.
+b20:USValue
+  a qudt:QuantityValue ;
+  qudt:hasUnit <http://qudt.org/vocab/unit/LB_F-PER-IN2> ;
+  s223:hasValue 2.7 ;
+  rdfs:label "USValue" ;
+.

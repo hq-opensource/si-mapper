@@ -1,0 +1,92 @@
+# baseURI: http://example.org/fourse
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# imports: http://example.org/system4
+# prefix: fourse
+
+@prefix fourse: <http://example.org/fourse#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/fourse>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:imports <http://example.org/system4> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+fourse:CP13
+  a s223:ConnectionPoint ;
+  s223:cnx fourse:Equipment10 ;
+  rdfs:label "CP13" ;
+.
+fourse:Connection2
+  a s223:Connection ;
+  s223:cnx <http://example.org/system1#CP2> ;
+  s223:cnx <http://example.org/system1#CP3> ;
+  s223:cnx <http://example.org/system1#CP6> ;
+  s223:cnx <http://example.org/system2#CP7> ;
+  s223:cnx <http://example.org/system2#CP8> ;
+  rdfs:label "Connection2" ;
+.
+fourse:Connection4
+  a s223:Connection ;
+  s223:cnx fourse:CP13 ;
+  s223:cnx <http://example.org/system1#CP5> ;
+  s223:cnx <http://example.org/system3#CP10> ;
+  s223:cnx <http://example.org/system3#CP9> ;
+  s223:cnx <http://example.org/system4#CP11> ;
+  s223:cnx <http://example.org/system4#CP12> ;
+  rdfs:label "Connection4" ;
+.
+fourse:Equipment10
+  a s223:Equipment ;
+  rdfs:label "Equipment10" ;
+.
+fourse:J4
+  a s223:Junction ;
+  rdfs:label "J4" ;
+.
+fourse:Segment14
+  a s223:Segment ;
+  s223:lnx fourse:J4 ;
+  s223:lnx <http://example.org/system3#Junction3> ;
+  rdfs:label "Segment14" ;
+.
+fourse:Segment4
+  a s223:Segment ;
+  s223:lnx <http://example.org/system1#Junction1> ;
+  s223:lnx <http://example.org/system2#Junction2> ;
+  rdfs:label "Segment4" ;
+.
+fourse:Segment7
+  a s223:Segment ;
+  s223:lnx fourse:J4 ;
+  s223:lnx <http://example.org/system1#CP5> ;
+  rdfs:label "Segment7" ;
+.
+fourse:Segment8
+  a s223:Segment ;
+  s223:lnx fourse:CP13 ;
+  s223:lnx fourse:J4 ;
+  rdfs:label "Segment8" ;
+.
+fourse:Segment9
+  a s223:Segment ;
+  s223:lnx fourse:J4 ;
+  s223:lnx <http://example.org/system4#Junction4> ;
+  rdfs:label "Segment9" ;
+.
+<http://example.org/system1#SCP2>
+  s223:systemConnected <http://example.org/system2#SCP5> ;
+.
+<http://example.org/system2#SCP5>
+  s223:systemConnected <http://example.org/system1#SCP2> ;
+.
+<http://example.org/system3#SCP6>
+  s223:systemConnected <http://example.org/system1#SCP3> ;
+.
+<http://example.org/system4#SCP7>
+  s223:systemConnected <http://example.org/system1#SCP3> ;
+.

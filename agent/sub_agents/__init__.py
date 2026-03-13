@@ -6,3 +6,5 @@ from .equipment.agent import EquipmentLlmAgent
 from .bacnet.agent import BacnetLlmAgent
 from .control.agent import ControlLlmAgent
 from .electricity.agent import ElectricityLlmAgent
+from ._223p.agent import OntologyLlmAgent
+

@@ -1,0 +1,155 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/nesting
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: nest
+
+@prefix g36: <http://data.ashrae.org/standard223/1.0/extensions/g36#> .
+@prefix nest: <http://data.ashrae.org/standard223/1.0/data/nesting#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix qudtqk: <http://qudt.org/vocab/quantitykind/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/nesting>
+  a owl:Ontology ;
+  rdfs:comment "An example model snippet with recursive equipment nesting." ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+nest:Connection1
+  a s223:Connection ;
+  s223:cnx nest:Equipment1CPIn ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Connection1" ;
+.
+nest:Connection1baa
+  a s223:Connection ;
+  s223:cnx nest:Equipment1baa2CPIn ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Connection1baa" ;
+.
+nest:Connection2
+  a s223:Connection ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Connection2" ;
+.
+nest:Connection2baa
+  a s223:Connection ;
+  s223:cnx nest:Equipment1baa3CPIn ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Connection2baa" ;
+.
+nest:Equipment1
+  a s223:Equipment ;
+  s223:cnx nest:Equipment1CPOut ;
+  s223:contains nest:Equipment1b ;
+  rdfs:label "Equipment1" ;
+.
+nest:Equipment1CPIn
+  a s223:InletConnectionPoint ;
+  s223:cnx nest:Equipment1 ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Equipment1CPIn" ;
+.
+nest:Equipment1CPOut
+  a s223:OutletConnectionPoint ;
+  s223:cnx nest:Connection2 ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Equipment1CPOut" ;
+.
+nest:Equipment1b
+  a s223:Equipment ;
+  s223:cnx nest:Equipment1bCPOut ;
+  s223:contains nest:Equipment1ba ;
+  rdfs:label "Equipment1b" ;
+.
+nest:Equipment1bCPIn
+  a s223:InletConnectionPoint ;
+  s223:cnx nest:Equipment1b ;
+  s223:hasMedium s223:Electricity-AC ;
+  s223:mapsTo nest:Equipment1CPIn ;
+  rdfs:label "Equipment1b CPIn" ;
+.
+nest:Equipment1bCPOut
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Electricity-AC ;
+  s223:mapsTo nest:Equipment1CPOut ;
+  rdfs:label "Equipment1b CPOut" ;
+.
+nest:Equipment1ba
+  a s223:Equipment ;
+  s223:cnx nest:Equipment1baCPOut ;
+  s223:contains nest:Equipment1baa2 ;
+  s223:contains nest:Equipment1baa3 ;
+  s223:contains nest:Junction1baa ;
+  rdfs:label "Equipment1ba" ;
+.
+nest:Equipment1baCPIn
+  a s223:InletConnectionPoint ;
+  s223:cnx nest:Equipment1ba ;
+  s223:hasMedium s223:Electricity-AC ;
+  s223:mapsTo nest:Equipment1bCPIn ;
+  rdfs:label "Equipment1ba CPIn" ;
+.
+nest:Equipment1baCPOut
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Electricity-AC ;
+  s223:mapsTo nest:Equipment1bCPOut ;
+  rdfs:label "Equipment1ba CPOut" ;
+.
+nest:Equipment1baa2
+  a s223:Equipment ;
+  s223:cnx nest:Equipment1baa2CPOut ;
+  rdfs:label "Equipment1baa2" ;
+.
+nest:Equipment1baa2CPIn
+  a s223:InletConnectionPoint ;
+  s223:cnx nest:Equipment1baa2 ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Equipment1baa2CPIn" ;
+.
+nest:Equipment1baa2CPOut
+  a s223:OutletConnectionPoint ;
+  s223:hasMedium s223:Electricity-AC ;
+  s223:mapsTo nest:Equipment1baCPOut ;
+  rdfs:label "Equipment1baa2CPOut" ;
+.
+nest:Equipment1baa3
+  a s223:Equipment ;
+  rdfs:label "Equipment1baa3" ;
+.
+nest:Equipment1baa3CPIn
+  a s223:InletConnectionPoint ;
+  s223:cnx nest:Equipment1baa3 ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Equipment1baa3CPIn" ;
+.
+nest:Junction1baa
+  a s223:Junction ;
+  s223:cnx nest:Junction1baa2CPOut ;
+  s223:cnx nest:Junction1baaCPOut ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Junction1baa" ;
+.
+nest:Junction1baa2CPOut
+  a s223:OutletConnectionPoint ;
+  s223:cnx nest:Connection2baa ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Junction1baa2CPOut" ;
+.
+nest:Junction1baaCPIn
+  a s223:InletConnectionPoint ;
+  s223:cnx nest:Junction1baa ;
+  s223:hasMedium s223:Electricity-AC ;
+  s223:mapsTo nest:Equipment1baCPIn ;
+  rdfs:label "Junction1baa CPIn" ;
+.
+nest:Junction1baaCPOut
+  a s223:OutletConnectionPoint ;
+  s223:cnx nest:Connection1baa ;
+  s223:hasMedium s223:Electricity-AC ;
+  rdfs:label "Junction1baa CPOut" ;
+.

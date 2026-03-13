@@ -1,0 +1,43 @@
+[34mConnectionPoint <http://data.ashrae.org/standard223/data/g36-figure-a-12#00002> probably needs an association with a Connection.[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00002
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00003
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00004
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00005
+[34mConnectionPoint <http://data.ashrae.org/standard223/data/g36-figure-a-12#00031> could be missing a mapsTo relation to a ConnectionPoint of <http://data.ashrae.org/standard223/data/g36-figure-a-12#00001> because it is associated with a Junction or Equipment that is contained by <http://data.ashrae.org/standard223/data/g36-figure-a-12#00001>.[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00031
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00032
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00039
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00040
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00047
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00062
+[34mThe property shape with path bob:airInlet for Class s223:Fan must have an rdfs:comment.[0m
+    http://data.ashrae.org/standard223#Fan http://data.ashrae.org/standard223#Fan
+    http://data.ashrae.org/standard223#Fan http://data.ashrae.org/standard223#Fan
+    http://data.ashrae.org/standard223#ObservableProperty http://data.ashrae.org/standard223#ObservableProperty
+    http://data.ashrae.org/standard223#Fan http://data.ashrae.org/standard223#Fan
+    http://data.ashrae.org/standard223#Fan http://data.ashrae.org/standard223#Fan
+    http://data.ashrae.org/standard223#QuantifiableProperty http://data.ashrae.org/standard223#QuantifiableProperty
+    http://data.ashrae.org/standard223#QuantifiableProperty http://data.ashrae.org/standard223#QuantifiableProperty
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Connection http://data.ashrae.org/standard223#Connection
+    http://data.ashrae.org/standard223#Connection http://data.ashrae.org/standard223#Connection
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Junction http://data.ashrae.org/standard223#Junction
+    http://data.ashrae.org/standard223#Equipment http://data.ashrae.org/standard223#Equipment
+    http://data.ashrae.org/standard223#QuantifiableObservableProperty http://data.ashrae.org/standard223#QuantifiableObservableProperty
+    http://data.ashrae.org/standard223#Property http://data.ashrae.org/standard223#Property
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#ConnectionPoint http://data.ashrae.org/standard223#ConnectionPoint
+    http://data.ashrae.org/standard223#Property http://data.ashrae.org/standard223#Property
+    http://data.ashrae.org/standard223#Property http://data.ashrae.org/standard223#Property
+[35mProperty needs to have at least 1 value[0m
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00018
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00019
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00020
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00021
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00022
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00023
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00027
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00035
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00043
+    http://data.ashrae.org/standard223/data/g36-figure-a-12#00058

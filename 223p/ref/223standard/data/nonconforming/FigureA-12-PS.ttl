@@ -1,0 +1,619 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/figure012
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+
+@prefix ex: <urn:ex/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/figure012>
+  a owl:Ontology ;
+  rdfs:isDefinedBy <http://data.ashrae.org/standard223/1.0/data/figure012> ;
+  rdfs:label "figure012" ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+.
+<urn:ex/00001>
+  a s223:Equipment ;
+  a ex:AHU ;
+  s223:hasConnectionPoint <urn:ex/00007> ;
+  s223:hasConnectionPoint <urn:ex/00059> ;
+  s223:hasConnectionPoint <urn:ex/00066> ;
+  s223:hasConnectionPoint <urn:ex/00074> ;
+  rdfs:label "A-12" ;
+.
+<urn:ex/00006>
+  a s223:Equipment ;
+  a ex:LinkedDampers ;
+  s223:hasConnectionPoint <urn:ex/00011> ;
+  s223:hasConnectionPoint <urn:ex/00012> ;
+  s223:hasConnectionPoint <urn:ex/00016> ;
+  s223:hasConnectionPoint <urn:ex/00017> ;
+  s223:hasEquipment <urn:ex/00010> ;
+  s223:hasEquipment <urn:ex/00015> ;
+  rdfs:label "A-12.linked_dampers" ;
+.
+<urn:ex/00010>
+  a s223:Equipment ;
+  a ex:Damper ;
+  s223:cnx <urn:ex/00011> ;
+  s223:cnx <urn:ex/00012> ;
+  s223:connectedThrough <urn:ex/00024> ;
+  s223:hasConnectionPoint <urn:ex/00011> ;
+  s223:hasConnectionPoint <urn:ex/00012> ;
+  s223:hasPart <urn:ex/00013> ;
+  s223:hasProperty <urn:ex/00014> ;
+  s223:isEquipmentOf <urn:ex/00006> ;
+  rdfs:label "A-12.linked_dampers.outside_air_damper" ;
+  ex:position <urn:ex/00014> ;
+.
+<urn:ex/00011>
+  a s223:ConnectionPoint ;
+  a s223:InletConnectionPoint ;
+  s223:cnx <urn:ex/00010> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00010> ;
+  rdfs:label "A-12.linked_dampers.outside_air_damper.airInlet" ;
+.
+<urn:ex/00012>
+  a s223:ConnectionPoint ;
+  a s223:OutletConnectionPoint ;
+  s223:cnx <urn:ex/00010> ;
+  s223:cnx <urn:ex/00024> ;
+  s223:connectsThrough <urn:ex/00024> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00010> ;
+  rdfs:label "A-12.linked_dampers.outside_air_damper.airOutlet" ;
+.
+<urn:ex/00013>
+  a s223:Part ;
+  a ex:DamperPositioner ;
+  s223:hasProperty <urn:ex/00014> ;
+  s223:isPartOf <urn:ex/00010> ;
+  rdfs:label "A-12.linked_dampers.outside_air_damper.damper_positioner" ;
+  ex:position <urn:ex/00014> ;
+.
+<urn:ex/00014>
+  a s223:AnalogOut ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00010> ;
+  s223:isPropertyOf <urn:ex/00013> ;
+.
+<urn:ex/00015>
+  a s223:Equipment ;
+  a ex:Damper ;
+  s223:cnx <urn:ex/00016> ;
+  s223:cnx <urn:ex/00017> ;
+  s223:connectedThrough <urn:ex/00024> ;
+  s223:connectedThrough <urn:ex/00077> ;
+  s223:hasConnectionPoint <urn:ex/00016> ;
+  s223:hasConnectionPoint <urn:ex/00017> ;
+  s223:hasPart <urn:ex/00018> ;
+  s223:hasProperty <urn:ex/00019> ;
+  s223:isEquipmentOf <urn:ex/00006> ;
+  rdfs:label "A-12.linked_dampers.return_air_damper" ;
+  ex:position <urn:ex/00019> ;
+.
+<urn:ex/00016>
+  a s223:ConnectionPoint ;
+  a s223:InletConnectionPoint ;
+  s223:cnx <urn:ex/00015> ;
+  s223:cnx <urn:ex/00077> ;
+  s223:connectsThrough <urn:ex/00077> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00015> ;
+  rdfs:label "A-12.linked_dampers.return_air_damper.airInlet" ;
+.
+<urn:ex/00017>
+  a s223:ConnectionPoint ;
+  a s223:OutletConnectionPoint ;
+  s223:cnx <urn:ex/00015> ;
+  s223:cnx <urn:ex/00024> ;
+  s223:connectsThrough <urn:ex/00024> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00015> ;
+  rdfs:label "A-12.linked_dampers.return_air_damper.airOutlet" ;
+.
+<urn:ex/00018>
+  a s223:Part ;
+  a ex:DamperPositioner ;
+  s223:hasProperty <urn:ex/00019> ;
+  s223:isPartOf <urn:ex/00015> ;
+  rdfs:label "A-12.linked_dampers.return_air_damper.damper_positioner" ;
+  ex:position <urn:ex/00019> ;
+.
+<urn:ex/00019>
+  a s223:AnalogOut ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00015> ;
+  s223:isPropertyOf <urn:ex/00018> ;
+.
+<urn:ex/00020>
+  a s223:Equipment ;
+  a ex:AirFilter ;
+  s223:cnx <urn:ex/00022> ;
+  s223:cnx <urn:ex/00023> ;
+  s223:connectedThrough <urn:ex/00024> ;
+  s223:connectedThrough <urn:ex/00040> ;
+  s223:hasConnectionPoint <urn:ex/00022> ;
+  s223:hasConnectionPoint <urn:ex/00023> ;
+  s223:hasProperty <urn:ex/00021> ;
+  rdfs:label "A-12.air_filter" ;
+  ex:dp <urn:ex/00021> ;
+.
+<urn:ex/00021>
+  a s223:AnalogIn ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00020> ;
+.
+<urn:ex/00022>
+  a s223:ConnectionPoint ;
+  a s223:InletConnectionPoint ;
+  s223:cnx <urn:ex/00020> ;
+  s223:cnx <urn:ex/00024> ;
+  s223:connectsThrough <urn:ex/00024> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00020> ;
+  rdfs:label "A-12.air_filter.airInlet" ;
+.
+<urn:ex/00023>
+  a s223:ConnectionPoint ;
+  a s223:OutletConnectionPoint ;
+  s223:cnx <urn:ex/00020> ;
+  s223:cnx <urn:ex/00040> ;
+  s223:connectsThrough <urn:ex/00040> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00020> ;
+  rdfs:label "A-12.air_filter.airOutlet" ;
+.
+<urn:ex/00024>
+  a s223:Connection ;
+  s223:cnx <urn:ex/00012> ;
+  s223:cnx <urn:ex/00017> ;
+  s223:cnx <urn:ex/00022> ;
+  s223:connectsAt <urn:ex/00012> ;
+  s223:connectsAt <urn:ex/00017> ;
+  s223:connectsAt <urn:ex/00022> ;
+  s223:connectsFrom <urn:ex/00010> ;
+  s223:connectsFrom <urn:ex/00015> ;
+  s223:connectsTo <urn:ex/00020> ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+<urn:ex/00025>
+  a s223:Equipment ;
+  s223:contains <urn:ex/00030> ;
+  s223:contains <urn:ex/00035> ;
+  s223:contains <urn:ex/A-12.hot_water_valve_motor> ;
+  s223:hasConnectionPoint <urn:ex/00031> ;
+  s223:hasConnectionPoint <urn:ex/00032> ;
+  s223:hasConnectionPoint <urn:ex/00034> ;
+  s223:hasConnectionPoint <urn:ex/00037> ;
+  rdfs:label "A-12.hot_water_coil" ;
+.
+<urn:ex/00030>
+  a s223:Equipment ;
+  s223:cnx <urn:ex/00031> ;
+  s223:cnx <urn:ex/00032> ;
+  s223:cnx <urn:ex/00033> ;
+  s223:cnx <urn:ex/00034> ;
+  s223:connectedThrough <urn:ex/00039> ;
+  s223:connectedThrough <urn:ex/00040> ;
+  s223:connectedThrough <urn:ex/00056> ;
+  s223:hasConnectionPoint <urn:ex/00031> ;
+  s223:hasConnectionPoint <urn:ex/00032> ;
+  s223:hasConnectionPoint <urn:ex/00033> ;
+  s223:hasConnectionPoint <urn:ex/00034> ;
+  rdfs:label "A-12.hot_water_coil.hw_coil" ;
+.
+<urn:ex/00031>
+  a s223:ConnectionPoint ;
+  a s223:InletConnectionPoint ;
+  s223:cnx <urn:ex/00030> ;
+  s223:cnx <urn:ex/00040> ;
+  s223:connectsThrough <urn:ex/00040> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00030> ;
+  rdfs:label "A-12.hot_water_coil.hw_coil.airInlet" ;
+.
+<urn:ex/00032>
+  a s223:ConnectionPoint ;
+  a s223:OutletConnectionPoint ;
+  s223:cnx <urn:ex/00030> ;
+  s223:cnx <urn:ex/00056> ;
+  s223:connectsThrough <urn:ex/00056> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00030> ;
+  rdfs:label "A-12.hot_water_coil.hw_coil.airOutlet" ;
+.
+<urn:ex/00033>
+  a s223:ConnectionPoint ;
+  s223:cnx <urn:ex/00030> ;
+  s223:cnx <urn:ex/00039> ;
+  s223:connectsThrough <urn:ex/00039> ;
+  s223:hasMedium s223:Water-HotWater ;
+  s223:isConnectionPointOf <urn:ex/00030> ;
+  rdfs:label "A-12.hot_water_coil.hw_coil.hotWaterInlet" ;
+.
+<urn:ex/00034>
+  a s223:ConnectionPoint ;
+  s223:cnx <urn:ex/00030> ;
+  s223:hasMedium s223:Water-HotWater ;
+  s223:isConnectionPointOf <urn:ex/00030> ;
+  rdfs:label "A-12.hot_water_coil.hw_coil.hotWaterOutlet" ;
+.
+<urn:ex/00035>
+  a s223:Equipment ;
+  a s223:HotWaterValve ;
+  s223:cnx <urn:ex/00037> ;
+  s223:cnx <urn:ex/00038> ;
+  s223:connectedThrough <urn:ex/00039> ;
+  s223:hasConnectionPoint <urn:ex/00037> ;
+  s223:hasConnectionPoint <urn:ex/00038> ;
+  s223:hasProperty <urn:ex/00036> ;
+  s223:position <urn:ex/00036> ;
+  rdfs:label "A-12.hot_water_coil.hw_valve" ;
+.
+<urn:ex/00036>
+  a s223:AnalogIn ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00035> ;
+.
+<urn:ex/00037>
+  a s223:ConnectionPoint ;
+  s223:cnx <urn:ex/00035> ;
+  s223:hasMedium s223:Water-HotWater ;
+  s223:isConnectionPointOf <urn:ex/00035> ;
+  rdfs:label "A-12.hot_water_coil.hw_valve.hotWaterInlet" ;
+.
+<urn:ex/00038>
+  a s223:ConnectionPoint ;
+  s223:cnx <urn:ex/00035> ;
+  s223:cnx <urn:ex/00039> ;
+  s223:connectsThrough <urn:ex/00039> ;
+  s223:hasMedium s223:Water-HotWater ;
+  s223:isConnectionPointOf <urn:ex/00035> ;
+  rdfs:label "A-12.hot_water_coil.hw_valve.hotWaterOutlet" ;
+.
+<urn:ex/00039>
+  a s223:Connection ;
+  s223:cnx <urn:ex/00033> ;
+  s223:cnx <urn:ex/00038> ;
+  s223:connectsAt <urn:ex/00033> ;
+  s223:connectsAt <urn:ex/00038> ;
+  s223:connectsFrom <urn:ex/00035> ;
+  s223:connectsTo <urn:ex/00030> ;
+  s223:hasMedium s223:Water-HotWater ;
+.
+<urn:ex/00040>
+  a s223:Connection ;
+  s223:cnx <urn:ex/00023> ;
+  s223:cnx <urn:ex/00031> ;
+  s223:connectsAt <urn:ex/00023> ;
+  s223:connectsAt <urn:ex/00031> ;
+  s223:connectsFrom <urn:ex/00020> ;
+  s223:connectsTo <urn:ex/00030> ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+<urn:ex/00041>
+  a s223:Equipment ;
+  s223:contains <urn:ex/00041> ;
+  s223:contains <urn:ex/00051> ;
+  s223:contains <urn:ex/A-12.chilled_water_valve_motor> ;
+  s223:hasConnectionPoint <urn:ex/00047> ;
+  s223:hasConnectionPoint <urn:ex/00048> ;
+  s223:hasConnectionPoint <urn:ex/00050> ;
+  s223:hasConnectionPoint <urn:ex/00053> ;
+  rdfs:label "A-12.chilled_water_coil" ;
+.
+<urn:ex/00046>
+  a s223:Equipment ;
+  s223:cnx <urn:ex/00047> ;
+  s223:cnx <urn:ex/00048> ;
+  s223:cnx <urn:ex/00049> ;
+  s223:cnx <urn:ex/00050> ;
+  s223:connectedThrough <urn:ex/00055> ;
+  s223:connectedThrough <urn:ex/00056> ;
+  s223:connectedThrough <urn:ex/00064> ;
+  s223:hasConnectionPoint <urn:ex/00047> ;
+  s223:hasConnectionPoint <urn:ex/00048> ;
+  s223:hasConnectionPoint <urn:ex/00049> ;
+  s223:hasConnectionPoint <urn:ex/00050> ;
+  rdfs:label "A-12.chilled_water_coil.cw_coil" ;
+.
+<urn:ex/00047>
+  a s223:ConnectionPoint ;
+  a s223:InletConnectionPoint ;
+  s223:cnx <urn:ex/00046> ;
+  s223:cnx <urn:ex/00056> ;
+  s223:connectsThrough <urn:ex/00056> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00046> ;
+  rdfs:label "A-12.chilled_water_coil.cw_coil.airInlet" ;
+.
+<urn:ex/00048>
+  a s223:ConnectionPoint ;
+  a s223:OutletConnectionPoint ;
+  s223:cnx <urn:ex/00046> ;
+  s223:cnx <urn:ex/00064> ;
+  s223:connectsThrough <urn:ex/00064> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00046> ;
+  rdfs:label "A-12.chilled_water_coil.cw_coil.airOutlet" ;
+.
+<urn:ex/00049>
+  a s223:ConnectionPoint ;
+  s223:cnx <urn:ex/00046> ;
+  s223:cnx <urn:ex/00055> ;
+  s223:connectsThrough <urn:ex/00055> ;
+  s223:hasMedium s223:Water-ChilledWater ;
+  s223:isConnectionPointOf <urn:ex/00046> ;
+  rdfs:label "A-12.chilled_water_coil.cw_coil.chilledWaterInlet" ;
+.
+<urn:ex/00050>
+  a s223:ConnectionPoint ;
+  s223:cnx <urn:ex/00046> ;
+  s223:hasMedium s223:Water-ChilledWater ;
+  s223:isConnectionPointOf <urn:ex/00046> ;
+  rdfs:label "A-12.chilled_water_coil.cw_coil.chilledWaterOutlet" ;
+.
+<urn:ex/00051>
+  a s223:ChilledWaterValve ;
+  a s223:Equipment ;
+  s223:cnx <urn:ex/00053> ;
+  s223:cnx <urn:ex/00054> ;
+  s223:connectedThrough <urn:ex/00055> ;
+  s223:hasConnectionPoint <urn:ex/00053> ;
+  s223:hasConnectionPoint <urn:ex/00054> ;
+  s223:hasProperty <urn:ex/00052> ;
+  s223:position <urn:ex/00052> ;
+  rdfs:label "A-12.chilled_water_coil.cw_valve" ;
+.
+<urn:ex/00052>
+  a s223:AnalogIn ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00051> ;
+.
+<urn:ex/00053>
+  a s223:ConnectionPoint ;
+  s223:cnx <urn:ex/00051> ;
+  s223:hasMedium s223:Water-ChilledWater ;
+  s223:isConnectionPointOf <urn:ex/00051> ;
+  rdfs:label "A-12.chilled_water_coil.cw_valve.chilledWaterInlet" ;
+.
+<urn:ex/00054>
+  a s223:ConnectionPoint ;
+  s223:cnx <urn:ex/00051> ;
+  s223:cnx <urn:ex/00055> ;
+  s223:connectsThrough <urn:ex/00055> ;
+  s223:hasMedium s223:Water-ChilledWater ;
+  s223:isConnectionPointOf <urn:ex/00051> ;
+  rdfs:label "A-12.chilled_water_coil.cw_valve.chilledWaterOutlet" ;
+.
+<urn:ex/00055>
+  a s223:Connection ;
+  s223:cnx <urn:ex/00049> ;
+  s223:cnx <urn:ex/00054> ;
+  s223:connectsAt <urn:ex/00049> ;
+  s223:connectsAt <urn:ex/00054> ;
+  s223:connectsFrom <urn:ex/00051> ;
+  s223:connectsTo <urn:ex/00046> ;
+  s223:hasMedium s223:Water-ChilledWater ;
+.
+<urn:ex/00056>
+  a s223:Connection ;
+  s223:cnx <urn:ex/00032> ;
+  s223:cnx <urn:ex/00047> ;
+  s223:connectsAt <urn:ex/00032> ;
+  s223:connectsAt <urn:ex/00047> ;
+  s223:connectsFrom <urn:ex/00030> ;
+  s223:connectsTo <urn:ex/00046> ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+<urn:ex/00057>
+  a s223:Equipment ;
+  a ex:VFDFan ;
+  s223:cnx <urn:ex/00058> ;
+  s223:cnx <urn:ex/00059> ;
+  s223:connectedThrough <urn:ex/00064> ;
+  s223:hasConnectionPoint <urn:ex/00058> ;
+  s223:hasConnectionPoint <urn:ex/00059> ;
+  s223:hasPart <urn:ex/00060> ;
+  s223:hasProperty <urn:ex/00061> ;
+  s223:hasProperty <urn:ex/00062> ;
+  s223:hasProperty <urn:ex/00063> ;
+  rdfs:label "A-12.supply_fan" ;
+  ex:fanSpeedCommand <urn:ex/00062> ;
+  ex:fanStart <urn:ex/00063> ;
+  ex:fanStatus <urn:ex/00061> ;
+.
+<urn:ex/00058>
+  a s223:ConnectionPoint ;
+  a s223:InletConnectionPoint ;
+  s223:cnx <urn:ex/00057> ;
+  s223:cnx <urn:ex/00064> ;
+  s223:connectsThrough <urn:ex/00064> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00057> ;
+  rdfs:label "A-12.supply_fan.airInlet" ;
+.
+<urn:ex/00059>
+  a s223:ConnectionPoint ;
+  a s223:OutletConnectionPoint ;
+  s223:cnx <urn:ex/00057> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00057> ;
+  rdfs:label "A-12.supply_fan.airOutlet" ;
+.
+<urn:ex/00060>
+  a s223:Part ;
+  a ex:VFD ;
+  s223:hasProperty <urn:ex/00061> ;
+  s223:hasProperty <urn:ex/00062> ;
+  s223:hasProperty <urn:ex/00063> ;
+  s223:isPartOf <urn:ex/00057> ;
+  rdfs:label "A-12.supply_fan.vfd" ;
+  ex:fanSpeedCommand <urn:ex/00062> ;
+  ex:fanStart <urn:ex/00063> ;
+  ex:fanStatus <urn:ex/00061> ;
+.
+<urn:ex/00061>
+  a s223:BinaryIn ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00057> ;
+  s223:isPropertyOf <urn:ex/00060> ;
+.
+<urn:ex/00062>
+  a s223:AnalogOut ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00057> ;
+  s223:isPropertyOf <urn:ex/00060> ;
+.
+<urn:ex/00063>
+  a s223:BinaryOut ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00057> ;
+  s223:isPropertyOf <urn:ex/00060> ;
+.
+<urn:ex/00064>
+  a s223:Connection ;
+  s223:cnx <urn:ex/00048> ;
+  s223:cnx <urn:ex/00058> ;
+  s223:connectsAt <urn:ex/00048> ;
+  s223:connectsAt <urn:ex/00058> ;
+  s223:connectsFrom <urn:ex/00046> ;
+  s223:connectsTo <urn:ex/00057> ;
+  s223:hasMedium s223:Fluid-Air ;
+.
+<urn:ex/00065>
+  a s223:Equipment ;
+  a ex:VFDFan ;
+  s223:cnx <urn:ex/00066> ;
+  s223:cnx <urn:ex/00067> ;
+  s223:connectedThrough <urn:ex/00077> ;
+  s223:hasConnectionPoint <urn:ex/00066> ;
+  s223:hasConnectionPoint <urn:ex/00067> ;
+  s223:hasPart <urn:ex/00068> ;
+  s223:hasProperty <urn:ex/00069> ;
+  s223:hasProperty <urn:ex/00070> ;
+  s223:hasProperty <urn:ex/00071> ;
+  rdfs:label "A-12.return_fan" ;
+  ex:fanSpeedCommand <urn:ex/00070> ;
+  ex:fanStart <urn:ex/00071> ;
+  ex:fanStatus <urn:ex/00069> ;
+.
+<urn:ex/00066>
+  a s223:ConnectionPoint ;
+  a s223:InletConnectionPoint ;
+  s223:cnx <urn:ex/00065> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00065> ;
+  rdfs:label "A-12.return_fan.airInlet" ;
+.
+<urn:ex/00067>
+  a s223:ConnectionPoint ;
+  a s223:OutletConnectionPoint ;
+  s223:cnx <urn:ex/00065> ;
+  s223:cnx <urn:ex/00077> ;
+  s223:connectsThrough <urn:ex/00077> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00065> ;
+  rdfs:label "A-12.return_fan.airOutlet" ;
+.
+<urn:ex/00068>
+  a s223:Part ;
+  a ex:VFD ;
+  s223:hasProperty <urn:ex/00069> ;
+  s223:hasProperty <urn:ex/00070> ;
+  s223:hasProperty <urn:ex/00071> ;
+  s223:isPartOf <urn:ex/00065> ;
+  rdfs:label "A-12.return_fan.vfd" ;
+  ex:fanSpeedCommand <urn:ex/00070> ;
+  ex:fanStart <urn:ex/00071> ;
+  ex:fanStatus <urn:ex/00069> ;
+.
+<urn:ex/00069>
+  a s223:BinaryIn ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00065> ;
+  s223:isPropertyOf <urn:ex/00068> ;
+.
+<urn:ex/00070>
+  a s223:AnalogOut ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00065> ;
+  s223:isPropertyOf <urn:ex/00068> ;
+.
+<urn:ex/00071>
+  a s223:BinaryOut ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00065> ;
+  s223:isPropertyOf <urn:ex/00068> ;
+.
+<urn:ex/00072>
+  a s223:Equipment ;
+  a ex:Damper ;
+  s223:cnx <urn:ex/00073> ;
+  s223:cnx <urn:ex/00074> ;
+  s223:connectedThrough <urn:ex/00077> ;
+  s223:hasConnectionPoint <urn:ex/00073> ;
+  s223:hasConnectionPoint <urn:ex/00074> ;
+  s223:hasPart <urn:ex/00075> ;
+  s223:hasProperty <urn:ex/00076> ;
+  rdfs:label "A-12.exhaust_air_damper" ;
+  ex:position <urn:ex/00076> ;
+.
+<urn:ex/00073>
+  a s223:ConnectionPoint ;
+  a s223:InletConnectionPoint ;
+  s223:cnx <urn:ex/00072> ;
+  s223:cnx <urn:ex/00077> ;
+  s223:connectsThrough <urn:ex/00077> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00072> ;
+  rdfs:label "A-12.exhaust_air_damper.airInlet" ;
+.
+<urn:ex/00074>
+  a s223:ConnectionPoint ;
+  a s223:OutletConnectionPoint ;
+  s223:cnx <urn:ex/00072> ;
+  s223:hasMedium s223:Fluid-Air ;
+  s223:isConnectionPointOf <urn:ex/00072> ;
+  rdfs:label "A-12.exhaust_air_damper.airOutlet" ;
+.
+<urn:ex/00075>
+  a s223:Part ;
+  a ex:DamperPositioner ;
+  s223:hasProperty <urn:ex/00076> ;
+  s223:isPartOf <urn:ex/00072> ;
+  rdfs:label "A-12.exhaust_air_damper.damper_positioner" ;
+  ex:position <urn:ex/00076> ;
+.
+<urn:ex/00076>
+  a s223:AnalogOut ;
+  a s223:Property ;
+  s223:isPropertyOf <urn:ex/00072> ;
+  s223:isPropertyOf <urn:ex/00075> ;
+.
+<urn:ex/00077>
+  a s223:Connection ;
+  s223:cnx <urn:ex/00016> ;
+  s223:cnx <urn:ex/00067> ;
+  s223:cnx <urn:ex/00073> ;
+  s223:connectsAt <urn:ex/00016> ;
+  s223:connectsAt <urn:ex/00067> ;
+  s223:connectsAt <urn:ex/00073> ;
+  s223:connectsFrom <urn:ex/00065> ;
+  s223:connectsTo <urn:ex/00015> ;
+  s223:connectsTo <urn:ex/00072> ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "A-12.return_air" ;
+.
+<urn:ex/A-12.chilled_water_valve_motor>
+  a s223:Equipment ;
+  rdfs:label "A-12.chilled_water_valve_motor" ;
+.
+<urn:ex/A-12.hot_water_valve_motor>
+  a s223:Equipment ;
+  rdfs:label "A-12.hot_water_valve_motor" ;
+.

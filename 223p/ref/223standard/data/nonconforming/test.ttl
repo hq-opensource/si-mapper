@@ -1,0 +1,43 @@
+# baseURI: http://data.ashrae.org/standard223/1.0/data/test
+# imports: http://data.ashrae.org/standard223/1.0/model/all
+# prefix: jtb
+
+@prefix jtb: <http://data.ashrae.org/standard223/1.0/data/test#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.ashrae.org/standard223/1.0/data/test>
+  a owl:Ontology ;
+  owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+jtb:Damper1InletConnectionPoint_1
+  a s223:InletConnectionPoint ;
+  s223:cnx jtb:Damper_1 ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Damper 1 Inlet CP" ;
+.
+jtb:Damper_1
+  a s223:Damper ;
+  rdfs:label "Damper 1" ;
+.
+jtb:Duct_1
+  a s223:Duct ;
+  s223:cnx jtb:Damper1InletConnectionPoint_1 ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Duct 1" ;
+.
+jtb:Fan_1
+  a s223:Fan ;
+  s223:cnx jtb:InletConnectionPoint_1 ;
+  rdfs:label "Fan 1" ;
+.
+jtb:InletConnectionPoint_1
+  a s223:InletConnectionPoint ;
+  s223:cnx jtb:Duct_1 ;
+  s223:hasMedium s223:Fluid-Air ;
+  rdfs:label "Inlet connection point 1" ;
+.
