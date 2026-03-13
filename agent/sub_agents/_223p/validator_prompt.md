@@ -22,58 +22,26 @@ You do **not** regenerate the ontology from scratch. You **repair** what was gen
 
 ---
 
-## Validation Checklist
-
-Before writing any fix, verify each of the following:
-
-### 1 · Syntax & Imports
-- [ ] The file is valid Python 3 (no syntax errors).
-- [ ] All imported modules exist and are accessible inside the agent environment.
-- [ ] Only `bob` and `scratch` are used for ontology construction (no raw `rdflib`, `owlready2`, etc.).
-
-### 2 · Class Usage
-- [ ] Every class instantiated in the code actually exists in `bob` or `scratch` — verify with `list_library_classes` and `get_class_details`.
-- [ ] Constructor arguments match the class signature.
-- [ ] No class is used from a module that does not export it.
-
-### 3 · Operators & Relationships
-- [ ] The `>>` (`__rshift__`) and `<<` (`__lshift__`) operators are used correctly to model directional connections (as defined in `bob`/`scratch` `Node` base class).
-- [ ] The `%` (`__mod__`) operator is used correctly to attach sensors to equipment (as defined in `bob`/`scratch` `Sensor` class).
-- [ ] The same relationship is not expressed twice (e.g. both `observes` property and `%` operator on the same pair).
-
-### 4 · Properties & Units
-- [ ] Every `Sensor` entity has a `hasUnit` property set to a `bob`/`scratch` enum value.
-- [ ] No undefined attribute accesses on library objects.
-
-### 5 · Serialisation
-- [ ] The code calls the 223P serialisation mechanism to write the TTL file to `ttl/ontology.ttl`.
-- [ ] The serialisation call is reachable (not dead code, not inside an `if __name__ == "__main__"` guard that would prevent it from running in a subprocess).
-
----
-
 ## Fixing Strategy
 
-Work through errors **one category at a time**:
-
-1. **Import errors** — fix module paths and missing dependencies first; re-execute before continuing.
-2. **Attribute / name errors** — look up the correct class or attribute name in the library; replace throughout the file.
-3. **Type / signature errors** — check the constructor or method signature with `get_class_details`; correct arguments.
-4. **Operator misuse** — review the `Node` and `Sensor` base class definitions to understand expected operand types.
-5. **Serialisation errors** — check the 223P library serialisation API; fix the call.
-6. **Runtime / logic errors** — use `scan_python_files` on `223p/ref/code` for reference patterns if needed.
-
-Always fix the root cause, not just the symptom.  
-Do **not** comment out errors to suppress them.
+1. Read the execution errors carefully.  Focus on what it says, not just the type of error.  Look for clues about which line of code caused the error, which class or method was involved, and what the expected vs actual values were. 
+2. Once you understand the error, generate a corrected version of the full `ontology.py` file that addresses the root cause of the error.  Do not just patch the symptom; ensure that your fix aligns with the correct usage of the libraries and the intended ontology structure. 
+3. Work through errors **incrementally**, one at a time, and write the full corrected file back after each fix.  This allows you to isolate issues and ensure that each change is effective. 
+4. Do **not** comment out errors to suppress them.
 
 ---
 
 ## Reference Material
 
 - Use `read_prompt` to access the original ontology generation guidelines if you need to understand the intent of a section of code.
-- Use `scan_python_files` on `223p/ref/code` to review reference implementations and understand idiomatic usage of `bob` and `scratch`.
+- Use `scan_python_files` on `../223p/ref/code` to review reference implementations and understand idiomatic usage of `bob` and `scratch`.
 - Use `list_library_classes` followed by `get_class_details` when you need to verify a class interface — always batch your `get_class_details` calls.
 
 ---
+
+## Prerequisites
+1. Read sample code, using scan_python_files.
+2. Read the original prompt, using read_prompt.
 
 ## Workflow
 

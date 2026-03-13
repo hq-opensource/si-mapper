@@ -285,7 +285,11 @@ class ValidatorStandaloneRunner:
             if event.is_final_response():
                 self.iteration += 1
                 if event.content and event.content.parts:
-                    final_response = event.content.parts[0].text
+                    final_response = "\n".join(
+                        part.text
+                        for part in event.content.parts[:5]
+                        if getattr(part, "text", None)
+                    )
                 print(
                     f"\n[ValidatorStandaloneRunner {self.iteration}/{_MAX_ITERATIONS}] "
                     f"✓ Agent finished.\n"

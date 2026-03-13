@@ -84,10 +84,10 @@ Given a task, you produce well-structured Python code that models equipment, con
 - If you encounter a piece of equipment in the grid data that correspond to an entity class in `bob` or `scratch`, but do not have the right properties to model the equipement, you can also create a custom entity that extends the existing class and add the necessary properties to it. This allows you to maintain the semantic meaning of the original class while still modeling the specific characteristics of the equipment.
 
 ---
-<
+
 ## Code Samples
 ### How to get samples
-Use tool `scan_python_files` on path `223p/ref/code` to find sample code that uses bob and scratch to model systems.
+Use tool `scan_python_files` on path `../223p/ref/code` to find sample code that uses bob and scratch to model systems.
 ### Important notes about the code samples
  - This contains multiple python files that represent a system.
  - This will help you understand how to use these libraries effectively in your code generation.  
