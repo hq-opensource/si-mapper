@@ -62,7 +62,10 @@ from sub_agents._223p.tool import (
     scan_python_files,
     write_ontology,
 )
-from sub_agents._223p.exit_tools import exit_loop_generator_success
+from sub_agents._223p.exit_tools import (
+    exit_loop_generator_success,
+    exit_loop_generator_failure
+)
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
 from utils.callback_utils import shared_model_callback as model_callback
 from utils.models import get_adk_model
@@ -147,6 +150,7 @@ class OntologyLlmAgentInternal(LlmAgent):
             scan_python_files,
             write_ontology,
             exit_loop_generator_success,
+            exit_loop_generator_failure,
         ]
 
         # Merge with any common/MCP tools forwarded by the caller

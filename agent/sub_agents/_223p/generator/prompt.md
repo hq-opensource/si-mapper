@@ -109,12 +109,17 @@ Use tool `scan_python_files` on path `../223p/ref/code` to find sample code that
 8. **Exit**: You **MUST** call `exit_loop_generator_success(summary="...")` immediately after a successful write. Include in the summary: number of equipment modelled, connection types used, and any notable design decisions. **Do not output any text response instead of calling this tool — the validator cannot start until you call it.**
 
 ## Stop conditions (errors that should cause you to stop)
-- read_rid does not return anything (i.e., the grid is empty)
+- read_rid does not return anything, i.e.:
+  - the grid is empty
+  - the grid has no equipment
+  - the gris has only ducts and pipes but no physical equipment
+  - the read_grid tool is not working properly
 - 'bob' and 'scratch' libraries are not found or are unreadable.
 - You are unable to read code samples
 - the generated code is not valid python code
 - the generated code does not use bob and scratch libraries to model the system
 - the generated code does not model the system based on the data from read_grid
 - the generated code does not serialize the ontology to ttl using 223p library
-When you reach any of these conditions, you should stop and report the error. Start your response with FINAL_OUTPUT followed be the error explanation.
+When you reach any of these conditions, you **MUST** call `exit_loop_generator_failure(reason="...")` with a clear explanation of the reason for failure. 
+**Do not output any text response instead of calling this tool.**
 

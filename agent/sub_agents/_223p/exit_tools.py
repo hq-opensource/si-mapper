@@ -62,3 +62,42 @@ def exit_loop_generator_success(
         "summary": summary,
     }
 
+
+def exit_loop_generator_failure(
+    tool_context: ToolContext,
+    reason: str = "Ontology generation failed.",
+) -> dict:
+    """
+    Signals that the ontology **generator** failed and should not proceed to
+    the validator step.
+
+    Sets ``ONTOLOGY_GENERATION_SUCCESS`` to ``False`` in the shared session
+    state so the enclosing :class:`Ontology223PSequentialAgent` skips the
+    validator step.  Also escalates to terminate the current LoopWrapper
+    iteration.
+
+    Call this tool (instead of ``exit_loop_generator_success``) when:
+    - an unrecoverable error occurred during ontology generation, OR
+    - the generated code is syntactically invalid and cannot be fixed, OR
+    - the maximum number of retry attempts has been exhausted.
+
+    Args:
+        reason: A clear description of why generation failed — error messages,
+                what was attempted, and why it could not be resolved.
+    """
+    logger.debug(
+        "[exit_loop_generator_failure] called by %s", tool_context.agent_name
+    )
+    # Explicitly mark generation as failed so the sequential agent will not
+    # launch the validator.
+    tool_context.state["ONTOLOGY_GENERATION_SUCCESS"] = False
+    # EXIT_LEVEL_4 is set as a state marker for consistency with other exit tools.
+    tool_context.state["EXIT_LEVEL_4"] = True
+    tool_context.actions.escalate = True
+    return {
+        "status": "signal_sent",
+        "message": "Generator failed – validator will be skipped.",
+        "reason": reason,
+    }
+
+
