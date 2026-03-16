@@ -56,12 +56,6 @@ def configure_logging() -> logging.Logger:
     if not logger.handlers: # Avoid adding multiple handlers if configure_logging is called multiple times
         logger.addHandler(console_handler)
 
-        # Create a file handler for app_run.log
-        file_handler = logging.FileHandler('app_run.log', mode='a') # 'a' for append mode
-        file_handler.setFormatter(formatter)
-        file_handler.setLevel(log_level) # Set handler level
-        logger.addHandler(file_handler)
-
     # Optionally, set the root logger level to WARNING or ERROR to suppress third-party logs
     # This will affect all loggers that propagate to the root logger
     logging.getLogger().setLevel(logging.WARNING)

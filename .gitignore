@@ -22,6 +22,9 @@ node_modules/
 .env
 .env.local
 
+# PNPM
+.pnpm-store/
+
 # Project Specific Directories (managed by their own .gitignores)
 # /agent/ (has its own .gitignore)
 # /mapper/ (has its own .gitignore)

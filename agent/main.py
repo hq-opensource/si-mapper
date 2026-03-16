@@ -1,5 +1,7 @@
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 """Main entrypoint for the PAR Agent Service."""
-from __future__ import annotations
 
 import os
 import uuid
@@ -17,14 +19,14 @@ from utils.mcp_utils import create_mcp_toolset
 from utils.callback_utils import GLOBAL_SESSION_STORE
 from utils.adk_patch import apply_adk_patches
 
-# Apply patches for Gemini 3.0 compatibility (Runtime Fix)
+# Apply patches for Gemini 3.1 compatibility (Runtime Fix)
 apply_adk_patches()
 
 # --- Configuration ---
 load_dotenv()
 logger = configure_logging()
 
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8080/mcp/")
+MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://127.0.0.1:8080/mcp/")
 SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
 logger.info(f"Using SHARED_ADK_MODEL: {SHARED_ADK_MODEL}")
 APP_TITLE = "SI-MAPPER Agent"

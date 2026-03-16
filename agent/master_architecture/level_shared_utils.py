@@ -65,7 +65,7 @@ class GenericLoopAgent(LoopAgent):
     """
     A LoopAgent that terminates based on a provided termination function.
     """
-    _termination_fn: Callable[[dict[str, Any]], bool] = PrivateAttr()
+    _termination_fn_override: Callable[[dict[str, Any]], bool] | None = PrivateAttr(default=None)
 
     def __init__(
         self,
@@ -81,7 +81,7 @@ class GenericLoopAgent(LoopAgent):
             max_iterations=max_iterations,
             description=description
         )
-        self._termination_fn = termination_fn
+        self._termination_fn_override = termination_fn
 
     def is_loop_finished(self, state: dict[str, Any]) -> bool:
         """Checks termination condition."""
@@ -91,7 +91,10 @@ class GenericLoopAgent(LoopAgent):
              return True
              
         # Check injected termination function
-        should_stop = self._termination_fn(state)
+        if not self._termination_fn_override:
+            return False
+
+        should_stop = self._termination_fn_override(state)
         
         # Log if we are stopping due to explicit exit tool
         if should_stop:
