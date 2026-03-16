@@ -1,0 +1,26 @@
+{
+  "name": "si-mapper-dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspaces/si-mapper",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "python",
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "teticio.python-envy",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  },
+  "remoteUser": "vscode",
+  "features": {}
+}

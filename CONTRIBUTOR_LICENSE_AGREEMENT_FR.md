@@ -1,6 +1,6 @@
 # Accord de licence du contributeur
 
-**Version 1.0**
+**Version 2.0**
 
 ## 1. Introduction
 
@@ -12,6 +12,8 @@ En soumettant une Contribution, Vous acceptez les termes de cet Accord et reconn
 - Vous avez le droit et l’autorisation de soumettre la Contribution selon les termes de l’Accord.
 - Vous acceptez d’accorder les licences décrites ci-dessous à HQ et à tout utilisateur du projet.
 
+Cet Accord peut être modifié ou mis à jour par HQ de temps à autre. En continuant de soumettre une Contribution après toute modification du présent Accord, Vous acceptez les termes ainsi révisés.
+
 ## 2. Portée et définition des Contributions
 
 Une Contribution inclut toute modification, amélioration, ajout de code source, documentation, tests, rapports de bogues ou toute autre soumission faite au projet.
@@ -19,6 +21,8 @@ Une Contribution inclut toute modification, amélioration, ajout de code source,
 Cet Accord couvre toutes les Contributions soumises, que ce soit sous forme de code, documentation, traductions, signalements d’issues, suggestions d’amélioration, ou toute autre participation.
 
 Si Vous soumettez une Contribution en tant qu’employé d’une société, Vous déclarez et garantissez que Vous avez l’autorisation de votre employeur pour soumettre cette Contribution selon les termes de cet Accord.
+
+Si Vous avez recours à un outil d’intelligence artificielle générative ou tout autre système automatisé lorsque Vous utilisez du contenu mis en open source par HQ, ou pour créer ou générer tout ou partie de Votre Contribution, Vous reconnaissez que cette utilisation est faite à Vos seuls risques. Vous reconnaissez que les contenus générés par de tels outils peuvent comporter des erreurs, imprécisions ou informations inadéquates. Vous demeurez entièrement responsable de vérifier et de valider tout contenu généré par ces outils avant de l’intégrer à Votre Contribution.
 
 ## 3. Licence accordée à HQ
 
@@ -33,6 +37,8 @@ Vous garantissez que la Contribution est une œuvre originale, qu’elle est la 
 Vous garantissez que Votre Contribution ne contient pas de code sous une licence incompatible avec celle du projet.
 
 Vous garantissez que Votre Contribution ne contient pas d’informations confidentielles ou de secrets industriels appartenant à un tiers.
+
+En cas d’utilisation d’outils d’intelligence artificielle générative ou de tout autres systèmes automatisés, Vous garantissez que cette utilisation ne contrevient à aucune obligation légale ou contractuelle.
 
 ## 5. Propriété intellectuelle et brevets
 
@@ -55,6 +61,8 @@ HQ n’est soumis à aucune obligation d’accepter ou d’intégrer Votre Contr
 HQ décline toute responsabilité en lien avec l’utilisation, l’exploitation ou la modification de Votre Contribution de quelque manière que ce soit.
 
 Pour plus de clarté, aucune rémunération ne sera due pour la Contribution.
+
+En cas d’utilisation d’outils d’intelligence artificielle générative ou de tout autres systèmes automatisés, HQ décline toute responsabilité en lien avec l’utilisation de ces outils ou du contenu qu’ils génèrent.
 
 ## 8. Durée, résiliation et mise à jour de l’Accord
 
