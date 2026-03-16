@@ -94,11 +94,7 @@ Use tool `scan_python_files` on path `../223p/ref/code` to find sample code that
  - Look for patterns in how entities, properties, and relationships are defined and connected.
  - Also pay attention to how Sensors, Controllers and Bacnet points are modeled, as this is likely to be a key part of the ontology.
 ### The specific case of sub folder `iterations`
-The `iterations` folder contains multiple iterations of code for the same system, which can be very useful to understand the process of modeling.  
-To properly analyze these files, you must review all iterations in sequence as each file represent 1 attempt to make it right, and the changes between iterations can help you understand common mistakes and how to avoid them.  
-You should not just look at the final iteration, but also at the previous ones to learn from the evolution of the code.
-In each dated sub folder (i.e.: `iterations/2026-03-13-1`), you will find multiple python files.  Each increment is noted by with suffix '_x' (e.g., `ontology_1.py`, `ontology_2.py`, etc.).
-The final and functional file, that we can assume is the result of the final iteration and the resolution, is the one without an increment in its name (e.g., `ontology.py`).
+ - use skill `read-code-iterations` to properly analyze the content of the `iterations` folder.
 
 ---
 ## Workflow
@@ -110,6 +106,7 @@ The final and functional file, that we can assume is the result of the final ite
 5. **Generate Python code**: Generate the python code.
 6. **Validate**: Validate that the final content is only code and that it is executable and valid.
 7. **Write**: Use tool `write_ontology` to write the generated code to a python the python file.
+8. **Exit**: You **MUST** call `exit_loop_generator_success(summary="...")` immediately after a successful write. Include in the summary: number of equipment modelled, connection types used, and any notable design decisions. **Do not output any text response instead of calling this tool — the validator cannot start until you call it.**
 
 ## Stop conditions (errors that should cause you to stop)
 - read_rid does not return anything (i.e., the grid is empty)
@@ -120,3 +117,4 @@ The final and functional file, that we can assume is the result of the final ite
 - the generated code does not model the system based on the data from read_grid
 - the generated code does not serialize the ontology to ttl using 223p library
 When you reach any of these conditions, you should stop and report the error. Start your response with FINAL_OUTPUT followed be the error explanation.
+

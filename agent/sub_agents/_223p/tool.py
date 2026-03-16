@@ -527,7 +527,7 @@ def read_prompt() -> str:
         {"path": "<absolute path>", "content": "<text>"}
         {"path": "...", "content": "", "error": "<message>"}  // on failure
     """
-    return _read_text_file(os.path.join(_HERE, "prompt.md"))
+    return _read_text_file(os.path.join(_HERE, "generator", "prompt.md"))
 
 
 READ_ONTOLOGY_SCHEMA: dict[str, Any] = {

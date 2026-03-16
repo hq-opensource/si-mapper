@@ -35,6 +35,7 @@ You do **not** regenerate the ontology from scratch. You **repair** what was gen
 
 - Use `read_prompt` to access the original ontology generation guidelines if you need to understand the intent of a section of code.
 - Use `scan_python_files` on `../223p/ref/code` to review reference implementations and understand idiomatic usage of `bob` and `scratch`.
+	- use skill `read-code-iterations` to properly analyze the content of the `iterations` folder.
 - Use `list_library_classes` followed by `get_class_details` when you need to verify a class interface — always batch your `get_class_details` calls.
 
 ---

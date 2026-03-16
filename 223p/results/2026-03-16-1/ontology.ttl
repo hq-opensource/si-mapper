@@ -24,7 +24,7 @@ ahu_system:00001 a s223:Connectable,
     bob:airInlet ahu_system:00002 ;
     bob:airOutlet ahu_system:00003 ;
     scratch:linkageInlet ahu_system:00004 ;
-    rdfs:comment "Outdoor air damper - upper path at position [7,3]" .
+    rdfs:comment "Outdoor air damper - upper path at position [7,4]" .
 
 ahu_system:00002 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -68,7 +68,7 @@ ahu_system:00005 a s223:Connectable,
     bob:airInlet ahu_system:00006 ;
     bob:airOutlet ahu_system:00007 ;
     scratch:linkageInlet ahu_system:00008 ;
-    rdfs:comment "Outdoor air damper - lower path at position [7,-1]" .
+    rdfs:comment "Outdoor air damper - lower path at position [7,1]" .
 
 ahu_system:00006 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -206,7 +206,7 @@ ahu_system:00017 a s223:Connectable,
     bob:airInlet ahu_system:00018 ;
     bob:airOutlet ahu_system:00019 ;
     scratch:linkageInlet ahu_system:00020 ;
-    rdfs:comment "Exhaust air damper at position [8,13]" .
+    rdfs:comment "Exhaust air damper at position [7,11]" .
 
 ahu_system:00018 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -251,7 +251,7 @@ ahu_system:00021 a s223:Connectable,
         ahu_system:00023 ;
     bob:airInlet ahu_system:00022 ;
     bob:airOutlet ahu_system:00023 ;
-    rdfs:comment "Air filter at position [12,3]" .
+    rdfs:comment "Air filter at position [13,8]" .
 
 ahu_system:00022 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -281,11 +281,11 @@ ahu_system:00024 a s223:Coil,
     s223:cnx ahu_system:00026,
         ahu_system:00028 ;
     s223:connected ahu_system:00021,
-        ahu_system:00058 ;
+        ahu_system:00032 ;
     s223:connectedFrom ahu_system:00021 ;
     s223:connectedThrough ahu_system:00184,
         ahu_system:00185 ;
-    s223:connectedTo ahu_system:00058 ;
+    s223:connectedTo ahu_system:00032 ;
     s223:hasConnectionPoint ahu_system:00025,
         ahu_system:00026,
         ahu_system:00027,
@@ -298,7 +298,7 @@ ahu_system:00024 a s223:Coil,
     bob:airOutlet ahu_system:00026 ;
     bob:chilledWaterInlet ahu_system:00027 ;
     bob:chilledWaterOutlet ahu_system:00028 ;
-    rdfs:comment "Cooling coil at position [14,3]" .
+    rdfs:comment "Cooling coil at position [15,8]" .
 
 ahu_system:00025 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -368,10 +368,12 @@ ahu_system:00032 a s223:Coil,
     rdfs:label "heating_coil_1" ;
     s223:cnx ahu_system:00034,
         ahu_system:00036 ;
-    s223:connected ahu_system:00058 ;
-    s223:connectedFrom ahu_system:00058 ;
-    s223:connectedThrough ahu_system:00153,
+    s223:connected ahu_system:00024,
+        ahu_system:00058 ;
+    s223:connectedFrom ahu_system:00024 ;
+    s223:connectedThrough ahu_system:00185,
         ahu_system:00186 ;
+    s223:connectedTo ahu_system:00058 ;
     s223:hasConnectionPoint ahu_system:00033,
         ahu_system:00034,
         ahu_system:00035,
@@ -384,14 +386,14 @@ ahu_system:00032 a s223:Coil,
     bob:airOutlet ahu_system:00034 ;
     bob:hotWaterInlet ahu_system:00035 ;
     bob:hotWaterOutlet ahu_system:00036 ;
-    rdfs:comment "Heating coil at position [18,3]" .
+    rdfs:comment "Heating coil at position [18,8]" .
 
 ahu_system:00033 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
         bob:AirConnectionPoint ;
     rdfs:label "heating_coil_1.airInlet" ;
     s223:cnx ahu_system:00032 ;
-    s223:connectsThrough ahu_system:00186 ;
+    s223:connectsThrough ahu_system:00185 ;
     s223:hasMedium s223:Fluid-Air ;
     s223:isConnectionPointOf ahu_system:00032 ;
     s223:pairedConnectionPoint ahu_system:00034 .
@@ -400,8 +402,8 @@ ahu_system:00034 a s223:ConnectionPoint,
         s223:OutletConnectionPoint,
         bob:AirConnectionPoint ;
     rdfs:label "heating_coil_1.airOutlet" ;
-    s223:cnx ahu_system:00153 ;
-    s223:connectsThrough ahu_system:00153 ;
+    s223:cnx ahu_system:00186 ;
+    s223:connectsThrough ahu_system:00186 ;
     s223:hasMedium s223:Fluid-Air ;
     s223:isConnectionPointOf ahu_system:00032 ;
     s223:pairedConnectionPoint ahu_system:00033 .
@@ -471,7 +473,7 @@ ahu_system:00040 a s223:Connectable,
     bob:powerInlet ahu_system:00045 ;
     bob:steamOutlet ahu_system:00042 ;
     bob:waterInlet ahu_system:00043 ;
-    rdfs:comment "Humidifier at position [19,3]" .
+    rdfs:comment "Humidifier at position [23,8]" .
 
 ahu_system:00041 a s223:ActuatableProperty,
         s223:Property,
@@ -629,28 +631,26 @@ ahu_system:00058 a s223:Connectable,
         s223:Fan ;
     rdfs:label "fan_1_a" ;
     s223:cnx ahu_system:00060 ;
-    s223:connected ahu_system:00024,
-        ahu_system:00032,
+    s223:connected ahu_system:00032,
         ahu_system:00070 ;
-    s223:connectedFrom ahu_system:00024,
+    s223:connectedFrom ahu_system:00032,
         ahu_system:00070 ;
-    s223:connectedThrough ahu_system:00185,
+    s223:connectedThrough ahu_system:00153,
         ahu_system:00186,
         ahu_system:00187 ;
-    s223:connectedTo ahu_system:00032 ;
     s223:hasConnectionPoint ahu_system:00059,
         ahu_system:00060,
         ahu_system:00061 ;
     bob:airInlet ahu_system:00059 ;
     bob:airOutlet ahu_system:00060 ;
-    rdfs:comment "Supply air fan at position [16,3]" .
+    rdfs:comment "Supply air fan at position [21,8]" .
 
 ahu_system:00059 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
         bob:AirConnectionPoint ;
     rdfs:label "fan_1_a.airInlet" ;
     s223:cnx ahu_system:00058 ;
-    s223:connectsThrough ahu_system:00185 ;
+    s223:connectsThrough ahu_system:00186 ;
     s223:hasMedium s223:Fluid-Air ;
     s223:isConnectionPointOf ahu_system:00058 ;
     s223:pairedConnectionPoint ahu_system:00060 .
@@ -659,8 +659,8 @@ ahu_system:00060 a s223:ConnectionPoint,
         s223:OutletConnectionPoint,
         bob:AirConnectionPoint ;
     rdfs:label "fan_1_a.airOutlet" ;
-    s223:cnx ahu_system:00186 ;
-    s223:connectsThrough ahu_system:00186 ;
+    s223:cnx ahu_system:00153 ;
+    s223:connectsThrough ahu_system:00153 ;
     s223:hasMedium s223:Fluid-Air ;
     s223:isConnectionPointOf ahu_system:00058 ;
     s223:pairedConnectionPoint ahu_system:00059 .
@@ -691,7 +691,7 @@ ahu_system:00062 a s223:Connectable,
         ahu_system:00065 ;
     bob:airInlet ahu_system:00063 ;
     bob:airOutlet ahu_system:00064 ;
-    rdfs:comment "Return air fan at position [20,8]" .
+    rdfs:comment "Return air fan at position [16,4]" .
 
 ahu_system:00063 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -736,7 +736,7 @@ ahu_system:00066 a s223:Connectable,
         ahu_system:00069 ;
     bob:airInlet ahu_system:00067 ;
     bob:airOutlet ahu_system:00068 ;
-    rdfs:comment "Exhaust air fan at position [7,13]" .
+    rdfs:comment "Exhaust air fan at position [9,1]" .
 
 ahu_system:00067 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -806,7 +806,7 @@ ahu_system:00070 a s223:Connectable,
         ahu_system:00088 ;
     scratch:amps ahu_system:00090 ;
     scratch:volts ahu_system:00092 ;
-    rdfs:comment "VFD for supply fan at position [16,4]" .
+    rdfs:comment "VFD for supply fan at position [21,9]" .
 
 ahu_system:00071 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -1081,7 +1081,7 @@ ahu_system:00097 a s223:Connectable,
         ahu_system:00115 ;
     scratch:amps ahu_system:00117 ;
     scratch:volts ahu_system:00119 ;
-    rdfs:comment "VFD for return fan at position [20,9]" .
+    rdfs:comment "VFD for return fan at position [16,5]" .
 
 ahu_system:00098 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
@@ -1326,7 +1326,7 @@ ahu_system:00124 a s223:System,
         ahu_system:00128 ;
     s223:hasMember ahu_system:00125,
         ahu_system:00130 ;
-    rdfs:comment "Three-way mixing valve at position [14,4]" .
+    rdfs:comment "Three-way mixing valve at position [15,9]" .
 
 ahu_system:00125 a s223:Connectable,
         s223:Equipment,
@@ -1555,7 +1555,7 @@ ahu_system:00149 a s223:Connection ;
     s223:connectsTo ahu_system:00001,
         ahu_system:00005 ;
     s223:hasMedium s223:Fluid-Air ;
-    rdfs:comment "Outdoor air intake" .
+    rdfs:comment "Outdoor air intake - connects to damper_paf_upper and damper_paf_lower" .
 
 ahu_system:00150 a s223:Connection ;
     rdfs:label "MixedAir" ;
@@ -1569,7 +1569,7 @@ ahu_system:00150 a s223:Connection ;
         ahu_system:00009 ;
     s223:connectsTo ahu_system:00013 ;
     s223:hasMedium s223:Fluid-Air ;
-    rdfs:comment "Mixed outdoor and return air" .
+    rdfs:comment "Mixed outdoor and return air entering the AHU processing train" .
 
 ahu_system:00151 a s223:Connection ;
     rdfs:label "ReturnAir" ;
@@ -1580,21 +1580,21 @@ ahu_system:00151 a s223:Connection ;
     s223:connectsTo ahu_system:00017,
         ahu_system:00062 ;
     s223:hasMedium s223:Fluid-Air ;
-    rdfs:comment "Return air from zones" .
+    rdfs:comment "Return air from served zones" .
 
 ahu_system:00152 a s223:Connection ;
     rdfs:label "ExhaustAir" ;
     s223:connectsAt ahu_system:00068 ;
     s223:connectsFrom ahu_system:00066 ;
     s223:hasMedium s223:Fluid-Air ;
-    rdfs:comment "Exhaust air to outside" .
+    rdfs:comment "Exhaust air discharged to outdoors" .
 
 ahu_system:00153 a s223:Connection ;
     rdfs:label "SupplyAir" ;
-    s223:connectsAt ahu_system:00034 ;
-    s223:connectsFrom ahu_system:00032 ;
+    s223:connectsAt ahu_system:00060 ;
+    s223:connectsFrom ahu_system:00058 ;
     s223:hasMedium s223:Fluid-Air ;
-    rdfs:comment "Supply air to zones" .
+    rdfs:comment "Conditioned supply air delivered to zones" .
 
 ahu_system:00154 a s223:ObservableProperty,
         s223:Property,
@@ -1611,11 +1611,11 @@ ahu_system:00155 a s223:Connectable,
         s223:TemperatureSensor,
         bob:AirTemperatureSensor ;
     rdfs:label "sensor_temp_melange" ;
-    s223:hasObservationLocation ahu_system:00022 ;
+    s223:hasObservationLocation ahu_system:00034 ;
     s223:hasProperty ahu_system:00154,
         ahu_system:00156 ;
     s223:observes ahu_system:00154 ;
-    rdfs:comment "Mixed air temperature sensor at position [13,3]" .
+    rdfs:comment "Mixed air temperature sensor at position [19,8]" .
 
 ahu_system:00156 a s223:ObservableProperty,
         s223:Property,
@@ -1641,7 +1641,7 @@ ahu_system:00158 a s223:Connectable,
         s223:TemperatureSensor,
         bob:AirTemperatureSensor ;
     rdfs:label "sensor_temp_retour" ;
-    s223:hasObservationLocation ahu_system:00063 ;
+    s223:hasObservationLocation ahu_system:00151 ;
     s223:hasProperty ahu_system:00157,
         ahu_system:00159 ;
     s223:observes ahu_system:00157 ;
@@ -1675,7 +1675,7 @@ ahu_system:00161 a s223:Connectable,
     s223:hasProperty ahu_system:00160,
         ahu_system:00162 ;
     s223:observes ahu_system:00160 ;
-    rdfs:comment "Supply air temperature sensor at position [20,3]" .
+    rdfs:comment "Supply air temperature sensor at position [19,4]" .
 
 ahu_system:00162 a s223:ObservableProperty,
         s223:Property,
@@ -1702,7 +1702,7 @@ ahu_system:00163 a s223:Connectable,
     bob:hasReferenceLocation ahu_system:00023 ;
     bob:observation_pressure ahu_system:00165 ;
     bob:reference_pressure ahu_system:00166 ;
-    rdfs:comment "Differential pressure sensor across filter at position [12,4]" .
+    rdfs:comment "Differential pressure sensor across filter at position [13,9]" .
 
 ahu_system:00164 a s223:ObservableProperty,
         s223:Property,
@@ -1763,7 +1763,7 @@ ahu_system:00169 a s223:Connectable,
     bob:differential_static_pressure ahu_system:00170 ;
     bob:observation_pressure ahu_system:00171 ;
     bob:reference_pressure ahu_system:00172 ;
-    rdfs:comment "Static pressure sensor at position [22,3]" .
+    rdfs:comment "Static pressure sensor in supply duct at position [28,8]" .
 
 ahu_system:00170 a s223:ObservableProperty,
         s223:Property,
@@ -1825,7 +1825,7 @@ ahu_system:00176 a s223:Connectable,
         s223:HumiditySensor,
         s223:Sensor ;
     rdfs:label "sensor_humidity_retour" ;
-    s223:hasObservationLocation ahu_system:00063 ;
+    s223:hasObservationLocation ahu_system:00151 ;
     s223:hasProperty ahu_system:00175,
         ahu_system:00177 ;
     s223:observes ahu_system:00175 ;
@@ -1860,7 +1860,7 @@ ahu_system:00179 a s223:Connectable,
     s223:hasProperty ahu_system:00178,
         ahu_system:00180 ;
     s223:observes ahu_system:00178 ;
-    rdfs:comment "Low limit temperature sensor at position [21,3]" .
+    rdfs:comment "Low limit temperature sensor in supply duct at position [21,4]" .
 
 ahu_system:00180 a s223:ObservableProperty,
         s223:Property,
@@ -1904,19 +1904,19 @@ ahu_system:00184 a s223:Connection ;
     s223:hasMedium s223:Fluid-Air .
 
 ahu_system:00185 a s223:Connection ;
-    s223:cnx ahu_system:00059 ;
+    s223:cnx ahu_system:00033 ;
     s223:connectsAt ahu_system:00026,
-        ahu_system:00059 ;
+        ahu_system:00033 ;
     s223:connectsFrom ahu_system:00024 ;
-    s223:connectsTo ahu_system:00058 ;
+    s223:connectsTo ahu_system:00032 ;
     s223:hasMedium s223:Fluid-Air .
 
 ahu_system:00186 a s223:Connection ;
-    s223:cnx ahu_system:00033 ;
-    s223:connectsAt ahu_system:00033,
-        ahu_system:00060 ;
-    s223:connectsFrom ahu_system:00058 ;
-    s223:connectsTo ahu_system:00032 ;
+    s223:cnx ahu_system:00059 ;
+    s223:connectsAt ahu_system:00034,
+        ahu_system:00059 ;
+    s223:connectsFrom ahu_system:00032 ;
+    s223:connectsTo ahu_system:00058 ;
     s223:hasMedium s223:Fluid-Air .
 
 ahu_system:00187 a s223:Connection ;

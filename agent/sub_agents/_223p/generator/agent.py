@@ -1,35 +1,32 @@
 """
-ASHRAE 223P Ontology Validator & Fixer Agent.
+ASHRAE 223P Ontology Generator Agent.
 
-Uses a LoopWrapper (max 20 iterations) around an LlmAgent that is always
-pinned to ``github_copilot/claude-sonnet-4.5``.
+Uses a LoopWrapper (max 50 iterations) around an LlmAgent.
 
-Role
-----
-This agent does **not** generate the ontology from scratch. It reads the
-already-generated ``223p/src/ontology.py``, executes it, analyses errors,
-and iteratively applies targeted fixes until the file runs without errors
-and produces a valid ``ttl/ontology.ttl`` output.
+The model is injected by the parent :class:`Ontology223PSequentialAgent` at
+construction time; callers must supply ``model_name``.
 
 Tools
 -----
 - All helpers from ``sub_agents/_223p/tool.py`` (library introspection,
-  ontology read/write/execute, prompt reader).
+  ontology read/write, prompt reader).
 - Any common MCP/shared tools forwarded via the ``tools`` parameter.
-- ``exit_loop_level_4`` so the agent can signal clean completion.
+- ``exit_loop_generator_success`` — signals successful generation **and**
+  persists the ``ONTOLOGY_GENERATION_SUCCESS`` state flag so the sequential
+  agent can conditionally run the validator.
 
 Usage (standalone)
 ------------------
 Run directly with:
 
     cd agent
-    python -m sub_agents._223p.validator_agent
+    python -m sub_agents._223p.generator.agent
 
-or via the bundled :class:`ValidatorStandaloneRunner`::
+or via the bundled :class:`StandaloneRunner`::
 
-    from sub_agents._223p.validator_agent import ValidatorStandaloneRunner
+    from sub_agents._223p.generator.agent import StandaloneRunner
     import asyncio
-    asyncio.run(ValidatorStandaloneRunner().run())
+    asyncio.run(StandaloneRunner().run())
 """
 from __future__ import annotations
 
@@ -40,7 +37,9 @@ import uuid
 from typing import Any
 
 # ── Path bootstrap ────────────────────────────────────────────────────────────
-_agent_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_agent_root = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..")
+)
 
 if not __package__:
     if _agent_root not in sys.path:
@@ -58,72 +57,65 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
 from sub_agents._223p.tool import (
-    execute_ontology,
-    get_class_details,
     list_library_classes,
-    read_ontology,
-    read_prompt,
+    get_class_details,
     scan_python_files,
     write_ontology,
 )
+from sub_agents._223p.exit_tools import exit_loop_generator_success
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
-from sub_agents.tools.loop_exit_tools import exit_loop_level_4
 from utils.callback_utils import shared_model_callback as model_callback
 from utils.models import get_adk_model
-from utils.prompt_utils import load_prompt_instruction
+from utils.prompt_utils import load_composed_prompt
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Constants
 # ──────────────────────────────────────────────────────────────────────────────
 
-#: Model that this agent is always pinned to.
-_FORCED_MODEL = "github_copilot/claude-sonnet-4.5"
+#: Fallback model used when running standalone (no parent to inject the model).
+_STANDALONE_DEFAULT_MODEL = "github_copilot/claude-sonnet-4.5"
 
 #: Default task description used when no message is supplied to the standalone runner.
 _DEFAULT_TASK = (
-    "Read ontology.py, execute it, and fix any errors you find. "
-    "Inspect the bob and scratch libraries as needed to understand correct class "
-    "usage, operators and serialisation patterns. "
-    "Keep fixing and re-executing until the file runs without errors and produces "
-    "a valid ttl/ontology.ttl file, then call exit_loop_level_4."
+    "Read the grid, inspect the bob and scratch libraries, "
+    "then generate ontology.py that models the entire HVAC system "
+    "in ASHRAE 223P and serialises it to ttl/ontology.ttl. "
+    "When the ontology is written without errors call exit_loop_generator_success."
 )
 
-_MAX_ITERATIONS = 100
+_MAX_ITERATIONS = 50
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Public interface: LoopWrapper
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-class OntologyValidatorAgent(LoopWrapper):
+class OntologyLlmAgent(LoopWrapper):
     """
-    Public interface: Loop-wrapped 223P Ontology Validator & Fixer Agent.
+    Loop-wrapped 223P Ontology Generator Agent.
 
-    The inner :class:`OntologyValidatorAgentInternal` is always pinned to
-    ``github_copilot/claude-sonnet-4.5``; the *model_name* parameter is
-    accepted for API compatibility with the rest of the project but is
-    intentionally ignored — the model is forced.
-
-    Unlike :class:`OntologyLlmAgent` (the generator), this agent does **not**
-    create the ontology from scratch.  It reads the already-generated
-    ``223p/src/ontology.py``, executes it, and applies targeted fixes until
-    execution succeeds.
+    The *model_name* parameter is required and is forwarded to the inner
+    :class:`OntologyLlmAgentInternal` LlmAgent.  Typically this is set
+    (hardcoded) by the parent :class:`Ontology223PSequentialAgent`.
     """
 
     def __init__(
         self,
-        model_name: str = _FORCED_MODEL,  # accepted but ignored – model is forced
+        model_name: str = _STANDALONE_DEFAULT_MODEL,
         tools: list[Any] | None = None,
         session_id: str | None = None,
     ) -> None:
-        internal_agent = OntologyValidatorAgentInternal(tools=tools, session_id=session_id)
+        internal_agent = OntologyLlmAgentInternal(
+            model_name=model_name,
+            tools=tools,
+            session_id=session_id,
+        )
         super().__init__(
-            name="OntologyValidatorAgent",
+            name="OntologyAgent",
             agent=internal_agent,
             description=(
-                "Validates and fixes the ASHRAE 223P ontology.py generated by the "
-                "OntologyAgent. Executes the file, analyses errors, and applies "
-                "targeted repairs until the ontology runs cleanly and serialises to TTL."
+                "Generates an ASHRAE 223P semantic ontology from the live HVAC grid "
+                "using the bob and scratch Python libraries."
             ),
             max_iterations=_MAX_ITERATIONS,
         )
@@ -134,28 +126,27 @@ class OntologyValidatorAgent(LoopWrapper):
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-class OntologyValidatorAgentInternal(LlmAgent):
+class OntologyLlmAgentInternal(LlmAgent):
     """Internal LlmAgent – not instantiated directly by callers."""
 
     def __init__(
         self,
+        model_name: str = _STANDALONE_DEFAULT_MODEL,
         tools: list[Any] | None = None,
         session_id: str | None = None,
     ) -> None:
-        instruction = load_prompt_instruction("sub_agents/_223p/validator_prompt.md")
+        instruction = load_composed_prompt(
+            "sub_agents/_223p/generator/prompt.md",
+            ["skills/read-code-iterations/SKILL.md"]
+        )
 
-        # Local tools provided by this sub-agent.
-        # execute_ontology is included here (unlike the generator) because
-        # validation requires actually running the file.
+        # Local tools provided by this sub-agent
         local_tools: list[Any] = [
-            read_ontology,
-            write_ontology,
-            execute_ontology,
             list_library_classes,
             get_class_details,
             scan_python_files,
-            read_prompt,
-            exit_loop_level_4,
+            write_ontology,
+            exit_loop_generator_success,
         ]
 
         # Merge with any common/MCP tools forwarded by the caller
@@ -170,8 +161,8 @@ class OntologyValidatorAgentInternal(LlmAgent):
         )
 
         super().__init__(
-            name="OntologyValidatorAgentInternal",
-            model=get_adk_model(_FORCED_MODEL),
+            name="OntologyAgentInternal",
+            model=get_adk_model(model_name),
             instruction=instruction,
             tools=unique_tools,
             after_model_callback=model_callback,
@@ -184,24 +175,10 @@ class OntologyValidatorAgentInternal(LlmAgent):
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-class ValidatorStandaloneRunner:
-    iteration = 0
+class StandaloneRunner:
     """
-    Thin harness that runs :class:`OntologyValidatorAgent` independently of
-    the main FastAPI service.
-
-    Parameters
-    ----------
-    mcp_server_url:
-        Override the MCP server URL. Falls back to ``MCP_SERVER_URL`` env var,
-        then ``http://localhost:8080/mcp/``.
-    google_api_key:
-        Google ADK / Gemini API key. Falls back to the ``GOOGLE_API_KEY``
-        environment variable.
-    github_token:
-        GitHub personal-access token used by LiteLLM to authenticate against
-        the GitHub Copilot inference API.  Falls back to the ``GITHUB_TOKEN``
-        environment variable.
+    Thin harness that runs :class:`OntologyLlmAgent` independently of the
+    main FastAPI service or the sequential pipeline.
 
     Environment variables (all optional when the matching parameter is supplied)
     ----------------------------------------------------------------------------
@@ -213,20 +190,23 @@ class ValidatorStandaloneRunner:
         GitHub Copilot token forwarded to LiteLLM.
     """
 
+    iteration = 0
+
     def __init__(
         self,
         mcp_server_url: str | None = None,
         google_api_key: str | None = None,
         github_token: str | None = None,
+        model_name: str = _STANDALONE_DEFAULT_MODEL,
     ) -> None:
         self.mcp_server_url = mcp_server_url or os.getenv(
             "MCP_SERVER_URL", "http://localhost:8080/mcp/"
         )
         self.google_api_key = google_api_key or os.getenv("GOOGLE_API_KEY")
         self.github_token = github_token or os.getenv("GITHUB_TOKEN")
+        self.model_name = model_name
 
     def _inject_credentials(self) -> None:
-        """Push resolved credentials into ``os.environ`` so ADK and LiteLLM pick them up."""
         if self.google_api_key:
             os.environ.setdefault("GOOGLE_API_KEY", self.google_api_key)
             os.environ.setdefault("GOOGLE_GENAI_API_KEY", self.google_api_key)
@@ -235,33 +215,29 @@ class ValidatorStandaloneRunner:
             os.environ.setdefault("LITELLM_API_KEY", self.github_token)
 
     async def run(self, task: str = _DEFAULT_TASK) -> str:
-        """
-        Run the validator agent with *task* as the initial user message.
-
-        Returns the agent's final text response (empty string if none).
-        """
+        """Run the generator agent with *task* as the initial user message."""
         self._inject_credentials()
 
         from utils.mcp_utils import create_mcp_toolset
 
-        print(f"[ValidatorStandaloneRunner] Connecting to MCP server at {self.mcp_server_url} …")
+        print(f"[StandaloneRunner] Connecting to MCP server at {self.mcp_server_url} …")
         mcp_toolset = create_mcp_toolset(self.mcp_server_url)
 
-        agent = OntologyValidatorAgent(tools=[mcp_toolset])
+        agent = OntologyLlmAgent(model_name=self.model_name, tools=[mcp_toolset])
 
         session_service = InMemorySessionService()
         artifact_service = InMemoryArtifactService()
-        session_id = f"validator-standalone-{uuid.uuid4().hex[:8]}"
+        session_id = f"standalone-{uuid.uuid4().hex[:8]}"
 
         await session_service.create_session(
-            app_name="ontology_validator_standalone",
+            app_name="ontology_standalone",
             user_id="standalone_user",
             session_id=session_id,
         )
 
         runner = Runner(
             agent=agent,
-            app_name="ontology_validator_standalone",
+            app_name="ontology_standalone",
             session_service=session_service,
             artifact_service=artifact_service,
         )
@@ -272,10 +248,7 @@ class ValidatorStandaloneRunner:
         )
 
         final_response = ""
-        print(
-            f"[ValidatorStandaloneRunner] Starting validator agent "
-            f"(max {_MAX_ITERATIONS} iterations) …\n"
-        )
+        print(f"[StandaloneRunner] Starting agent (max {_MAX_ITERATIONS} iterations) …\n")
 
         async for event in runner.run_async(
             user_id="standalone_user",
@@ -285,15 +258,8 @@ class ValidatorStandaloneRunner:
             if event.is_final_response():
                 self.iteration += 1
                 if event.content and event.content.parts:
-                    final_response = "\n".join(
-                        part.text
-                        for part in event.content.parts[:5]
-                        if getattr(part, "text", None)
-                    )
-                print(
-                    f"\n[ValidatorStandaloneRunner {self.iteration}/{_MAX_ITERATIONS}] "
-                    f"✓ Agent finished.\n"
-                )
+                    final_response = event.content.parts[0].text
+                print(f"\n[StandaloneRunner {self.iteration}/{_MAX_ITERATIONS}] ✓ Agent finished.\n")
                 print(final_response)
 
         return final_response
@@ -311,7 +277,7 @@ if __name__ == "__main__":
     load_dotenv(os.path.join(_agent_root, ".env"))
 
     parser = argparse.ArgumentParser(
-        description="Run the 223P Ontology Validator & Fixer Agent standalone.",
+        description="Run the 223P Ontology Generator Agent standalone.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Credentials can also be supplied via environment variables:\n"
@@ -323,35 +289,27 @@ if __name__ == "__main__":
     parser.add_argument(
         "task",
         nargs="*",
-        help="Task description for the agent (defaults to the built-in validation task).",
+        help="Task description for the agent (defaults to the built-in 223P task).",
     )
+    parser.add_argument("--google-api-key", metavar="KEY", default=None)
+    parser.add_argument("--github-token", metavar="TOKEN", default=None)
+    parser.add_argument("--mcp-server-url", metavar="URL", default=None)
     parser.add_argument(
-        "--google-api-key",
-        metavar="KEY",
-        default=None,
-        help="Google ADK / Gemini API key (overrides GOOGLE_API_KEY env var).",
-    )
-    parser.add_argument(
-        "--github-token",
-        metavar="TOKEN",
-        default=None,
-        help="GitHub Copilot token forwarded to LiteLLM (overrides GITHUB_TOKEN env var).",
-    )
-    parser.add_argument(
-        "--mcp-server-url",
-        metavar="URL",
-        default=None,
-        help="MCP server URL (overrides MCP_SERVER_URL env var).",
+        "--model",
+        metavar="MODEL",
+        default=_STANDALONE_DEFAULT_MODEL,
+        help="Model name to use (default: %(default)s).",
     )
 
     args = parser.parse_args()
     task_arg = " ".join(args.task) if args.task else _DEFAULT_TASK
 
     asyncio.run(
-        ValidatorStandaloneRunner(
+        StandaloneRunner(
             mcp_server_url=args.mcp_server_url,
             google_api_key=args.google_api_key,
             github_token=args.github_token,
+            model_name=args.model,
         ).run(task=task_arg)
     )
 
