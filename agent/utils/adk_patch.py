@@ -25,8 +25,15 @@ from google.adk.flows.llm_flows.contents import (
 
 logger = logging.getLogger("google.adk.patch")
 
+_PATCH_APPLIED = False
+
 def apply_adk_patches():
     """Applies runtime patches to google.adk to support Gemini 3.0."""
+    global _PATCH_APPLIED
+    if _PATCH_APPLIED:
+        logger.debug("ADK patches already applied, skipping.")
+        return
+    
     logger.info("Applying ADK patches for Gemini 3.0 compatibility...")
 
     # 1. Patch Pydantic Models (Extra fields tolerance)
@@ -39,6 +46,7 @@ def apply_adk_patches():
     _patch_contents()
     
     logger.info("ADK patches applied successfully.")
+    _PATCH_APPLIED = True
 
 def _patch_pydantic_models():
     """Allows extra fields (like thought_signature) in Event and LlmResponse."""

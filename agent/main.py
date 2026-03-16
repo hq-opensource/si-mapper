@@ -1,5 +1,30 @@
-"""Main entrypoint for the PAR Agent Service."""
 from __future__ import annotations
+
+# ── Python 3.13 / Windows WMI hang fix ────────────────────────────────────────
+# Python 3.13 introduced a WMI-based `platform.system()` call that can hang
+# indefinitely on some Windows machines (VMs, WSL2 hosts, etc.).
+# aiohttp hits this at import time.  Pre-populating the cache bypasses it.
+import platform as _platform
+import os as _os
+if not getattr(_platform, '_uname_cache', None):
+    try:
+        import struct as _struct
+        _is64 = _struct.calcsize('P') == 8
+        _platform._uname_cache = _platform.uname_result._make([
+            'Windows',
+            _os.environ.get('COMPUTERNAME', 'localhost'),
+            '10',
+            '10.0.0',
+            'AMD64' if _is64 else 'x86',
+        ])
+    except Exception:
+        pass  # If the patch fails, fall through to the normal (possibly slow) path
+# ──────────────────────────────────────────────────────────────────────────────
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+"""Main entrypoint for the PAR Agent Service."""
 
 import os
 import uuid
@@ -24,7 +49,7 @@ apply_adk_patches()
 load_dotenv()
 logger = configure_logging()
 
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8080/mcp/")
+MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://127.0.0.1:8080/mcp/")
 SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
 logger.info(f"Using SHARED_ADK_MODEL: {SHARED_ADK_MODEL}")
 APP_TITLE = "SI-MAPPER Agent"

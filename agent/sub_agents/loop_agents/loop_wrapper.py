@@ -7,7 +7,7 @@ class LoopWrapper(LoopAgent):
     A wrapper that turns a standard Agent into a LoopAgent with a custom termination condition.
     Use this to give an agent "retry" or "refinement" capabilities until it signals completion.
     """
-    _termination_fn: Callable[[dict[str, Any]], bool] = PrivateAttr()
+    _termination_fn_override: Callable[[dict[str, Any]], bool] | None = PrivateAttr(default=None)
 
     def __init__(
         self,
@@ -23,7 +23,7 @@ class LoopWrapper(LoopAgent):
             max_iterations=max_iterations,
             description=description
         )
-        self._termination_fn = termination_fn or self._default_termination
+        self._termination_fn_override = termination_fn
 
     def _default_termination(self, state: dict[str, Any]) -> bool:
         """
@@ -40,4 +40,6 @@ class LoopWrapper(LoopAgent):
         if self.iterations >= self.max_iterations:
              return True
              
-        return self._termination_fn(state)
+        if self._termination_fn_override:
+            return self._termination_fn_override(state)
+        return self._default_termination(state)
