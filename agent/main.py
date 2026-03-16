@@ -1,26 +1,3 @@
-from __future__ import annotations
-
-# ── Python 3.13 / Windows WMI hang fix ────────────────────────────────────────
-# Python 3.13 introduced a WMI-based `platform.system()` call that can hang
-# indefinitely on some Windows machines (VMs, WSL2 hosts, etc.).
-# aiohttp hits this at import time.  Pre-populating the cache bypasses it.
-import platform as _platform
-import os as _os
-if not getattr(_platform, '_uname_cache', None):
-    try:
-        import struct as _struct
-        _is64 = _struct.calcsize('P') == 8
-        _platform._uname_cache = _platform.uname_result._make([
-            'Windows',
-            _os.environ.get('COMPUTERNAME', 'localhost'),
-            '10',
-            '10.0.0',
-            'AMD64' if _is64 else 'x86',
-        ])
-    except Exception:
-        pass  # If the patch fails, fall through to the normal (possibly slow) path
-# ──────────────────────────────────────────────────────────────────────────────
-
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -42,7 +19,7 @@ from utils.mcp_utils import create_mcp_toolset
 from utils.callback_utils import GLOBAL_SESSION_STORE
 from utils.adk_patch import apply_adk_patches
 
-# Apply patches for Gemini 3.0 compatibility (Runtime Fix)
+# Apply patches for Gemini 3.1 compatibility (Runtime Fix)
 apply_adk_patches()
 
 # --- Configuration ---
