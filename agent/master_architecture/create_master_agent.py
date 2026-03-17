@@ -30,7 +30,7 @@ def create_inner_master_agent(
     return main_loop
 
 
-def create_master_agent(session_id: str, subagents:List[LoopAgent], model_name: str, si_mapper_toolset: McpToolset) -> LlmAgent:
+def create_master_agent(session_id: str, model_name: str, si_mapper_toolset: McpToolset, subagents: List[LoopAgent] = None) -> LlmAgent:
     """Creates the Master orchestrator agent hierarchy."""
     logger.debug(f"Creating Master Orchestrator for session {session_id}")
 

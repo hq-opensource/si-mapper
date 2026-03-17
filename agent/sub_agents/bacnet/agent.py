@@ -43,7 +43,7 @@ class BacnetAgentInternal(LlmAgent):
         
         instruction = load_composed_prompt(
             "sub_agents/bacnet/prompt.md", 
-            ["skills/parse_csv/SKILL.md"]
+            ["skills/parse-csv/SKILL.md"]
         )
 
         # Core tools for the Bacnet extraction loop

@@ -1,5 +1,5 @@
 ---
-name: parse_csv
+name: parse-csv
 description: Specialized instructions for parsing and extracting device information from BACnet filtered CSV files.
 ---
 

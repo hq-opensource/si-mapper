@@ -1,5 +1,5 @@
 ---
-name: horizontal_ducts
+name: horizontal-ducts
 description: Specialized instructions for identifying and drawing horizontal ducts for HVAC systems.
 ---
 
