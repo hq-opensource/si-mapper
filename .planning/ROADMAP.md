@@ -62,3 +62,16 @@
 - **Phase 4.3: Compatibility Verification**
     - [ ] Verify that the application builds and runs without peer dependency warnings.
     - [ ] Ensure full React 19 / Next.js 16 functionality.
+
+## Phase 5: Agent-Frontend Interface & Performance Metrics
+**Goal:** Establish a robust communication layer between the reasoning agent and the React frontend, ensuring transparency of thoughts, tool calls, and performance metrics.
+
+- **Phase 5.1: Communication Layer Audit**
+    - [ ] Map all callbacks (pre-model, post-model) between Agent and Frontend.
+    - [ ] Simplify internal agent communication logic.
+- **Phase 5.2: UI Rendering of Agent State**
+    - [ ] Implement rendering for agent "thoughts" and "instructions".
+    - [ ] Ensure real-time tool call status visibility on the HUD.
+- **Phase 5.3: Performance Metrics Dashboard**
+    - [ ] Identify and extract key performance metrics (latency, token usage, success rate).
+    - [ ] Render metrics in a frontend dashboard/HUD for developer visibility.
