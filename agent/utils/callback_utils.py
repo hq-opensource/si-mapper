@@ -107,9 +107,10 @@ def shared_model_callback(
     # Update active agent in state
     state["active_agent"] = agent_name
     
-    # Extract session ID if possible
-    session_id = getattr(callback_context, "session_id", "default-session")
-    if not session_id or session_id == "Unknown":
+    # Extract session ID from invocation context
+    try:
+        session_id = callback_context.session.id
+    except:
         session_id = "default-session"
     
     # Process all agents that have this callback registered
@@ -118,12 +119,37 @@ def shared_model_callback(
     if not llm_response.content or not llm_response.content.parts:
         return llm_response
 
+    start = _call_start_times.pop(agent_name, None)
+    elapsed = (time.perf_counter() - start) if start is not None else None
+    
+    # Extract token usage
+    usage = getattr(llm_response, "usage_metadata", None)
+    metrics = {
+        "latency_s": elapsed,
+        "prompt_tokens": getattr(usage, "prompt_token_count", 0),
+        "completion_tokens": getattr(usage, "candidates_token_count", 0),
+        "total_tokens": getattr(usage, "total_token_count", 0),
+        "cached_tokens": getattr(usage, "cached_content_token_count", 0),
+        "provider": "google",
+    }
+
+    # --- DEBUG: Print parts types ---
+    parts_info = []
+    for p in llm_response.content.parts:
+        info = f"type(p)={type(p)}"
+        if hasattr(p, 'thought'): info += f", thought={p.thought}"
+        if hasattr(p, 'text'): info += f", text_len={len(p.text) if p.text else 0}"
+        if hasattr(p, 'function_call'): info += f", fn={p.function_call.name if p.function_call else 'None'}"
+        parts_info.append(info)
+    logger.debug(f"[{agent_name}] Response Parts: {parts_info}")
+    # --------------------------------
+    
     # 1. NEW: Process structured events
     from .event_processor import EventProcessor
     from .events import EventType
     
     # Generate fresh events for this chunk (Enables appending behavior in frontend)
-    new_events = EventProcessor.process_parts(agent_name, llm_response)
+    new_events = EventProcessor.process_parts(agent_name, llm_response, metrics=metrics)
     
     # 2. Update local state history
     events_history = state.get("events", [])
@@ -251,10 +277,7 @@ def shared_model_callback(
     if llm_response.content.role == 'model' and (has_action or has_real_text):
         callback_context._invocation_context.end_invocation = True
 
-    # ── Per-iteration report ──────────────────────────────────────────────────
-    start = _call_start_times.pop(agent_name, None)
-    elapsed = (time.perf_counter() - start) if start is not None else None
-    _print_iteration_report(agent_name, llm_response, elapsed)
+    # _print_iteration_report(agent_name, llm_response, elapsed)
     # ─────────────────────────────────────────────────────────────────────────
 
     return llm_response

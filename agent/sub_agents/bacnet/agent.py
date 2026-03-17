@@ -7,7 +7,7 @@ from sub_agents.tools.loop_exit_tools import exit_loop_level_4
 from sub_agents.tools.ingest_category_tool import ingest_category_files_tool
 from tools.task_tools import fetch_pending_task, mark_technical_progress, create_batch_tasks, fetch_batch_tasks, mark_technical_progress_batch, complete_tasks_batch, check_specialist_termination
 from tools.progress_tool import update_step, update_status, update_state
-from utils.callback_utils import shared_model_callback as model_callback
+from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
 from utils.prompt_utils import load_composed_prompt
 from utils.models import get_adk_model
 from typing import Any
@@ -73,6 +73,7 @@ class BacnetAgentInternal(LlmAgent):
             instruction=instruction,
             tools=unique_tools,
             after_model_callback=model_callback,
+            before_model_callback=before_model_callback,
             planner=planner,
             generate_content_config=types.GenerateContentConfig(temperature=0.0),
         )

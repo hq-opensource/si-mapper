@@ -13,6 +13,7 @@ import { TasksWindow } from "./TasksWindow";
 import { StateWindow } from "./StateWindow";
 import { SharedPageContainer } from "./SharedPageContainer";
 import { StatusPlaceholder } from "./StatusPlaceholder";
+import { PerformanceDashboard } from "./PerformanceDashboard";
 
 // Define WorkAreaWrapper outside to prevent remounting subcomponents on every render (stable component tree)
 const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -29,7 +30,7 @@ const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
 
 function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agentState: AgentState }) {
   // Determine initial view based on props but allow internal navigation
-  const [activeTab, setActiveTab] = useState<'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state'>(isEditMode ? 'edit' : 'view');
+  const [activeTab, setActiveTab] = useState<'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance'>(isEditMode ? 'edit' : 'view');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   // Initialize theme: Default to light mode, ignore system preference
   useEffect(() => {
@@ -46,7 +47,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
     localStorage.setItem('app-theme', newTheme);
   };
 
-  const handleTabChange = (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state') => {
+  const handleTabChange = (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance') => {
     setActiveTab(tab);
   };
 
@@ -70,6 +71,8 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
         return <ToolCallsWindow />;
       case 'state':
         return <StateWindow />;
+      case 'performance':
+        return <PerformanceDashboard />;
 
       case 'plans':
         return (

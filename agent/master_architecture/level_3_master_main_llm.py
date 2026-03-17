@@ -8,7 +8,7 @@ from google.adk.tools import load_artifacts
 from master_architecture.tools.loop_exit_tools import exit_loop_level_2
 from master_architecture.tools.ingest_category_tool import ingest_category_files_tool
 from tools.progress_tool import update_step, update_status, update_plan, sync_tasks
-from master_architecture.tools.callbacks import model_callback
+from master_architecture.tools.callbacks import model_callback, before_model_callback
 from utils.prompt_utils import load_prompt_instruction
 from utils.models import get_adk_model
 from typing import Any
@@ -42,6 +42,7 @@ class MasterLlmAgent(LlmAgent):
             model=get_adk_model(model_name),
             instruction=instruction,
             tools=final_tools,
+            before_model_callback=before_model_callback,
             after_model_callback=model_callback,
             planner=planner,
             generate_content_config=model_config,
