@@ -83,3 +83,16 @@
 - **Phase 6.4: Validation & Testing**
     - [x] Run production build and fix any TypeScript or hydration errors.
     - [ ] Verify multi-model agent integration and HUD functionality.
+
+## Phase 7: Dependency Modernization & UI Optimization (SVAR Migration)
+**Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
+
+- **Phase 7.1: Remove Chonky Legacy Layers**
+    - [x] Uninstall `chonky` and `chonky-icon-fontawesome`. 
+    - [ ] Strip out `@material-ui/core` and related v4 dependencies.
+- **Phase 7.2: Implement SVAR React File Manager**
+    - [ ] Install `@svar/react-file-manager`.
+    - [ ] Replace `Chonky` file explorer with `SVAR File Manager` in the frontend.
+- **Phase 7.3: Compatibility Verification**
+    - [ ] Verify that the application builds and runs without peer dependency warnings.
+    - [ ] Ensure full React 19 / Next.js 16 functionality.

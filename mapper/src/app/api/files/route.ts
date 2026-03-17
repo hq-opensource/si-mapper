@@ -31,6 +31,7 @@ export async function GET(request: Request) {
             return {
                 id: `/${relativePath}`, // Path as ID
                 name: entry.name,
+                value: entry.name, // Added for SVAR
                 size: stats.size,
                 date: new Date(stats.mtime).getTime() / 1000, // Unix timestamp in seconds
                 type: entry.isDirectory() ? 'folder' : 'file',
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
         return NextResponse.json({
             id: `/${relativePath}`,
             name: name,
+            value: name, // Added for SVAR
             size: stats.size,
             date: new Date(stats.mtime).getTime() / 1000,
             type: 'folder',

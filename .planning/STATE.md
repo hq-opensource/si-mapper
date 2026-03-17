@@ -35,3 +35,4 @@
 ## Roadmap Evolution
 - Phase 4 added: Google ADK with LiteLLM
 - Phase 5 added: Full System Multi-Model Validation
+- Phase 7 added: Remove Chonky and replace with SVAR React File Manager

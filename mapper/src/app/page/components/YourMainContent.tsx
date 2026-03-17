@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { ExternalPageIframe } from "./ExternalPageIframe";
 import { AgentNavbar } from "./AgentNavbar"; // New component
 import { type AgentState } from "./AgentStateOverlay";
-import { ChonkyFileManager } from "@/components/ChonkyFileManager";
+import { SvarFileManager } from "@/components/SvarFileManager";
 import { Markdown } from "@copilotkit/react-ui";
 import { FileText, BarChart2, Folder, Eye, Edit3 } from "lucide-react";
 import { ThoughtsWindow } from "./ThoughtsWindow";
@@ -136,7 +136,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
             fullWidth
             fullHeight
           >
-            <ChonkyFileManager />
+            <SvarFileManager />
           </SharedPageContainer>
         );
       case 'graph':
