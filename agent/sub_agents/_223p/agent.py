@@ -22,16 +22,13 @@ pipeline.
 
 Usage (standalone)
 ------------------
-Run the full pipeline::
+Use the unified runner::
 
     cd agent
-    python -m sub_agents._223p.agent
+    python -m sub_agents._223p.run pipeline
 
-or via the bundled :class:`PipelineStandaloneRunner`::
-
-    from sub_agents._223p.agent import PipelineStandaloneRunner
-    import asyncio
-    asyncio.run(PipelineStandaloneRunner().run())
+See :mod:`sub_agents._223p.run` for all options (``--model``, ``--github-token``,
+``--mcp-server-url``, custom task, etc.).
 
 Backward compatibility
 ----------------------
@@ -41,11 +38,9 @@ work unchanged.
 """
 from __future__ import annotations
 
-import asyncio
 import logging
 import os
 import sys
-import uuid
 from contextlib import aclosing
 from typing import Any, AsyncGenerator
 
@@ -64,10 +59,6 @@ os.environ["SSL_CERT_FILE"] = ""
 # ─────────────────────────────────────────────────────────────────────────────
 
 from google.adk.agents import SequentialAgent
-from google.adk.artifacts import InMemoryArtifactService
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-from google.genai import types
 
 from sub_agents._223p.generator.agent import OntologyLlmAgent  # noqa: F401 (re-export)
 from sub_agents._223p.validator.agent import OntologyValidatorAgent
@@ -199,141 +190,4 @@ class Ontology223PSequentialAgent(SequentialAgent):
         # also set it here explicitly so the convention holds even if the
         # validator hits max_iterations without calling the tool.
         ctx.session.state["EXIT_LEVEL_4"] = True
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Standalone runner (full pipeline)
-# ──────────────────────────────────────────────────────────────────────────────
-
-_DEFAULT_TASK = (
-    "Read the grid, inspect the bob and scratch libraries, "
-    "then generate ontology.py that models the entire HVAC system "
-    "in ASHRAE 223P and serialises it to ttl/ontology.ttl. "
-    "When the ontology is written without errors call exit_loop_generator_success. "
-    "The validator will then execute and fix the generated file automatically."
-)
-
-
-class PipelineStandaloneRunner:
-    """
-    Thin harness that runs the full :class:`Ontology223PSequentialAgent`
-    pipeline (generator + validator) independently of the FastAPI service.
-
-    Environment variables (all optional when the matching parameter is supplied)
-    ----------------------------------------------------------------------------
-    ``MCP_SERVER_URL``   URL of the MCP server.
-    ``GOOGLE_API_KEY``   Google ADK / Gemini API key.
-    ``GITHUB_TOKEN``     GitHub Copilot token forwarded to LiteLLM.
-    """
-
-    def __init__(
-        self,
-        mcp_server_url: str | None = None,
-        google_api_key: str | None = None,
-        github_token: str | None = None,
-    ) -> None:
-        self.mcp_server_url = mcp_server_url or os.getenv(
-            "MCP_SERVER_URL", "http://localhost:8080/mcp/"
-        )
-        self.google_api_key = google_api_key or os.getenv("GOOGLE_API_KEY")
-        self.github_token = github_token or os.getenv("GITHUB_TOKEN")
-
-    def _inject_credentials(self) -> None:
-        if self.google_api_key:
-            os.environ.setdefault("GOOGLE_API_KEY", self.google_api_key)
-            os.environ.setdefault("GOOGLE_GENAI_API_KEY", self.google_api_key)
-        if self.github_token:
-            os.environ.setdefault("GITHUB_TOKEN", self.github_token)
-            os.environ.setdefault("LITELLM_API_KEY", self.github_token)
-
-    async def run(self, task: str = _DEFAULT_TASK) -> str:
-        """Run the pipeline with *task* as the initial user message."""
-        self._inject_credentials()
-
-        from utils.mcp_utils import create_mcp_toolset
-
-        print(f"[PipelineStandaloneRunner] Connecting to MCP server at {self.mcp_server_url} …")
-        mcp_toolset = create_mcp_toolset(self.mcp_server_url)
-
-        agent = Ontology223PSequentialAgent(tools=[mcp_toolset])
-
-        session_service = InMemorySessionService()
-        artifact_service = InMemoryArtifactService()
-        session_id = f"pipeline-{uuid.uuid4().hex[:8]}"
-
-        await session_service.create_session(
-            app_name="ontology_pipeline_standalone",
-            user_id="standalone_user",
-            session_id=session_id,
-        )
-
-        runner = Runner(
-            agent=agent,
-            app_name="ontology_pipeline_standalone",
-            session_service=session_service,
-            artifact_service=artifact_service,
-        )
-
-        content = types.Content(
-            role="user",
-            parts=[types.Part(text=task)],
-        )
-
-        final_response = ""
-        print("[PipelineStandaloneRunner] Starting pipeline …\n")
-
-        async for event in runner.run_async(
-            user_id="standalone_user",
-            session_id=session_id,
-            new_message=content,
-        ):
-            if event.is_final_response():
-                if event.content and event.content.parts:
-                    final_response = event.content.parts[0].text
-                print("\n[PipelineStandaloneRunner] ✓ Pipeline finished.\n")
-                print(final_response)
-
-        return final_response
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Entry-point
-# ──────────────────────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-
-    from dotenv import load_dotenv
-    import argparse
-
-    load_dotenv(os.path.join(_agent_root, ".env"))
-
-    parser = argparse.ArgumentParser(
-        description="Run the 223P Ontology Generation+Validation Pipeline standalone.",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=(
-            "Credentials can also be supplied via environment variables:\n"
-            "  GOOGLE_API_KEY  – Google ADK / Gemini API key\n"
-            "  GITHUB_TOKEN    – GitHub Copilot token (used by LiteLLM)\n"
-            "  MCP_SERVER_URL  – MCP server URL\n"
-        ),
-    )
-    parser.add_argument(
-        "task",
-        nargs="*",
-        help="Task description (defaults to the built-in 223P pipeline task).",
-    )
-    parser.add_argument("--google-api-key", metavar="KEY", default=None)
-    parser.add_argument("--github-token", metavar="TOKEN", default=None)
-    parser.add_argument("--mcp-server-url", metavar="URL", default=None)
-
-    args = parser.parse_args()
-    task_arg = " ".join(args.task) if args.task else _DEFAULT_TASK
-
-    asyncio.run(
-        PipelineStandaloneRunner(
-            mcp_server_url=args.mcp_server_url,
-            google_api_key=args.google_api_key,
-            github_token=args.github_token,
-        ).run(task=task_arg)
-    )
 
