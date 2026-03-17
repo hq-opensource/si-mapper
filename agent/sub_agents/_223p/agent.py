@@ -176,11 +176,11 @@ class Ontology223PSequentialAgent(SequentialAgent):
         # ── Conditional gate ──────────────────────────────────────────
         generation_ok = ctx.session.state.get("ONTOLOGY_GENERATION_SUCCESS", False)
         if not generation_ok:
+            failure_reason = ctx.session.state["ONTOLOGY_GENERATION_FAILURE_REASON"]
             logger.warning(
-                "[Ontology223PPipeline] Generator did not set "
-                "ONTOLOGY_GENERATION_SUCCESS — the generator likely exhausted "
-                "its iteration budget without calling exit_loop_generator_success. "
-                "Skipping validator step."
+                "[Ontology223PPipeline] Generator did not set ONTOLOGY_GENERATION_SUCCESS. "
+                + (failure_reason if failure_reason else "The generator likely exhausted its iteration budget without calling exit_loop_generator_success.")
+                + " Skipping validator step."
             )
             # Signal pipeline completion to any outer loop even on early exit.
             ctx.session.state["EXIT_LEVEL_4"] = True

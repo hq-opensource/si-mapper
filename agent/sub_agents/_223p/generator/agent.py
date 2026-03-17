@@ -67,7 +67,7 @@ from sub_agents._223p.exit_tools import (
     exit_loop_generator_failure
 )
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
-from utils.callback_utils import shared_model_callback as model_callback
+from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
 from utils.models import get_adk_model
 from utils.prompt_utils import load_composed_prompt
 
@@ -169,6 +169,7 @@ class OntologyLlmAgentInternal(LlmAgent):
             model=get_adk_model(model_name),
             instruction=instruction,
             tools=unique_tools,
+            before_model_callback=before_model_callback,
             after_model_callback=model_callback,
             generate_content_config=types.GenerateContentConfig(temperature=0.0),
         )

@@ -91,6 +91,7 @@ def exit_loop_generator_failure(
     # Explicitly mark generation as failed so the sequential agent will not
     # launch the validator.
     tool_context.state["ONTOLOGY_GENERATION_SUCCESS"] = False
+    tool_context.state["ONTOLOGY_GENERATION_FAILURE_REASON"] = reason
     # EXIT_LEVEL_4 is set as a state marker for consistency with other exit tools.
     tool_context.state["EXIT_LEVEL_4"] = True
     tool_context.actions.escalate = True

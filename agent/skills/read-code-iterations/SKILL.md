@@ -7,121 +7,96 @@ description: Specialized instructions for reading and comparing dated iteration 
 
 ## 1. Purpose
 
-This skill elaborates on how to properly **read and compare the files inside the `iterations` folder** to extract knowledge from previous attempts.
-
-The goal is not to describe what to generate — it is to describe **how to navigate and interpret the iteration artifacts** so that errors and their resolutions can be understood and learned from.
+Navigate and interpret the `iterations/` folder to extract **error-to-resolution lessons** from previous generation attempts. The goal is learning from deltas, not describing what to generate.
 
 ---
 
-## 2. Folder Structure
+## 2. Folder Structure (example, actual may vary)
 
-Under `iterations/`, there are dated sub-folders, each representing one generation session.
-
-Here is an example of the structure, but more folders and files may be added over time:
 ```
 iterations/
     2026-03-13-1/
-        <prefix>_1.py      ← attempt 1 (first try, likely has errors)
-        <prefix>.py        ← final resolved file for this session
-    2026-03-13-2/
-        <prefix>_1.py      ← attempt 1
+        <prefix>_1.py      ← attempt 1 (has errors)
         <prefix>.py        ← final resolved file
     2026-03-13-3/
-        <prefix>_1.py      ← attempt 1
-        <prefix>_2.py      ← attempt 2
-        <prefix>_3.py      ← attempt 3
+        <prefix>_1.py
+        <prefix>_2.py
+        <prefix>_3.py
         <prefix>.py        ← final resolved file
-    2026-03-16-1/
-        <prefix>_1.py      ← attempt 1
-        <prefix>_2.py      ← attempt 2
-        <prefix>.py        ← final resolved file
+    ...
 ```
 
-**Key conventions:**
-- The `<prefix>` part of the filename (e.g., `ontology`, `mapping`, `pipeline`) may vary across sessions — **do not assume a fixed prefix**.
-- Files suffixed `_N` (e.g., `<prefix>_1.py`, `<prefix>_2.py`) are **numbered attempts** — they failed or were incomplete.
-- The file **without a suffix** (e.g., `<prefix>.py`) is the **final, resolved, working file** for that session.
-- The number of `_N` files in a session indicates how many attempts were needed before convergence.
+**Conventions:**
+- `<prefix>` varies across sessions — do not assume a fixed name.
+- `<prefix>_N.py` = failed/incomplete attempt N.
+- `<prefix>.py` (no suffix) = **final, working file** for that session.
+- Number of `_N` files = attempts needed before convergence.
 
-**To be ignored:**
-- Any files that do not follow the `*_N.py` naming pattern.
-- Any files that are not in the dated sub-folders.
-- Files that are not Python code (e.g., `.txt`, `.md`) unless they contain notes about the iterations.
-- Files that are not part of the `iterations` folder (e.g., files in `code_samples` or other folders) when analyzing the iteration process.
+**Ignore:**
+- Files not following `*_N.py` or `*.py` naming inside dated folders.
+- Non-Python files (`.txt`, `.md`) unless they contain iteration notes.
+- Files outside the dated sub-folders.
 
 ---
 
 ## 3. Reading Protocol
 
-### Step 1 — Read in strict sequential order
-
-Within a dated folder, always read files **from lowest to highest**, then the final:
-
+**Step 1 — Sequential order within a session:**
 ```
-<prefix>_1.py → <prefix>_2.py → <prefix>_3.py → <prefix>.py
+<prefix>_1.py → <prefix>_2.py → … → <prefix>.py
 ```
+Never start with `<prefix>.py` alone — resolution only makes sense after reading what failed.
 
-Never start with `<prefix>.py` alone. The resolution only makes sense in the context of what failed before it.
+**Step 2 — Identify the delta between each consecutive pair:**
+- What changed? (added, removed, modified lines)
+- What was the likely error in the previous file?
+- What is the fix?
 
-### Step 2 — For each consecutive pair, identify the delta
+The delta **is the lesson**. Small diff = focused fix. Large diff = structural rethink.
 
-When moving from file N to file N+1 (or from the last `_N` to `<prefix>.py`), ask:
+**Step 3 — `<prefix>.py` is ground truth.**
+Extract reusable patterns only from the final unsuffixed file, never from `_N` files.
 
-- **What changed?** Look for added, removed, or modified lines.
-- **What was the likely error in the previous file?** The change reveals what was wrong.
-- **What is the fix?** The new code is the answer to the error.
-
-The delta between two files **is the lesson**. A small diff = one focused correction. A large diff = major structural rethink.
-
-### Step 3 — Treat `<prefix>.py` as ground truth for that session
-
-The unsuffixed `<prefix>.py` is the file that successfully ran (or was accepted as correct). When extracting patterns to reuse, always take them from `<prefix>.py`, not from any `_N` file.
-
-### Step 4 — Read sessions in chronological order
-
-Sessions are named with dates (`2026-03-13-1`, `2026-03-13-2`, etc.). Later sessions build on the knowledge of earlier ones. A pattern corrected in session `2026-03-13-2` should not reappear in `2026-03-16-1` — if it does, that is itself a signal worth noting.
+**Step 4 — Process sessions in chronological order.**
+A pattern corrected in an earlier session must not reappear later — if it does, flag it as a recurring risk.
 
 ---
 
-## 4. What to Look For When Comparing (Diff Categories & Recurring Risks)
-
-When diffing two consecutive files, focus on these categories:
+## 4. Diff Categories & Recurring Risks
 
 | Category | Signal to look for |
 | :--- | :--- |
-| **Imports** | Were modules added, removed, or moved between `bob` and `scratch`? |
-| **Instantiation pattern** | Did the object constructor arguments change? |
-| **Connection wiring** | Did the `>>` chain change structure, or were explicit port names introduced? |
-| **Sensor API** | Did the method used to attach a property or observation change? |
-| **Serialization** | Did the function used to write the output file change? |
-| **Structural approach** | Was a class hierarchy (e.g., `System.contains()`) replaced with a flat pattern? |
+| **Imports** | Modules added, removed, or moved between `bob` and `scratch` |
+| **Instantiation pattern** | Constructor arguments changed |
+| **Connection wiring** | `>>` chain restructured or explicit port names introduced |
+| **Sensor API** | Method used to attach a property or observation changed |
+| **Serialization** | Function used to write the output file changed |
+| **Structural approach** | Class hierarchy replaced with flat pattern (or vice versa) |
 
-Each of these categories represents a class of mistake that can recur. When you see a change in one of these categories, note it as a **recurring risk** for future generations.
+Each category is a class of mistake that can recur — note it as a **recurring risk**.
 
 ---
 
-## 5. Full Reading Algorithm
+## 5. Reading Algorithm
 
 ```
-FOR EACH dated session folder (in chronological order):
-    DETECT the filename prefix used in this session
+FOR EACH dated session folder (chronological order):
+    DETECT the filename prefix for this session
     READ <prefix>_1.py
     FOR EACH subsequent _N file:
         COMPARE with previous file
         IDENTIFY what changed and why
     READ <prefix>.py (final)
     COMPARE with last _N file
-    RECORD: what the final fix was
+    RECORD the final fix
 ```
-
-This sequential reading reveals the **path from error to resolution**, which is more valuable than the resolved code alone.
 
 ---
 
 ## 6. Verification Checklist
 
-- [ ] Did you read every `_N` file before reading `<prefix>.py` for each session?
-- [ ] Did you process sessions in strict chronological order?
-- [ ] For each diff, have you classified the change into one of the categories in Section 4?
-- [ ] Did you record the final fix from `<prefix>.py` (not from any `_N` file)?
-- [ ] Did you flag any error pattern that reappears across sessions as a recurring risk?
+- [ ] Every `_N` file read before `<prefix>.py` for each session?
+- [ ] Sessions processed in strict chronological order?
+- [ ] Each diff classified into a category from Section 4?
+- [ ] Final fix recorded from `<prefix>.py` only (not from any `_N` file)?
+- [ ] Error patterns reappearing across sessions flagged as recurring risks?
