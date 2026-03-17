@@ -1,4 +1,4 @@
-from .agent import OntologyLlmAgent, StandaloneRunner
+from .agent import OntologyLlmAgent
 
-__all__ = ["OntologyLlmAgent", "StandaloneRunner"]
+__all__ = ["OntologyLlmAgent"]
 

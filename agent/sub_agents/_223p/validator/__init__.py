@@ -1,4 +1,4 @@
-from .agent import OntologyValidatorAgent, ValidatorStandaloneRunner
+from .agent import OntologyValidatorAgent
 
-__all__ = ["OntologyValidatorAgent", "ValidatorStandaloneRunner"]
+__all__ = ["OntologyValidatorAgent"]
 
