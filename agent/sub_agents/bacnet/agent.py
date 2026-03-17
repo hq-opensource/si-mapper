@@ -38,12 +38,15 @@ class BacnetAgentInternal(LlmAgent):
         # Configure native Gemini 3 thinking via Planner
         planner = None
         if "thinking" in model_name.lower() or "gemini-3" in model_name.lower():
-             thinking_config = types.ThinkingConfig(include_thoughts=True)
+             thinking_config = types.ThinkingConfig(
+                 include_thoughts=True,
+                 thinking_level="high"
+             )
              planner = BuiltInPlanner(thinking_config=thinking_config)
         
         instruction = load_composed_prompt(
             "sub_agents/bacnet/prompt.md", 
-            ["skills/parse-csv/SKILL.md"]
+            ["skills/skill-parse-csv/SKILL.md"]
         )
 
         # Core tools for the Bacnet extraction loop

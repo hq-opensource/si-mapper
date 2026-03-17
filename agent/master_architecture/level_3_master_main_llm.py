@@ -23,7 +23,12 @@ class MasterLlmAgent(LlmAgent):
         # Configure native Gemini 3 thinking via Planner
         planner = None
         if "thinking" in model_name.lower() or "gemini-3" in model_name.lower():
-             thinking_config = types.ThinkingConfig(include_thoughts=True)
+             # Set thinking level to 'high' for maximum reasoning depth
+             # and a generous token budget for detailed internal planning.
+             thinking_config = types.ThinkingConfig(
+                 include_thoughts=True,
+                 thinking_level="high"
+             )
              planner = BuiltInPlanner(thinking_config=thinking_config)
         
         # Load instruction from markdown file only if no custom instruction is provided

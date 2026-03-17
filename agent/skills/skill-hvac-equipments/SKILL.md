@@ -1,5 +1,5 @@
 ---
-name: equipments
+name: skill-hvac-equipments
 description: Specialized instructions for identifying and drawing equipments for HVAC systems.
 ---
 

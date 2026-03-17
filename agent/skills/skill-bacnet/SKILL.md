@@ -1,5 +1,5 @@
 ---
-name: bacnet
+name: skill-bacnet
 description: Specialized instructions for identifying bacnet points for HVAC systems.
 ---
 
