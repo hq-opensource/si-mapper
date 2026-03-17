@@ -1,12 +1,14 @@
 
+import pathlib
 from typing import List
 from google.adk.agents import LoopAgent
 from master_architecture.level_2_master_main_loop import MasterMainLoopAgent
 from master_architecture.level_3_master_main_llm import MasterLlmAgent
 from dotenv import load_dotenv
 from google.adk.agents import LlmAgent
-from google.adk.agents import LlmAgent
 from google.adk.tools import McpToolset
+from google.adk.skills import load_skill_from_dir
+from google.adk.tools import skill_toolset
 from utils.logging_config import configure_logging
 from tools.task_tools import add_task, set_task_status, enqueue_grid_tasks, mark_technical_progress, mark_technical_progress_batch, complete_tasks_batch
 from tools.state_tools import save_agent_state, get_agent_state
@@ -32,6 +34,23 @@ def create_master_agent(session_id: str, subagents:List[LoopAgent], model_name: 
     """Creates the Master orchestrator agent hierarchy."""
     logger.debug(f"Creating Master Orchestrator for session {session_id}")
 
+    # --- 1. Load Skills from agent/skills ---
+    skills_root = pathlib.Path(__file__).parent.parent / "skills"
+    loaded_skills = []
+    
+    if skills_root.exists():
+        for skill_dir in skills_root.iterdir():
+            if skill_dir.is_dir() and (skill_dir / "SKILL.md").exists():
+                try:
+                    skill = load_skill_from_dir(skill_dir)
+                    loaded_skills.append(skill)
+                    logger.debug(f"Loaded skill: {skill_dir.name}")
+                except Exception as e:
+                    logger.error(f"Failed to load skill from {skill_dir}: {e}")
+    
+    # --- 2. Create the SkillToolset ---
+    skill_tools = skill_toolset.SkillToolset(skills=loaded_skills)
+
     task_tools = [
         add_task, 
         set_task_status, 
@@ -46,7 +65,7 @@ def create_master_agent(session_id: str, subagents:List[LoopAgent], model_name: 
     master_agent = MasterLlmAgent(
         model_name=model_name,
         subagents=subagents,
-        tools=[si_mapper_toolset] + task_tools,
+        tools=[si_mapper_toolset, skill_tools] + task_tools,
         session_id=session_id
     )
 

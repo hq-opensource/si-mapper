@@ -150,6 +150,7 @@ def shared_model_callback(
     
     # Generate fresh events for this chunk (Enables appending behavior in frontend)
     new_events = EventProcessor.process_parts(agent_name, llm_response, metrics=metrics)
+    logger.debug(f"[{agent_name}] Extracted {len(new_events)} new events")
     
     # 2. Update local state history
     events_history = state.get("events", [])
