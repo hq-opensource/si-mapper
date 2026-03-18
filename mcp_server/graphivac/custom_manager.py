@@ -1,5 +1,6 @@
 import os
 import sys
+import asyncio
 from typing import Any, Dict, List, Callable
 
 from edn_format import Keyword
@@ -19,6 +20,7 @@ logger = configure_logging()
 class CustomManager:
     def __init__(self, org_id: str, project_id: str, grid_id: str, grid_title: str, font_configs: Dict[str, Any], base_url: str):
         self.api = GraphivacAPI(org_id, project_id, grid_id, grid_title, font_configs, base_url)
+        self.lock = asyncio.Lock()
 
     def _ensure_comps_exists(self, mutable_grid: Dict[Keyword, Any], k_comps: Keyword) -> Dict[Keyword, Any]:
         # Check if comps exists and is mutable
@@ -29,7 +31,7 @@ class CustomManager:
             mutable_grid[k_comps] = {}
         return mutable_grid
 
-    def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
+    async def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
         """
         Wraps a tool action to return a structured response with status and grid states.
         """
@@ -38,19 +40,19 @@ class CustomManager:
             "grid_before": [],
             "grid_after": []
         }
-        
+
         try:
-            # 1. Capture Grid Before
+            # 1. Capture Grid Before (read-only, outside lock)
             try:
                 response["grid_before"] = read_grid_util(self.api)
             except Exception as e:
                 logger.error(f"Error reading grid BEFORE {tool_name}: {e}")
-                # We don't fail the whole tool just for this, but log it.
 
-            # 2. Execute Action
-            action()
+            # 2. Execute Action (serialized with lock, non-blocking)
+            async with self.lock:
+                await asyncio.to_thread(action)
 
-            # 3. Capture Grid After
+            # 3. Capture Grid After (read-only, outside lock)
             try:
                 response["grid_after"] = read_grid_util(self.api)
             except Exception as e:
@@ -59,7 +61,6 @@ class CustomManager:
         except Exception as e:
             logger.error(f"Error executing {tool_name}: {e}")
             response["tool_status"] = f"fail: {str(e)}"
-            # Try to get grid_after even if it failed, in case partial changes were made or to show current state
             try:
                 response["grid_after"] = read_grid_util(self.api)
             except:
@@ -69,7 +70,7 @@ class CustomManager:
 
     # --- ROOM BASEBOARD ---
 
-    def create_room_baseboard(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_room_baseboard(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE ROOM BASEBOARD: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -87,9 +88,9 @@ class CustomManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_room_baseboard {name}", action)
+        return await self._wrap_tool_execution(f"create_room_baseboard {name}", action)
 
-    def delete_room_baseboard(self, name: str) -> Dict[str, Any]:
+    async def delete_room_baseboard(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE ROOM BASEBOARD: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -108,7 +109,7 @@ class CustomManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "user.room.baseboard"
 
                     if is_match and is_correct_type:
@@ -120,14 +121,14 @@ class CustomManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_room_baseboard {name}", action)
+        return await self._wrap_tool_execution(f"delete_room_baseboard {name}", action)
 
     # --- PIPE CHILLER ---
 
-    def create_pipe_chiller(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_pipe_chiller(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE PIPE CHILLER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -145,9 +146,9 @@ class CustomManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_pipe_chiller {name}", action)
+        return await self._wrap_tool_execution(f"create_pipe_chiller {name}", action)
 
-    def delete_pipe_chiller(self, name: str) -> Dict[str, Any]:
+    async def delete_pipe_chiller(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE PIPE CHILLER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -166,7 +167,7 @@ class CustomManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "user.pipe.chiller"
 
                     if is_match and is_correct_type:
@@ -178,7 +179,7 @@ class CustomManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_pipe_chiller {name}", action)
+        return await self._wrap_tool_execution(f"delete_pipe_chiller {name}", action)

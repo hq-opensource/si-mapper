@@ -18,18 +18,18 @@ def register_electric_tools(mcp_instance: FastMCP, electric_manager: ElectricMan
     """
 
     @mcp_instance.tool
-    def create_variable_frequency_drive(name: str, coord: list[int]) -> ToolResult:
+    async def create_variable_frequency_drive(name: str, coord: list[int]) -> ToolResult:
         """Adds a Variable Frequency Drive (VFD) to the system at specific coordinates."""
-        result = electric_manager.create_variable_frequency_drive(name, coord)
+        result = await electric_manager.create_variable_frequency_drive(name, coord)
         return ToolResult(
             content=[TextContent(type="text", text=result["tool_status"])],
             structured_content=result
         )
 
     @mcp_instance.tool
-    def delete_variable_frequency_drive(name: str) -> ToolResult:
+    async def delete_variable_frequency_drive(name: str) -> ToolResult:
         """Deletes a Variable Frequency Drive (VFD) by name."""
-        result = electric_manager.delete_variable_frequency_drive(name)
+        result = await electric_manager.delete_variable_frequency_drive(name)
         return ToolResult(
             content=[TextContent(type="text", text=result["tool_status"])],
             structured_content=result

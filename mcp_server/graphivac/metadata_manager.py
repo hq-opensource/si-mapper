@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import asyncio
 from typing import Any, Dict, List, Callable
 from collections.abc import Mapping, Sequence
 
@@ -22,6 +23,7 @@ logger = configure_logging()
 class MetadataManager:
     def __init__(self, org_id: str, project_id: str, grid_id: str, grid_title: str, font_configs: Dict[str, Any], base_url: str):
         self.api = GraphivacAPI(org_id, project_id, grid_id, grid_title, font_configs, base_url)
+        self.lock = asyncio.Lock()
 
     def _ensure_comps_exists(self, mutable_grid: Dict[Keyword, Any], k_comps: Keyword) -> Dict[Keyword, Any]:
         if k_comps not in mutable_grid:
@@ -29,20 +31,21 @@ class MetadataManager:
             mutable_grid[k_comps] = {}
         return mutable_grid
 
-    def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
+    async def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
         response = {
             "tool_status": "success",
             "grid_before": [],
             "grid_after": []
         }
-        
+
         try:
             try:
                 response["grid_before"] = read_grid_util(self.api)
             except Exception as e:
                 logger.error(f"Error reading grid BEFORE {tool_name}: {e}")
 
-            result = action()
+            async with self.lock:
+                result = await asyncio.to_thread(action)
             if isinstance(result, Mapping):
                 response.update(result)
 
@@ -67,13 +70,13 @@ class MetadataManager:
             if len(key) > 0 and key[0] == k_obj:
                 if len(key) > 1 and key[1] == equipment_name:
                     return True
-        
+
         if isinstance(value, (dict, Mapping)) and value.get(k_name) == equipment_name:
             return True
-            
+
         return False
 
-    def write_metadata(self, equipment_name: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+    async def write_metadata(self, equipment_name: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
         # Handle double wrapping e.g. metadata = {"metadata": {"bacnet": ...}}
         if len(metadata) == 1 and "metadata" in metadata and isinstance(metadata["metadata"], dict):
             logger.info(f"Unwrapping double-wrapped metadata for {equipment_name}.")
@@ -87,10 +90,10 @@ class MetadataManager:
             k_obj = Keyword("obj")
             k_name = Keyword("name")
             k_custom_fields = Keyword("custom-fields")
-            
+
             mutable_grid = self._ensure_comps_exists(mutable_grid, k_comps)
             comps = mutable_grid[k_comps]
-            
+
             # Flexible matching helper
             def is_match(name_on_grid, target_name):
                 if not name_on_grid or not target_name:
@@ -116,18 +119,18 @@ class MetadataManager:
                     if not isinstance(value, dict):
                         logger.warning(f"Component {grid_name} is not a dictionary. Cannot write metadata.")
                         continue
-                    
+
                     # Custom fields are stored as a map in EDN, which edn_to_mutable converts to a dict
                     current_metadata = value.get(k_custom_fields, {})
                     if not isinstance(current_metadata, dict):
                         logger.warning(f"Existing :custom-fields for {grid_name} is not a dict. Resetting.")
                         current_metadata = {}
-                    
+
                     # Merge new metadata with technical cleanup
                     for m_key, m_val in metadata.items():
                         # Clean key
                         clean_key = str(m_key).strip("'\"")
-                        
+
                         # JSON stringify complex objects for UI rendering
                         if isinstance(m_val, (dict, list)):
                             if isinstance(m_val, dict):
@@ -135,22 +138,22 @@ class MetadataManager:
                             processed_val = json.dumps(m_val)
                         else:
                             processed_val = m_val
-                        
+
                         current_metadata[clean_key] = processed_val
-                    
+
                     value[k_custom_fields] = current_metadata
                     logger.info(f"Successfully updated metadata for {grid_name} (matched from {equipment_name})")
                     found = True
                     break
-            
+
             if not found:
                 raise Exception(f"Equipment named '{equipment_name}' not found on the grid.")
 
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"write_metadata {equipment_name}", action)
+        return await self._wrap_tool_execution(f"write_metadata {equipment_name}", action)
 
-    def write_metadata_batch(self, updates: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+    async def write_metadata_batch(self, updates: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
         """
         Updates metadata for multiple equipment items in a single transaction.
         Args:
@@ -165,27 +168,27 @@ class MetadataManager:
         def action():
             logger.debug(f"--- STARTING BATCH WRITE METADATA FOR {len(updates)} ITEMS ---")
             logger.debug(f"Requested update names: {list(updates.keys())}")
-            
+
             # 1. Read the grid once
             immutable_grid = self.api.get_grid_info_edn()
             mutable_grid = edn_to_mutable(immutable_grid)
-            
+
             k_comps = Keyword("comps")
             k_obj = Keyword("obj")
             k_name = Keyword("name")
             k_custom_fields = Keyword("custom-fields")
-            
+
             mutable_grid = self._ensure_comps_exists(mutable_grid, k_comps)
             comps = mutable_grid[k_comps]
-            
+
             processed_count = 0
-            
+
             # Pre-slugify update keys for faster flexible matching
             def get_slug(name):
                 return str(name).lower().replace(" ", "_").replace("-", "_")
-            
+
             slug_to_original = {get_slug(k): k for k in updates.keys()}
-            
+
             # 2. Iterate through all items in the grid to find matches
             for key, value in comps.items():
                 grid_name = None
@@ -193,13 +196,13 @@ class MetadataManager:
                      grid_name = key[1]
                 if not grid_name and isinstance(value, (dict, Mapping)):
                     grid_name = value.get(k_name)
-                
+
                 if not grid_name:
                     continue
-                
+
                 grid_name_str = str(grid_name)
                 found_key = None
-                
+
                 # Check exact
                 if grid_name_str in updates:
                     found_key = grid_name_str
@@ -219,45 +222,40 @@ class MetadataManager:
                 if found_key:
                     logger.info(f"Match found for grid component '{grid_name_str}' using key '{found_key}'.")
                     target_metadata = updates[found_key]
-                    
+
                     if not isinstance(value, dict):
                         logger.warning(f"Component {grid_name_str} is not a dictionary. Skipping.")
                         continue
-                    
+
                     # Prepare custom fields
                     current_metadata = value.get(k_custom_fields, {})
                     if not isinstance(current_metadata, dict):
                         current_metadata = {}
-                    
+
                     # Merge updates with technical cleanup
                     for m_key, m_val in target_metadata.items():
-                        # Clean key (LLM sometimes adds extra quotes like "'2500.AI1'")
                         clean_key = str(m_key).strip("'\"")
-                        
-                        # CRITICAL: If the value is a complex object (dict/list), 
-                        # we must JSON stringify it so the Graphivac UI can render it.
-                        # Otherwise it shows as "[object Object]" on the frontend.
+
                         if isinstance(m_val, (dict, list)):
-                            # Clean internal keys if any
                             if isinstance(m_val, dict):
                                 m_val = {str(k).strip("'\""): v for k, v in m_val.items()}
                             processed_val = json.dumps(m_val)
                         else:
                             processed_val = m_val
-                        
+
                         current_metadata[clean_key] = processed_val
-                    
+
                     # Apply back to mutable grid
                     value[k_custom_fields] = current_metadata
                     processed_count += 1
-            
+
             logger.info(f"Batch update: Processed {processed_count}/{len(updates)} requested items.")
-            
+
             # 3. Write the grid once
             self.api.update_grid_edn(mutable_grid)
             return {"processed": processed_count}
 
-        return self._wrap_tool_execution(f"write_metadata_batch ({len(updates)} items)", action)
+        return await self._wrap_tool_execution(f"write_metadata_batch ({len(updates)} items)", action)
 
     def read_metadata(self, equipment_name: str) -> Dict[str, Any]:
         logger.debug(f"--- STARTING READ METADATA FOR: {equipment_name} ---")
@@ -266,9 +264,9 @@ class MetadataManager:
         k_obj = Keyword("obj")
         k_name = Keyword("name")
         k_custom_fields = Keyword("custom-fields")
-        
+
         comps = immutable_grid.get(k_comps, {})
-        
+
         for key, value in comps.items():
             if self._is_match(key, value, equipment_name, k_obj, k_name):
                 # value is likely an ImmutableMap here
@@ -276,10 +274,10 @@ class MetadataManager:
                 # Use edn_to_mutable to ensure we return a clean Python dict
                 from mcp_server.graphivac.utils.edn_to_mutable import edn_to_mutable
                 return edn_to_mutable(cf)
-        
+
         raise Exception(f"Equipment named '{equipment_name}' not found on the grid.")
 
-    def delete_metadata(self, equipment_name: str) -> Dict[str, Any]:
+    async def delete_metadata(self, equipment_name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE METADATA FOR: {equipment_name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -288,10 +286,10 @@ class MetadataManager:
             k_obj = Keyword("obj")
             k_name = Keyword("name")
             k_custom_fields = Keyword("custom-fields")
-            
+
             mutable_grid = self._ensure_comps_exists(mutable_grid, k_comps)
             comps = mutable_grid[k_comps]
-            
+
             found = False
             for key, value in comps.items():
                 if self._is_match(key, value, equipment_name, k_obj, k_name):
@@ -299,10 +297,10 @@ class MetadataManager:
                         del value[k_custom_fields]
                     found = True
                     break
-            
+
             if not found:
                 raise Exception(f"Equipment named '{equipment_name}' not found on the grid.")
 
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_metadata {equipment_name}", action)
+        return await self._wrap_tool_execution(f"delete_metadata {equipment_name}", action)

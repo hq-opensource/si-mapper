@@ -1,5 +1,6 @@
 import os
 import sys
+import asyncio
 from typing import Any, Dict, List, Callable
 
 from edn_format import Keyword
@@ -19,6 +20,7 @@ logger = configure_logging()
 class PipeManager:
     def __init__(self, org_id: str, project_id: str, grid_id: str, grid_title: str, font_configs: Dict[str, Any], base_url: str):
         self.api = GraphivacAPI(org_id, project_id, grid_id, grid_title, font_configs, base_url)
+        self.lock = asyncio.Lock()
 
     def _ensure_comps_exists(self, mutable_grid: Dict[Keyword, Any], k_comps: Keyword) -> Dict[Keyword, Any]:
         # Check if comps exists and is mutable
@@ -29,7 +31,7 @@ class PipeManager:
             mutable_grid[k_comps] = {}
         return mutable_grid
 
-    def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
+    async def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
         """
         Wraps a tool action to return a structured response with status and grid states.
         """
@@ -38,19 +40,19 @@ class PipeManager:
             "grid_before": [],
             "grid_after": []
         }
-        
+
         try:
-            # 1. Capture Grid Before
+            # 1. Capture Grid Before (read-only, outside lock)
             try:
                 response["grid_before"] = read_grid_util(self.api)
             except Exception as e:
                 logger.error(f"Error reading grid BEFORE {tool_name}: {e}")
-                # We don't fail the whole tool just for this, but log it.
 
-            # 2. Execute Action
-            action()
+            # 2. Execute Action (serialized with lock, non-blocking)
+            async with self.lock:
+                await asyncio.to_thread(action)
 
-            # 3. Capture Grid After
+            # 3. Capture Grid After (read-only, outside lock)
             try:
                 response["grid_after"] = read_grid_util(self.api)
             except Exception as e:
@@ -69,7 +71,7 @@ class PipeManager:
 
     # --- PIPE ---
 
-    def create_pipe(self, name: str, start_coord: List[int], end_coord: List[int]) -> Dict[str, Any]:
+    async def create_pipe(self, name: str, start_coord: List[int], end_coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE PIPE: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -78,7 +80,7 @@ class PipeManager:
             mutable_grid = self._ensure_comps_exists(mutable_grid, k_comps)
 
             # Key is [:pipe "name"]
-            new_pipe_key = (Keyword("pipe"), name) 
+            new_pipe_key = (Keyword("pipe"), name)
             new_pipe_value = {
                 Keyword("n1"): {Keyword("pos"): start_coord},
                 Keyword("n2"): {Keyword("pos"): end_coord}
@@ -87,9 +89,9 @@ class PipeManager:
             mutable_grid[k_comps][new_pipe_key] = new_pipe_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_pipe {name}", action)
+        return await self._wrap_tool_execution(f"create_pipe {name}", action)
 
-    def delete_pipe(self, name: str) -> Dict[str, Any]:
+    async def delete_pipe(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE PIPE: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -110,7 +112,7 @@ class PipeManager:
                     # Check Name tag in Value
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     if is_match:
                         keys_to_remove.append(key)
 
@@ -120,14 +122,14 @@ class PipeManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_pipe {name}", action)
+        return await self._wrap_tool_execution(f"delete_pipe {name}", action)
 
     # --- BOILER ---
 
-    def create_boiler(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_boiler(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE BOILER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -145,9 +147,9 @@ class PipeManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_boiler {name}", action)
+        return await self._wrap_tool_execution(f"create_boiler {name}", action)
 
-    def delete_boiler(self, name: str) -> Dict[str, Any]:
+    async def delete_boiler(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE BOILER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -166,7 +168,7 @@ class PipeManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "pipe.boiler"
 
                     if is_match and is_correct_type:
@@ -178,14 +180,14 @@ class PipeManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_boiler {name}", action)
+        return await self._wrap_tool_execution(f"delete_boiler {name}", action)
 
     # --- HEAT PUMP ---
 
-    def create_heat_pump(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_heat_pump(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE HEAT PUMP: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -203,9 +205,9 @@ class PipeManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_heat_pump {name}", action)
+        return await self._wrap_tool_execution(f"create_heat_pump {name}", action)
 
-    def delete_heat_pump(self, name: str) -> Dict[str, Any]:
+    async def delete_heat_pump(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE HEAT PUMP: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -224,7 +226,7 @@ class PipeManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "pipe.heat-pump"
 
                     if is_match and is_correct_type:
@@ -236,16 +238,14 @@ class PipeManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_heat_pump {name}", action)
+        return await self._wrap_tool_execution(f"delete_heat_pump {name}", action)
 
     # --- PUMP ---
 
-    # --- PUMP ---
-
-    def create_pump(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_pump(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE PUMP: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -263,9 +263,9 @@ class PipeManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_pump {name}", action)
+        return await self._wrap_tool_execution(f"create_pump {name}", action)
 
-    def delete_pump(self, name: str) -> Dict[str, Any]:
+    async def delete_pump(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE PUMP: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -284,7 +284,7 @@ class PipeManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "pipe.pump"
 
                     if is_match and is_correct_type:
@@ -296,14 +296,14 @@ class PipeManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_pump {name}", action)
+        return await self._wrap_tool_execution(f"delete_pump {name}", action)
 
     # --- TEMPERATURE SENSOR ---
 
-    def create_sensor_temperature(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_sensor_temperature(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE PIPE TEMP SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -321,9 +321,9 @@ class PipeManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_sensor_temperature {name}", action)
+        return await self._wrap_tool_execution(f"create_sensor_temperature {name}", action)
 
-    def delete_sensor_temperature(self, name: str) -> Dict[str, Any]:
+    async def delete_sensor_temperature(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE PIPE TEMP SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -342,7 +342,7 @@ class PipeManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "pipe.sensor.temperature"
 
                     if is_match and is_correct_type:
@@ -354,16 +354,14 @@ class PipeManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_sensor_temperature {name}", action)
+        return await self._wrap_tool_execution(f"delete_sensor_temperature {name}", action)
 
     # --- THREE-WAY VALVE ---
 
-    # --- THREE-WAY VALVE ---
-
-    def create_valve_three_way(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_valve_three_way(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE 3-WAY VALVE: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -381,9 +379,9 @@ class PipeManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_valve_three_way {name}", action)
+        return await self._wrap_tool_execution(f"create_valve_three_way {name}", action)
 
-    def delete_valve_three_way(self, name: str) -> Dict[str, Any]:
+    async def delete_valve_three_way(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE 3-WAY VALVE: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -402,7 +400,7 @@ class PipeManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "pipe.valve.three-way"
 
                     if is_match and is_correct_type:
@@ -414,14 +412,14 @@ class PipeManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_valve_three_way {name}", action)
+        return await self._wrap_tool_execution(f"delete_valve_three_way {name}", action)
 
     # --- TWO-WAY VALVE ---
 
-    def create_valve_two_way(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_valve_two_way(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE 2-WAY VALVE: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -439,9 +437,9 @@ class PipeManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_valve_two_way {name}", action)
+        return await self._wrap_tool_execution(f"create_valve_two_way {name}", action)
 
-    def delete_valve_two_way(self, name: str) -> Dict[str, Any]:
+    async def delete_valve_two_way(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE 2-WAY VALVE: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -460,7 +458,7 @@ class PipeManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "pipe.valve.two-way"
 
                     if is_match and is_correct_type:
@@ -472,7 +470,7 @@ class PipeManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_valve_two_way {name}", action)
+        return await self._wrap_tool_execution(f"delete_valve_two_way {name}", action)

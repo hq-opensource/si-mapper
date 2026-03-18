@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+import asyncio
 from typing import Any, Dict, List, Callable
 
 from edn_format import Keyword
@@ -18,8 +19,9 @@ from mcp_server.graphivac.utils.grid_status import read_grid
 logger = configure_logging()
 
 class DuctManager:
-    def __init__(self, org_id: str, project_id: str, grid_id: str, grid_title: str, font_configs: Dict[str, Any], base_url: str):
+    def __init__(self, org_id: str, project_id: str, grid_id: str, grid_title: str, font_configs: Dict[str, Any], base_url: str, lock: asyncio.Lock = None):
         self.api = GraphivacAPI(org_id, project_id, grid_id, grid_title, font_configs, base_url)
+        self.lock = lock or asyncio.Lock()
 
     def _ensure_comps_exists(self, mutable_grid: Dict[Keyword, Any], k_comps: Keyword) -> Dict[Keyword, Any]:
         # Check if comps exists and is mutable
@@ -30,20 +32,22 @@ class DuctManager:
             mutable_grid[k_comps] = {}
         return mutable_grid
 
-    def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
+    async def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
         tool_status = "success"
-        try:
-            logger.debug(f"Executing action for {tool_name}")
-            action()
-        except Exception as e:
-            logger.error(f"Error executing {tool_name}: {e}")
-            tool_status = f"fail: {str(e)}"
+        async with self.lock:
+            try:
+                logger.debug(f"Executing action for {tool_name} (Lock Acquired)")
+                # Run the synchronous (blocking) action in a thread so the event loop stays free
+                await asyncio.to_thread(action)
+            except Exception as e:
+                logger.error(f"Error executing {tool_name}: {e}")
+                tool_status = f"fail: {str(e)}"
         
         return {"tool_status": tool_status}
 
     # --- DUCT ---
 
-    def create_duct(self, name: str, start_coord: List[int], end_coord: List[int]) -> Dict[str, Any]:
+    async def create_duct(self, name: str, start_coord: List[int], end_coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE DUCT: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -60,9 +64,9 @@ class DuctManager:
             mutable_grid[k_comps][new_duct_key] = new_duct_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_duct {name}", action)
+        return await self._wrap_tool_execution(f"create_duct {name}", action)
 
-    def create_ducts_batch(self, ducts: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_ducts_batch(self, ducts: Dict[str, Any]) -> Dict[str, Any]:
         def action():
             logger.debug("--- STARTING CREATE DUCTS BATCH ---")
             
@@ -94,9 +98,9 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution("create_ducts_batch", action)
+        return await self._wrap_tool_execution("create_ducts_batch", action)
 
-    def delete_duct(self, name: str) -> Dict[str, Any]:
+    async def delete_duct(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE DUCT: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -135,11 +139,11 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_duct {name}", action)
+        return await self._wrap_tool_execution(f"delete_duct {name}", action)
 
     # --- COOLING COIL ---
 
-    def create_cooling_coil(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_cooling_coil(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE COOLING COIL: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -157,9 +161,9 @@ class DuctManager:
             mutable_grid[k_comps][new_coil_key] = new_coil_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_cooling_coil {name}", action)
+        return await self._wrap_tool_execution(f"create_cooling_coil {name}", action)
 
-    def delete_cooling_coil(self, name: str) -> Dict[str, Any]:
+    async def delete_cooling_coil(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE COOLING COIL: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -193,11 +197,11 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_cooling_coil {name}", action)
+        return await self._wrap_tool_execution(f"delete_cooling_coil {name}", action)
 
     # --- HEATING COIL ---
 
-    def create_heating_coil(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_heating_coil(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE HEATING COIL: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -215,9 +219,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_heating_coil {name}", action)
+        return await self._wrap_tool_execution(f"create_heating_coil {name}", action)
 
-    def delete_heating_coil(self, name: str) -> Dict[str, Any]:
+    async def delete_heating_coil(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE HEATING COIL: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -251,11 +255,11 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_heating_coil {name}", action)
+        return await self._wrap_tool_execution(f"delete_heating_coil {name}", action)
 
     # --- FAN ---
 
-    def create_fan(self, name: str, coord: List[int], rotation: int = 0) -> Dict[str, Any]:
+    async def create_fan(self, name: str, coord: List[int], rotation: int = 0) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE FAN: {name} rot={rotation} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -275,9 +279,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_fan {name}", action)
+        return await self._wrap_tool_execution(f"create_fan {name}", action)
 
-    def delete_fan(self, name: str) -> Dict[str, Any]:
+    async def delete_fan(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE FAN: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -311,11 +315,11 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_fan {name}", action)
+        return await self._wrap_tool_execution(f"delete_fan {name}", action)
 
     # --- FILTER ---
 
-    def create_filter(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_filter(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE FILTER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -333,9 +337,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_filter {name}", action)
+        return await self._wrap_tool_execution(f"create_filter {name}", action)
 
-    def delete_filter(self, name: str) -> Dict[str, Any]:
+    async def delete_filter(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE FILTER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -369,11 +373,11 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_filter {name}", action)
+        return await self._wrap_tool_execution(f"delete_filter {name}", action)
 
     # --- DAMPER ---
 
-    def create_damper(self, name: str, coord: List[int], rotation: int = 0) -> Dict[str, Any]:
+    async def create_damper(self, name: str, coord: List[int], rotation: int = 0) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE DAMPER: {name} rot={rotation} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -393,9 +397,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_damper {name}", action)
+        return await self._wrap_tool_execution(f"create_damper {name}", action)
 
-    def delete_damper(self, name: str) -> Dict[str, Any]:
+    async def delete_damper(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE DAMPER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -429,11 +433,11 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_damper {name}", action)
+        return await self._wrap_tool_execution(f"delete_damper {name}", action)
 
     # --- THERMAL WHEEL ---
 
-    def create_thermal_wheel(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_thermal_wheel(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE THERMAL WHEEL: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -451,9 +455,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_thermal_wheel {name}", action)
+        return await self._wrap_tool_execution(f"create_thermal_wheel {name}", action)
 
-    def delete_thermal_wheel(self, name: str) -> Dict[str, Any]:
+    async def delete_thermal_wheel(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE THERMAL WHEEL: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -487,11 +491,11 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_thermal_wheel {name}", action)
+        return await self._wrap_tool_execution(f"delete_thermal_wheel {name}", action)
 
     # --- HUMIDIFIER ---
 
-    def create_humidifier(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_humidifier(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE HUMIDIFIER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -509,9 +513,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_humidifier {name}", action)
+        return await self._wrap_tool_execution(f"create_humidifier {name}", action)
 
-    def delete_humidifier(self, name: str) -> Dict[str, Any]:
+    async def delete_humidifier(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE HUMIDIFIER: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -545,11 +549,11 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_humidifier {name}", action)
+        return await self._wrap_tool_execution(f"delete_humidifier {name}", action)
 
     # --- SENSORS ---
 
-    def create_sensor_enthalpy(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_sensor_enthalpy(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE ENTHALPY SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -567,9 +571,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_sensor_enthalpy {name}", action)
+        return await self._wrap_tool_execution(f"create_sensor_enthalpy {name}", action)
 
-    def delete_sensor_enthalpy(self, name: str) -> Dict[str, Any]:
+    async def delete_sensor_enthalpy(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE ENTHALPY SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -603,9 +607,9 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_sensor_enthalpy {name}", action)
+        return await self._wrap_tool_execution(f"delete_sensor_enthalpy {name}", action)
 
-    def create_sensor_temperature(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_sensor_temperature(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE TEMPERATURE SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -623,9 +627,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_sensor_temperature {name}", action)
+        return await self._wrap_tool_execution(f"create_sensor_temperature {name}", action)
 
-    def delete_sensor_temperature(self, name: str) -> Dict[str, Any]:
+    async def delete_sensor_temperature(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE TEMPERATURE SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -659,9 +663,9 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_sensor_temperature {name}", action)
+        return await self._wrap_tool_execution(f"delete_sensor_temperature {name}", action)
 
-    def create_sensor_differential_pressure(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_sensor_differential_pressure(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE DIFFERENTIAL PRESSURE SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -679,9 +683,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_sensor_differential_pressure {name}", action)
+        return await self._wrap_tool_execution(f"create_sensor_differential_pressure {name}", action)
 
-    def delete_sensor_differential_pressure(self, name: str) -> Dict[str, Any]:
+    async def delete_sensor_differential_pressure(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE DIFFERENTIAL PRESSURE SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -715,9 +719,9 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_sensor_differential_pressure {name}", action)
+        return await self._wrap_tool_execution(f"delete_sensor_differential_pressure {name}", action)
 
-    def create_sensor_humidity(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_sensor_humidity(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE HUMIDITY SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -735,9 +739,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_sensor_humidity {name}", action)
+        return await self._wrap_tool_execution(f"create_sensor_humidity {name}", action)
 
-    def create_sensor_low_limit(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_sensor_low_limit(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE LOW LIMIT SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -755,9 +759,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_sensor_low_limit {name}", action)
+        return await self._wrap_tool_execution(f"create_sensor_low_limit {name}", action)
 
-    def delete_sensor_low_limit(self, name: str) -> Dict[str, Any]:
+    async def delete_sensor_low_limit(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE LOW LIMIT SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -791,9 +795,9 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_sensor_low_limit {name}", action)
+        return await self._wrap_tool_execution(f"delete_sensor_low_limit {name}", action)
 
-    def delete_sensor_humidity(self, name: str) -> Dict[str, Any]:
+    async def delete_sensor_humidity(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE HUMIDITY SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -827,9 +831,9 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_sensor_humidity {name}", action)
+        return await self._wrap_tool_execution(f"delete_sensor_humidity {name}", action)
 
-    def create_sensor_flow(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_sensor_flow(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE FLOW SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -847,9 +851,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_sensor_flow {name}", action)
+        return await self._wrap_tool_execution(f"create_sensor_flow {name}", action)
 
-    def delete_sensor_flow(self, name: str) -> Dict[str, Any]:
+    async def delete_sensor_flow(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE FLOW SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -883,9 +887,9 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_sensor_flow {name}", action)
+        return await self._wrap_tool_execution(f"delete_sensor_flow {name}", action)
 
-    def create_sensor_static_pressure(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_sensor_static_pressure(self, name: str, coord: List[int]) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING CREATE STATIC PRESSURE SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -903,9 +907,9 @@ class DuctManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_sensor_static_pressure {name}", action)
+        return await self._wrap_tool_execution(f"create_sensor_static_pressure {name}", action)
 
-    def delete_sensor_static_pressure(self, name: str) -> Dict[str, Any]:
+    async def delete_sensor_static_pressure(self, name: str) -> Dict[str, Any]:
         def action():
             logger.debug(f"--- STARTING DELETE STATIC PRESSURE SENSOR: {name} ---")
             immutable_grid = self.api.get_grid_info_edn()
@@ -939,5 +943,5 @@ class DuctManager:
             
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_sensor_static_pressure {name}", action)
+        return await self._wrap_tool_execution(f"delete_sensor_static_pressure {name}", action)
 

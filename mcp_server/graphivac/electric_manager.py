@@ -1,6 +1,7 @@
 
 import os
 import sys
+import asyncio
 import re
 from typing import Any, Dict, List, Callable
 
@@ -20,6 +21,7 @@ logger = configure_logging()
 class ElectricManager:
     def __init__(self, org_id: str, project_id: str, grid_id: str, grid_title: str, font_configs: Dict[str, Any], base_url: str):
         self.api = GraphivacAPI(org_id, project_id, grid_id, grid_title, font_configs, base_url)
+        self.lock = asyncio.Lock()
 
     def _ensure_comps_exists(self, mutable_grid: Dict[Keyword, Any], k_comps: Keyword) -> Dict[Keyword, Any]:
         # Check if comps exists and is mutable
@@ -30,20 +32,21 @@ class ElectricManager:
             mutable_grid[k_comps] = {}
         return mutable_grid
 
-    def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
+    async def _wrap_tool_execution(self, tool_name: str, action: Callable[[], Any]) -> Dict[str, Any]:
         tool_status = "success"
-        try:
-            logger.debug(f"Executing action for {tool_name}")
-            action()
-        except Exception as e:
-            logger.error(f"Error executing {tool_name}: {e}")
-            tool_status = f"fail: {str(e)}"
-        
+        async with self.lock:
+            try:
+                logger.debug(f"Executing action for {tool_name} (Lock Acquired)")
+                await asyncio.to_thread(action)
+            except Exception as e:
+                logger.error(f"Error executing {tool_name}: {e}")
+                tool_status = f"fail: {str(e)}"
+
         return {"tool_status": tool_status}
 
     # --- VFD ---
 
-    def create_variable_frequency_drive(self, name: str, coord: List[int]) -> Dict[str, Any]:
+    async def create_variable_frequency_drive(self, name: str, coord: List[int]) -> Dict[str, Any]:
         """Creates a Variable Frequency Drive (VFD)."""
         def action():
             logger.debug(f"--- STARTING CREATE VFD: {name} ---")
@@ -62,9 +65,9 @@ class ElectricManager:
             mutable_grid[k_comps][new_key] = new_value
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"create_variable_frequency_drive {name}", action)
+        return await self._wrap_tool_execution(f"create_variable_frequency_drive {name}", action)
 
-    def delete_variable_frequency_drive(self, name: str) -> Dict[str, Any]:
+    async def delete_variable_frequency_drive(self, name: str) -> Dict[str, Any]:
         """Deletes a VFD by name."""
         def action():
             logger.debug(f"--- STARTING DELETE VFD: {name} ---")
@@ -84,7 +87,7 @@ class ElectricManager:
                         is_match = True
                     elif isinstance(value, dict) and value.get(k_name) == name:
                         is_match = True
-                    
+
                     is_correct_type = isinstance(value, dict) and value.get(Keyword("symbol")) == "electric.vfd"
 
                     if is_match and is_correct_type:
@@ -96,7 +99,7 @@ class ElectricManager:
 
             for k in keys_to_remove:
                 del comps[k]
-            
+
             self.api.update_grid_edn(mutable_grid)
 
-        return self._wrap_tool_execution(f"delete_variable_frequency_drive {name}", action)
+        return await self._wrap_tool_execution(f"delete_variable_frequency_drive {name}", action)
