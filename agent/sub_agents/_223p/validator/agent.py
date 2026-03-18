@@ -61,12 +61,13 @@ from sub_agents._223p.tool import (
     read_prompt,
     scan_python_files,
     write_ontology,
+    skills_toolset,
 )
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
 from sub_agents.tools.loop_exit_tools import exit_loop_level_4
 from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
 from utils.models import get_adk_model
-from utils.prompt_utils import load_composed_prompt
+from utils.prompt_utils import load_prompt_instruction
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Constants
@@ -132,14 +133,12 @@ class OntologyValidatorAgentInternal(LlmAgent):
         tools: list[Any] | None = None,
         session_id: str | None = None,
     ) -> None:
-        instruction = load_composed_prompt(
-            "sub_agents/_223p/validator/prompt.md",
-            ["skills/read-code-iterations/SKILL.md"]
-        )
+        instruction = load_prompt_instruction("sub_agents/_223p/validator/prompt.md")
 
         # Local tools provided by this sub-agent.
         # execute_ontology is included because validation requires actually running the file.
         local_tools: list[Any] = [
+            skills_toolset,
             execute_ontology,
             read_ontology,
             write_ontology,

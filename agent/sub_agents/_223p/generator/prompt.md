@@ -57,9 +57,11 @@ Generate Python code that models equipment, connections, and relationships from 
 ---
 
 ## Code Samples
+### 223P References
 - Run `scan_python_files` on `../223p/ref/code` for reference implementations.
 - Study patterns for entities, connections, Sensors, Controllers, and BACnet points.
-- For the `iterations` sub-folder, use the `read-code-iterations` skill.
+### error-resolution lessons
+- Use the `read-code-iterations` skill to acquire error-resolution lessons.
 
 ---
 
@@ -67,7 +69,7 @@ Generate Python code that models equipment, connections, and relationships from 
 
 1. **Grid** — Call `read_grid` to get all components and coordinates.
 2. **Libraries** — Batch-inspect needed classes with `list_library_classes` + `get_class_details`.
-3. **Samples** — Analyse code samples from `../223p/ref/code`.
+3. **Samples** — Analyse code samples.
 4. **Plan** — Outline entities, connections, and spatial hierarchy.
 5. **Generate** — Write the Python ontology code.
 6. **Validate** — Confirm output is valid, executable Python using `bob`/`scratch`.

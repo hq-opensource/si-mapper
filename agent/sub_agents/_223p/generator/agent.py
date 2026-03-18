@@ -53,6 +53,7 @@ from sub_agents._223p.tool import (
     get_class_details,
     scan_python_files,
     write_ontology,
+    skills_toolset,
 )
 from sub_agents._223p.exit_tools import (
     exit_loop_generator_success,
@@ -61,7 +62,7 @@ from sub_agents._223p.exit_tools import (
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
 from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
 from utils.models import get_adk_model
-from utils.prompt_utils import load_composed_prompt
+from utils.prompt_utils import load_prompt_instruction
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Constants
@@ -122,13 +123,11 @@ class OntologyLlmAgentInternal(LlmAgent):
         tools: list[Any] | None = None,
         session_id: str | None = None,
     ) -> None:
-        instruction = load_composed_prompt(
-            "sub_agents/_223p/generator/prompt.md",
-            ["skills/read-code-iterations/SKILL.md"]
-        )
+        instruction = load_prompt_instruction("sub_agents/_223p/generator/prompt.md")
 
         # Local tools provided by this sub-agent
         local_tools: list[Any] = [
+            skills_toolset,
             list_library_classes,
             get_class_details,
             scan_python_files,

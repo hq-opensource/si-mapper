@@ -53,6 +53,7 @@ if not __package__:
 
 # ── SSL Verification disabled ──────────────────────────────────────────────────
 os.environ["SSL_CERT_FILE"] = ""
+
 # ──────────────────────────────────────────────────────────────────────────────
 
 from google.adk.artifacts import InMemoryArtifactService

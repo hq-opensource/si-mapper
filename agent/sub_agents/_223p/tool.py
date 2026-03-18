@@ -31,6 +31,8 @@ import subprocess
 import sys
 import textwrap
 from typing import Any
+from google.adk.skills import load_skill_from_dir
+from google.adk.tools import skill_toolset
 
 __all__ = [
     # Library introspection
@@ -595,6 +597,11 @@ READ_PROMPT_SCHEMA: dict[str, Any] = {
     },
 }
 
+skills_toolset = skill_toolset.SkillToolset(
+    skills = [
+        load_skill_from_dir(os.path.join(_PROJECT_ROOT, "agent", "skills", "read-code-iterations"))
+    ]
+)
 
 # ---------------------------------------------------------------------------
 # CLI entry-point for quick inspection

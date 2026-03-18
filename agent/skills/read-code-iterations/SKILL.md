@@ -7,22 +7,21 @@ description: Specialized instructions for reading and comparing dated iteration 
 
 ## 1. Purpose
 
-Navigate and interpret the `iterations/` folder to extract **error-to-resolution lessons** from previous generation attempts. The goal is learning from deltas, not describing what to generate.
+Navigate and interpret the `resources assets` folder to extract **error-to-resolution lessons** from previous generation attempts. The goal is learning from deltas, not describing what to generate.
 
 ---
 
 ## 2. Folder Structure (example, actual may vary)
 
 ```
-iterations/
-    2026-03-13-1/
-        <prefix>_1.py      ← attempt 1 (has errors)
-        <prefix>.py        ← final resolved file
-    2026-03-13-3/
-        <prefix>_1.py
-        <prefix>_2.py
-        <prefix>_3.py
-        <prefix>.py        ← final resolved file
+2026-03-13-1/
+    <prefix>_1.py      ← attempt 1 (has errors)
+    <prefix>.py        ← final resolved file
+2026-03-13-3/
+    <prefix>_1.py
+    <prefix>_2.py
+    <prefix>_3.py
+    <prefix>.py        ← final resolved file
     ...
 ```
 
