@@ -9,7 +9,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 ## Workflow
 
 **Preparation**
-- Use `read-code-iterations` skill to acquire error-resolution lessons.  Confirm when done.
+- Use `skill-read-code` skill to acquire error-resolution lessons.  Confirm when done.
 
 **Fix loop:**
 1. read full source.
@@ -27,7 +27,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 
 ---
 ## Available skills and tools
-- `read-code-iterations` skill to acquire error-resolution lessons.  Keep result in cache.
+- `skill-read-code` skill to acquire error-resolution lessons.  Keep result in cache.
 - `list_library_classes` tool to check available classes and their properties in `bob` and `scratch`.
 - `get_class_details` tool to verify class definitions, constructor arguments, and property names.  Use batch calls.
 - `scan_python_files` tool on `../223p/ref/code` for idiomatic `bob`/`scratch` usage.  Keep result in cache.
@@ -39,7 +39,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 ---
 
 ## Stop Conditions → `exit_loop_level_4(summary="VALIDATION_FAILED: ...")`
-- Usage of skill `read-code-iterations` was unsuccessfully — unable to acquire error-resolution lessons.
+- Usage of skill `skill-read-code` was unsuccessfully — unable to acquire error-resolution lessons.
 - `read_ontology` returns empty or missing file.
 - `list_library_classes` errors — `bob`/`scratch` unreadable.
 - Same error persists after 10 consecutive fix attempts — escalate to human review.

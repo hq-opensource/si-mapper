@@ -168,7 +168,7 @@ class OntologyValidatorAgentInternal(LlmAgent):
             before_model_callback=before_model_callback,
             after_model_callback=model_callback,
             generate_content_config=types.GenerateContentConfig(temperature=0.0),
-            include_contents="none",  # Isolate from generator's conversation history
+            # include_contents="none",  # Isolate from generator's conversation history
         )
 
 

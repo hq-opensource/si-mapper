@@ -61,7 +61,7 @@ Generate Python code that models equipment, connections, and relationships from 
 - Run `scan_python_files` on `../223p/ref/code` for reference implementations.
 - Study patterns for entities, connections, Sensors, Controllers, and BACnet points.
 ### error-resolution lessons
-- Use the `read-code-iterations` skill to acquire error-resolution lessons.
+- Use the `skill-read-code` skill to acquire error-resolution lessons.
 
 ---
 

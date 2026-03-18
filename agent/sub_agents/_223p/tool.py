@@ -599,7 +599,7 @@ READ_PROMPT_SCHEMA: dict[str, Any] = {
 
 skills_toolset = skill_toolset.SkillToolset(
     skills = [
-        load_skill_from_dir(os.path.join(_PROJECT_ROOT, "agent", "skills", "read-code-iterations"))
+        load_skill_from_dir(os.path.join(_PROJECT_ROOT, "agent", "skills", "skill-read-code"))
     ]
 )
 
