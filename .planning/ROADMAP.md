@@ -49,12 +49,16 @@
 | REQ-4 | Phase 1.4 | Completed |
 | REQ-5 | Phase 2.3 | Pending |
 | REQ-6 | Phase 3.1 | Pending |
+| REFAC-01 | Phase 6 | Planned |
+| REFAC-02 | Phase 6 | Planned |
+| REFAC-03 | Phase 6 | Planned |
+| REFAC-04 | Phase 6 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
 
 - **Phase 4.1: Remove Chonky Legacy Layers**
-    - [x] Uninstall `chonky` and `chonky-icon-fontawesome`. 
+    - [x] Uninstall `chonky` and `chonky-icon-fontawesome`.
     - [ ] Strip out `@material-ui/core` and related v4 dependencies.
 - **Phase 4.2: Implement SVAR React File Manager**
     - [ ] Install `@svar/react-file-manager`.
@@ -75,3 +79,15 @@
 - **Phase 5.3: Performance Metrics Dashboard**
     - [ ] Identify and extract key performance metrics (latency, token usage, success rate).
     - [ ] Render metrics in a frontend dashboard/HUD for developer visibility.
+
+### Phase 6: Refactor GraphyVAC API
+
+**Goal:** Decouple agent from direct MCP calls by introducing an internal state layer (ToolContext.state) and a standalone sync service that replicates state to GraphyVAC via existing MCP server.
+**Requirements**: [REFAC-01, REFAC-02, REFAC-03, REFAC-04]
+**Depends on:** Phase 5
+**Plans:** 3 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Internal grid tools (ToolContext.state CRUD) + agent wiring
+- [ ] 06-02-PLAN.md — Standalone sync service (poll, diff, MCP replication)
+- [ ] 06-03-PLAN.md — Unit tests + end-to-end verification
