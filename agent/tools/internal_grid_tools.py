@@ -1,6 +1,6 @@
 import uuid
 import json
-from typing import List, Dict, Optional
+from typing import List, Optional
 from google.adk.tools import ToolContext
 from utils.logging_config import configure_logging
 
@@ -119,7 +119,7 @@ def add_component(
 
     # Build component dict
     component_id = str(uuid.uuid4())[:8]
-    component: Dict = {"id": component_id, "type": component_type, "name": name}
+    component: dict = {"id": component_id, "type": component_type, "name": name}
 
     if component_type in LINE_TYPES:
         component["start"] = start_coord
@@ -141,21 +141,28 @@ def add_component(
 
 def add_components_batch(
     tool_context: ToolContext,
-    components: List[Dict],
+    components_json: str,
 ) -> str:
     """
     Adds multiple components to the internal grid in a single batch operation.
 
-    Each dict in components must have:
-        - 'type': component type string
-        - 'name': unique name
-        - For line types: 'start_coord' and 'end_coord'
-        - For coord types: 'coord'
-        - Optionally 'rotation' for fan/damper
-
     Args:
-        components: List of component dicts to add.
+        components_json: JSON-encoded list of component dicts. Each dict must have:
+            - 'type': component type string
+            - 'name': unique name
+            - For line types (duct/pipe): 'start_coord' and 'end_coord'
+            - For equipment/sensor types: 'coord'
+            - Optionally 'rotation' for fan/damper
+
+    Example: '[{"type":"fan","name":"SF-1","coord":[5,5]},{"type":"duct","name":"D-1","start_coord":[0,0],"end_coord":[10,0]}]'
     """
+    try:
+        components = json.loads(components_json)
+        if not isinstance(components, list):
+            return ":::thought\n[System] Error: components_json must be a JSON array.\n:::"
+    except json.JSONDecodeError as e:
+        return f":::thought\n[System] Error: Invalid JSON in components_json: {e}\n:::"
+
     _ensure_internal_grid(tool_context)
 
     existing_components = tool_context.state["internal_grid"]["components"]
@@ -194,7 +201,7 @@ def add_components_batch(
                 skipped += 1
                 continue
             component_id = str(uuid.uuid4())[:8]
-            component: Dict = {
+            component: dict = {
                 "id": component_id,
                 "type": component_type,
                 "name": name,

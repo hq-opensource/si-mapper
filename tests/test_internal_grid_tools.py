@@ -196,11 +196,11 @@ class TestAddComponentsBatch(unittest.TestCase):
         """Batch add of 3 components stores all 3."""
         ctx = MockToolContext()
         initialize_internal_grid(ctx)
-        batch = [
+        batch = json.dumps([
             {"type": "fan", "name": "fan-a", "coord": [1, 1]},
             {"type": "duct", "name": "duct-a", "start_coord": [0, 0], "end_coord": [3, 0]},
             {"type": "cooling_coil", "name": "coil-a", "coord": [5, 5]},
-        ]
+        ])
         result = add_components_batch(ctx, batch)
         self.assertEqual(len(ctx.state["internal_grid"]["components"]), 3)
         self.assertIn("3 added", result)
