@@ -33,3 +33,4 @@
 - Phase 3 added: Semantic Graph Generation
 - Phase 4 added: Dependency Modernization & UI Optimization (SVAR Migration)
 - Phase 5 added: Agent-Frontend Interface & Performance Metrics
+- Phase 6 added: refactor graphivac api
