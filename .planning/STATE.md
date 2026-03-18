@@ -1,11 +1,28 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+current_phase: 06
+status: in_progress
+last_updated: "2026-03-18T21:39:49Z"
+progress:
+  total_phases: 6
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 1
+---
+
 # State: HVAC Reconstruction Project
 
 ## Project Progress
-- **Current Phase:** Phase 2: Raw Information Extraction & Mapping
-- **Overall Completion:** 45% (Phases 1 Complete, Phase 2 In Progress)
-- **Active Plan:** Phase 2.3: Iterative Technical Mapping Loop
+
+- **Current Phase:** 06
+- **Overall Completion:** [███░░░░░░░] 33%
+- **Active Plan:** Phase 06 Plan 02 (next)
+- **Last Completed:** 06-01 (Internal Grid Tools)
 
 ## Milestone Status (v2.0: Raw Mapping)
+
 - [x] Metadata Infrastructure (MCP) ✅
 - [x] Grid Read Verification ✅
 - [x] Bacnet Agent (Verified 2.2.1) ✅
@@ -13,23 +30,32 @@
 - [x] Electricity Agent (Verified 2.2.3) ✅
 
 ## Performance Metrics
+
 - **Success Rate (Extraction):** N/A
 - **Average Accuracy (Geometry):** N/A
 - **Time to Reconstruct:** N/A
 
 ## Session Continuity (2026-02-17)
+
 ### Recent Decisions
+
 - Defined the 3-Step core mission (Replicate -> Extract -> Graph).
 - Verified `read_grid` and MCP tool synchronization.
 - **Decision:** Aborted Agentic Vision Pilot due to model configuration complexity and performance trade-offs; reverting to stable Phase 2 goal.
 - **Decision:** Completed Bacnet Agent Logic and Verification (2.2.1).
+- **Decision (06-01):** Internal grid state lives at ToolContext.state['internal_grid']; line types (duct/pipe) use start/end coords, point types use single coord; metadata remains MCP-only.
 
 ### Next Steps
-1. /gsd-execute-plan 2.2.2 (Control Agent).
-2. Implement multimodal analyzers for technical metadata.
-3. Establish technical mapping loop for grid components.
+
+1. Execute 06-02 (sync service that replicates internal_grid to GraphyVAC).
+2. Execute 06-03 (update agent prompts/instructions to use new internal grid tools).
+
+### Session Log
+
+- **2026-03-18:** Completed 06-01-PLAN.md. Created internal_grid_tools.py (6 functions, 25 component types). Wired into master agent.
 
 ## Roadmap Evolution
+
 - Phase 3 added: Semantic Graph Generation
 - Phase 4 added: Dependency Modernization & UI Optimization (SVAR Migration)
 - Phase 5 added: Agent-Frontend Interface & Performance Metrics
