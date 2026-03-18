@@ -30,3 +30,7 @@ node_modules/
 # /mapper/ (has its own .gitignore)
 # /mcp_server/ (has its own .gitignore)
 
+# 223p Generated Files
+/223p/src/
+/223p/ttl/
+
