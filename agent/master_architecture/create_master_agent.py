@@ -76,7 +76,8 @@ def create_master_agent(session_id: str, model_name: str, si_mapper_toolset: Mcp
     master_agent = MasterLlmAgent(
         model_name=model_name,
         subagents=subagents,
-        tools=[si_mapper_toolset, skill_tools] + task_tools,
+        tools=[skill_tools] + task_tools,
+        # tools=[si_mapper_toolset, skill_tools] + task_tools,
         session_id=session_id
     )
 
