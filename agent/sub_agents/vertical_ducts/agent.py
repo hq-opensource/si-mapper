@@ -6,7 +6,7 @@ from sub_agents.tools.ingest_category_tool import ingest_category_files_tool
 from sub_agents.tools.loop_exit_tools import exit_loop_level_4
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
 from tools.progress_tool import update_step, update_status, update_state
-from utils.callback_utils import shared_model_callback as model_callback
+from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
 from utils.prompt_utils import load_prompt_instruction
 from utils.models import get_adk_model
 from typing import Any
@@ -35,7 +35,10 @@ class VerticalDuctLlmAgentInternal(LlmAgent):
     def __init__(self, model_name: str, tools: list[Any] = None, session_id: str = None):
         planner = None
         if "thinking" in model_name.lower() or "gemini-3" in model_name.lower():
-            thinking_config = types.ThinkingConfig(include_thoughts=True)
+            thinking_config = types.ThinkingConfig(
+                include_thoughts=True,
+                thinking_level="high"
+            )
             planner = BuiltInPlanner(thinking_config=thinking_config)
         
         instruction = load_prompt_instruction("sub_agents/vertical_ducts/prompt.md")
@@ -50,6 +53,7 @@ class VerticalDuctLlmAgentInternal(LlmAgent):
             instruction=instruction,
             tools=unique_tools,
             after_model_callback=model_callback,
+            before_model_callback=before_model_callback,
             planner=planner,
             generate_content_config=types.GenerateContentConfig(temperature=0.0),
         )

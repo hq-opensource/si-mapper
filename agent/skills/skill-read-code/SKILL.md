@@ -1,5 +1,5 @@
 ---
-name: read-code-iterations
+name: skill-read-code
 description: Specialized instructions for reading and comparing dated iteration folders to extract error-resolution lessons from previous code generation attempts.
 ---
 

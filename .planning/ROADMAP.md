@@ -39,19 +39,6 @@
 - **Phase 3.1: Ontology Mapping & Graph Construction**
 - **Phase 3.2: Export Logic & Validation**
 
-## Phase 4: Google ADK with LiteLLM (Completed)
-**Goal:** Integrate Google ADK with LiteLLM to allow agents to use multiple LLM providers (OpenAI, Anthropic, Gemini) and LiteLLM Proxy for centralized model management.
-**Depends on:** None
-**Plans:** 3 plans
-
-## Phase 5: Full System Multi-Model Validation (Current Focus)
-**Goal:** Validate the entire HVAC reconstruction and mapping system (all agents, tools, MCP integration) using optimized models from Anthropic, OpenAI, and Google through the LiteLLM architecture.
-**Depends on:** Phase 4
-**Plans:**
-- [x] Plan 5.1: Core Validation Scripts
-- [ ] Plan 5.2: Multi-Model Execution Loop
-
----
 
 # Requirements Mapping
 | Req ID | Phase | Plan Status |
@@ -62,24 +49,29 @@
 | REQ-4 | Phase 1.4 | Completed |
 | REQ-5 | Phase 2.3 | Pending |
 | REQ-6 | Phase 3.1 | Pending |
-| REQ-7 | Phase 4 | Completed |
-| REQ-8 | Phase 5 | In Progress |
-| REQ-9 | Phase 6 | Pending |
 
-## Phase 6: Next.js 16 Upgrade (Current Focus)
-**Goal:** Upgrade the frontend (mapper) to Next.js 16, utilizing Turbopack, Cache Components, and the new `proxy.ts` system while ensuring compatibility with Python 3.13/3.14 and CopilotKit.
+## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
+**Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
 
-- **Phase 6.1: Environment & Dependency Preparation**
-    - [x] Verify Node.js 20.9+ and TypeScript 5.1+ requirements.
-    - [x] Research CopilotKit compatibility with Next.js 16.
-    - [x] Create a migration branch.
-- **Phase 6.2: Automated & Manual Upgrade**
-    - [x] Execute `npx @next/codemod@canary upgrade latest`.
-    - [x] Update `next`, `react`, and `react-dom` to latest versions.
-- **Phase 6.3: Breaking Changes & Cleanup**
-    - [x] Migrate middleware to the new `proxy.ts` system (N/A).
-    - [x] Update Asynchronous Request APIs (Params/SearchParams to Promises).
-    - [x] Ensure Turbopack compatibility (Fixed `rmdir`).
-- **Phase 6.4: Validation & Testing**
-    - [x] Run production build and fix any TypeScript or hydration errors.
-    - [ ] Verify multi-model agent integration and HUD functionality.
+- **Phase 4.1: Remove Chonky Legacy Layers**
+    - [x] Uninstall `chonky` and `chonky-icon-fontawesome`. 
+    - [ ] Strip out `@material-ui/core` and related v4 dependencies.
+- **Phase 4.2: Implement SVAR React File Manager**
+    - [ ] Install `@svar/react-file-manager`.
+    - [ ] Replace `Chonky` file explorer with `SVAR File Manager` in the frontend.
+- **Phase 4.3: Compatibility Verification**
+    - [ ] Verify that the application builds and runs without peer dependency warnings.
+    - [ ] Ensure full React 19 / Next.js 16 functionality.
+
+## Phase 5: Agent-Frontend Interface & Performance Metrics
+**Goal:** Establish a robust communication layer between the reasoning agent and the React frontend, ensuring transparency of thoughts, tool calls, and performance metrics.
+
+- **Phase 5.1: Communication Layer Audit**
+    - [ ] Map all callbacks (pre-model, post-model) between Agent and Frontend.
+    - [ ] Simplify internal agent communication logic.
+- **Phase 5.2: UI Rendering of Agent State**
+    - [ ] Implement rendering for agent "thoughts" and "instructions".
+    - [ ] Ensure real-time tool call status visibility on the HUD.
+- **Phase 5.3: Performance Metrics Dashboard**
+    - [ ] Identify and extract key performance metrics (latency, token usage, success rate).
+    - [ ] Render metrics in a frontend dashboard/HUD for developer visibility.

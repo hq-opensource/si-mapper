@@ -21,47 +21,54 @@ type AgentState = {
 };
 
 // Internal component to handle syncing to context
-function StateSyncer({ pooledState }: { pooledState: AgentState | null }) {
+function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | null, agentState: AgentState }) {
   const { syncThoughts, syncToolCalls, syncEvents, syncTasks, syncData } = useThoughts();
 
   useEffect(() => {
-    if (!pooledState) return;
+    // 1. Merge sources (prioritize streaming agentState for real-time thoughts)
+    const combinedEvents = [
+      ...(agentState.events || []),
+      ...(pooledState?.events || [])
+    ];
+    const combinedThoughts = [
+      ...(agentState.thoughts || []),
+      ...(pooledState?.thoughts || [])
+    ];
+    const combinedToolCalls = [
+      ...(agentState.tool_calls || []),
+      ...(pooledState?.tool_calls || [])
+    ];
+    const combinedTasks = pooledState?.tasks || agentState.tasks;
 
-    if (pooledState.thoughts && pooledState.thoughts.length > 0) {
-      syncThoughts(pooledState.thoughts);
-    }
-    if (pooledState.tool_calls && pooledState.tool_calls.length > 0) {
-      syncToolCalls(pooledState.tool_calls);
-    }
-    if (pooledState.events && pooledState.events.length > 0) {
-      syncEvents(pooledState.events);
-    }
-    if (pooledState.tasks && pooledState.tasks.length > 0) {
-      syncTasks(pooledState.tasks);
-    }
+    if (combinedThoughts.length > 0) syncThoughts(combinedThoughts);
+    if (combinedToolCalls.length > 0) syncToolCalls(combinedToolCalls);
+    if (combinedEvents.length > 0) syncEvents(combinedEvents);
+    if (combinedTasks && combinedTasks.length > 0) syncTasks(combinedTasks);
 
-    // Extract custom data keys (not managed by specific context-syncers)
-    const { data } = pooledState;
+    // 2. Sync Custom Data
+    const { data } = pooledState || {};
+    const adkData = agentState.data;
 
-    // Filter out internal control flags (EXIT_...) and keys handled by context-syncers
     const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'tasks', 'plan', 'thoughts', 'tool_calls', 'events', 'data'];
-    const filteredRest = Object.fromEntries(
+    
+    // Filter rest from both sources
+    const pooledRest = pooledState ? Object.fromEntries(
       Object.entries(pooledState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
+    ) : {};
+    
+    const agentRest = Object.fromEntries(
+      Object.entries(agentState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
     );
 
-    // Prepare custom data for display:
-    // 1. Keep 'data' as a key ONLY if it has content
-    // 2. Add any other extra keys found in 'rest' (filtered to remove internal flags)
-    const customData: Record<string, unknown> = { ...filteredRest };
+    const customData: Record<string, unknown> = { ...agentRest, ...pooledRest };
 
-    if (data && Object.keys(data).length > 0) {
-      customData.data = data;
-    }
+    if (data && Object.keys(data).length > 0) customData.data = data;
+    if (adkData && Object.keys(adkData).length > 0) customData.adkData = adkData;
 
     if (Object.keys(customData).length > 0) {
       syncData(customData);
     }
-  }, [pooledState, syncThoughts, syncToolCalls, syncEvents, syncTasks, syncData]);
+  }, [pooledState, agentState, syncThoughts, syncToolCalls, syncEvents, syncTasks, syncData]);
 
   return null;
 }
@@ -126,7 +133,7 @@ export default function CopilotKitPage() {
   return (
     <main className="flex h-screen" style={{ "--copilot-kit-primary-color": themeColor, "--accent": themeColor } as React.CSSProperties}>
       <ThoughtsProvider currentAgentName={combinedState.active_agent || "SI-MAPPER"}>
-        <StateSyncer pooledState={pooledState} />
+        <StateSyncer pooledState={pooledState} agentState={agentState} />
         <SplitSidebar isEditMode={isEditMode} toggleEditMode={() => setIsEditMode(!isEditMode)} />
         <div className="flex-grow min-w-0 overflow-hidden">
           <YourMainContent

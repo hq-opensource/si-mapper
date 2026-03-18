@@ -8,8 +8,8 @@ import { formatAgentName } from "@/lib/utils";
 
 interface AgentNavbarProps {
     agentState: AgentState;
-    activeTab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state';
-    onTabChange: (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state') => void;
+    activeTab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance';
+    onTabChange: (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance') => void;
 }
 
 export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarProps) {
@@ -28,8 +28,9 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         { id: 'todo', label: 'Tasks', icon: ListTodo },
         { id: 'state', label: 'State', icon: Database },
         { id: 'tools', label: 'Tools', icon: Wrench },
+        { id: 'performance', label: 'Performance', icon: BarChart2 },
         { id: 'files', label: 'Files', icon: Folder },
-        { id: 'debug', label: 'Debug', icon: BarChart2 }, // Reusing an icon for debug
+        { id: 'debug', label: 'Debug', icon: BarChart2 },
     ] as const;
 
     const { events, tasks, data } = useThoughts();
@@ -39,6 +40,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
     const [hasNewTodo, setHasNewTodo] = useState(false);
     const [hasNewTools, setHasNewTools] = useState(false);
     const [hasNewState, setHasNewState] = useState(false);
+    const [hasNewPerformance, setHasNewPerformance] = useState(false);
     const [lastEventCount, setLastEventCount] = useState(0);
     const [lastTaskCount, setLastTaskCount] = useState(0);
     const [lastPlanContent, setLastPlanContent] = useState("");
@@ -51,9 +53,11 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
 
             const hasThoughts = newEvents.some(e => e.event_type === 'BRAINSTORM' || e.event_type === 'DELEGATION');
             const hasTools = newEvents.some(e => e.event_type === 'ACTION_TRIGGER' || e.event_type === 'ACTION_RESULT' || e.event_type === 'STATE_MUTATION');
+            const hasPerf = newEvents.some(e => e.metadata?.latency_s !== undefined);
 
             if (activeTab !== 'thoughts' && hasThoughts) setHasNewThoughts(true);
             if (activeTab !== 'tools' && hasTools) setHasNewTools(true);
+            if (activeTab !== 'performance' && hasPerf) setHasNewPerformance(true);
 
             setLastEventCount(events.length);
         }
@@ -97,6 +101,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         if (activeTab === 'todo') setHasNewTodo(false);
         if (activeTab === 'tools') setHasNewTools(false);
         if (activeTab === 'state') setHasNewState(false);
+        if (activeTab === 'performance') setHasNewPerformance(false);
     }, [activeTab]);
 
 
@@ -133,6 +138,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
                         (item.id === 'plans' && hasNewPlan) ||
                         (item.id === 'todo' && hasNewTodo) ||
                         (item.id === 'state' && hasNewState) ||
+                        (item.id === 'performance' && hasNewPerformance) ||
                         (item.id === 'tools' && hasNewTools);
 
                     return (
