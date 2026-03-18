@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 06
 status: unknown
-last_updated: "2026-03-18T21:45:40.668Z"
+last_updated: "2026-03-18T21:57:00Z"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -45,15 +45,17 @@ progress:
 - **Decision:** Completed Bacnet Agent Logic and Verification (2.2.1).
 - **Decision (06-01):** Internal grid state lives at ToolContext.state['internal_grid']; line types (duct/pipe) use start/end coords, point types use single coord; metadata remains MCP-only.
 - **Decision (06-02):** Sync service diffs internal_grid by component name; deletes before creates to avoid name collisions; one streamablehttp_client session per MCP call (mirrors ADK parallel pattern); purely additive standalone service, no MCP server or agent modifications.
+- **Decision (06-03):** Tests use MockToolContext (no ADK runtime) and sys.modules stubs before import; call_tool mocked with async recorder for MCP mapping tests; asyncio.run() preferred over deprecated get_event_loop().run_until_complete().
 
 ### Next Steps
 
-1. Execute 06-03 (update agent prompts/instructions to use new internal grid tools).
+1. Human end-to-end verification: start MCP server + agent + sync service, add test fan via agent chat, confirm it appears in GraphyVAC within ~2s. Then mark 06-03 complete.
 
 ### Session Log
 
 - **2026-03-18:** Completed 06-01-PLAN.md. Created internal_grid_tools.py (6 functions, 25 component types). Wired into master agent.
 - **2026-03-18:** Completed 06-02-PLAN.md. Created sync_service/ (McpSyncClient, SyncEngine, main.py). Standalone polling service that replicates internal_grid to GraphyVAC via MCP every 2s.
+- **2026-03-18:** 06-03 Task 1 complete (3553d2e). 26 unit tests pass: 17 for internal_grid_tools, 9 for sync_engine. Paused at checkpoint Task 2 (human end-to-end verification).
 
 ## Roadmap Evolution
 
