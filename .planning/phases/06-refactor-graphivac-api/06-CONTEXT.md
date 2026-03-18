@@ -17,7 +17,7 @@ The MCP server itself is NOT modified. The existing GraphyVAC API client and man
 
 ### Internal state format
 - Agent-friendly JSON stored in ADK `ToolContext.state` under a dedicated key (e.g., `"internal_grid"`)
-- Schema: `{"components": [{"type": "...", "id": "...", "name": "...", "x": ..., "y": ..., ...}]}`
+- Schema: `{"components": [{"type": "...", "id": "...", "name": "...", "x": ..., "y": ..., ...}]}` Analyze schema for ducts, because ducts have start and end coordinates, while the other equipments don't require a start and end.
 - Component types and schema must match the current MCP tool signatures (ducts, pipes, equipment) so the sync service can translate directly to MCP calls
 - IDs, names, and coordinates are mandatory fields on every component entry
 
@@ -31,7 +31,7 @@ The MCP server itself is NOT modified. The existing GraphyVAC API client and man
 ### Sync service
 - Standalone Python service (separate from MCP server and Next.js frontend)
 - Polls `ToolContext.state["internal_grid"]` on a fixed interval
-- Diffs current state against last-synced state to identify new/changed/deleted components
+- Diffs current state against last-synced state to identify new/changed/deleted components. Where is saved the last state? 
 - For each diff, calls the corresponding MCP server tool (e.g., `create_duct`, `create_cooling_coil`) using the existing MCP server endpoint
 - MCP server's internal queuing logic handles rate control — sync service does not need its own queue
 - Mirrors the existing "50 agent test" pattern that already drives the MCP server programmatically
@@ -40,12 +40,13 @@ The MCP server itself is NOT modified. The existing GraphyVAC API client and man
 - `mcp_server/graphivac/graphivac_api.py` — left as-is
 - All existing managers and tools — left as-is
 - MCP server routing and queuing — left as-is
-- `agent/tools/state_tools.py` — the new internal-state tools extend this existing pattern
+- `agent/tools/state_tools.py` — the new internal-state tools extend this existing pattern 
 
 ### Claude's Discretion
-- Poll interval duration (start with a reasonable default, tune later)
+- Initial "internal_grid" state? For the initial internal grid state, you should use the MCP server to check the existing grid state, and use that grid state as the initial state for the "internal_grid" state.
+- Poll interval duration (start with a reasonable default, tune later) , each 2 seconds.
 - Diff algorithm implementation details
-- Whether to persist last-synced state in a file for crash recovery
+- Whether to persist last-synced state in a file for crash recovery, yes.
 
 </decisions>
 
