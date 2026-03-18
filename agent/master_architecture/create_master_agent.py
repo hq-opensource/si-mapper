@@ -12,6 +12,10 @@ from google.adk.tools import skill_toolset
 from utils.logging_config import configure_logging
 from tools.task_tools import add_task, set_task_status, enqueue_grid_tasks, mark_technical_progress, mark_technical_progress_batch, complete_tasks_batch
 from tools.state_tools import save_agent_state, get_agent_state
+from tools.internal_grid_tools import (
+    add_component, add_components_batch, delete_component,
+    delete_components_batch, read_internal_grid, initialize_internal_grid
+)
 
 # --- Configuration ---
 load_dotenv()
@@ -52,11 +56,18 @@ def create_master_agent(session_id: str, model_name: str, si_mapper_toolset: Mcp
     skill_tools = skill_toolset.SkillToolset(skills=loaded_skills)
 
     task_tools = [
-        add_task, 
-        set_task_status, 
-        save_agent_state, 
-        get_agent_state, 
-        enqueue_grid_tasks, 
+        add_task,
+        set_task_status,
+        save_agent_state,
+        get_agent_state,
+        # Internal grid tools (write to ToolContext.state instead of MCP)
+        initialize_internal_grid,
+        add_component,
+        add_components_batch,
+        delete_component,
+        delete_components_batch,
+        read_internal_grid,
+        enqueue_grid_tasks,
         mark_technical_progress,
         mark_technical_progress_batch,
         complete_tasks_batch
