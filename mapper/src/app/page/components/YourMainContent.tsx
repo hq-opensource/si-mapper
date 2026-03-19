@@ -19,11 +19,13 @@ import { PerformanceDashboard } from "./PerformanceDashboard";
 const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
   <div className="w-full h-full flex flex-col p-6 pt-24 bg-[var(--background)]">
     <div className="flex-1 w-full rounded-[1.5rem] border border-[var(--muted-foreground)]/20 overflow-hidden bg-[var(--background)] shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-700 hover:border-[var(--accent)]/40 group relative">
-      {children}
-
-      {/* Subtle Interactive Glow - Rendered on top for depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/[0.02] to-transparent pointer-events-none z-20" />
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--accent)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-20 pointer-events-none" />
+      {/* Subtle Interactive Glow - Rendered behind for depth */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/[0.02] to-transparent pointer-events-none z-0" />
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--accent)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-10 pointer-events-none" />
+      
+      <div className="relative z-10 h-full w-full">
+        {children}
+      </div>
     </div>
   </div>
 );

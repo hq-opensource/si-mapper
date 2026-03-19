@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Filemanager, WillowDark } from "@svar-ui/react-filemanager";
+import { Filemanager, Willow, WillowDark } from "@svar-ui/react-filemanager";
 import "@svar-ui/react-filemanager/style.css";
 
 // Interface for my API objects
@@ -17,6 +17,7 @@ interface FileItem {
 export function SvarFileManager() {
     const [data, setData] = useState<FileItem[]>([]);
     const [currentPath, setCurrentPath] = useState('/');
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const apiRef = useRef<any>(null);
 
     const fetchFiles = useCallback(async (path: string) => {
@@ -35,6 +36,17 @@ export function SvarFileManager() {
         } catch (error) {
             console.error('Error fetching files:', error);
         }
+    }, []);
+
+    useEffect(() => {
+        const checkTheme = () => {
+            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            setTheme(currentTheme);
+        };
+        checkTheme();
+        const observer = new MutationObserver(checkTheme);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
     }, []);
 
     useEffect(() => {
@@ -77,8 +89,6 @@ export function SvarFileManager() {
                 fetchFiles(currentPath);
                 break;
             case "upload-file":
-                // Standard SVAR upload event usually provides the file in ev
-                // If it's a manual trigger, we would handle it differently
                 if (ev.files) {
                     for (const file of ev.files) {
                         const formData = new FormData();
@@ -95,20 +105,19 @@ export function SvarFileManager() {
         }
     };
 
+    const ThemeProvider = theme === 'dark' ? WillowDark : Willow;
+
     return (
         <div className="w-full h-full min-h-[500px] bg-[var(--background)] rounded-3xl border border-[var(--muted-foreground)]/10 overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] transition-all duration-700 hover:border-[var(--accent)]/30 group relative">
-            {/* Glossy Overlay for Premium Look */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-[var(--accent)]/[0.03] to-transparent pointer-events-none z-10" />
-            
-            <WillowDark>
-                <div className="w-full h-full p-2 bg-[#1a1c1e]"> 
+            <ThemeProvider>
+                <div className="w-full h-full p-2 bg-[var(--background)]"> 
                     <Filemanager 
                         data={data}
                         onAction={handleAction}
                         init={(api) => { apiRef.current = api; }}
                     />
                 </div>
-            </WillowDark>
+            </ThemeProvider>
 
             <style jsx global>{`
                 /* Fine-tune SVAR styles to match project's premium aesthetic */
@@ -118,7 +127,7 @@ export function SvarFileManager() {
                 }
                 .svar-filemanager-toolbar {
                     background: transparent !important;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+                    border-bottom: 1px solid rgba(var(--accent-rgb), 0.1) !important;
                     padding: 0.75rem !important;
                 }
                 .svar-filemanager-item {
@@ -130,7 +139,11 @@ export function SvarFileManager() {
                     background: rgba(var(--accent-rgb), 0.1) !important;
                 }
                 .svar-filemanager-tree {
-                    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+                    border-right: 1px solid rgba(var(--accent-rgb), 0.1) !important;
+                }
+                /* Restore text color to variables */
+                .svar-filemanager * {
+                    color: inherit;
                 }
             `}</style>
         </div>

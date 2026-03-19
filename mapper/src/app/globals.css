@@ -7,6 +7,7 @@
   --card-foreground: #1e293b;
   --muted-foreground: #64748b;
   --accent: #4f46e5;
+  --accent-rgb: 79, 70, 229;
   --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
 
   /* Shared Input Variables - Precisely calculated for a premium look */
@@ -31,6 +32,8 @@
   --foreground: #f8fafc;
   --card-foreground: #f1f5f9;
   --muted-foreground: #94a3b8;
+  --accent: #4f46e5;
+  --accent-rgb: 79, 70, 229;
   --input-bg: rgba(30, 41, 59, 0.5);
   --input-border: rgba(148, 163, 184, 0.1);
 }
@@ -40,6 +43,8 @@
   --foreground: #0f172a;
   --card-foreground: #1e293b;
   --muted-foreground: #64748b;
+  --accent: #4f46e5;
+  --accent-rgb: 79, 70, 229;
   --input-bg: rgba(15, 23, 42, 0.04);
   --input-border: rgba(15, 23, 42, 0.08);
 }

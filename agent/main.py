@@ -69,8 +69,8 @@ def create_app() -> FastAPI:
     subagents = [horizontal_agent, vertical_agent, equipment_agent, bacnet_agent, control_agent, electricity_agent]
     
     # Create Master Agent
-    master_agent = create_master_agent(session_id=session_id, model_name=SHARED_ADK_MODEL, si_mapper_toolset=si_mapper_toolset)
-    # master_agent = create_master_agent(session_id=session_id, subagents=subagents, model_name=SHARED_ADK_MODEL, si_mapper_toolset=si_mapper_toolset)
+    master_agent = create_master_agent(session_id=session_id, model_name=SHARED_ADK_MODEL)
+    # master_agent = create_master_agent(session_id=session_id, subagents=subagents, model_name=SHARED_ADK_MODEL)
 
     # 3. Wrap with ADK
     adk_agent = ADKAgent(

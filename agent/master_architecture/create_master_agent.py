@@ -6,7 +6,6 @@ from master_architecture.level_2_master_main_loop import MasterMainLoopAgent
 from master_architecture.level_3_master_main_llm import MasterLlmAgent
 from dotenv import load_dotenv
 from google.adk.agents import LlmAgent
-from google.adk.tools import McpToolset
 from google.adk.skills import load_skill_from_dir
 from google.adk.tools import skill_toolset
 from utils.logging_config import configure_logging
@@ -34,7 +33,7 @@ def create_inner_master_agent(
     return main_loop
 
 
-def create_master_agent(session_id: str, model_name: str, si_mapper_toolset: McpToolset, subagents: List[LoopAgent] = None) -> LlmAgent:
+def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAgent] = None) -> LlmAgent:
     """Creates the Master orchestrator agent hierarchy."""
     logger.debug(f"Creating Master Orchestrator for session {session_id}")
 
