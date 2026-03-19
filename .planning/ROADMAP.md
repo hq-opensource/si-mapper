@@ -102,3 +102,41 @@ Plans:
 - [ ] 07-01-PLAN.md — Bidirectional EDN-JSON translator module + unit tests (TDD)
 - [ ] 07-02-PLAN.md — Rewrite sync callbacks (before: translator + _raw_edn_grid, after: full rebuild + REST PUT)
 - [ ] 07-03-PLAN.md — Integration test against real GraphyVAC + human verification
+
+### Phase 8: Implement capture_frontend_state visual verification tool
+
+**Goal:** Upgrade the Master Agent from a "data-blind" command issuer into a "vision-guided" engineer by adding a two-tool visual verification loop. The agent will be able to take an on-demand screenshot of the live GraphyVAC CAD canvas (via Playwright headless capture), save it as a session artifact, and then use the existing `load_artifacts` tool to inject the image inline into its context — allowing it to visually compare the canvas against the original HVAC reference image and self-correct before declaring a phase complete.
+
+**Architecture:**
+The implementation leverages the existing ADK artifact system already in use by `ingest_category_files` and `load_artifacts`. The two-step verification loop is entirely agent-driven (no callbacks required):
+
+1. `capture_frontend_state()` — new `BaseTool` subclass that:
+   - Launches a Playwright headless Chromium instance
+   - Navigates to `GRAPHIVAC_VIEW_URL` (env var, same URL as the iframe view mode)
+   - Waits for canvas `networkidle` + 2s render buffer
+   - Takes a full-viewport PNG screenshot
+   - Wraps bytes as `types.Part(inline_data=types.Blob(mime_type="image/png", data=png_bytes))`
+   - Calls `await tool_context.save_artifact("verification/latest_snapshot.png", part)`
+   - Returns `{"status": "success", "artifact": "verification/latest_snapshot.png"}`
+
+2. Agent then calls the existing `load_artifacts(artifact_names=["verification/latest_snapshot.png"])` — the ADK `LoadArtifactsTool.process_llm_request` detects the function response, loads the `image/png` Part from the artifact service, and appends it directly to `llm_request.contents` as inline bytes. The model sees the pixels.
+
+**Key constraints validated from ADK source:**
+- Tool return values must be `dict` — binary cannot be returned directly from `run_async` (ADK wraps non-dict returns as `{'result': value}`)
+- `image/png` MIME type passes through `_as_safe_part_for_llm` unchanged (it is in `_GEMINI_SUPPORTED_INLINE_MIME_PREFIXES`)
+- `ToolContext.save_artifact` / `load_artifact` are available — artifact service is already configured via CopilotKit wrapper
+- `load_artifacts` parameter is `artifact_names` (array), NOT `filenames`
+- No `before_model_callback` needed — the existing `LoadArtifactsTool.process_llm_request` handles the injection automatically
+
+**Files to create/modify:**
+- `agent/master_architecture/tools/capture_frontend_state_tool.py` — new tool (mirrors pattern of `ingest_category_files_tool.py`)
+- `agent/master_architecture/create_master_agent.py` — register new tool
+- `agent/master_architecture/prompts/master_instruction.md` — add Visual Verification Protocol section
+- `agent/pyproject.toml` (or requirements) — add `playwright` dependency + `playwright install chromium`
+
+**Depends on:** Phase 7
+**Plans:** 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — capture_frontend_state tool + playwright setup + agent registration
+- [ ] 08-02-PLAN.md — master_instruction.md verification protocol + end-to-end test
