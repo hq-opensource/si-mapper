@@ -1,30 +1,29 @@
 """
-Grid synchronization: Pulls the live GraphyVAC grid into the agent's 
-internal state (ToolContext.state["internal_grid"]) at the start of every turn.
+Grid synchronization: Pulls the live GraphyVAC grid into the agent's internal state
+using the EDN translator.
 """
 
 import asyncio
 import logging
 import os
-import uuid
-import json
 import requests
 from typing import Optional
-from edn_format import Keyword
-from edn_format.immutable_list import ImmutableList
+
 import edn_format
+from edn_format import Keyword
 from google.adk.agents.callback_context import CallbackContext
 from google.genai import types
+
+from utils.edn_to_mutable import edn_to_mutable
+from utils.grid_edn_translator import edn_comps_to_internal_grid
 
 logger = logging.getLogger(__name__)
 
 
-def _fetch_and_parse_grid() -> dict:
+def _fetch_and_parse_grid() -> tuple:
     """
-    Synchronous helper: fetches the current grid from GraphyVAC via REST and
-    returns a dict ready to store as internal_grid.
-
-    Returns {"components": [...]} on success or {"components": []} on any error.
+    Synchronous helper: fetches the current grid from GraphyVAC via REST.
+    Returns (internal_grid, raw_edn_grid) on success or ({"components": []}, {}) on error.
     """
     base_url = os.getenv("GRAPHIVAC_BASE_URL", "")
     org_id = os.getenv("GRAPHIVAC_ORG_ID", "")
@@ -33,7 +32,7 @@ def _fetch_and_parse_grid() -> dict:
 
     if not all([base_url, org_id, project_id, grid_id]):
         logger.warning("GraphyVAC env vars not fully set — internal_grid starts empty")
-        return {"components": []}
+        return {"components": []}, {}
 
     url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
     try:
@@ -41,56 +40,22 @@ def _fetch_and_parse_grid() -> dict:
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         logger.warning(f"Could not reach GraphyVAC to seed grid: {e} — starting empty")
-        return {"components": []}
+        return {"components": []}, {}
 
     try:
         edn_data = edn_format.loads(response.text)
     except Exception as e:
         logger.warning(f"Could not parse grid EDN response: {e} — starting empty")
-        return {"components": []}
+        return {"components": []}, {}
 
-    comps_map = edn_data.get(Keyword("comps"), {})
-    components = []
+    # Convert entire EDN to mutable Python types
+    raw_edn_grid = edn_to_mutable(edn_data)
 
-    for key, value in comps_map.items():
-        # Key format: (Keyword("duct"|"obj"), "component-name")
-        if not (isinstance(key, (list, tuple, ImmutableList)) and len(key) == 2):
-            continue
+    # Extract comps and translate to internal_grid
+    comps_map = raw_edn_grid.get(Keyword("comps"), {})
+    internal_grid = edn_comps_to_internal_grid(comps_map)
 
-        obj_type_kw, obj_name = key
-        obj_type = obj_type_kw.name if isinstance(obj_type_kw, Keyword) else str(obj_type_kw)
-        comp_id = str(uuid.uuid4())[:8]
-
-        if obj_type == "duct":
-            n1 = value.get(Keyword("n1"), {})
-            n2 = value.get(Keyword("n2"), {})
-            pos1 = n1.get(Keyword("pos"), [0, 0])
-            pos2 = n2.get(Keyword("pos"), [0, 0])
-            components.append({
-                "id": comp_id,
-                "type": "duct",
-                "name": obj_name,
-                "start": list(pos1),
-                "end": list(pos2),
-            })
-
-        elif obj_type == "obj":
-            symbol = value.get(Keyword("symbol"))
-            comp_type = symbol.name if isinstance(symbol, Keyword) else str(symbol)
-            pos = value.get(Keyword("pos"), [0, 0])
-            rotation = value.get(Keyword("rotation"), 0)
-
-            comp: dict = {
-                "id": comp_id,
-                "type": comp_type,
-                "name": obj_name,
-                "coord": list(pos),
-            }
-            if comp_type in {"fan", "damper"}:
-                comp["rotation"] = int(rotation) if rotation else 0
-            components.append(comp)
-
-    return {"components": components}
+    return internal_grid, raw_edn_grid
 
 
 async def sync_graphivac_to_agent_callback(
@@ -100,22 +65,21 @@ async def sync_graphivac_to_agent_callback(
     before_agent_callback: seeds internal_grid from the live GraphyVAC grid
     at the start of every agent turn.
 
-    This ensures the agent always has the latest user modifications from the frontend.
-    Also saves a snapshot to help diffing in the after_agent_callback.
+    Saves the raw EDN grid as _raw_edn_grid so after_callback can preserve
+    non-comps metadata (title, font configs, etc.) in the PUT.
     """
     try:
-        grid = await asyncio.to_thread(_fetch_and_parse_grid)
-        # 1. Update the active grid state (Source of Truth for Tools)
-        callback_context.state["internal_grid"] = grid
+        internal_grid, raw_edn_grid = await asyncio.to_thread(_fetch_and_parse_grid)
+        callback_context.state["internal_grid"] = internal_grid
+        callback_context.state["_raw_edn_grid"] = raw_edn_grid
 
-        # 2. Save a snapshot for the 'after' sync diff (Initial State)
-        callback_context.state["_initial_grid_snapshot"] = json.loads(json.dumps(grid))
-
-        n = len(grid["components"])
+        n = len(internal_grid.get("components", []))
         logger.info(f"grid_sync_graphivac_to_agent: Synchronized {n} components into agent memory")
     except Exception as e:
         logger.error(f"grid_sync_graphivac_to_agent: Sync failed, starting empty: {e}")
         if "internal_grid" not in callback_context.state:
             callback_context.state["internal_grid"] = {"components": []}
+        if "_raw_edn_grid" not in callback_context.state:
+            callback_context.state["_raw_edn_grid"] = {}
 
     return None
