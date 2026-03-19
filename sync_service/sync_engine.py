@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from typing import Dict, List, Any, Optional, Tuple
-from sync_service.mcp_client import McpSyncClient
+from mcp_client import McpSyncClient
 
 logger = logging.getLogger("sync_service.sync_engine")
 
@@ -65,9 +65,14 @@ class SyncEngine:
         to_create, to_delete = self.diff(components)
 
         if not to_create and not to_delete:
+            logger.debug(f"[sync] No changes — {len(components)} components already in sync")
             return {"created": 0, "deleted": 0, "errors": []}
 
-        logger.info(f"Sync cycle: {len(to_create)} to create, {len(to_delete)} to delete")
+        logger.info(f"[sync] Diff: {len(to_create)} to CREATE, {len(to_delete)} to DELETE")
+        if to_create:
+            logger.info(f"[sync] Creating: {[c['name'] for c in to_create]}")
+        if to_delete:
+            logger.info(f"[sync] Deleting: {[c['name'] for c in to_delete]}")
 
         errors = []
 
@@ -84,11 +89,13 @@ class SyncEngine:
         # Process creates
         for comp in to_create:
             try:
-                await self.mcp_client.create_component(comp)
+                logger.info(f"[sync] Calling MCP create for {comp['type']} '{comp['name']}'")
+                result = await self.mcp_client.create_component(comp)
+                logger.info(f"[sync] MCP create result: {result}")
                 self._last_synced[comp["name"]] = comp
             except Exception as e:
                 err = f"Failed to create {comp['name']}: {e}"
-                logger.error(err)
+                logger.error(f"[sync] {err}", exc_info=True)
                 errors.append(err)
 
         # Persist state after sync

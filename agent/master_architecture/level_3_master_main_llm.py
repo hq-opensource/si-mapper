@@ -9,6 +9,8 @@ from master_architecture.tools.loop_exit_tools import exit_loop_level_2
 from master_architecture.tools.ingest_category_tool import ingest_category_files_tool
 from tools.progress_tool import update_step, update_status, update_plan, sync_tasks
 from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
+from utils.grid_sync_graphivac_to_agent import sync_graphivac_to_agent_callback
+from utils.grid_sync_agent_to_graphivac import sync_agent_to_graphivac_callback
 from utils.prompt_utils import load_prompt_instruction
 from utils.models import get_adk_model
 from typing import Any
@@ -47,6 +49,8 @@ class MasterLlmAgent(LlmAgent):
             model=get_adk_model(model_name),
             instruction=instruction,
             tools=final_tools,
+            before_agent_callback=sync_graphivac_to_agent_callback,
+            after_agent_callback=sync_agent_to_graphivac_callback,
             before_model_callback=before_model_callback,
             after_model_callback=model_callback,
             planner=planner,

@@ -20,8 +20,8 @@ from typing import Dict, Any, Optional
 
 import httpx
 
-from sync_service.mcp_client import McpSyncClient
-from sync_service.sync_engine import SyncEngine
+from mcp_client import McpSyncClient
+from sync_engine import SyncEngine
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,7 +32,7 @@ logger = logging.getLogger("sync_service.main")
 # Configuration
 AGENT_STATE_URL = os.getenv("AGENT_STATE_URL", "http://localhost:8001/session_state")
 MCP_URL = os.getenv("MCP_URL", "http://localhost:8080/mcp/")
-POLL_INTERVAL = float(os.getenv("SYNC_POLL_INTERVAL", "2.0"))  # seconds
+POLL_INTERVAL = float(os.getenv("SYNC_POLL_INTERVAL", "1.0"))  # seconds
 
 
 async def fetch_internal_grid(http_client: httpx.AsyncClient) -> Optional[Dict[str, Any]]:
@@ -41,16 +41,24 @@ async def fetch_internal_grid(http_client: httpx.AsyncClient) -> Optional[Dict[s
         response = await http_client.get(AGENT_STATE_URL)
         response.raise_for_status()
         state = response.json()
+
+        # Diagnostic: log all top-level keys so we can see what's being returned
+        keys = list(state.keys())
+        logger.info(f"[fetch] /session_state returned {len(keys)} keys: {keys}")
+
         internal_grid = state.get("internal_grid")
         if internal_grid is None:
-            logger.debug("No 'internal_grid' key in session state yet")
+            logger.warning("[fetch] 'internal_grid' NOT found in session state — agent may not have written it yet")
             return None
+
+        n = len(internal_grid.get("components", []))
+        logger.info(f"[fetch] internal_grid found — {n} components")
         return internal_grid
     except httpx.ConnectError:
-        logger.warning(f"Cannot connect to agent at {AGENT_STATE_URL} — is the agent running?")
+        logger.warning(f"[fetch] Cannot connect to agent at {AGENT_STATE_URL} — is the agent running?")
         return None
     except Exception as e:
-        logger.error(f"Error fetching session state: {e}")
+        logger.error(f"[fetch] Error fetching session state: {e}")
         return None
 
 
@@ -80,6 +88,13 @@ async def poll_loop(engine: SyncEngine):
 
 async def main():
     """Entry point for the sync service."""
+    # DEACTIVATED: Sync is now handled by the agent's before/after callbacks.
+    # See agent/utils/grid_sync_*.py and level_3_master_main_llm.py
+    print("\n[DISABLED] The standalone sync service is no longer required.")
+    print("Synchronization is now handled by the Master Agent lifecycle callbacks.")
+    print("Refer to agent/utils/grid_sync_graphivac_to_agent.py and grid_sync_agent_to_graphivac.py\n")
+    return
+
     mcp_client = McpSyncClient(mcp_url=MCP_URL)
     engine = SyncEngine(mcp_client)
 

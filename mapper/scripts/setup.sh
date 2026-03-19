@@ -8,8 +8,14 @@ uv sync
 popd
 
 # Setup MCP Server
-echo "[2/2] Setting up MCP Server..."
+echo "[2/3] Setting up MCP Server..."
 pushd "$(dirname "$0")/../../mcp_server"
+uv sync
+popd
+
+# Setup Sync Service
+echo "[3/3] Setting up Sync Service..."
+pushd "$(dirname "$0")/../../sync_service"
 uv sync
 popd
 
