@@ -27,21 +27,6 @@ Identify and list all **horizontal ducts** in HVAC drawings as authoritative spa
 - Mixing sections (treat as continuation)
 - Junction boxes
 
----
-
-## Coordinate System
-- Origin (0,0) = **top-left**
-- End (30,15) = **bottom-right**
-- X-axis: 0 (left) → 30 (right)
-- Y-axis: 0 (top) → 15 (bottom)
-
-## Flow Direction Convention
-- Left-to-right flow: Span as ascending x coordinates (e.g., "5 to 15 X-axis")
-- Right-to-left flow: Span as descending x coordinates (e.g., "15 to 5 X-axis")
-- This convention uses span order to encode flow direction
-
----
-
 ## Execution Flow
 
 ### 1. Ingest Context

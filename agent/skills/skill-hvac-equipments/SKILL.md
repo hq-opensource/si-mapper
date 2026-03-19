@@ -21,14 +21,6 @@ Place HVAC equipment on the established duct system.
 
 ---
 
-## Coordinate System
-- Origin (0,0) = **top-left**
-- End (30,15) = **bottom-right**
-- X-axis: 0 (left) → 30 (right)
-- Y-axis: 0 (top) → 15 (bottom)
-
----
-
 ## Equipment Types
 Use these exact type strings:
 - **Coils**: `cooling_coil`, `heating_coil`

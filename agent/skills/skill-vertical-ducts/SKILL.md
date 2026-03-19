@@ -18,13 +18,6 @@ Identify and list all **vertical ducts** in HVAC drawings that connect two horiz
 
 ---
 
-## Coordinate System
-- Origin (0,0) = **top-left**
-- End (30,15) = **bottom-right**
-- X-axis: 0 (left) → 30 (right)
-- Y-axis: 0 (top) → 15 (bottom)
-
----
 
 ## Execution Flow
 
