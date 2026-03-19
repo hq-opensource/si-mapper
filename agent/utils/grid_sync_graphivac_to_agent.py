@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 def _fetch_and_parse_grid() -> tuple:
     """
     Synchronous helper: fetches the current grid from GraphyVAC via REST.
-    Returns (internal_grid, raw_edn_grid) on success or ({"components": []}, {}) on error.
+    Returns (internal_grid, edn_text) on success or ({"components": []}, "") on error.
     """
     base_url = os.getenv("GRAPHIVAC_BASE_URL", "")
     org_id = os.getenv("GRAPHIVAC_ORG_ID", "")
@@ -32,7 +32,7 @@ def _fetch_and_parse_grid() -> tuple:
 
     if not all([base_url, org_id, project_id, grid_id]):
         logger.warning("GraphyVAC env vars not fully set — internal_grid starts empty")
-        return {"components": []}, {}
+        return {"components": []}, ""
 
     url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
     try:
@@ -40,22 +40,26 @@ def _fetch_and_parse_grid() -> tuple:
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         logger.warning(f"Could not reach GraphyVAC to seed grid: {e} — starting empty")
-        return {"components": []}, {}
+        return {"components": []}, ""
+
+    edn_text = response.text
 
     try:
-        edn_data = edn_format.loads(response.text)
+        edn_data = edn_format.loads(edn_text)
     except Exception as e:
         logger.warning(f"Could not parse grid EDN response: {e} — starting empty")
-        return {"components": []}, {}
+        return {"components": []}, ""
 
-    # Convert entire EDN to mutable Python types
+    # Convert entire EDN to mutable Python types to extract comps
     raw_edn_grid = edn_to_mutable(edn_data)
 
     # Extract comps and translate to internal_grid
     comps_map = raw_edn_grid.get(Keyword("comps"), {})
     internal_grid = edn_comps_to_internal_grid(comps_map)
 
-    return internal_grid, raw_edn_grid
+    # Return the raw EDN string (not the parsed dict) so it can be stored in state
+    # without Keyword objects that break JSON serialization.
+    return internal_grid, edn_text
 
 
 async def sync_graphivac_to_agent_callback(
@@ -71,6 +75,8 @@ async def sync_graphivac_to_agent_callback(
     try:
         internal_grid, raw_edn_grid = await asyncio.to_thread(_fetch_and_parse_grid)
         callback_context.state["internal_grid"] = internal_grid
+        # Store as EDN string (not parsed dict) — Keyword objects in a parsed dict
+        # cannot be serialized to JSON by the ADK state layer.
         callback_context.state["_raw_edn_grid"] = raw_edn_grid
 
         n = len(internal_grid.get("components", []))
@@ -80,6 +86,6 @@ async def sync_graphivac_to_agent_callback(
         if "internal_grid" not in callback_context.state:
             callback_context.state["internal_grid"] = {"components": []}
         if "_raw_edn_grid" not in callback_context.state:
-            callback_context.state["_raw_edn_grid"] = {}
+            callback_context.state["_raw_edn_grid"] = ""
 
     return None

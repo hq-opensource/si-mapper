@@ -13,6 +13,7 @@ from edn_format import Keyword
 from google.adk.agents.callback_context import CallbackContext
 from google.genai import types
 
+from utils.edn_to_mutable import edn_to_mutable
 from utils.grid_edn_translator import internal_grid_to_edn_comps
 
 logger = logging.getLogger(__name__)
@@ -41,11 +42,15 @@ async def sync_agent_to_graphivac_callback(
     to GraphyVAC in a single REST call. No diffing. No MCP.
     """
     internal_grid = callback_context.state.get("internal_grid", {"components": []})
-    raw_edn_grid = callback_context.state.get("_raw_edn_grid", {})
+    raw_edn_str = callback_context.state.get("_raw_edn_grid", "")
 
-    if not raw_edn_grid:
+    if not raw_edn_str:
         logger.warning("grid_sync_agent_to_graphivac: No _raw_edn_grid in state — skipping PUT")
         return None
+
+    # Re-parse the stored EDN string into a mutable dict with Keyword keys.
+    # We store as a string in state to avoid Keyword objects breaking JSON serialization.
+    raw_edn_grid = edn_to_mutable(edn_format.loads(raw_edn_str))
 
     # Rebuild comps from internal_grid
     new_comps = internal_grid_to_edn_comps(internal_grid)
