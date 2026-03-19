@@ -70,3 +70,4 @@ progress:
 - Phase 5 added: Agent-Frontend Interface & Performance Metrics
 - Phase 6 added: refactor graphivac api
 - Phase 7 added: Replace MCP sync-out with direct REST PUT via bidirectional EDN-JSON translator
+- Phase 8 added: Implement capture_frontend_state visual verification tool
