@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 07
 status: unknown
-last_updated: "2026-03-19T13:48:13.857Z"
+last_updated: "2026-03-19T13:53:38.870Z"
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 07
-- **Overall Completion:** [███████░░░] 67%
-- **Active Plan:** Phase 07 Plan 02 (next)
-- **Last Completed:** 07-01 (EDN-JSON Translator)
+- **Overall Completion:** [████████░░] 83%
+- **Active Plan:** Phase 07 complete
+- **Last Completed:** 07-02 (Sync Callbacks Rewrite)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -47,10 +47,11 @@ progress:
 - **Decision (06-02):** Sync service diffs internal_grid by component name; deletes before creates to avoid name collisions; one streamablehttp_client session per MCP call (mirrors ADK parallel pattern); purely additive standalone service, no MCP server or agent modifications.
 - **Decision (06-03):** Tests use MockToolContext (no ADK runtime) and sys.modules stubs before import; call_tool mocked with async recorder for MCP mapping tests; asyncio.run() preferred over deprecated get_event_loop().run_until_complete().
 - **Decision (07-01):** Rotation uses Keyword('rot') not Keyword('rotation') — pre-existing bug fixed in new translator; edn_to_mutable.py is a standalone local copy; SYMBOL_TO_AGENT has 23 entries; unknown EDN symbols silently dropped with warning log.
+- **Decision (07-02):** No diff, no snapshot: after_callback does full comps rebuild from internal_grid every turn; only comps key replaced in _raw_edn_grid preserving title/font metadata; retry-once on PUT failure with types.Content error injection on unrecoverable failure.
 
 ### Next Steps
 
-1. Execute 07-02: Rewrite sync callbacks to use translator + direct REST PUT.
+1. Phase 07 complete. All plans executed.
 
 ### Session Log
 
@@ -58,6 +59,7 @@ progress:
 - **2026-03-18:** Completed 06-02-PLAN.md. Created sync_service/ (McpSyncClient, SyncEngine, main.py). Standalone polling service that replicates internal_grid to GraphyVAC via MCP every 2s.
 - **2026-03-18:** 06-03 Task 1 complete (3553d2e). 26 unit tests pass: 17 for internal_grid_tools, 9 for sync_engine. Paused at checkpoint Task 2 (human end-to-end verification).
 - **2026-03-19:** Completed 07-01-PLAN.md. Created edn_to_mutable.py + grid_edn_translator.py (23-entry SYMBOL_TO_AGENT, bidirectional). 15 unit tests pass covering all 25 types. Rotation bug fix confirmed.
+- **2026-03-19:** Completed 07-02-PLAN.md. Rewrote both sync callbacks. before_callback uses translator + saves _raw_edn_grid. after_callback does full comps rebuild + single REST PUT. MCP eliminated from sync lifecycle.
 
 ## Roadmap Evolution
 
