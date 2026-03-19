@@ -131,7 +131,7 @@ def edn_comps_to_internal_grid(comps_map: dict) -> dict:
                 "coord": list(pos),
             }
 
-            # Rotation: use Keyword("rot") — NOT Keyword("rotation") (bug fix)
+            # Rotation: use Keyword("rot") — the correct EDN key (bug fix: old code used wrong key)
             if agent_type in ROTATION_TYPES:
                 rot = value.get(Keyword("rot"), 0)
                 component["rotation"] = int(rot) if rot else 0
