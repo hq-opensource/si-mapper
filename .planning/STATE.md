@@ -63,3 +63,4 @@ progress:
 - Phase 4 added: Dependency Modernization & UI Optimization (SVAR Migration)
 - Phase 5 added: Agent-Frontend Interface & Performance Metrics
 - Phase 6 added: refactor graphivac api
+- Phase 7 added: Replace MCP sync-out with direct REST PUT via bidirectional EDN-JSON translator
