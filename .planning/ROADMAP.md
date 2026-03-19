@@ -91,3 +91,14 @@ Plans:
 - [ ] 06-01-PLAN.md — Internal grid tools (ToolContext.state CRUD) + agent wiring
 - [ ] 06-02-PLAN.md — Standalone sync service (poll, diff, MCP replication)
 - [ ] 06-03-PLAN.md — Unit tests + end-to-end verification
+
+### Phase 7: Replace MCP sync-out with direct REST PUT via bidirectional EDN-JSON translator
+
+**Goal:** Eliminate the MCP server from the sync lifecycle. Build a hardcoded bidirectional EDN-JSON translator so the before_agent_callback saves the raw EDN grid, and the after_agent_callback rebuilds full comps and PUTs the grid back in a single REST call. Also fixes the `:rot` vs `:rotation` bug in fan/damper rotation parsing.
+**Depends on:** Phase 6
+**Plans:** 3 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Bidirectional EDN-JSON translator module + unit tests (TDD)
+- [ ] 07-02-PLAN.md — Rewrite sync callbacks (before: translator + _raw_edn_grid, after: full rebuild + REST PUT)
+- [ ] 07-03-PLAN.md — Integration test against real GraphyVAC + human verification
