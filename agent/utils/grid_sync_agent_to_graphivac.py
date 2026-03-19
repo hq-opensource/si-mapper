@@ -27,7 +27,24 @@ from google.genai import types
 from utils.edn_to_mutable import edn_to_mutable
 from utils.grid_edn_translator import internal_grid_to_edn_comps
 
-logger = logging.getLogger(__name__)
+# Use the named app logger so messages appear regardless of root logger level
+import importlib
+try:
+    _lc = importlib.import_module("utils.logging_config")
+    logger = _lc.configure_logging()
+except Exception:
+    logger = logging.getLogger(__name__)
+
+
+def _dbg(msg: str) -> None:
+    """Print to stdout AND write to /tmp/sync_out.log — bypasses all log filtering."""
+    print(f"[SYNC-OUT] {msg}", flush=True)
+    try:
+        import time
+        with open("/tmp/sync_out.log", "a") as f:
+            f.write(f"{time.strftime('%H:%M:%S')} {msg}\n")
+    except Exception:
+        pass
 
 
 def _put_grid_to_graphivac(raw_edn_grid: dict) -> tuple:
@@ -41,9 +58,11 @@ def _put_grid_to_graphivac(raw_edn_grid: dict) -> tuple:
     grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
 
     url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
+    print(f"[SYNC-OUT] PUT → {url}", flush=True)
     headers = {"Content-Type": "application/edn"}
     data = edn_format.dumps(raw_edn_grid)
     response = requests.put(url, headers=headers, data=data, timeout=15)
+    print(f"[SYNC-OUT] PUT ← {response.status_code} {response.text[:200]}", flush=True)
     response.raise_for_status()
     return response.status_code, response.text
 
@@ -58,51 +77,50 @@ def _response_has_function_calls(llm_response: Any) -> bool:
 
 
 async def _run_sync_out(callback_context: CallbackContext) -> Optional[types.Content]:
-    """
-    Core sync-out logic: rebuild comps from internal_grid and PUT to GraphyVAC.
-    Shared by both sync_agent_to_graphivac_callback (after_agent_callback, kept
-    for backwards compat) and sync_agent_to_graphivac_model_callback.
-    """
+    """Core sync-out logic: rebuild comps from internal_grid and PUT to GraphyVAC."""
     internal_grid = callback_context.state.get("internal_grid", {"components": []})
     raw_edn_str = callback_context.state.get("_raw_edn_grid", "")
+    n = len(internal_grid.get("components", []))
+
+    _dbg(f"_run_sync_out called — {n} components, _raw_edn_grid len={len(raw_edn_str) if isinstance(raw_edn_str, str) else type(raw_edn_str)}")
 
     if not raw_edn_str:
-        logger.warning("grid_sync_agent_to_graphivac: No _raw_edn_grid in state — skipping PUT")
+        _dbg("WARNING: _raw_edn_grid is empty — skipping PUT")
         return None
 
     try:
         raw_edn_grid = edn_to_mutable(edn_format.loads(raw_edn_str))
+        _dbg(f"EDN parsed OK, top-level keys: {[str(k) for k in raw_edn_grid.keys()]}")
     except Exception as e:
-        logger.error(f"grid_sync_agent_to_graphivac: Failed to parse _raw_edn_grid: {e}")
+        _dbg(f"ERROR parsing _raw_edn_grid: {e}")
         return None
 
     try:
         new_comps = internal_grid_to_edn_comps(internal_grid)
         raw_edn_grid[Keyword("comps")] = new_comps
+        _dbg(f"EDN comps built: {len(new_comps)} entries")
     except Exception as e:
-        logger.error(f"grid_sync_agent_to_graphivac: Failed to build EDN comps: {e}")
+        _dbg(f"ERROR building EDN comps: {e}")
         return None
 
-    n = len(internal_grid.get("components", []))
-    logger.info(f"grid_sync_agent_to_graphivac: Rebuilding {n} components into EDN and PUTting to GraphyVAC")
+    _dbg(f"Attempting PUT with {n} components...")
 
     last_error = None
     for attempt in range(2):
         try:
             status, _ = await asyncio.to_thread(_put_grid_to_graphivac, raw_edn_grid)
-            logger.info(f"grid_sync_agent_to_graphivac: PUT successful (HTTP {status}), {n} components")
+            _dbg(f"PUT successful (HTTP {status}), {n} components written to GraphyVAC")
             return None
         except Exception as e:
             last_error = e
-            if attempt == 0:
-                logger.warning(f"grid_sync_agent_to_graphivac: PUT failed (attempt 1), retrying: {e}")
+            _dbg(f"PUT attempt {attempt + 1} failed: {e}")
 
     error_msg = (
         "SYNC ERROR: Failed to write grid to GraphyVAC after retry. "
         "Grid state is diverged. Stop all grid operations. "
         f"Last error: {last_error}"
     )
-    logger.warning(f"grid_sync_agent_to_graphivac: {error_msg}")
+    _dbg(f"UNRECOVERABLE: {error_msg}")
     return types.Content(parts=[types.Part(text=error_msg)])
 
 
@@ -112,29 +130,18 @@ async def sync_agent_to_graphivac_model_callback(
 ) -> Optional[Any]:
     """
     after_model_callback: Syncs internal_grid to GraphyVAC after the FINAL
-    model response of each turn (the response with no function calls).
-
-    This fires reliably inside the LLM flow regardless of how ag_ui_adk
-    exits the runner.run_async() generator, unlike after_agent_callback
-    which requires the generator to be fully consumed.
-
-    Returns None to let the response pass through unchanged.
+    model response of each turn (no function calls = agent is done with tools).
     """
-    # Only sync on the final response — when the model is done calling tools.
-    if _response_has_function_calls(llm_response):
+    has_calls = _response_has_function_calls(llm_response)
+    _dbg(f"model_callback fired — has_function_calls={has_calls}")
+
+    if has_calls:
         return None
 
-    logger.debug("grid_sync_agent_to_graphivac: Final model response detected — triggering sync-out")
+    _dbg("Final model response — triggering sync-out")
     error_content = await _run_sync_out(callback_context)
-
-    # after_model_callback must return Optional[LlmResponse], not types.Content.
-    # If sync failed, log the error but don't surface it as a model response —
-    # returning None lets the agent's own response pass through.
     if error_content:
-        logger.error(
-            "grid_sync_agent_to_graphivac: Sync-out failed after final model response. "
-            f"Error: {error_content.parts[0].text if error_content.parts else 'unknown'}"
-        )
+        _dbg(f"Sync-out failed: {error_content.parts[0].text if error_content.parts else 'unknown'}")
     return None
 
 
@@ -142,11 +149,8 @@ async def sync_agent_to_graphivac_callback(
     callback_context: CallbackContext,
 ) -> Optional[types.Content]:
     """
-    after_agent_callback: kept for completeness but NOT the primary sync trigger.
-
-    ag_ui_adk may exit runner.run_async() early, preventing this from firing.
-    The primary sync is done in sync_agent_to_graphivac_model_callback.
-    This is a fallback — if the generator IS fully consumed, it provides a
-    second sync opportunity at the very end of the agent turn.
+    after_agent_callback: fallback path (may not fire if ag_ui_adk exits early).
+    Primary sync is in sync_agent_to_graphivac_model_callback.
     """
+    _dbg("after_agent_callback fired (fallback path)")
     return await _run_sync_out(callback_context)
