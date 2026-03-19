@@ -7,7 +7,7 @@
     "start": "pnpm run start:all",
     "start:all": "concurrently \"pnpm run start:ui\" \"pnpm run dev:agent\" \"pnpm run dev:mcp\" --names ui,agent,mcp --prefix-colors blue,green,magenta --kill-others",
     "start:ui": "next start",
-    "dev:all": "concurrently \"pnpm run dev:ui\" \"pnpm run dev:agent\" \"pnpm run dev:mcp\" --names ui,agent,mcp --prefix-colors blue,green,magenta --kill-others",
+    "dev:all": "concurrently \"pnpm run dev:ui\" \"pnpm run dev:agent\" --names ui,agent --prefix-colors blue,green --kill-others",
     "dev:debug": "LOG_LEVEL=debug pnpm run dev:all",
     "dev:agent": "cd ../agent && VIRTUAL_ENV= PYTHONWARNINGS=ignore uv run main.py",
     "dev:mcp": "cd ../mcp_server && VIRTUAL_ENV= PYTHONWARNINGS=ignore uv run server/main.py",

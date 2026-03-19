@@ -80,6 +80,7 @@ async def sync_graphivac_to_agent_callback(
         callback_context.state["_raw_edn_grid"] = raw_edn_grid
 
         n = len(internal_grid.get("components", []))
+        print(f"[SYNC-IN ] Fetched {n} component(s) from GraphyVAC → internal_grid reset", flush=True)
         logger.info(f"grid_sync_graphivac_to_agent: Synchronized {n} components into agent memory")
     except Exception as e:
         logger.error(f"grid_sync_graphivac_to_agent: Sync failed, starting empty: {e}")

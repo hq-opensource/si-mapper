@@ -140,6 +140,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
             icon={Folder}
             fullWidth
             fullHeight
+            noPadding
           >
             <SvarFileManager />
           </SharedPageContainer>

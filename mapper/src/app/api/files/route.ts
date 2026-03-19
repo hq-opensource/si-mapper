@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readdir, stat, mkdir, rm, unlink, rename } from 'fs/promises';
+import { readdir, stat } from 'fs/promises';
 import path from 'path';
 
 const UPLOADS_DIR = path.join(process.cwd(), 'uploads');
@@ -13,29 +13,75 @@ const validatePath = (requestedPath: string | null) => {
     return targetPath;
 };
 
+const getTree = async (dir: string): Promise<any[]> => {
+    try {
+        const entries = await readdir(dir, { withFileTypes: true });
+        const files = await Promise.all(entries.map(async (entry) => {
+            const fullPath = path.join(dir, entry.name);
+            const stats = await stat(fullPath);
+            const relativePath = path.relative(UPLOADS_DIR, fullPath);
+            const id = `/${relativePath}`;
+            
+            // pId should be "/" if the parent is UPLOADS_DIR
+            const parentRelPath = path.relative(UPLOADS_DIR, dir);
+            const pId = parentRelPath === "" ? "/" : `/${parentRelPath}`;
+
+            const item: any = {
+                id,
+                pId,
+                name: entry.name,
+                value: entry.name,
+                size: stats.size,
+                date: new Date(stats.mtime).getTime() / 1000,
+                type: entry.isDirectory() ? 'folder' : 'file',
+                open: false
+            };
+
+            if (entry.isDirectory()) {
+                const subTree = await getTree(fullPath);
+                return [item, ...subTree];
+            }
+            return [item];
+        }));
+        return files.flat();
+    } catch (e) {
+        console.error("Tree error:", e);
+        return [];
+    }
+};
+
 // GET: List files in a directory
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const id = searchParams.get('id'); // ID represents the path for lazy loading
-        const targetPath = validatePath(id);
+        const id = searchParams.get('id'); 
+        const tree = searchParams.get('tree') === 'true';
 
+        if (tree) {
+            const items = await getTree(UPLOADS_DIR);
+            return NextResponse.json(items);
+        }
+
+        const targetPath = validatePath(id);
         const entries = await readdir(targetPath, { withFileTypes: true });
 
         const files = await Promise.all(entries.map(async (entry) => {
             const fullPath = path.join(targetPath, entry.name);
             const stats = await stat(fullPath);
             const relativePath = path.relative(UPLOADS_DIR, fullPath);
+            
+            const parentRelPath = path.relative(UPLOADS_DIR, targetPath);
+            const pId = parentRelPath === "" ? "/" : `/${parentRelPath}`;
 
-            // Returning consistent file structure
             return {
-                id: `/${relativePath}`, // Path as ID
+                id: `/${relativePath}`,
+                pId,
                 name: entry.name,
-                value: entry.name, // Added for SVAR
+                value: entry.name,
                 size: stats.size,
-                date: new Date(stats.mtime).getTime() / 1000, // Unix timestamp in seconds
+                date: new Date(stats.mtime).getTime() / 1000,
                 type: entry.isDirectory() ? 'folder' : 'file',
-                open: false // For folders
+                open: false
             };
         }));
 
@@ -43,102 +89,5 @@ export async function GET(request: Request) {
     } catch (error) {
         console.error('GET error:', error);
         return NextResponse.json({ error: 'Failed to list files' }, { status: 500 });
-    }
-}
-
-// POST: Create Folder
-export async function POST(request: Request) {
-    try {
-        const createParams = await request.formData();
-        const parent = createParams.get('target') as string || '/'; // Parent folder ID
-        const name = createParams.get('name') as string;
-
-        if (!name) return NextResponse.json({ error: 'Name required' }, { status: 400 });
-
-        const parentPath = validatePath(parent);
-        const newFolderPath = path.join(parentPath, name);
-
-        // Ensure we don't overwrite
-        try {
-            await stat(newFolderPath);
-            return NextResponse.json({ error: 'Folder already exists' }, { status: 400 });
-        } catch {
-            // Good, it doesn't exist
-        }
-
-        await mkdir(newFolderPath);
-
-        // Return the new folder object
-        const stats = await stat(newFolderPath);
-        const relativePath = path.relative(UPLOADS_DIR, newFolderPath);
-
-        return NextResponse.json({
-            id: `/${relativePath}`,
-            name: name,
-            value: name, // Added for SVAR
-            size: stats.size,
-            date: new Date(stats.mtime).getTime() / 1000,
-            type: 'folder',
-            open: false
-        });
-
-    } catch (error) {
-        console.error('POST error:', error);
-        return NextResponse.json({ error: 'Failed to create folder' }, { status: 500 });
-    }
-}
-
-// DELETE: Remove files/folders
-export async function DELETE(request: Request) {
-    try {
-        // Expects form data with "ids"
-        const formData = await request.formData();
-        const ids = formData.get('ids');
-
-        if (!ids) return NextResponse.json({ error: 'No IDs provided' }, { status: 400 });
-
-        const idList = ids.toString().split(',').filter(Boolean);
-
-        for (const id of idList) {
-            const itemPath = validatePath(id);
-            const stats = await stat(itemPath);
-            if (stats.isDirectory()) {
-                await rm(itemPath, { recursive: true, force: true });
-            } else {
-                await unlink(itemPath);
-            }
-        }
-
-        return NextResponse.json({ status: 'success' });
-    } catch (error) {
-        console.error('DELETE error:', error);
-        return NextResponse.json({ error: 'Failed to delete items' }, { status: 500 });
-    }
-}
-
-// PUT: Rename items
-export async function PUT(request: Request) {
-    try {
-        const formData = await request.formData();
-        const id = formData.get('id') as string;
-        const value = formData.get('value') as string; // New name
-
-        if (!id || !value) return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
-
-        const oldPath = validatePath(id);
-        const dir = path.dirname(oldPath);
-        const newPath = path.join(dir, value);
-
-        // Check local collision in same dir
-        // Security check: ensure newPath is still within UPLOADS_DIR (dirname ensures this if oldPath was valid, but checking doesn't hurt)
-        if (!newPath.startsWith(UPLOADS_DIR)) throw new Error("Invalid destination");
-
-        await rename(oldPath, newPath);
-
-        return NextResponse.json({ status: 'success' });
-
-    } catch (error) {
-        console.error('PUT error:', error);
-        return NextResponse.json({ error: 'Failed to rename item' }, { status: 500 });
     }
 }

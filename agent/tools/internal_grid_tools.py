@@ -130,8 +130,10 @@ def add_component(
             component["rotation"] = rotation
 
     components.append(component)
+    tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
     n = len(components)
 
+    print(f"[GRID] ADD {component_type} '{name}' → internal_grid now has {n} component(s)", flush=True)
     logger.info(f"Added {component_type} '{name}' (id={component_id}) to internal grid. Total: {n}")
     return (
         f":::thought\n[System] Added {component_type} '{name}' (id={component_id}) "
@@ -228,11 +230,24 @@ def add_components_batch(
         existing_names.add(name)
         added += 1
 
+    tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
     n = len(existing_components)
     error_detail = " | ".join(errors) if errors else ""
     detail_part = f" Errors: {error_detail}" if error_detail else ""
 
-    logger.info(f"Batch add: {added} added, {skipped} skipped. Total: {n}")
+    # Log a breakdown of what was actually added, grouped by type
+    added_components = existing_components[-added:] if added > 0 else []
+    type_counts: dict = {}
+    for c in added_components:
+        type_counts[c["type"]] = type_counts.get(c["type"], 0) + 1
+    breakdown = ", ".join(f"{count}x {t}" for t, count in sorted(type_counts.items()))
+    print(
+        f"[GRID] BATCH ADD {added} component(s) [{breakdown}]"
+        f"{' | ' + str(skipped) + ' skipped' if skipped else ''}"
+        f" → internal_grid now has {n} component(s)",
+        flush=True,
+    )
+    logger.info(f"Batch add: {added} added [{breakdown}], {skipped} skipped. Total: {n}")
     return (
         f":::thought\n[System] Batch add: {added} added, {skipped} skipped. "
         f"Total: {n} components.{detail_part}\n:::"
@@ -257,8 +272,10 @@ def delete_component(tool_context: ToolContext, name: str) -> str:
         return f":::thought\n[System] Error: Component '{name}' not found in internal grid.\n:::"
 
     tool_context.state["internal_grid"]["components"] = updated
+    tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
     n = len(updated)
 
+    print(f"[GRID] DELETE '{name}' → internal_grid now has {n} component(s)", flush=True)
     logger.info(f"Deleted '{name}' from internal grid. Remaining: {n}")
     return f":::thought\n[System] Deleted '{name}' from internal grid. Remaining: {n} components.\n:::"
 
@@ -282,12 +299,19 @@ def delete_components_batch(tool_context: ToolContext, names: List[str]) -> str:
 
     updated = [c for c in components if c["name"] not in found]
     tool_context.state["internal_grid"]["components"] = updated
+    tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
 
     n = len(updated)
     deleted = len(found)
     missing = len(not_found)
 
     detail = f" Not found: {sorted(not_found)}." if not_found else ""
+    print(
+        f"[GRID] BATCH DELETE {deleted} component(s) {sorted(found)}"
+        f"{' | ' + str(missing) + ' not found' if missing else ''}"
+        f" → internal_grid now has {n} component(s)",
+        flush=True,
+    )
     logger.info(f"Batch delete: {deleted} deleted, {missing} not found. Remaining: {n}")
     return (
         f":::thought\n[System] Batch delete: {deleted} deleted, {missing} not found. "
