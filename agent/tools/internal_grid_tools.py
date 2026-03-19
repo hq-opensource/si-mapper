@@ -241,10 +241,12 @@ def add_components_batch(
     for c in added_components:
         type_counts[c["type"]] = type_counts.get(c["type"], 0) + 1
     breakdown = ", ".join(f"{count}x {t}" for t, count in sorted(type_counts.items()))
+    added_names = [c["name"] for c in added_components]
     print(
         f"[GRID] BATCH ADD {added} component(s) [{breakdown}]"
         f"{' | ' + str(skipped) + ' skipped' if skipped else ''}"
-        f" → internal_grid now has {n} component(s)",
+        f" → internal_grid now has {n} component(s)"
+        f"\n       Names: {added_names}",
         flush=True,
     )
     logger.info(f"Batch add: {added} added [{breakdown}], {skipped} skipped. Total: {n}")

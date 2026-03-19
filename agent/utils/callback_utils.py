@@ -273,13 +273,19 @@ async def shared_model_callback(
     llm_response.content.parts = new_parts
 
     has_action = any(getattr(p, "function_call", None) for p in llm_response.content.parts)
+    has_real_text = any(
+        p.text and p.text.strip()
+        and not getattr(p, "thought", False)
+        and ":::tool_call" not in p.text
+        for p in llm_response.content.parts
+    )
 
-    # Sync-out: fires only on the final model response (no pending tool calls).
-    # end_invocation is NOT set here — ADK's LlmAgent terminates naturally when
-    # the model produces a response with no function calls. Setting end_invocation=True
-    # on tool-call responses was ending the invocation before tools ran, causing
-    # before_agent_callback (SYNC-IN) to wipe internal_grid on the next loop iteration.
-    if not has_action:
+    # Sync-out: fires only on the final model response (real text, no tool calls).
+    # Gating on has_real_text prevents firing on every intermediate thinking/reasoning
+    # chunk — without this, a thinking model triggers dozens of unnecessary PUTs
+    # per turn (one per thought block). We only want to sync when the agent has
+    # finished its reasoning and produced an actual response.
+    if not has_action and has_real_text:
         await _run_sync_out(callback_context)
 
     # _print_iteration_report(agent_name, llm_response, elapsed)
