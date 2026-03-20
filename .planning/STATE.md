@@ -2,24 +2,24 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 08
+current_phase: 09
 status: unknown
-last_updated: "2026-03-20T00:36:09.237Z"
+last_updated: "2026-03-20T20:29:18.422Z"
 progress:
-  total_phases: 8
+  total_phases: 9
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 12
+  completed_plans: 9
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 08
-- **Overall Completion:** [██████████] 100%
-- **Active Plan:** 08-02 (complete)
-- **Last Completed:** 08-02 (Visual Verification Protocol + unit tests)
+- **Current Phase:** 09
+- **Overall Completion:** [████████░░] 75%
+- **Active Plan:** 09-01 (complete)
+- **Last Completed:** 09-01 (Generator/Validator exit tools with snapshot lifecycle)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -50,11 +50,14 @@ progress:
 - **Decision (07-02):** No diff, no snapshot: after_callback does full comps rebuild from internal_grid every turn; only comps key replaced in _raw_edn_grid preserving title/font metadata; retry-once on PUT failure with types.Content error injection on unrecoverable failure.
 - **Decision (08-01):** Playwright imported lazily inside run_async (not top-level) so the module loads at agent startup even before chromium is installed; artifact path fixed to verification/latest_snapshot.png for predictable load_artifacts calls.
 - **Decision (08-02):** Visual Verification Protocol inserted BEFORE the STOP block in master_instruction.md to maintain operational instruction doc structure; test_url_construction kept as separate test function for intent clarity.
+- **Decision (09-01):** checkpoint_code is the ONLY exit tool that does NOT set actions.escalate — loop continuation is the key invariant for the validator iteration cycle.
+- **Decision (09-01):** Read-copy-write pattern enforced for all list mutations in ToolContext.state to avoid ADK session mutation issues: list(state.get(..., [])) → append → reassign.
 
 ### Next Steps
 
-1. Install chromium for playwright: `cd agent && uv run playwright install chromium`
-2. Phase 08 fully complete — agent has capture_frontend_state_tool registered, Visual Verification Protocol in master_instruction.md, and 4 unit tests passing.
+1. Execute 09-02: Wire exit_generator_success/failure into ontology generator agent.py
+2. Execute 09-03: Wire checkpoint_code/exit_validator_success/failure into ontology validator agent.py
+3. Install chromium for playwright: `cd agent && uv run playwright install chromium` (from Phase 08)
 
 ### Session Log
 
@@ -66,6 +69,7 @@ progress:
 - **2026-03-19:** 07-03 Task 1 complete (e0596f1). Created tests/test_integration_grid_sync.py standalone integration test. Paused at checkpoint Task 2 (human visual verification in Graphivac UI).
 - **2026-03-20:** Completed 08-01-PLAN.md. Created capture_frontend_state_tool.py (CaptureFrontendStateTool, headless Playwright screenshot). Registered in create_master_agent.py. Added playwright>=1.40.0 to pyproject.toml.
 - **2026-03-19:** Completed 08-02-PLAN.md. Added Visual Verification Protocol to master_instruction.md. Created agent/tests/test_capture_frontend_state.py (4 unit tests, all passing, mocked Playwright).
+- **2026-03-20:** Completed 09-01-PLAN.md. Created ontology_generator/exit_tools.py (2 functions) and ontology_validator/exit_tools.py (3 functions including checkpoint_code). 22 unit tests all passing. Read-copy-write pattern established for snapshot state management.
 
 ## Roadmap Evolution
 
