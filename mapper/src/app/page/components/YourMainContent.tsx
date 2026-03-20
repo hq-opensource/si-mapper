@@ -14,6 +14,7 @@ import { StateWindow } from "./StateWindow";
 import { SharedPageContainer } from "./SharedPageContainer";
 import { StatusPlaceholder } from "./StatusPlaceholder";
 import { PerformanceDashboard } from "./PerformanceDashboard";
+import { ArtifactsDashboard } from "./ArtifactsDashboard";
 
 // Define WorkAreaWrapper outside to prevent remounting subcomponents on every render (stable component tree)
 const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -32,7 +33,7 @@ const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
 
 function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agentState: AgentState }) {
   // Determine initial view based on props but allow internal navigation
-  const [activeTab, setActiveTab] = useState<'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance'>(isEditMode ? 'edit' : 'view');
+  const [activeTab, setActiveTab] = useState<'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts'>(isEditMode ? 'edit' : 'view');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   // Initialize theme: Default to light mode, ignore system preference
   useEffect(() => {
@@ -49,7 +50,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
     localStorage.setItem('app-theme', newTheme);
   };
 
-  const handleTabChange = (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance') => {
+  const handleTabChange = (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts') => {
     setActiveTab(tab);
   };
 
@@ -75,6 +76,8 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
         return <StateWindow />;
       case 'performance':
         return <PerformanceDashboard />;
+      case 'artifacts':
+        return <ArtifactsDashboard />;
 
       case 'plans':
         return (

@@ -29,9 +29,8 @@ Identify and list all **horizontal ducts** in HVAC drawings as authoritative spa
 
 ## Execution Flow
 
-### 1. Ingest Context & Initialization
+### 1. Ingest Context
 - You will be provided with drawing artifacts. Use the available tool `load_artifacts` to view them if they are not already in context.
-- Use the `initialize_internal_grid` tool to ensure the internal state is ready.
 
 ### 2. Analyze
 - Count chevron starts for exact duct count

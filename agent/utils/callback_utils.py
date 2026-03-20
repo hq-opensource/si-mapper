@@ -7,6 +7,8 @@ from google.genai import types as genai_types
 import logging
 from .string_utils import format_agent_name
 from .grid_sync_agent_to_graphivac import _run_sync_out
+from .events import AgentEvent, EventType
+from .event_processor import EventProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -18,12 +20,13 @@ _call_start_times: Dict[str, float] = {}
 GLOBAL_SESSION_STORE = {}
 
 
-def _log_artifact_visibility(agent_name: str, llm_request: Any) -> None:
+def _log_artifact_visibility(callback_context: CallbackContext, llm_request: Any) -> None:
     """
     Scans llm_request.contents for artifact data (inline_data blobs in tool
     responses) and logs a clear summary so we can confirm whether the model
     is actually receiving image/artifact bytes on this LLM call.
     """
+    agent_name = callback_context.agent_name
     SEP = "─" * 68
     contents = getattr(llm_request, "contents", None)
     if not contents:
@@ -82,6 +85,24 @@ def _log_artifact_visibility(agent_name: str, llm_request: Any) -> None:
                 print(line)
         print(f"  ✅ Model WILL see {len(artifact_summary) + len(tool_response_blobs)} artifact blob(s) this call.")
         print(f"{SEP}\n")
+
+        # Emit event for frontend
+        metadata = {
+            "visibility_check": True,
+            "turns_in_context": len(contents),
+            "inline_blobs": artifact_summary,
+            "tool_response_blobs": tool_response_blobs,
+            "total_blobs": len(artifact_summary) + len(tool_response_blobs)
+        }
+        event = AgentEvent(
+            agent_name=agent_name,
+            event_type=EventType.ARTIFACT,
+            content=f"🖼️ Artifact Visibility Check: {len(artifact_summary) + len(tool_response_blobs)} blobs visible",
+            metadata=metadata
+        )
+        events_list = callback_context.state.get("events", [])
+        events_list.append(event.model_dump())
+        callback_context.state["events"] = events_list[-200:]
     else:
         # Only log this if load_artifacts was recently called (check last tool call in request)
         last_tool_call = None
@@ -101,6 +122,17 @@ def _log_artifact_visibility(agent_name: str, llm_request: Any) -> None:
             print(f"  last tool call was 'load_artifacts' BUT no inline blobs found in request.")
             print(f"  ❌ Model will NOT see any artifact content this call — artifacts may have been dropped.")
             print(f"{SEP}\n")
+
+            # Emit event for frontend
+            event = AgentEvent(
+                agent_name=agent_name,
+                event_type=EventType.ARTIFACT,
+                content="⚠️ Artifact Visibility Check: NO blobs visible (possible drop!)",
+                metadata={"visibility_check": True, "dropped": True}
+            )
+            events_list = callback_context.state.get("events", [])
+            events_list.append(event.model_dump())
+            callback_context.state["events"] = events_list[-200:]
 
 
 async def _ensure_pending_artifacts_injected(
@@ -178,7 +210,7 @@ async def _ensure_pending_artifacts_injected(
             genai_types.Content(
                 role="user",
                 parts=[
-                    genai_types.Part.from_text(f"Artifact {name} is:"),
+                    genai_types.Part.from_text(text=f"Artifact {name} is:"),
                     artifact,
                 ],
             )
@@ -189,6 +221,17 @@ async def _ensure_pending_artifacts_injected(
     if injected:
         print(f"  Model will now see {len(injected)} artifact(s) this call.")
     print(f"{SEP}\n")
+
+    if injected:
+        event = AgentEvent(
+            agent_name=agent_name,
+            event_type=EventType.ARTIFACT,
+            content=f"🔄 Sticky Re-injection: {len(injected)} artifacts injected",
+            metadata={"reinjection": True, "artifacts": injected}
+        )
+        events_list = callback_context.state.get("events", [])
+        events_list.append(event.model_dump())
+        callback_context.state["events"] = events_list[-200:]
 
 
 async def shared_before_model_callback(
@@ -206,7 +249,7 @@ async def shared_before_model_callback(
     """
     _call_start_times[callback_context.agent_name] = time.perf_counter()
     await _ensure_pending_artifacts_injected(callback_context, llm_request)
-    _log_artifact_visibility(callback_context.agent_name, llm_request)
+    _log_artifact_visibility(callback_context, llm_request)
     return None
 
 
@@ -359,6 +402,22 @@ async def shared_model_callback(
         else:
             print(f"  ✅ Called alone — ADK injection should work. Sticky re-injection is standby.")
         print(f"{SEP}\n")
+
+        # Emit event for frontend
+        event = AgentEvent(
+            agent_name=agent_name,
+            event_type=EventType.ARTIFACT,
+            content=f"📥 load_artifacts called for: {requested_names}",
+            metadata={
+                "load_artifacts": True,
+                "requested_names": requested_names,
+                "tool_calls": fn_calls_in_response,
+                "other_tools": other_tools
+            }
+        )
+        events_list = callback_context.state.get("events", [])
+        events_list.append(event.model_dump())
+        callback_context.state["events"] = events_list[-200:]
     # When model produces a real text response (not just more tool calls),
     # it has processed whatever artifacts were pending — clear the pending state.
     has_text_response = any(
@@ -372,8 +431,6 @@ async def shared_model_callback(
     # ─────────────────────────────────────────────────────────────────────────
 
     # 1. NEW: Process structured events
-    from .event_processor import EventProcessor
-    from .events import EventType
     
     # Generate fresh events for this chunk (Enables appending behavior in frontend)
     new_events = EventProcessor.process_parts(agent_name, llm_response, metrics=metrics)

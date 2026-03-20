@@ -46,6 +46,9 @@ def _put_grid_to_graphivac(raw_edn_grid: dict) -> int:
 
 async def _run_sync_out(callback_context: CallbackContext) -> Optional[types.Content]:
     """Core sync-out logic: rebuild comps from internal_grid and PUT to Graphivac."""
+    if not callback_context.state.get("_updated_grid"):
+        return None
+
     internal_grid = callback_context.state.get("internal_grid", {"components": []})
     raw_edn_str = callback_context.state.get("_raw_edn_grid", "")
     n = len(internal_grid.get("components", []))
@@ -71,6 +74,7 @@ async def _run_sync_out(callback_context: CallbackContext) -> Optional[types.Con
     for attempt in range(2):
         try:
             status = await asyncio.to_thread(_put_grid_to_graphivac, raw_edn_grid)
+            callback_context.state["_updated_grid"] = False
             print(f"[SYNC-OUT] PUT {n} component(s) → HTTP {status}", flush=True)
             return None
         except Exception as e:

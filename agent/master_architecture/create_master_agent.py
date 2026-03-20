@@ -13,7 +13,7 @@ from tools.task_tools import add_task, set_task_status, enqueue_grid_tasks, mark
 from tools.state_tools import save_agent_state, get_agent_state
 from tools.internal_grid_tools import (
     add_component, add_components_batch, delete_component,
-    delete_components_batch, read_internal_grid, initialize_internal_grid
+    delete_components_batch, read_internal_grid
 )
 from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
 
@@ -61,7 +61,6 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         save_agent_state,
         get_agent_state,
         # Internal grid tools (write to ToolContext.state instead of MCP)
-        initialize_internal_grid,
         add_component,
         add_components_batch,
         delete_component,

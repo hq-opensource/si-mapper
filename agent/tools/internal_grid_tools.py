@@ -45,25 +45,6 @@ def _ensure_internal_grid(tool_context: ToolContext) -> None:
 # Public tools
 # ---------------------------------------------------------------------------
 
-def initialize_internal_grid(tool_context: ToolContext) -> str:
-    """
-    Initializes the internal grid state.
-
-    If the internal grid already exists, returns an early message with the
-    current component count. Otherwise creates an empty grid.
-
-    Note: After initialization, the agent should call the read_grid MCP tool
-    and then use add_component / add_components_batch to populate the state
-    from the existing grid.
-    """
-    if "internal_grid" in tool_context.state:
-        n = len(tool_context.state["internal_grid"].get("components", []))
-        return f":::thought\n[System] Internal grid already initialized with {n} components.\n:::"
-
-    tool_context.state["internal_grid"] = {"components": []}
-    logger.info("Internal grid initialized (empty).")
-    return ":::thought\n[System] Internal grid initialized (empty). Use read_grid MCP tool to load existing state if needed.\n:::"
-
 
 def add_component(
     tool_context: ToolContext,
@@ -131,6 +112,7 @@ def add_component(
 
     components.append(component)
     tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
+    tool_context.state["_updated_grid"] = True
     n = len(components)
 
     print(f"[GRID] ADD {component_type} '{name}' → internal_grid now has {n} component(s)", flush=True)
@@ -231,6 +213,8 @@ def add_components_batch(
         added += 1
 
     tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
+    if added > 0:
+        tool_context.state["_updated_grid"] = True
     n = len(existing_components)
     error_detail = " | ".join(errors) if errors else ""
     detail_part = f" Errors: {error_detail}" if error_detail else ""
@@ -275,6 +259,7 @@ def delete_component(tool_context: ToolContext, name: str) -> str:
 
     tool_context.state["internal_grid"]["components"] = updated
     tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
+    tool_context.state["_updated_grid"] = True
     n = len(updated)
 
     print(f"[GRID] DELETE '{name}' → internal_grid now has {n} component(s)", flush=True)
@@ -302,10 +287,11 @@ def delete_components_batch(tool_context: ToolContext, names: List[str]) -> str:
     updated = [c for c in components if c["name"] not in found]
     tool_context.state["internal_grid"]["components"] = updated
     tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
-
     n = len(updated)
     deleted = len(found)
     missing = len(not_found)
+    if deleted > 0:
+        tool_context.state["_updated_grid"] = True
 
     detail = f" Not found: {sorted(not_found)}." if not_found else ""
     print(
@@ -332,7 +318,7 @@ def read_internal_grid(
         component_type: (Optional) If provided, filters components by this type.
     """
     if "internal_grid" not in tool_context.state:
-        return ":::thought\n[System] Internal grid not initialized. Call initialize_internal_grid first.\n:::"
+        return ":::thought\n[System] Internal grid not available.\n:::"
 
     components = tool_context.state["internal_grid"]["components"]
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, ListTodo, Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database } from "lucide-react";
+import { FileText, ListTodo, Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package } from "lucide-react";
 import { AgentState } from "./AgentStateOverlay";
 import { useState, useEffect } from "react";
 import { useThoughts } from "@/context/ThoughtsContext";
@@ -8,8 +8,8 @@ import { formatAgentName } from "@/lib/utils";
 
 interface AgentNavbarProps {
     agentState: AgentState;
-    activeTab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance';
-    onTabChange: (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance') => void;
+    activeTab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts';
+    onTabChange: (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts') => void;
 }
 
 export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarProps) {
@@ -29,6 +29,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         { id: 'state', label: 'State', icon: Database },
         { id: 'tools', label: 'Tools', icon: Wrench },
         { id: 'performance', label: 'Performance', icon: BarChart2 },
+        { id: 'artifacts', label: 'Artifacts', icon: Package },
         { id: 'files', label: 'Files', icon: Folder },
         { id: 'debug', label: 'Debug', icon: BarChart2 },
     ] as const;
@@ -41,6 +42,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
     const [hasNewTools, setHasNewTools] = useState(false);
     const [hasNewState, setHasNewState] = useState(false);
     const [hasNewPerformance, setHasNewPerformance] = useState(false);
+    const [hasNewArtifacts, setHasNewArtifacts] = useState(false);
     const [lastEventCount, setLastEventCount] = useState(0);
     const [lastTaskCount, setLastTaskCount] = useState(0);
     const [lastPlanContent, setLastPlanContent] = useState("");
@@ -58,6 +60,9 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
             if (activeTab !== 'thoughts' && hasThoughts) setHasNewThoughts(true);
             if (activeTab !== 'tools' && hasTools) setHasNewTools(true);
             if (activeTab !== 'performance' && hasPerf) setHasNewPerformance(true);
+
+            const hasArtifacts = newEvents.some(e => e.event_type === 'ARTIFACT');
+            if (activeTab !== 'artifacts' && hasArtifacts) setHasNewArtifacts(true);
 
             setLastEventCount(events.length);
         }
@@ -102,6 +107,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         if (activeTab === 'tools') setHasNewTools(false);
         if (activeTab === 'state') setHasNewState(false);
         if (activeTab === 'performance') setHasNewPerformance(false);
+        if (activeTab === 'artifacts') setHasNewArtifacts(false);
     }, [activeTab]);
 
 
@@ -139,6 +145,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
                         (item.id === 'todo' && hasNewTodo) ||
                         (item.id === 'state' && hasNewState) ||
                         (item.id === 'performance' && hasNewPerformance) ||
+                        (item.id === 'artifacts' && hasNewArtifacts) ||
                         (item.id === 'tools' && hasNewTools);
 
                     return (

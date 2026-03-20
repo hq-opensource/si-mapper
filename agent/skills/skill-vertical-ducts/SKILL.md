@@ -23,8 +23,7 @@ Identify and list all **vertical ducts** in HVAC drawings that connect two horiz
 
 ### 1. Ingest Context & Grid Awareness
 - You will be provided with drawing artifacts. Use the available tool `load_artifacts` to view them if they are not already in context.
-- Use the `initialize_internal_grid` tool to ensure the internal state is ready.
-- Use the `read_internal_grid` tool to retrieve the current state of the grid. 
+- Use the `read_internal_grid` tool to retrieve the current state of the grid.
     - You will see a list of components. 
     - Horizontal ducts will have `type: "duct"` and provide coordinates via `start` and `end` keys (e.g., `{"start": [x1,y1], "end": [x2,y2]}`). Use the start and end coordinates to identify the direction of the flow: 
         - If x1 < x2, the flow is from left to right

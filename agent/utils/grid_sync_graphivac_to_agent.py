@@ -78,6 +78,8 @@ async def sync_graphivac_to_agent_callback(
         # Store as EDN string (not parsed dict) — Keyword objects in a parsed dict
         # cannot be serialized to JSON by the ADK state layer.
         callback_context.state["_raw_edn_grid"] = raw_edn_grid
+        # Grid just seeded from Graphivac — nothing to push back yet.
+        callback_context.state["_updated_grid"] = False
 
         n = len(internal_grid.get("components", []))
         print(f"[SYNC-IN ] Fetched {n} component(s) from Graphivac → internal_grid reset", flush=True)

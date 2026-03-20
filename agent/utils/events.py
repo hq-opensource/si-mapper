@@ -11,6 +11,7 @@ class EventType(str, Enum):
     ACTION_RESULT = "ACTION_RESULT"   # Tool output (cleaned)
     STATE_MUTATION = "STATE_MUTATION" # UI state updates (tasks, plans)
     TEXT_RESPONSE = "TEXT_RESPONSE"   # Final text to user
+    ARTIFACT = "ARTIFACT"             # Artifact loading/visibility logs
 
 class AgentEvent(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
