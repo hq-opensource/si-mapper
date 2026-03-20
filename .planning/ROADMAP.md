@@ -49,10 +49,10 @@
 | REQ-4 | Phase 1.4 | Completed |
 | REQ-5 | Phase 2.3 | Pending |
 | REQ-6 | Phase 3.1 | Pending |
-| REFAC-01 | Phase 6 | Planned |
-| REFAC-02 | Phase 6 | Planned |
-| REFAC-03 | Phase 6 | Planned |
-| REFAC-04 | Phase 6 | Planned |
+| REFAC-01 | Phase 6 | Completed |
+| REFAC-02 | Phase 6 | Completed |
+| REFAC-03 | Phase 6 | Completed |
+| REFAC-04 | Phase 6 | Completed |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -67,20 +67,20 @@
     - [ ] Verify that the application builds and runs without peer dependency warnings.
     - [ ] Ensure full React 19 / Next.js 16 functionality.
 
-## Phase 5: Agent-Frontend Interface & Performance Metrics
+## Phase 5: Agent-Frontend Interface & Performance Metrics (Completed)
 **Goal:** Establish a robust communication layer between the reasoning agent and the React frontend, ensuring transparency of thoughts, tool calls, and performance metrics.
 
 - **Phase 5.1: Communication Layer Audit**
-    - [ ] Map all callbacks (pre-model, post-model) between Agent and Frontend.
-    - [ ] Simplify internal agent communication logic.
+    - [x] Map all callbacks (pre-model, post-model) between Agent and Frontend.
+    - [x] Simplify internal agent communication logic.
 - **Phase 5.2: UI Rendering of Agent State**
-    - [ ] Implement rendering for agent "thoughts" and "instructions".
-    - [ ] Ensure real-time tool call status visibility on the HUD.
+    - [x] Implement rendering for agent "thoughts" and "instructions".
+    - [x] Ensure real-time tool call status visibility on the HUD.
 - **Phase 5.3: Performance Metrics Dashboard**
-    - [ ] Identify and extract key performance metrics (latency, token usage, success rate).
-    - [ ] Render metrics in a frontend dashboard/HUD for developer visibility.
+    - [x] Identify and extract key performance metrics (latency, token usage, success rate).
+    - [x] Render metrics in a frontend dashboard/HUD for developer visibility.
 
-### Phase 6: Refactor Graphivac API
+### Phase 6: Refactor Graphivac API (Completed)
 
 **Goal:** Decouple agent from direct MCP calls by introducing an internal state layer (ToolContext.state) and a standalone sync service that replicates state to Graphivac via existing MCP server.
 **Requirements**: [REFAC-01, REFAC-02, REFAC-03, REFAC-04]
@@ -88,22 +88,22 @@
 **Plans:** 3/3 plans complete
 
 Plans:
-- [ ] 06-01-PLAN.md — Internal grid tools (ToolContext.state CRUD) + agent wiring
-- [ ] 06-02-PLAN.md — Standalone sync service (poll, diff, MCP replication)
-- [ ] 06-03-PLAN.md — Unit tests + end-to-end verification
+- [x] 06-01-PLAN.md — Internal grid tools (ToolContext.state CRUD) + agent wiring
+- [x] 06-02-PLAN.md — Standalone sync service (poll, diff, MCP replication)
+- [x] 06-03-PLAN.md — Unit tests + end-to-end verification
 
-### Phase 7: Replace MCP sync-out with direct REST PUT via bidirectional EDN-JSON translator
+### Phase 7: Replace MCP sync-out with direct REST PUT via bidirectional EDN-JSON translator (Completed)
 
 **Goal:** Eliminate the MCP server from the sync lifecycle. Build a hardcoded bidirectional EDN-JSON translator so the before_agent_callback saves the raw EDN grid, and the after_agent_callback rebuilds full comps and PUTs the grid back in a single REST call. Also fixes the `:rot` vs `:rotation` bug in fan/damper rotation parsing.
 **Depends on:** Phase 6
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
-- [ ] 07-01-PLAN.md — Bidirectional EDN-JSON translator module + unit tests (TDD)
-- [ ] 07-02-PLAN.md — Rewrite sync callbacks (before: translator + _raw_edn_grid, after: full rebuild + REST PUT)
-- [ ] 07-03-PLAN.md — Integration test against real Graphivac + human verification
+- [x] 07-01-PLAN.md — Bidirectional EDN-JSON translator module + unit tests (TDD)
+- [x] 07-02-PLAN.md — Rewrite sync callbacks (before: translator + _raw_edn_grid, after: full rebuild + REST PUT)
+- [x] 07-03-PLAN.md — Integration test against real Graphivac + human verification
 
-### Phase 8: Implement capture_frontend_state visual verification tool
+### Phase 8: Implement capture_frontend_state visual verification tool (Completed)
 
 **Goal:** Upgrade the Master Agent from a "data-blind" command issuer into a "vision-guided" engineer by adding a two-tool visual verification loop. The agent will be able to take an on-demand screenshot of the live Graphivac CAD canvas (via Playwright headless capture), save it as a session artifact, and then use the existing `load_artifacts` tool to inject the image inline into its context — allowing it to visually compare the canvas against the original HVAC reference image and self-correct before declaring a phase complete.
 
@@ -135,8 +135,21 @@ The implementation leverages the existing ADK artifact system already in use by 
 - `agent/pyproject.toml` (or requirements) — add `playwright` dependency + `playwright install chromium`
 
 **Depends on:** Phase 7
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 08-01-PLAN.md — capture_frontend_state tool + playwright setup + agent registration
-- [ ] 08-02-PLAN.md — master_instruction.md verification protocol + end-to-end test
+- [x] 08-01-PLAN.md — capture_frontend_state tool + playwright setup + agent registration
+- [x] 08-02-PLAN.md — master_instruction.md verification protocol + end-to-end test
+
+### Phase 9: Integrate _223P agent into master architecture via sub-agent or skills
+
+**Goal:** Promote the existing 223P ontology pipeline from a standalone runner into two flat, independent sub-agents (ontology_generator and ontology_validator) that the Master Agent can delegate to directly, with code snapshot versioning in ToolContext.state and a new frontend Code tab for browsing generated ontology code iterations.
+**Requirements**: [P9-01, P9-02, P9-03, P9-04, P9-05, P9-06, P9-07, P9-08]
+**Depends on:** Phase 8
+**Plans:** 4 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Exit tools + checkpoint_code tool (generator + validator exit tools with state snapshots)
+- [ ] 09-02-PLAN.md — Agent files (OntologyGeneratorAgent + OntologyValidatorAgent LoopWrappers + prompts)
+- [ ] 09-03-PLAN.md — Wire into master architecture (create_master_agent.py + master_instruction.md)
+- [ ] 09-04-PLAN.md — Frontend Code tab (CodeWindow.tsx + navbar/content wiring)
