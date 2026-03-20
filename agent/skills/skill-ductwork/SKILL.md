@@ -73,7 +73,6 @@ After calling the tool `sync_agent_to_graphivac`, perform a **Duct Verification 
 - If discrepancies are found, correct them by calling the tool `add_components_batch` or `delete_components_batch`.
 - After all corrections are finished, call `sync_agent_to_graphivac` again and repeat the checkpoint instructions until the ducts match the reference.
 
-
 ## 6. Exit
 Summarize your actions.
 

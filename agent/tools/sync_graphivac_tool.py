@@ -48,42 +48,39 @@ async def sync_agent_to_graphivac(tool_context: ToolContext) -> dict:
     state = tool_context.state
 
     if not state.get("_updated_grid"):
-        return {"status": "ok", "message": "No pending grid changes to sync."}
+        return "No pending grid changes to sync. Internal grid state of the agent is already up to date."
 
     internal_grid = state.get("internal_grid", {"components": []})
     raw_edn_str = state.get("_raw_edn_grid", "")
     n = len(internal_grid.get("components", []))
 
     if not raw_edn_str:
-        return {"status": "error", "message": "_raw_edn_grid is empty — cannot sync."}
+        return "SYNC-OUT FAILED: raw EDN grid is empty. Call sync_graphivac_to_agent first to load the grid."
 
     try:
         raw_edn_grid = edn_to_mutable(edn_format.loads(raw_edn_str))
     except Exception as e:
-        return {"status": "error", "message": f"Failed to parse _raw_edn_grid: {e}"}
+        return f"SYNC-OUT FAILED: could not parse EDN grid: {e}"
 
     try:
         new_comps = internal_grid_to_edn_comps(internal_grid)
         raw_edn_grid[Keyword("comps")] = new_comps
     except Exception as e:
-        return {"status": "error", "message": f"Failed to build EDN comps: {e}"}
+        return f"SYNC-OUT FAILED: could not build EDN components: {e}"
 
     last_error = None
     for attempt in range(2):
         try:
-            status = await asyncio.to_thread(_put_grid_to_graphivac, raw_edn_grid)
+            http_status = await asyncio.to_thread(_put_grid_to_graphivac, raw_edn_grid)
             state["_updated_grid"] = False
-            logger.info(f"[SYNC-OUT] PUT {n} component(s) → HTTP {status}")
-            return {"status": "ok", "message": f"Synced {n} component(s) to Graphivac (HTTP {status})."}
+            logger.info(f"[SYNC-OUT] PUT {n} component(s) → HTTP {http_status}")
+            return f"Grid synchronized to Graphivac. {n} component(s) saved successfully."
         except Exception as e:
             last_error = e
             if attempt == 0:
                 logger.warning(f"[SYNC-OUT] PUT attempt 1 failed, retrying: {e}")
 
-    error_msg = (
-        f"Failed to write grid to Graphivac after 2 attempts. "
-        f"Grid state is diverged. Stop all grid operations. "
-        f"Last error: {last_error}"
+    return (
+        f"SYNC-OUT FAILED after 2 attempts. Grid state is diverged — stop all grid operations. "
+        f"Error: {last_error}"
     )
-    logger.error(f"[SYNC-OUT] UNRECOVERABLE: {error_msg}")
-    return {"status": "error", "message": error_msg}
