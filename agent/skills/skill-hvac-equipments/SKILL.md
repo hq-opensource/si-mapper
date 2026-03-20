@@ -18,16 +18,17 @@ Place HVAC equipment on the established duct system.
    - Identify type (from the list above) and position.
    - Find parent duct and snap coordinates.
    - Determine rotation (if `fan` or `damper`).
-4. **Register**: Use `add_component` for single items or `add_components_batch` for multiple.
+4. **Register internally**: Use `add_component` for single items or `add_components_batch` for multiple.
    - Example: `add_component(component_type="fan", name="SF-1", coord=[10,5], rotation=180)`
    - Example: `add_component(component_type="damper", name="MD-1", coord=[12,5], rotation=90)`
    - Example: `add_component(component_type="variable_frequency_drive", name="VFD-1", coord=[15,6])`
-5. **Verify**: After drawing all HVAC equipments, perform an **Equipment Verification Checkpoint**:
+5. **Sync to frontend**: Use `sync_agent_to_graphivac` to sync the HVAC equipments to the frontend.
+6. **Verify**: After calling the tool `sync_agent_to_graphivac`, perform a **Equipment Verification Checkpoint**:
    - Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
    - Compare the snapshot against the reference image. Verify that all equipment components are present, correctly positioned, and correctly attached to the ducts.
    - If discrepancies are found, correct them and repeat the workflow until the equipment matches the reference.
    - Only mark the task as finished after visual confirmation passes.
-6. **Exit**: Summarize your actions.
+7. **Exit**: Summarize your actions.
 
 # Rules
 

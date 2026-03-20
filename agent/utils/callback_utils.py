@@ -6,7 +6,6 @@ from google.adk.models import LlmResponse
 from google.genai import types as genai_types
 import logging
 from .string_utils import format_agent_name
-from .grid_sync_agent_to_graphivac import _run_sync_out
 from .events import AgentEvent, EventType
 from .event_processor import EventProcessor
 
@@ -526,14 +525,6 @@ async def shared_model_callback(
         and ":::tool_call" not in p.text
         for p in llm_response.content.parts
     )
-
-    # Sync-out: fires only on the final model response (real text, no tool calls).
-    # Gating on has_real_text prevents firing on every intermediate thinking/reasoning
-    # chunk — without this, a thinking model triggers dozens of unnecessary PUTs
-    # per turn (one per thought block). We only want to sync when the agent has
-    # finished its reasoning and produced an actual response.
-    if not has_action and has_real_text:
-        await _run_sync_out(callback_context)
 
     # _print_iteration_report(agent_name, llm_response, elapsed)
     # ─────────────────────────────────────────────────────────────────────────

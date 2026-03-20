@@ -33,7 +33,7 @@ Identify and replicate all **horizontal and vertical ducts** in HVAC drawings as
 - Vertical ducts are rare → validate carefully
 
 
-## 3. Register findings
+## 3. Register findings internally
 
 Register ALL ducts (horizontal and vertical) in a **single call** to `add_components_batch`.
 
@@ -62,15 +62,19 @@ Ensure start_coord and end_coord reflect true airflow direction as explained in 
 ]
 ```
 
+## 4. Send ductwork to the frontend
 
-## 4. Verify the ductwork
-After drawing all horizontal and vertical ducts, perform a **Duct Verification Checkpoint**:
+Call the tool `sync_agent_to_graphivac` to send the ductwork to the frontend.
+
+## 5. Verify the ductwork
+After calling the tool `sync_agent_to_graphivac`, perform a **Duct Verification Checkpoint**:
 - Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
 - Compare the snapshot against the reference image. Verify that all horizontal and vertical ducts are present, correctly positioned, and flow directions are correct.
-- If discrepancies are found, correct them and repeat the checkpoint until the ducts match the reference.
+- If discrepancies are found, correct them by calling the tool `add_components_batch` or `delete_components_batch`.
+- After all corrections are finished, call `sync_agent_to_graphivac` again and repeat the checkpoint instructions until the ducts match the reference.
 
 
-## 5. Exit
+## 6. Exit
 Summarize your actions.
 
 
