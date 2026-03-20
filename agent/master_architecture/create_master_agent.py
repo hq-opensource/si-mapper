@@ -14,6 +14,7 @@ from tools.internal_grid_tools import (
     add_component, add_components_batch, delete_component,
     delete_components_batch, read_internal_grid
 )
+from tools.metadata_tools import write_metadata, write_metadata_batch
 from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
 
 # --- Configuration ---
@@ -63,6 +64,9 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         delete_component,
         delete_components_batch,
         read_internal_grid,
+        # Metadata tools (write BACnet/control data to GraphyVAC custom-fields)
+        write_metadata,
+        write_metadata_batch,
         capture_frontend_state_tool,
     ]
     

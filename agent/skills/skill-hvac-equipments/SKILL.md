@@ -9,17 +9,35 @@ Place HVAC equipment on the established duct system.
 
 ---
 
-## Rules
 
-### Placement Requirements
+# Execution Flow
+
+1. **Load context**: Use `load_artifacts` to view drawings.
+2. **Read grid**: Use `read_internal_grid` to get duct coordinates.
+3. **Analyze**: For each equipment piece:
+   - Identify type (from the list above) and position.
+   - Find parent duct and snap coordinates.
+   - Determine rotation (if `fan` or `damper`).
+4. **Register**: Use `add_component` for single items or `add_components_batch` for multiple.
+   - Example: `add_component(component_type="fan", name="SF-1", coord=[10,5], rotation=180)`
+   - Example: `add_component(component_type="damper", name="MD-1", coord=[12,5], rotation=90)`
+   - Example: `add_component(component_type="variable_frequency_drive", name="VFD-1", coord=[15,6])`
+5. **Verify**: After drawing all HVAC equipments, perform an **Equipment Verification Checkpoint**:
+   - Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
+   - Compare the snapshot against the reference image. Verify that all equipment components are present, correctly positioned, and correctly attached to the ducts.
+   - If discrepancies are found, correct them and repeat the workflow until the equipment matches the reference.
+   - Only mark the task as finished after visual confirmation passes.
+6. **Exit**: Summarize your actions.
+
+# Rules
+
+## Placement Requirements
 - **Read the grid first**: Always use the tool `read_internal_grid` to see existing ducts
 - **Snap to ducts**: Equipment must be placed exactly on its parent duct's line
   - Horizontal duct at Y1 → equipment at `[X, Y1]`
   - Vertical duct at X1 → equipment at `[X1, Y]`
 - **No overlaps**: Components cannot share the same coordinates
 - **Unique names**: Every component needs a unique identifier
-
----
 
 ## Equipment Types
 Use these exact type strings from `internal_grid_tools.py`:
@@ -31,8 +49,6 @@ Use these exact type strings from `internal_grid_tools.py`:
     - Duct: `duct_sensor_enthalpy`, `duct_sensor_temperature`, `duct_sensor_differential_pressure`, `duct_sensor_humidity`, `duct_sensor_flow`, `duct_sensor_low_limit`, `duct_sensor_static_pressure`
     - Pipe: `pipe_sensor_temperature`
 - **Electric**: `variable_frequency_drive`
-
----
 
 ## Rotation Rules
 Only `fan` and `damper` types use the `rotation` parameter.
@@ -50,8 +66,6 @@ Only `fan` and `damper` types use the `rotation` parameter.
 ### All Other Equipment
 - Ignore rotation or set to `0`.
 
----
-
 ## Off-Duct Equipment
 
 Some equipment sits outside the duct (below its parent component):
@@ -66,21 +80,12 @@ Some equipment sits outside the duct (below its parent component):
 - Placement: Same X-coordinate, Y + 1 unit down
 - Example: Fan at `[15, 5]` → VFD at `[15, 6]`
 
----
 
-## Workflow
 
-1. **Load context**: Use `load_artifacts` to view drawings.
-2. **Read grid**: Use `read_internal_grid` to get duct coordinates.
-3. **Analyze**: For each equipment piece:
-   - Identify type (from the list above) and position.
-   - Find parent duct and snap coordinates.
-   - Determine rotation (if `fan` or `damper`).
-4. **Register**: Use `add_component` for single items or `add_components_batch` for multiple.
-   - Example: `add_component(component_type="fan", name="SF-1", coord=[10,5], rotation=180)`
-   - Example: `add_component(component_type="damper", name="MD-1", coord=[12,5], rotation=90)`
-   - Example: `add_component(component_type="variable_frequency_drive", name="VFD-1", coord=[15,6])`
-5. **Verify**: Use `read_internal_grid` to see existing equipment and verify all were registered.
-6. **Exit**: Summarize your actions.
+
+
+
+
+
 
 ---
