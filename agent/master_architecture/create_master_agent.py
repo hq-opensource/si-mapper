@@ -15,6 +15,7 @@ from tools.internal_grid_tools import (
     add_component, add_components_batch, delete_component,
     delete_components_batch, read_internal_grid, initialize_internal_grid
 )
+from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
 
 # --- Configuration ---
 load_dotenv()
@@ -69,7 +70,8 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         enqueue_grid_tasks,
         mark_technical_progress,
         mark_technical_progress_batch,
-        complete_tasks_batch
+        complete_tasks_batch,
+        capture_frontend_state_tool,
     ]
     
     master_agent = MasterLlmAgent(
