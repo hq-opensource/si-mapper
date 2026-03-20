@@ -52,7 +52,7 @@ class EventProcessor:
                     args_str = str(fn_call.args)
                 
                 # Check for state mutation tools
-                state_tools = ["add_task", "set_task_status", "update_task_status", "update_plan", "update_step", "update_status", "register_equipment_type", "update_state"]
+                state_tools = ["update_step", "update_status", "update_state", "register_equipment_type"]
                 event_type = EventType.STATE_MUTATION if fn_call.name in state_tools else EventType.ACTION_TRIGGER
                 
                 # Check for delegation tools

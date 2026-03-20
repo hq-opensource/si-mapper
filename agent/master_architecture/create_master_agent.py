@@ -9,7 +9,6 @@ from google.adk.agents import LlmAgent
 from google.adk.skills import load_skill_from_dir
 from google.adk.tools import skill_toolset
 from utils.logging_config import configure_logging
-from tools.task_tools import add_task, set_task_status, enqueue_grid_tasks, mark_technical_progress, mark_technical_progress_batch, complete_tasks_batch
 from tools.state_tools import save_agent_state, get_agent_state
 from tools.internal_grid_tools import (
     add_component, add_components_batch, delete_component,
@@ -56,20 +55,14 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
     skill_tools = skill_toolset.SkillToolset(skills=loaded_skills)
 
     task_tools = [
-        add_task,
-        set_task_status,
         save_agent_state,
         get_agent_state,
-        # Internal grid tools (write to ToolContext.state instead of MCP)
+        # Internal grid tools
         add_component,
         add_components_batch,
         delete_component,
         delete_components_batch,
         read_internal_grid,
-        enqueue_grid_tasks,
-        mark_technical_progress,
-        mark_technical_progress_batch,
-        complete_tasks_batch,
         capture_frontend_state_tool,
     ]
     
@@ -77,7 +70,6 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         model_name=model_name,
         subagents=subagents,
         tools=[skill_tools] + task_tools,
-        # tools=[skill_tools] + task_tools,
         session_id=session_id
     )
 

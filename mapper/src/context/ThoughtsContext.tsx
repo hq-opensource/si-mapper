@@ -26,22 +26,6 @@ export interface AgentEvent {
     trace_id?: string;
 }
 
-export interface AgentTask {
-    id: string;
-    agent_name: string;
-    description: string;
-    status: 'pending' | 'processing' | 'working' | 'verification_ready' | 'verified' | 'failed';
-    bacnet_status?: 'pending' | 'processing' | 'working' | 'verification_ready' | 'verified' | 'failed';
-    control_status?: 'pending' | 'processing' | 'working' | 'verification_ready' | 'verified' | 'failed';
-    electricity_status?: 'pending' | 'processing' | 'working' | 'verification_ready' | 'verified' | 'failed';
-    category?: string;
-    priority?: number;
-    retry_count: number;
-    created_at?: string;
-    updated_at?: string;
-    metadata?: unknown;
-}
-
 interface ThoughtsContextType {
     thoughts: Thought[];
     addThought: (id: string, content: string, agentName?: string) => void;
@@ -51,8 +35,6 @@ interface ThoughtsContextType {
     syncToolCalls: (newToolCalls: ToolCall[]) => void;
     events: AgentEvent[];
     syncEvents: (newEvents: AgentEvent[]) => void;
-    tasks: AgentTask[];
-    syncTasks: (newTasks: AgentTask[]) => void;
     data: Record<string, unknown>;
     syncData: (newData: Record<string, unknown>) => void;
 }
@@ -76,7 +58,6 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
     const [thoughts, setThoughts] = useState<Thought[]>([]);
     const [toolCalls, setToolCalls] = useState<ToolCall[]>([]);
     const [events, setEvents] = useState<AgentEvent[]>([]);
-    const [tasks, setTasks] = useState<AgentTask[]>([]);
     const [data, setData] = useState<Record<string, unknown>>({});
 
     const addThought = useCallback((id: string, content: string, agentName?: string) => {
@@ -205,34 +186,6 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
         });
     }, []);
 
-    const syncTasks = useCallback((newTasks: AgentTask[]) => {
-        const tasksArray = (Array.isArray(newTasks)
-            ? newTasks
-            : Object.values(newTasks)) as AgentTask[];
-
-        setTasks(prev => {
-            let changed = false;
-            const merged = [...prev];
-            tasksArray.forEach(nt => {
-                const idx = merged.findIndex(t => t.id === nt.id);
-                if (idx >= 0) {
-                    // Check if anything actually changed
-                    const existing = merged[idx];
-                    const isDifferent = Object.entries(nt).some(([key, value]) => existing[key as keyof AgentTask] !== value);
-                    if (isDifferent) {
-                        merged[idx] = { ...existing, ...nt };
-                        changed = true;
-                    }
-                } else {
-                    merged.push(nt);
-                    changed = true;
-                }
-            });
-            if (!changed) return prev;
-            return [...merged];
-        });
-    }, []);
-
     const syncData = useCallback((newData: Record<string, unknown>) => {
         setData(prev => {
             const hasChange = Object.entries(newData).some(([key, value]) => {
@@ -248,7 +201,6 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
             thoughts, addThought, syncThoughts,
             toolCalls, addToolCall, syncToolCalls,
             events, syncEvents,
-            tasks, syncTasks,
             data, syncData
         }}>
             {children}

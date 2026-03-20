@@ -4,7 +4,7 @@ import { useCopilotAction, useCoAgent } from "@copilotkit/react-core";
 import { useState, useEffect, useMemo } from "react";
 import { SplitSidebar } from "@/components/SplitSidebar";
 import { YourMainContent } from "@/app/page/components/YourMainContent";
-import { ThoughtsProvider, useThoughts, type Thought, type ToolCall, type AgentEvent, type AgentTask } from "@/context/ThoughtsContext";
+import { ThoughtsProvider, useThoughts, type Thought, type ToolCall, type AgentEvent } from "@/context/ThoughtsContext";
 import { useAgentPolling } from "@/hooks/useAgentPolling";
 
 type AgentState = {
@@ -13,8 +13,6 @@ type AgentState = {
   observed_steps: string[];
   data: Record<string, unknown>;
   active_agent?: string;
-  tasks?: AgentTask[];
-  plan?: string;
   thoughts?: Thought[];
   tool_calls?: ToolCall[];
   events?: AgentEvent[];
@@ -22,7 +20,7 @@ type AgentState = {
 
 // Internal component to handle syncing to context
 function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | null, agentState: AgentState }) {
-  const { syncThoughts, syncToolCalls, syncEvents, syncTasks, syncData } = useThoughts();
+  const { syncThoughts, syncToolCalls, syncEvents, syncData } = useThoughts();
 
   useEffect(() => {
     // 1. Merge sources (prioritize streaming agentState for real-time thoughts)
@@ -38,18 +36,15 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
       ...(agentState.tool_calls || []),
       ...(pooledState?.tool_calls || [])
     ];
-    const combinedTasks = pooledState?.tasks || agentState.tasks;
-
     if (combinedThoughts.length > 0) syncThoughts(combinedThoughts);
     if (combinedToolCalls.length > 0) syncToolCalls(combinedToolCalls);
     if (combinedEvents.length > 0) syncEvents(combinedEvents);
-    if (combinedTasks && combinedTasks.length > 0) syncTasks(combinedTasks);
 
     // 2. Sync Custom Data
     const { data } = pooledState || {};
     const adkData = agentState.data;
 
-    const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'tasks', 'plan', 'thoughts', 'tool_calls', 'events', 'data'];
+    const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'thoughts', 'tool_calls', 'events', 'data'];
     
     // Filter rest from both sources
     const pooledRest = pooledState ? Object.fromEntries(
@@ -68,7 +63,7 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
     if (Object.keys(customData).length > 0) {
       syncData(customData);
     }
-  }, [pooledState, agentState, syncThoughts, syncToolCalls, syncEvents, syncTasks, syncData]);
+  }, [pooledState, agentState, syncThoughts, syncToolCalls, syncEvents, syncData]);
 
   return null;
 }
@@ -102,9 +97,6 @@ export default function CopilotKitPage() {
   const combinedState = {
     ...agentState,
     ...(pooledState || {}),
-    // Explicitly merge lists if they exist in pooled state
-    tasks: pooledState?.tasks || agentState.tasks,
-    plan: pooledState?.plan || agentState.plan,
     status: pooledState?.status || agentState.status,
     current_step: pooledState?.current_step || agentState.current_step,
     active_agent: pooledState?.active_agent || agentState.active_agent,

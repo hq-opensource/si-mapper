@@ -5,11 +5,9 @@ import { ExternalPageIframe } from "./ExternalPageIframe";
 import { AgentNavbar } from "./AgentNavbar"; // New component
 import { type AgentState } from "./AgentStateOverlay";
 import { SvarFileManager } from "@/components/SvarFileManager";
-import { Markdown } from "@copilotkit/react-ui";
-import { FileText, BarChart2, Folder, Eye, Edit3 } from "lucide-react";
+import { BarChart2, Folder, Eye, Edit3 } from "lucide-react";
 import { ThoughtsWindow } from "./ThoughtsWindow";
 import { ToolCallsWindow } from "./ToolCallsWindow";
-import { TasksWindow } from "./TasksWindow";
 import { StateWindow } from "./StateWindow";
 import { SharedPageContainer } from "./SharedPageContainer";
 import { StatusPlaceholder } from "./StatusPlaceholder";
@@ -33,7 +31,7 @@ const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
 
 function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agentState: AgentState }) {
   // Determine initial view based on props but allow internal navigation
-  const [activeTab, setActiveTab] = useState<'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts'>(isEditMode ? 'edit' : 'view');
+  const [activeTab, setActiveTab] = useState<'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts'>(isEditMode ? 'edit' : 'view');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   // Initialize theme: Default to light mode, ignore system preference
   useEffect(() => {
@@ -50,20 +48,8 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
     localStorage.setItem('app-theme', newTheme);
   };
 
-  const handleTabChange = (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts') => {
+  const handleTabChange = (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts') => {
     setActiveTab(tab);
-  };
-
-  // Helper for plan formatting (reused from previous overlay logic)
-  const formatPlanContent = (content: string) => {
-    if (!content) return "";
-    return content
-      .replace(/\[NEW\]/g, '✨ **NEW**')
-      .replace(/\[MODIFY\]/g, '🔨 **MODIFY**')
-      .replace(/\[REMOVE\]/g, '🗑️ **REMOVE**')
-      .replace(/\[IMPORTANT\]/g, '⚠️ **IMPORTANT**')
-      .replace(/\[NOTE\]/g, '📝 **NOTE**')
-      .replace(/\[INFO\]/g, 'ℹ️ **INFO**');
   };
 
   const renderContent = () => {
@@ -79,38 +65,6 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
       case 'artifacts':
         return <ArtifactsDashboard />;
 
-      case 'plans':
-        return (
-          <SharedPageContainer
-            title="Plans"
-            subtitle="Agent Created Plans"
-            icon={FileText}
-            fullWidth
-            fullHeight
-          >
-            {
-              agentState.plan ? (
-                <div className="prose prose-sm max-w-none 
-                                  prose-headings:font-bold prose-headings:text-[var(--foreground)] 
-                                  prose-p:text-[var(--foreground)] prose-p:leading-relaxed
-                                  prose-li:text-[var(--foreground)] prose-li:marker:text-[var(--muted-foreground)]
-                                  prose-strong:text-[var(--foreground)] prose-strong:font-extrabold
-                                  prose-hr:border-[var(--muted-foreground)]
-                                  prose-pre:bg-[var(--card-foreground)] prose-pre:text-[var(--background)]
-                              ">
-                  <Markdown content={formatPlanContent(agentState.plan)} />
-                </div>
-              ) : (
-                <StatusPlaceholder
-                  icon={FileText}
-                  title="No Plan Available"
-                  subtitle="Agent has not generated a proposal yet"
-                />
-              )}
-          </SharedPageContainer>
-        );
-      case 'todo':
-        return <TasksWindow />;
       case 'view':
         return (
           <SharedPageContainer

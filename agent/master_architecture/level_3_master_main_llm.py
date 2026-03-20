@@ -7,7 +7,7 @@ from google.adk.tools import load_artifacts
 
 from master_architecture.tools.loop_exit_tools import exit_loop_level_2
 from master_architecture.tools.ingest_category_tool import ingest_category_files_tool
-from tools.progress_tool import update_step, update_status, update_plan, sync_tasks
+from tools.progress_tool import update_step, update_status
 from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
 from utils.grid_sync_graphivac_to_agent import sync_graphivac_to_agent_callback
 from utils.prompt_utils import load_prompt_instruction
@@ -37,7 +37,7 @@ class MasterLlmAgent(LlmAgent):
             instruction = load_prompt_instruction("master_architecture/prompts/master_instruction.md")
 
 
-        default_tools = [ingest_category_files_tool, load_artifacts, update_step, update_status, update_plan, sync_tasks, exit_loop_level_2]
+        default_tools = [ingest_category_files_tool, load_artifacts, update_step, update_status, exit_loop_level_2]
         agent_tools = [AgentTool(agent=sa) for sa in (subagents or [])]
         final_tools = default_tools + (tools or []) + agent_tools
 

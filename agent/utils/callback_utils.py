@@ -452,7 +452,7 @@ async def shared_model_callback(
         target_store = GLOBAL_SESSION_STORE[session_id]
         
         # Lists that need careful merging/deduplication
-        list_keys = ["events", "thoughts", "tool_calls", "tasks"]
+        list_keys = ["events", "thoughts", "tool_calls"]
         
         for key, value in current_state_dict.items():
             if key in list_keys and isinstance(value, list):

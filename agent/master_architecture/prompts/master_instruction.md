@@ -22,8 +22,16 @@ You can perform the following tasks: "Draw an HVAC system", "Find BACnet points"
 **Draw an HVAC system** : 
 1. Load the HVAC files using the `ingest_category_files` using category `hvac`. Loda all files inside this category using the `load_artifacts` tool.
 2. Analyze the files and understand the HVAC system. If a legend is present, use it to understand the HVAC system. Loading the files does not mean that you understand the HVAC system. You need to wait for the files to be loaded and then analyze them. Proceed to the next step only when you understand the HVAC system.
-3. Load the skill `skill-horizontal-ducts` and the skill `skill-vertical-ducts` and use the knowledge of the skill to draw the horizontal ducts and the vertical ducts found on the HVAC files. After drawing all horizontal ducts and vertical ducts, continue to next step.
-4. Load the skill `skill-hvac-equipments` and use the knowledge of the skill to draw the HVAC equipments. After drawing all HVAC equipments, mark your task as finished.
+3. Load the skill `skill-horizontal-ducts` and the skill `skill-vertical-ducts` and use the knowledge of the skill to draw the horizontal ducts and the vertical ducts found on the HVAC files. After drawing all horizontal and vertical ducts, perform a **Duct Verification Checkpoint**:
+   - Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
+   - Compare the snapshot against the reference image. Verify that all horizontal and vertical ducts are present, correctly positioned, and flow directions are correct.
+   - If discrepancies are found, correct them and repeat the checkpoint until the ducts match the reference.
+   - **Do not proceed to step 4 until the duct layout is confirmed correct.**
+4. Load the skill `skill-hvac-equipments` and use the knowledge of the skill to draw the HVAC equipments. After drawing all HVAC equipments, perform an **Equipment Verification Checkpoint**:
+   - Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
+   - Compare the snapshot against the reference image. Verify that all equipment components are present, correctly positioned, and correctly attached to the ducts.
+   - If discrepancies are found, correct them and repeat the checkpoint until the equipment matches the reference.
+   - Only mark the task as finished after visual confirmation passes.
 
 **Find BACnet points** : 
 1. Load the BACnet files using the `ingest_category_files` using category `bacnet`. Loda all files inside this category using the `load_artifacts` tool.
@@ -57,19 +65,19 @@ You can perform the following tasks: "Draw an HVAC system", "Find BACnet points"
 
 ## Visual Verification Protocol
 
-When you believe you have finished placing all components for a task, you MUST verify your work visually before declaring the task complete:
+Verification checkpoints are embedded directly in the "Draw an HVAC system" workflow (after ducts, after equipment). Use this protocol at each checkpoint:
 
-1. Call `capture_frontend_state()` to take a screenshot of the live Graphivac canvas.
-2. Call `load_artifacts(artifact_names=["verification/latest_snapshot.png"])` to inspect the screenshot.
-3. Compare the canvas snapshot against the original reference image. Check that:
-   - All expected components are visible on the grid
-   - Components are positioned at the correct coordinates
-   - Flow directions and connections appear correct
-   - No phantom or misplaced components exist
-4. If discrepancies are found, correct the placement using the internal grid tools, then repeat from step 1.
-5. Only declare the task complete after visual confirmation matches the reference.
+1. Call `capture_frontend_state()` — this is always a standalone call, do not pair it with other tools.
+2. Call `load_artifacts(artifact_names=["verification/latest_snapshot.png"])` — standalone call, read the image before doing anything else.
+3. Compare the snapshot against the reference image. Check:
+   - All expected components for this phase are visible
+   - Components are at the correct coordinates
+   - Flow directions are correct
+   - No missing or misplaced components
+4. If discrepancies are found, correct them with the internal grid tools, then repeat from step 1.
+5. Only advance to the next phase (or declare done) after the snapshot matches the reference.
 
-If `capture_frontend_state()` returns an error, proceed without visual verification and note the failure in your response.
+If `capture_frontend_state()` returns an error, note the failure and proceed without visual verification for that checkpoint.
 
 **STOP.** Before your next turn, look at your `SkillToolset`. Identify which skill matches the user's request and load it (e.g. `skill-hvac-equipments`). Do not attempt to solve the user's problem without a skill active.
 

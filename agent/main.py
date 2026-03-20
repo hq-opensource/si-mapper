@@ -13,7 +13,6 @@ from ag_ui_adk import ADKAgent, add_adk_fastapi_endpoint
 
 # Local imports
 from master_architecture.create_master_agent import create_master_agent
-from sub_agents import HorizontalDuctLlmAgent, VerticalDuctLlmAgent, EquipmentLlmAgent, BacnetLlmAgent, ControlLlmAgent, ElectricityLlmAgent
 from utils.logging_config import configure_logging
 from utils.mcp_utils import create_mcp_toolset
 from utils.callback_utils import GLOBAL_SESSION_STORE
@@ -58,19 +57,8 @@ def create_app() -> FastAPI:
         }
     GLOBAL_SESSION_STORE["latest"] = GLOBAL_SESSION_STORE[session_id]
     
-    # Create subagents
-    horizontal_agent = HorizontalDuctLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
-    vertical_agent = VerticalDuctLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
-    equipment_agent = EquipmentLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
-    bacnet_agent = BacnetLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
-    control_agent = ControlLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
-    electricity_agent = ElectricityLlmAgent(model_name=SHARED_ADK_MODEL, session_id=session_id, tools=[si_mapper_toolset])
-    
-    subagents = [horizontal_agent, vertical_agent, equipment_agent, bacnet_agent, control_agent, electricity_agent]
-    
     # Create Master Agent
     master_agent = create_master_agent(session_id=session_id, model_name=SHARED_ADK_MODEL)
-    # master_agent = create_master_agent(session_id=session_id, subagents=subagents, model_name=SHARED_ADK_MODEL)
 
     # 3. Wrap with ADK
     adk_agent = ADKAgent(

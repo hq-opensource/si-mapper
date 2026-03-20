@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 import logging
 from typing import Any
@@ -60,7 +61,8 @@ class CaptureFrontendStateTool(BaseTool):
             async with async_playwright() as p:
                 browser = await p.chromium.launch(headless=True)
                 page = await browser.new_page()
-                await page.goto(view_url, wait_until="networkidle")
+                await page.goto(view_url, wait_until="load")
+                await asyncio.sleep(3)
                 png_bytes = await page.screenshot(full_page=True)
                 await browser.close()
         except Exception as e:

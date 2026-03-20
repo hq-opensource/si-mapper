@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, ListTodo, Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package } from "lucide-react";
+import { Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package } from "lucide-react";
 import { AgentState } from "./AgentStateOverlay";
 import { useState, useEffect } from "react";
 import { useThoughts } from "@/context/ThoughtsContext";
@@ -8,8 +8,8 @@ import { formatAgentName } from "@/lib/utils";
 
 interface AgentNavbarProps {
     agentState: AgentState;
-    activeTab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts';
-    onTabChange: (tab: 'thoughts' | 'plans' | 'todo' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts') => void;
+    activeTab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts';
+    onTabChange: (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts') => void;
 }
 
 export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarProps) {
@@ -24,8 +24,6 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         { id: 'edit', label: 'Edit', icon: Edit3 },
         { id: 'graph', label: 'Graph', icon: BarChart2 },
         { id: 'thoughts', label: 'Thoughts', icon: Brain },
-        { id: 'plans', label: 'Plans', icon: FileText },
-        { id: 'todo', label: 'Tasks', icon: ListTodo },
         { id: 'state', label: 'State', icon: Database },
         { id: 'tools', label: 'Tools', icon: Wrench },
         { id: 'performance', label: 'Performance', icon: BarChart2 },
@@ -34,18 +32,14 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         { id: 'debug', label: 'Debug', icon: BarChart2 },
     ] as const;
 
-    const { events, tasks, data } = useThoughts();
+    const { events, data } = useThoughts();
 
     const [hasNewThoughts, setHasNewThoughts] = useState(false);
-    const [hasNewPlan, setHasNewPlan] = useState(false);
-    const [hasNewTodo, setHasNewTodo] = useState(false);
     const [hasNewTools, setHasNewTools] = useState(false);
     const [hasNewState, setHasNewState] = useState(false);
     const [hasNewPerformance, setHasNewPerformance] = useState(false);
     const [hasNewArtifacts, setHasNewArtifacts] = useState(false);
     const [lastEventCount, setLastEventCount] = useState(0);
-    const [lastTaskCount, setLastTaskCount] = useState(0);
-    const [lastPlanContent, setLastPlanContent] = useState("");
     const [lastDataHash, setLastDataHash] = useState("");
 
     // Track new events (Thoughts/Tools)
@@ -68,26 +62,6 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         }
     }, [events, activeTab, lastEventCount]);
 
-    // Track new tasks
-    useEffect(() => {
-        if (tasks.length > lastTaskCount) {
-            if (activeTab !== 'todo') {
-                setHasNewTodo(true);
-            }
-            setLastTaskCount(tasks.length);
-        }
-    }, [tasks.length, activeTab, lastTaskCount]);
-
-    // Track new plans
-    useEffect(() => {
-        if (agentState.plan && agentState.plan !== lastPlanContent) {
-            if (activeTab !== 'plans') {
-                setHasNewPlan(true);
-            }
-            setLastPlanContent(agentState.plan);
-        }
-    }, [agentState.plan, lastPlanContent, activeTab]);
-
     // Track new state data
     useEffect(() => {
         const currentHash = JSON.stringify(data);
@@ -102,8 +76,6 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
     // Reset markers when visiting tabs
     useEffect(() => {
         if (activeTab === 'thoughts') setHasNewThoughts(false);
-        if (activeTab === 'plans') setHasNewPlan(false);
-        if (activeTab === 'todo') setHasNewTodo(false);
         if (activeTab === 'tools') setHasNewTools(false);
         if (activeTab === 'state') setHasNewState(false);
         if (activeTab === 'performance') setHasNewPerformance(false);
@@ -141,8 +113,6 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
                 {navItems.map((item) => {
                     const isNew =
                         (item.id === 'thoughts' && hasNewThoughts) ||
-                        (item.id === 'plans' && hasNewPlan) ||
-                        (item.id === 'todo' && hasNewTodo) ||
                         (item.id === 'state' && hasNewState) ||
                         (item.id === 'performance' && hasNewPerformance) ||
                         (item.id === 'artifacts' && hasNewArtifacts) ||
