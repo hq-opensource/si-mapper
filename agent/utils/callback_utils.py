@@ -27,7 +27,6 @@ def _log_artifact_visibility(callback_context: CallbackContext, llm_request: Any
     is actually receiving image/artifact bytes on this LLM call.
     """
     agent_name = callback_context.agent_name
-    SEP = "─" * 68
     contents = getattr(llm_request, "contents", None)
     if not contents:
         return
@@ -71,20 +70,7 @@ def _log_artifact_visibility(callback_context: CallbackContext, llm_request: Any
                             )
 
     if artifact_summary or tool_response_blobs:
-        print(f"\n{SEP}")
-        print(f"  🖼️  ARTIFACT VISIBILITY CHECK — {agent_name}")
-        print(SEP)
-        print(f"  Total turns in context: {len(contents)}")
-        if artifact_summary:
-            print("  Inline blobs visible to model:")
-            for line in artifact_summary:
-                print(line)
-        if tool_response_blobs:
-            print("  Blobs inside tool responses:")
-            for line in tool_response_blobs:
-                print(line)
-        print(f"  ✅ Model WILL see {len(artifact_summary) + len(tool_response_blobs)} artifact blob(s) this call.")
-        print(f"{SEP}\n")
+        pass
 
         # Emit event for frontend
         metadata = {
@@ -116,12 +102,7 @@ def _log_artifact_visibility(callback_context: CallbackContext, llm_request: Any
             if last_tool_call:
                 break
         if last_tool_call == "load_artifacts":
-            print(f"\n{SEP}")
-            print(f"  ⚠️  ARTIFACT VISIBILITY CHECK — {agent_name}")
-            print(SEP)
-            print(f"  last tool call was 'load_artifacts' BUT no inline blobs found in request.")
-            print(f"  ❌ Model will NOT see any artifact content this call — artifacts may have been dropped.")
-            print(f"{SEP}\n")
+            pass
 
             # Emit event for frontend
             event = AgentEvent(
@@ -186,12 +167,8 @@ async def _ensure_pending_artifacts_injected(
         return
 
     # ADK's injection missed — inject manually.
-    SEP = "─" * 68
     agent_name = callback_context.agent_name
-    print(f"\n{SEP}")
-    print(f"  🔄 STICKY ARTIFACT RE-INJECTION — {agent_name}")
-    print(SEP)
-    print(f"  ADK check missed (load_artifacts was not last tool). Re-injecting: {pending}")
+    pass
 
     injected = []
     for name in pending:
@@ -199,7 +176,7 @@ async def _ensure_pending_artifacts_injected(
         if artifact is None and not name.startswith("user:"):
             artifact = await callback_context.load_artifact(f"user:{name}")
         if artifact is None:
-            print(f"  ⚠️  Artifact '{name}' not found in artifact service, skipping.")
+            logger.warning(f"  ⚠️  Artifact '{name}' not found in artifact service, skipping.")
             continue
 
         size_info = ""
@@ -216,11 +193,9 @@ async def _ensure_pending_artifacts_injected(
             )
         )
         injected.append(name)
-        print(f"  ✅ Injected '{name}'{size_info}")
+        # Logged to frontend
 
-    if injected:
-        print(f"  Model will now see {len(injected)} artifact(s) this call.")
-    print(f"{SEP}\n")
+    pass
 
     if injected:
         event = AgentEvent(
@@ -390,18 +365,7 @@ async def shared_model_callback(
             state["temp:_pending_artifacts"] = requested_names
 
         other_tools = [t for t in fn_calls_in_response if t != "load_artifacts"]
-        SEP = "─" * 68
-        print(f"\n{SEP}")
-        print(f"  📥 load_artifacts CALLED — {agent_name}")
-        print(SEP)
-        print(f"  Requested artifacts: {requested_names}")
-        print(f"  All tool calls in this response: {fn_calls_in_response}")
-        if other_tools:
-            print(f"  ⚠️  Called alongside other tools: {other_tools}")
-            print(f"  ⚠️  ADK injection may miss — sticky re-injection will fire next call if needed.")
-        else:
-            print(f"  ✅ Called alone — ADK injection should work. Sticky re-injection is standby.")
-        print(f"{SEP}\n")
+        pass
 
         # Emit event for frontend
         event = AgentEvent(

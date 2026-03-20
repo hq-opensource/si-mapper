@@ -21,8 +21,8 @@ You can perform the following tasks: "Draw an HVAC system", "Find BACnet points"
 
 **Draw an HVAC system** : 
 1. Load the HVAC files using the `ingest_category_files` using category `hvac`. Loda all files inside this category using the `load_artifacts` tool.
-2. Load the skill `skill-horizontal-ducts` and use the knowledge of the skill to draw the horizontal ducts. After drawing all horizontal ducts, continue to next step.
-3. Load the skill `skill-vertical-ducts` and use the knowledge of the skill to draw the vertical ducts. After drawing all vertical ducts, continue to next step.
+2. Analyze the files and understand the HVAC system. If a legend is present, use it to understand the HVAC system. Loading the files does not mean that you understand the HVAC system. You need to wait for the files to be loaded and then analyze them. Proceed to the next step only when you understand the HVAC system.
+3. Load the skill `skill-horizontal-ducts` and the skill `skill-vertical-ducts` and use the knowledge of the skill to draw the horizontal ducts and the vertical ducts found on the HVAC files. After drawing all horizontal ducts and vertical ducts, continue to next step.
 4. Load the skill `skill-hvac-equipments` and use the knowledge of the skill to draw the HVAC equipments. After drawing all HVAC equipments, mark your task as finished.
 
 **Find BACnet points** : 
