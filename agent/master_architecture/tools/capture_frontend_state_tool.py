@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class CaptureFrontendStateTool(BaseTool):
     """
     A tool that launches headless Chromium via Playwright, navigates to the
-    GraphyVAC view-only URL, takes a PNG screenshot, saves it as a session
+    Graphivac view-only URL, takes a PNG screenshot, saves it as a session
     artifact, and returns a status dict.
 
     NOTE: Run `playwright install chromium` once after installing dependencies.
@@ -24,7 +24,7 @@ class CaptureFrontendStateTool(BaseTool):
         super().__init__(
             name='capture_frontend_state',
             description=(
-                "Takes a screenshot of the live GraphyVAC canvas and saves it as a session artifact. "
+                "Takes a screenshot of the live Graphivac canvas and saves it as a session artifact. "
                 "After calling this, use load_artifacts(artifact_names=[\"verification/latest_snapshot.png\"]) "
                 "to inspect the image."
             ),

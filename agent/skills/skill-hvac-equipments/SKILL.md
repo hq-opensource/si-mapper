@@ -12,7 +12,7 @@ Place HVAC equipment on the established duct system.
 ## Rules
 
 ### Placement Requirements
-- **Read the grid first**: Always use the tool `read_grid` to see existing ducts
+- **Read the grid first**: Always use the tool `read_internal_grid` to see existing ducts
 - **Snap to ducts**: Equipment must be placed exactly on its parent duct's line
   - Horizontal duct at Y1 → equipment at `[X, Y1]`
   - Vertical duct at X1 → equipment at `[X1, Y]`
@@ -22,16 +22,20 @@ Place HVAC equipment on the established duct system.
 ---
 
 ## Equipment Types
-Use these exact type strings:
-- **Coils**: `cooling_coil`, `heating_coil`
-- **Movement**: `supply_fan`, `damper`
-- **Other**: `filter`, `humidifier`, `thermal_wheel`
-- **Sensors**: `enthalpy_sensor`, `temperature_sensor`, `differential_pressure_sensor`, `humidity_sensor`, `flow_sensor`, `low_limit_sensor`
+Use these exact type strings from `internal_grid_tools.py`:
+- **Coils**: `cooling_coil`, `heating_coil`, `boiler`, `heat_pump`
+- **Air Handling**: `fan`, `filter`, `damper`, `thermal_wheel`, `humidifier`
+- **Piping**: `pump`, `valve_three_way`, `valve_two_way`, `pipe_chiller`
+- **Room**: `room_baseboard`
+- **Sensors**: 
+    - Duct: `duct_sensor_enthalpy`, `duct_sensor_temperature`, `duct_sensor_differential_pressure`, `duct_sensor_humidity`, `duct_sensor_flow`, `duct_sensor_low_limit`, `duct_sensor_static_pressure`
+    - Pipe: `pipe_sensor_temperature`
 - **Electric**: `variable_frequency_drive`
 
 ---
 
 ## Rotation Rules
+Only `fan` and `damper` types use the `rotation` parameter.
 
 ### Dampers
 - Horizontal duct: `rotation: 0`
@@ -44,7 +48,7 @@ Use these exact type strings:
 - Bottom → Top: `rotation: 270`
 
 ### All Other Equipment
-- Default: `rotation: 0`
+- Ignore rotation or set to `0`.
 
 ---
 
@@ -52,44 +56,31 @@ Use these exact type strings:
 
 Some equipment sits outside the duct (below its parent component):
 
-### Differential Pressure Sensor
-- Associated with: Filter
+### Differential Pressure Sensor (`duct_sensor_differential_pressure`)
+- Associated with: `filter`
 - Placement: Same X-coordinate, Y + 1 unit down
 - Example: Filter at `[10, 5]` → Sensor at `[10, 6]`
 
-### Variable Frequency Drive (variable_frequency_drive)
-- Associated with: Supply Fan or Return Fan
+### Variable Frequency Drive (`variable_frequency_drive`)
+- Associated with: `fan`
 - Placement: Same X-coordinate, Y + 1 unit down
-- Example: Fan at `[15, 5]` → Variable Frequency Drive at `[15, 6]`
+- Example: Fan at `[15, 5]` → VFD at `[15, 6]`
 
 ---
 
 ## Workflow
 
-1. **Load context**: Use `load_artifacts` to view drawings
-2. **Read grid**: Use `read_grid` to get duct coordinates
+1. **Load context**: Use `load_artifacts` to view drawings.
+2. **Read grid**: Use `read_internal_grid` to get duct coordinates.
 3. **Analyze**: For each equipment piece:
-   - Identify type and position
-   - Find parent duct and snap coordinates
-   - Determine rotation
-4. **Register**: Iterate and call the specific creation tool for EACH item found.
-   - Example: `create_fan("fan_1", [10,5], rotation=180)`
-   - Example: `create_damper("damper_1", [12,5], rotation=90)`
-   - Example: `create_variable_frequency_drive("vfd_1", [15,6])`
-5. **Verify**: Analize each duct at a time, count equipements, call the tool `read_grid` to see existing equipements, verify ifall equipements were already registered.
-6. **Exit**: Call `exit_loop_level_4(summary="description of what you placed")`
+   - Identify type (from the list above) and position.
+   - Find parent duct and snap coordinates.
+   - Determine rotation (if `fan` or `damper`).
+4. **Register**: Use `add_component` for single items or `add_components_batch` for multiple.
+   - Example: `add_component(component_type="fan", name="SF-1", coord=[10,5], rotation=180)`
+   - Example: `add_component(component_type="damper", name="MD-1", coord=[12,5], rotation=90)`
+   - Example: `add_component(component_type="variable_frequency_drive", name="VFD-1", coord=[15,6])`
+5. **Verify**: Use `read_internal_grid` to see existing equipment and verify all were registered.
+6. **Exit**: Summarize your actions.
 
 ---
-
-## Output Format
-Return a JSON summary of what you found and placed.
-```json
-{
-  "fans": {
-    "supply_fan_1": {"position": [10, 5], "rotation": 0}
-  },
-  "coils": {
-    "cooling_coil_1": {"position": [15, 5]}
-  }
-}
-```

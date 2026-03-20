@@ -29,13 +29,13 @@ metrics:
 
 # Phase 08 Plan 01: capture_frontend_state Tool Summary
 
-**One-liner:** Headless Chromium Playwright tool that screenshots the live GraphyVAC canvas and saves it as a PNG session artifact for agent self-correction.
+**One-liner:** Headless Chromium Playwright tool that screenshots the live Graphivac canvas and saves it as a PNG session artifact for agent self-correction.
 
 ## What Was Built
 
-Created `CaptureFrontendStateTool`, a `BaseTool` subclass that gives the Master Agent the ability to visually inspect the GraphyVAC canvas. The tool:
+Created `CaptureFrontendStateTool`, a `BaseTool` subclass that gives the Master Agent the ability to visually inspect the Graphivac canvas. The tool:
 
-1. Constructs the GraphyVAC view-only URL from four `GRAPHIVAC_*` env vars (stripping `/api/v1` from the base URL).
+1. Constructs the Graphivac view-only URL from four `GRAPHIVAC_*` env vars (stripping `/api/v1` from the base URL).
 2. Launches headless Chromium via Playwright (lazy import inside `run_async`).
 3. Navigates to the URL with `wait_until="networkidle"`, takes a full-page PNG screenshot.
 4. Saves the PNG as a session artifact at `verification/latest_snapshot.png` via `tool_context.save_artifact`.

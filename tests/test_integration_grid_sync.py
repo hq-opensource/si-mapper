@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Integration test: exercises the full translator + REST pipeline against a real GraphyVAC grid.
+Integration test: exercises the full translator + REST pipeline against a real Graphivac grid.
 
 Usage:
     GRAPHIVAC_BASE_URL=https://... GRAPHIVAC_ORG_ID=... GRAPHIVAC_PROJECT_ID=... GRAPHIVAC_GRID_ID=... python tests/test_integration_grid_sync.py
@@ -10,7 +10,7 @@ The script will:
 2. Parse it to internal_grid using the translator
 3. Add test components (a duct, a pipe, a fan with rotation, a sensor)
 4. Translate back to EDN using the translator
-5. PUT to GraphyVAC
+5. PUT to Graphivac
 6. Print verification instructions for the human
 """
 import os
@@ -63,7 +63,7 @@ def main():
     url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
 
     # --- Step 1: GET the live grid ---
-    print("Step 1: Reading live grid from GraphyVAC...")
+    print("Step 1: Reading live grid from Graphivac...")
     response = requests.get(url, headers={"Accept": "application/edn"}, timeout=10)
     response.raise_for_status()
     edn_data = edn_format.loads(response.text)
@@ -89,7 +89,7 @@ def main():
     print("Step 3: Added 4 test components (duct, pipe, fan with rot=90, temp sensor)")
 
     # --- Step 4: Translate back to EDN and PUT ---
-    print("Step 4: Translating to EDN and PUTting to GraphyVAC...")
+    print("Step 4: Translating to EDN and PUTting to Graphivac...")
     new_comps = internal_grid_to_edn_comps(internal_grid)
     raw_edn_grid[Keyword("comps")] = new_comps
     data = edn_format.dumps(raw_edn_grid)
@@ -105,7 +105,7 @@ def main():
     print("VERIFICATION INSTRUCTIONS")
     print("=" * 60)
     print()
-    print("Open the GraphyVAC UI and check the grid. You should see:")
+    print("Open the Graphivac UI and check the grid. You should see:")
     print()
     print("  1. TEST-DUCT-1: A duct line from [0,15] to [10,15]")
     print("  2. TEST-PIPE-1: A pipe line from [-3,17] to [1,17]")
@@ -119,7 +119,7 @@ def main():
     print()
     print("CLEANUP: To remove test components, re-run the agent or")
     print("manually delete TEST-DUCT-1, TEST-PIPE-1, TEST-FAN-1, TEST-SENSOR-1")
-    print("from the GraphyVAC UI.")
+    print("from the Graphivac UI.")
     print("=" * 60)
 
 
@@ -127,16 +127,16 @@ if __name__ == "__main__":
     try:
         main()
     except requests.exceptions.HTTPError as e:
-        print(f"\nERROR: HTTP error from GraphyVAC: {e}")
+        print(f"\nERROR: HTTP error from Graphivac: {e}")
         print(f"  Response status: {e.response.status_code}")
         print(f"  Response body: {e.response.text[:500]}")
         sys.exit(1)
     except requests.exceptions.ConnectionError as e:
-        print(f"\nERROR: Could not connect to GraphyVAC: {e}")
+        print(f"\nERROR: Could not connect to Graphivac: {e}")
         print("  Check that GRAPHIVAC_BASE_URL is correct and the server is running.")
         sys.exit(1)
     except requests.exceptions.Timeout:
-        print("\nERROR: Request to GraphyVAC timed out.")
+        print("\nERROR: Request to Graphivac timed out.")
         print("  Check that the server is reachable and responding.")
         sys.exit(1)
     except Exception as e:

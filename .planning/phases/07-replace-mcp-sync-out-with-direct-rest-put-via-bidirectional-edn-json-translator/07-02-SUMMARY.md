@@ -104,7 +104,7 @@ None - no external service configuration required.
 
 - Both sync callbacks are now MCP-free and use the translator
 - The sync lifecycle is: fetch EDN -> save raw + translate to internal_grid -> agent turn -> translate back -> single REST PUT
-- Integration test (standalone script to verify against live GraphyVAC) was noted as deferred to the verification checkpoint in plan 07-03
+- Integration test (standalone script to verify against live Graphivac) was noted as deferred to the verification checkpoint in plan 07-03
 
 ---
 *Phase: 07-replace-mcp-sync-out-with-direct-rest-put-via-bidirectional-edn-json-translator*

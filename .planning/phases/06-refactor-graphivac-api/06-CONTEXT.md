@@ -6,9 +6,9 @@
 <domain>
 ## Phase Boundary
 
-Redesign the agent↔GraphyVAC communication architecture. Instead of the agent calling MCP tools that immediately write to GraphyVAC (long round-trip: vision → tool params → API call → read_grid), the agent writes to an internal state (ADK ToolContext.state) using a simplified tool layer. A standalone sync service watches that internal state and calls the existing MCP server to replicate it in GraphyVAC in real time.
+Redesign the agent↔Graphivac communication architecture. Instead of the agent calling MCP tools that immediately write to Graphivac (long round-trip: vision → tool params → API call → read_grid), the agent writes to an internal state (ADK ToolContext.state) using a simplified tool layer. A standalone sync service watches that internal state and calls the existing MCP server to replicate it in Graphivac in real time.
 
-The MCP server itself is NOT modified. The existing GraphyVAC API client and manager/tool layer stay intact.
+The MCP server itself is NOT modified. The existing Graphivac API client and manager/tool layer stay intact.
 
 </domain>
 
@@ -22,7 +22,7 @@ The MCP server itself is NOT modified. The existing GraphyVAC API client and man
 - IDs, names, and coordinates are mandatory fields on every component entry
 
 ### Agent tool interface (new internal-state layer)
-- Replicate the existing MCP tool surface, but writing to `ToolContext.state` instead of calling GraphyVAC
+- Replicate the existing MCP tool surface, but writing to `ToolContext.state` instead of calling Graphivac
 - Support both single-element and batch operations (add/delete)
 - Read back from internal state at any time (agent self-corrects: "I found 3 fans but image shows 5 → add 2 more")
 - Flexible CRUD: add one, add batch, delete one, delete batch

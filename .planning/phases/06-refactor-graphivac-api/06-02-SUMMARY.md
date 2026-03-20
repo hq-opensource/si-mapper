@@ -12,13 +12,13 @@ requires:
     provides: MCP server at port 8080 with create_*/delete_* tools for all component types
 
 provides:
-  - Standalone sync service (sync_service/) that bridges agent internal state and GraphyVAC rendering
+  - Standalone sync service (sync_service/) that bridges agent internal state and Graphivac rendering
   - McpSyncClient — maps any component type to correct MCP create/delete tool call
   - SyncEngine — diffs internal_grid by component name, persists crash-recovery state
   - main.py — polling loop that reads agent /session_state every 2 seconds
 
 affects:
-  - 06-03 (agent prompt updates will reference sync service as the GraphyVAC bridge)
+  - 06-03 (agent prompt updates will reference sync service as the Graphivac bridge)
 
 # Tech tracking
 tech-stack:
@@ -105,7 +105,7 @@ None - no external service configuration required. Sync service uses existing ag
 
 ## Next Phase Readiness
 - Sync service is ready: `python -m sync_service.main` once agent and MCP server are running
-- 06-03 (agent prompt updates) can proceed — sync service is the bridge that makes internal_grid changes visible in GraphyVAC
+- 06-03 (agent prompt updates) can proceed — sync service is the bridge that makes internal_grid changes visible in Graphivac
 
 ---
 *Phase: 06-refactor-graphivac-api*

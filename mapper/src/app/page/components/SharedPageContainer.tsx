@@ -58,13 +58,22 @@ export function SharedPageContainer({
             </div>
 
             {/* Scrollable Content Area */}
-            <div className={`flex-1 ${fullHeight ? 'overflow-hidden flex flex-col h-full' : 'overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-[var(--muted-foreground)]/20 scrollbar-track-transparent'}`}>
+            <div className={`flex-1 overflow-x-hidden scrollbar-thin scrollbar-thumb-[var(--muted-foreground)]/20 scrollbar-track-transparent ${fullHeight ? 'flex flex-col h-full overflow-y-auto' : 'overflow-y-auto'}`}>
                 <div className={`mx-auto w-full ${effectiveMaxWidth} ${paddingClasses} ${fullHeight ? 'flex-1 flex flex-col' : ''}`}>
                     <div className={`relative animate-in fade-in slide-in-from-bottom-4 duration-1000 ${fullHeight ? 'flex-1 h-full' : ''}`}>
                         {children}
                     </div>
                 </div>
             </div>
+
+            {/* Premium Footer - System Status & Controls */}
+            {footerContent && (
+                <div className="flex-none p-4 border-t border-[var(--muted-foreground)]/10 bg-[var(--background)]/50 backdrop-blur-sm">
+                    <div className={`mx-auto w-full ${effectiveMaxWidth} px-8`}>
+                        {footerContent}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

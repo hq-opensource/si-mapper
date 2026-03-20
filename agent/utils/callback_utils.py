@@ -17,6 +17,91 @@ _call_start_times: Dict[str, float] = {}
 GLOBAL_SESSION_STORE = {}
 
 
+def _log_artifact_visibility(agent_name: str, llm_request: Any) -> None:
+    """
+    Scans llm_request.contents for artifact data (inline_data blobs in tool
+    responses) and logs a clear summary so we can confirm whether the model
+    is actually receiving image/artifact bytes on this LLM call.
+    """
+    SEP = "─" * 68
+    contents = getattr(llm_request, "contents", None)
+    if not contents:
+        return
+
+    artifact_summary: list[str] = []
+    tool_response_blobs: list[str] = []
+
+    for turn_idx, content in enumerate(contents):
+        role = getattr(content, "role", "?")
+        parts = getattr(content, "parts", []) or []
+        for part_idx, part in enumerate(parts):
+            # inline_data on any part (e.g. from a load_artifacts tool response)
+            inline = getattr(part, "inline_data", None)
+            if inline:
+                mime = getattr(inline, "mime_type", "?")
+                data = getattr(inline, "data", b"") or b""
+                size_kb = len(data) / 1024
+                artifact_summary.append(
+                    f"  turn[{turn_idx}] part[{part_idx}] role={role} "
+                    f"→ BLOB mime={mime} size={size_kb:.1f}KB"
+                )
+            # function_response that carries parts (ADK wraps tool output)
+            fn_resp = getattr(part, "function_response", None)
+            if fn_resp:
+                fn_name = getattr(fn_resp, "name", "?")
+                resp_val = getattr(fn_resp, "response", None)
+                # ADK may nest parts inside the function response value
+                nested_parts = None
+                if isinstance(resp_val, dict):
+                    nested_parts = resp_val.get("parts") or resp_val.get("content")
+                if nested_parts:
+                    for np_idx, np in enumerate(nested_parts if isinstance(nested_parts, list) else [nested_parts]):
+                        np_inline = getattr(np, "inline_data", None) if not isinstance(np, dict) else None
+                        if np_inline:
+                            mime = getattr(np_inline, "mime_type", "?")
+                            data = getattr(np_inline, "data", b"") or b""
+                            size_kb = len(data) / 1024
+                            tool_response_blobs.append(
+                                f"  turn[{turn_idx}] part[{part_idx}] fn={fn_name} nested[{np_idx}] "
+                                f"→ BLOB mime={mime} size={size_kb:.1f}KB"
+                            )
+
+    if artifact_summary or tool_response_blobs:
+        print(f"\n{SEP}")
+        print(f"  🖼️  ARTIFACT VISIBILITY CHECK — {agent_name}")
+        print(SEP)
+        print(f"  Total turns in context: {len(contents)}")
+        if artifact_summary:
+            print("  Inline blobs visible to model:")
+            for line in artifact_summary:
+                print(line)
+        if tool_response_blobs:
+            print("  Blobs inside tool responses:")
+            for line in tool_response_blobs:
+                print(line)
+        print(f"  ✅ Model WILL see {len(artifact_summary) + len(tool_response_blobs)} artifact blob(s) this call.")
+        print(f"{SEP}\n")
+    else:
+        # Only log this if load_artifacts was recently called (check last tool call in request)
+        last_tool_call = None
+        for content in reversed(contents):
+            parts = getattr(content, "parts", []) or []
+            for part in reversed(parts):
+                fn_call = getattr(part, "function_call", None)
+                if fn_call:
+                    last_tool_call = getattr(fn_call, "name", None)
+                    break
+            if last_tool_call:
+                break
+        if last_tool_call == "load_artifacts":
+            print(f"\n{SEP}")
+            print(f"  ⚠️  ARTIFACT VISIBILITY CHECK — {agent_name}")
+            print(SEP)
+            print(f"  last tool call was 'load_artifacts' BUT no inline blobs found in request.")
+            print(f"  ❌ Model will NOT see any artifact content this call — artifacts may have been dropped.")
+            print(f"{SEP}\n")
+
+
 def shared_before_model_callback(
     callback_context: CallbackContext,
     llm_request: Any,  # google.adk.models.llm_request.LlmRequest
@@ -24,9 +109,12 @@ def shared_before_model_callback(
     """
     Records the wall-clock start time of every LLM call so that
     shared_model_callback can compute the exact round-trip duration.
+    Also logs artifact visibility so we can confirm the model actually
+    receives image/blob data when load_artifacts is called.
     Returning None means "do not intercept — proceed normally".
     """
     _call_start_times[callback_context.agent_name] = time.perf_counter()
+    _log_artifact_visibility(callback_context.agent_name, llm_request)
     return None
 
 
@@ -144,7 +232,31 @@ async def shared_model_callback(
         parts_info.append(info)
     logger.debug(f"[{agent_name}] Response Parts: {parts_info}")
     # --------------------------------
-    
+
+    # ── Artifact race-condition detector ──────────────────────────────────────
+    # If the model calls load_artifacts AND other tools in the same turn, the
+    # artifact content will be injected for the *next* LLM call but the model
+    # won't have a chance to process it before more tool calls flush it out.
+    fn_calls_in_response = [
+        p.function_call.name
+        for p in llm_response.content.parts
+        if getattr(p, "function_call", None)
+    ]
+    if "load_artifacts" in fn_calls_in_response:
+        other_tools = [t for t in fn_calls_in_response if t != "load_artifacts"]
+        SEP = "─" * 68
+        print(f"\n{SEP}")
+        print(f"  📥 load_artifacts CALLED — {agent_name}")
+        print(SEP)
+        print(f"  All tool calls in this response: {fn_calls_in_response}")
+        if other_tools:
+            print(f"  ⚠️  WARNING: load_artifacts called alongside other tools: {other_tools}")
+            print(f"  ⚠️  The artifact content will be injected NEXT call but model may not pause to read it!")
+        else:
+            print(f"  ✅ load_artifacts called alone — model should receive artifact content next call.")
+        print(f"{SEP}\n")
+    # ─────────────────────────────────────────────────────────────────────────
+
     # 1. NEW: Process structured events
     from .event_processor import EventProcessor
     from .events import EventType

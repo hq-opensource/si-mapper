@@ -17,7 +17,7 @@ The MCP server itself is NOT removed — subagents still call it during thinking
 
 ### Architecture
 - **No diff, no snapshot**: The after_callback does a full comps rebuild from `internal_grid` every turn. Whatever is in `internal_grid` at turn end is the truth.
-- **Raw EDN preserved**: The before_callback saves `_raw_edn_grid` (the full mutable EDN dict) — not for diffing, but to carry non-comps metadata (title, font configs, etc.) through to the PUT. GraphyVAC's PUT is a full replacement; only the `comps` key is replaced.
+- **Raw EDN preserved**: The before_callback saves `_raw_edn_grid` (the full mutable EDN dict) — not for diffing, but to carry non-comps metadata (title, font configs, etc.) through to the PUT. Graphivac's PUT is a full replacement; only the `comps` key is replaced.
 - **`_initial_grid_snapshot` removed**: No longer needed anywhere in the codebase.
 
 ### Unknown symbol handling
@@ -28,25 +28,25 @@ The MCP server itself is NOT removed — subagents still call it during thinking
 ### Sync-out failure behavior
 - On PUT failure: **retry once** with the same request.
 - If the retry also fails: **inject a warning Content into the agent's next turn** and log a warning. The agent should treat this as a signal to stop work.
-- Rationale: a failed PUT means `internal_grid` and GraphyVAC are diverged. The next sync-in would read the old GraphyVAC state and overwrite `internal_grid`, silently losing the agent's turn. Better to stop and warn than to let that happen.
+- Rationale: a failed PUT means `internal_grid` and Graphivac are diverged. The next sync-in would read the old Graphivac state and overwrite `internal_grid`, silently losing the agent's turn. Better to stop and warn than to let that happen.
 - This failure mode is considered unlikely (would only occur on network issues). Build the warning infrastructure but don't over-engineer recovery logic.
 - The `after_agent_callback` returns `Optional[types.Content]` — return a `types.Content` with the error message on unrecoverable failure; return `None` on success.
 
 ### Pipe vs duct distinction
 - Pipes and ducts are **distinct EDN types** and must not be conflated.
-- Pipe line components use `(Keyword("pipe"), name)` as the EDN key — verified in `pipe_manager.py` and confirmed in GraphyVAC UI (`:comps {[:pipe "D3tBIs0TvG"] {:n1 {:pos [-3 3]}, :n2 {:pos [1 3]}}}`).
+- Pipe line components use `(Keyword("pipe"), name)` as the EDN key — verified in `pipe_manager.py` and confirmed in Graphivac UI (`:comps {[:pipe "D3tBIs0TvG"] {:n1 {:pos [-3 3]}, :n2 {:pos [1 3]}}}`).
 - Duct line components use `(Keyword("duct"), name)`.
 - The translator must distinguish them on both read (sync-in) and write (sync-out).
 
 ### Test scope
 - **Unit tests**: Translator module (`agent/utils/grid_edn_translator.py`) tested in isolation — roundtrip correctness, unknown symbol handling, rotation bug fix, pipe vs duct distinction.
-- **Integration test**: A dedicated test script that connects to a **real GraphyVAC grid** using environment variables. It:
+- **Integration test**: A dedicated test script that connects to a **real Graphivac grid** using environment variables. It:
   1. Reads the live grid via the before_callback logic
   2. Parses it to `internal_grid`
   3. Adds a known set of test components
   4. Translates back to EDN via the translator
-  5. PUTs to the real GraphyVAC grid
-  6. Human verifies the result in the GraphyVAC UI
+  5. PUTs to the real Graphivac grid
+  6. Human verifies the result in the Graphivac UI
 - The test must print clear instructions for the human: what was added, what to look for in the UI, and how to clean up.
 - The test agent itself is mocked — we're testing the translator and REST pipeline, not the LLM.
 
@@ -76,7 +76,7 @@ The MCP server itself is NOT removed — subagents still call it during thinking
 - `mcp_server/graphivac/utils/edn_to_mutable.py` — `edn_to_mutable()` recursively converts ImmutableDict/ImmutableList to standard Python. Must be reimplemented in the agent package (no cross-package imports).
 - `mcp_server/graphivac/utils/grid_status.py` — `_to_json_friendly()` Keyword-to-string conversion. Reference only.
 
-### GraphyVAC REST API
+### Graphivac REST API
 - `mcp_server/graphivac/graphivac_api.py` — `get_grid_info_edn()` (GET) and `update_grid_edn()` (PUT) — the exact REST calls the sync callbacks make.
 
 </canonical_refs>
@@ -103,10 +103,10 @@ The MCP server itself is NOT removed — subagents still call it during thinking
 <specifics>
 ## Specific Ideas
 
-- Integration test should be a **standalone runnable script** (not a pytest test) so the human can run it manually, watch the GraphyVAC UI in real time, and verify the result visually.
-- The test should print something like: "Added fan 'TEST-FAN-1' at [5,5] and duct 'TEST-DUCT-1' from [0,0] to [10,0]. Check the GraphyVAC UI — you should see these two components. Press Enter to clean up..."
-- User confirmed pipes are stored as `[:pipe "name"]` in GraphyVAC EDN (verified in the live UI).
-- The failure warning injected into the agent on a failed PUT should be clear enough for the agent to understand it must stop: something like "SYNC ERROR: Failed to write grid to GraphyVAC after retry. Grid state is diverged. Stop all grid operations."
+- Integration test should be a **standalone runnable script** (not a pytest test) so the human can run it manually, watch the Graphivac UI in real time, and verify the result visually.
+- The test should print something like: "Added fan 'TEST-FAN-1' at [5,5] and duct 'TEST-DUCT-1' from [0,0] to [10,0]. Check the Graphivac UI — you should see these two components. Press Enter to clean up..."
+- User confirmed pipes are stored as `[:pipe "name"]` in Graphivac EDN (verified in the live UI).
+- The failure warning injected into the agent on a failed PUT should be clear enough for the agent to understand it must stop: something like "SYNC ERROR: Failed to write grid to Graphivac after retry. Grid state is diverged. Stop all grid operations."
 
 </specifics>
 

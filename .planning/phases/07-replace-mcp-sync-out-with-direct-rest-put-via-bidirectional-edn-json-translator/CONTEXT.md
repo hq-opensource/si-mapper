@@ -20,7 +20,7 @@ The simplest correct approach: if the translator is reliable enough to reconstru
 
 ### Why the raw EDN still needs to be saved
 
-The EDN grid is not just `comps`. It has other top-level keys: grid title, font configs, and any other GraphyVAC metadata. GraphyVAC's PUT endpoint is a **full replacement** — this is confirmed by how every manager works (GET full grid → mutate comps → PUT full grid). Sending only `{comps: {...}}` would wipe everything else.
+The EDN grid is not just `comps`. It has other top-level keys: grid title, font configs, and any other Graphivac metadata. Graphivac's PUT endpoint is a **full replacement** — this is confirmed by how every manager works (GET full grid → mutate comps → PUT full grid). Sending only `{comps: {...}}` would wipe everything else.
 
 So the raw EDN is saved in the before_callback — not for diffing, but as the **carrier** that preserves non-comps metadata. The after_callback replaces only the `comps` key and PUTs the rest unchanged.
 
@@ -45,7 +45,7 @@ before_agent_callback
 after_agent_callback
   new_comps = internal_grid_to_edn_comps(internal_grid)
   modified_edn = {**_raw_edn_grid, Keyword("comps"): new_comps}
-  REST PUT modified_edn → GraphyVAC   ← one call, no MCP
+  REST PUT modified_edn → Graphivac   ← one call, no MCP
 ```
 
 ---

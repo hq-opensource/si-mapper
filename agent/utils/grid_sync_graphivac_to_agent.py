@@ -1,5 +1,5 @@
 """
-Grid synchronization: Pulls the live GraphyVAC grid into the agent's internal state
+Grid synchronization: Pulls the live Graphivac grid into the agent's internal state
 using the EDN translator.
 """
 
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def _fetch_and_parse_grid() -> tuple:
     """
-    Synchronous helper: fetches the current grid from GraphyVAC via REST.
+    Synchronous helper: fetches the current grid from Graphivac via REST.
     Returns (internal_grid, edn_text) on success or ({"components": []}, "") on error.
     """
     base_url = os.getenv("GRAPHIVAC_BASE_URL", "")
@@ -31,7 +31,7 @@ def _fetch_and_parse_grid() -> tuple:
     grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
 
     if not all([base_url, org_id, project_id, grid_id]):
-        logger.warning("GraphyVAC env vars not fully set — internal_grid starts empty")
+        logger.warning("Graphivac env vars not fully set — internal_grid starts empty")
         return {"components": []}, ""
 
     url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
@@ -39,7 +39,7 @@ def _fetch_and_parse_grid() -> tuple:
         response = requests.get(url, headers={"Accept": "application/edn"}, timeout=10)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        logger.warning(f"Could not reach GraphyVAC to seed grid: {e} — starting empty")
+        logger.warning(f"Could not reach Graphivac to seed grid: {e} — starting empty")
         return {"components": []}, ""
 
     edn_text = response.text
@@ -66,7 +66,7 @@ async def sync_graphivac_to_agent_callback(
     callback_context: CallbackContext,
 ) -> Optional[types.Content]:
     """
-    before_agent_callback: seeds internal_grid from the live GraphyVAC grid
+    before_agent_callback: seeds internal_grid from the live Graphivac grid
     at the start of every agent turn.
 
     Saves the raw EDN grid as _raw_edn_grid so after_callback can preserve
@@ -80,7 +80,7 @@ async def sync_graphivac_to_agent_callback(
         callback_context.state["_raw_edn_grid"] = raw_edn_grid
 
         n = len(internal_grid.get("components", []))
-        print(f"[SYNC-IN ] Fetched {n} component(s) from GraphyVAC → internal_grid reset", flush=True)
+        print(f"[SYNC-IN ] Fetched {n} component(s) from Graphivac → internal_grid reset", flush=True)
         logger.info(f"grid_sync_graphivac_to_agent: Synchronized {n} components into agent memory")
     except Exception as e:
         logger.error(f"grid_sync_graphivac_to_agent: Sync failed, starting empty: {e}")

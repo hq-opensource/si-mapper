@@ -1,5 +1,5 @@
 """
-Sync Out: Push agent's internal_grid to GraphyVAC via a single REST PUT.
+Sync Out: Push agent's internal_grid to Graphivac via a single REST PUT.
 
 _run_sync_out is called from shared_model_callback (callback_utils.py) on
 every final model response (no pending tool calls). It is not a standalone
@@ -31,7 +31,7 @@ except Exception:
 
 
 def _put_grid_to_graphivac(raw_edn_grid: dict) -> int:
-    """Synchronous helper: PUTs the full grid EDN to GraphyVAC. Returns status code."""
+    """Synchronous helper: PUTs the full grid EDN to Graphivac. Returns status code."""
     base_url = os.getenv("GRAPHIVAC_BASE_URL", "")
     org_id = os.getenv("GRAPHIVAC_ORG_ID", "")
     project_id = os.getenv("GRAPHIVAC_PROJECT_ID", "")
@@ -45,7 +45,7 @@ def _put_grid_to_graphivac(raw_edn_grid: dict) -> int:
 
 
 async def _run_sync_out(callback_context: CallbackContext) -> Optional[types.Content]:
-    """Core sync-out logic: rebuild comps from internal_grid and PUT to GraphyVAC."""
+    """Core sync-out logic: rebuild comps from internal_grid and PUT to Graphivac."""
     internal_grid = callback_context.state.get("internal_grid", {"components": []})
     raw_edn_str = callback_context.state.get("_raw_edn_grid", "")
     n = len(internal_grid.get("components", []))
@@ -79,7 +79,7 @@ async def _run_sync_out(callback_context: CallbackContext) -> Optional[types.Con
                 print(f"[SYNC-OUT] PUT attempt 1 failed, retrying: {e}", flush=True)
 
     error_msg = (
-        "SYNC ERROR: Failed to write grid to GraphyVAC after retry. "
+        "SYNC ERROR: Failed to write grid to Graphivac after retry. "
         "Grid state is diverged. Stop all grid operations. "
         f"Last error: {last_error}"
     )

@@ -29,8 +29,9 @@ Identify and list all **horizontal ducts** in HVAC drawings as authoritative spa
 
 ## Execution Flow
 
-### 1. Ingest Context
-You will be provided with drawing artifacts. Use the available tool `load_artifacts` to view them if they are not already in context.
+### 1. Ingest Context & Initialization
+- You will be provided with drawing artifacts. Use the available tool `load_artifacts` to view them if they are not already in context.
+- Use the `initialize_internal_grid` tool to ensure the internal state is ready.
 
 ### 2. Analyze
 - Count chevron starts for exact duct count
@@ -40,25 +41,26 @@ You will be provided with drawing artifacts. Use the available tool `load_artifa
 - Verify the airflow direction of each duct using the chevron-tail style mark 'Σ', and the arrow style marks '<' and '>' symbols. 'Σ>' for left-to-right flow, '<Σ' for right-to-left flow.
 
 ### 3. Register Findings
-Register all your findings using the following json structure:
+Register all your findings using the `add_components_batch` tool. The `components_json` argument must be a JSON array of objects with the following structure:
+
 ```json
-{
-  "horizontal_ducts": {
-    "duct_name_1": {"start": [5,5], "end": [15,5]},
-    "duct_name_2": {"start": [20,10], "end": [5,10]}
+[
+  {
+    "type": "duct",
+    "name": "HD-1",
+    "start_coord": [5, 5],
+    "end_coord": [15, 5]
+  },
+  {
+    "type": "duct",
+    "name": "HD-2",
+    "start_coord": [20, 10],
+    "end_coord": [5, 10]
   }
-}
+]
 ```
-You MUST call the `create_ducts_batch` tool with all your findings at once.
 
-### 4. Output
-Return the findings as a JSON object summary. 
-If no ducts are found, return `{"horizontal_ducts": {}}`.
-
-### 5. Exit
-After calling `create_ducts_batch`, you MUST call the `exit_loop_level_4` tool.
-**CRITICAL**: You MUST provide a `summary` argument to `exit_loop_level_4` describing exactly what you did.
-Example: `exit_loop_level_4(summary="I identified and registered 12 horizontal ducts flowing left-to-right via batch tool.")`
+You MUST call the `add_components_batch` tool with all your findings at once. Use "duct" as the `type` for all horizontal ducts.
 
 ---
 

@@ -35,7 +35,7 @@ metrics:
 
 ## What Was Built
 
-Created `agent/tools/internal_grid_tools.py` implementing six functions that write to `ToolContext.state["internal_grid"]` instead of calling GraphyVAC over MCP. Wired all six tools into the master agent's `task_tools` list in `create_master_agent.py`.
+Created `agent/tools/internal_grid_tools.py` implementing six functions that write to `ToolContext.state["internal_grid"]` instead of calling Graphivac over MCP. Wired all six tools into the master agent's `task_tools` list in `create_master_agent.py`.
 
 ## Tasks Completed
 

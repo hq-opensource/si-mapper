@@ -11,7 +11,7 @@ requires:
   - phase: 07-01
     provides: "Bidirectional EDN-JSON translator (grid_edn_translator.py)"
 provides:
-  - Standalone integration test script that exercises the full translator + REST pipeline against a real GraphyVAC grid
+  - Standalone integration test script that exercises the full translator + REST pipeline against a real Graphivac grid
 affects: []
 
 # Tech tracking
@@ -27,7 +27,7 @@ key-files:
   modified: []
 
 key-decisions:
-  - "Integration test is standalone (not pytest) so human can run it manually and verify in GraphyVAC UI"
+  - "Integration test is standalone (not pytest) so human can run it manually and verify in Graphivac UI"
 
 patterns-established:
   - "Integration test pattern: GET -> parse -> modify -> translate -> PUT -> print VERIFICATION INSTRUCTIONS"
@@ -41,7 +41,7 @@ completed: 2026-03-19
 
 # Phase 7 Plan 03: Integration Test Script Summary
 
-**Standalone integration test script that reads a live GraphyVAC grid, adds 4 test components (duct, pipe, fan with rotation, temp sensor), PUTs back via REST, and prints human verification instructions**
+**Standalone integration test script that reads a live Graphivac grid, adds 4 test components (duct, pipe, fan with rotation, temp sensor), PUTs back via REST, and prints human verification instructions**
 
 ## Performance
 
@@ -55,7 +55,7 @@ completed: 2026-03-19
 - Created `tests/test_integration_grid_sync.py` — standalone runnable script (not pytest)
 - Script exercises the full GET -> translate -> modify -> translate back -> PUT flow
 - All 12 acceptance criteria pass (syntax, imports, env var checks, test components, VERIFICATION INSTRUCTIONS, no MCP references)
-- Paused at Task 2 (checkpoint:human-verify) — awaiting human to run test against real GraphyVAC
+- Paused at Task 2 (checkpoint:human-verify) — awaiting human to run test against real Graphivac
 
 ## Task Commits
 
@@ -78,7 +78,7 @@ None
 ## User Setup Required
 Human verification required. See checkpoint details:
 
-1. Ensure GraphyVAC is running and set env vars:
+1. Ensure Graphivac is running and set env vars:
    - `GRAPHIVAC_BASE_URL`, `GRAPHIVAC_ORG_ID`, `GRAPHIVAC_PROJECT_ID`, `GRAPHIVAC_GRID_ID`
 
 2. Run the integration test:
@@ -87,7 +87,7 @@ Human verification required. See checkpoint details:
    GRAPHIVAC_BASE_URL=<url> GRAPHIVAC_ORG_ID=<org> GRAPHIVAC_PROJECT_ID=<proj> GRAPHIVAC_GRID_ID=<grid> python3 tests/test_integration_grid_sync.py
    ```
 
-3. Verify in the GraphyVAC UI:
+3. Verify in the Graphivac UI:
    - TEST-DUCT-1 appears as a duct line from [0,15] to [10,15]
    - TEST-PIPE-1 appears as a pipe line from [-3,17] to [1,17]
    - TEST-FAN-1 appears as a fan at [5,15] with 90-degree rotation

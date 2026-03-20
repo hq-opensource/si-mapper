@@ -104,7 +104,7 @@ None - no external service configuration required for unit tests.
 ## Next Phase Readiness
 - Unit tests ready; Task 2 (end-to-end verification) awaits human confirmation
 - After human approves end-to-end flow, this plan can be marked complete
-- End-to-end instructions: start MCP server + agent + sync service, add a test fan via agent chat, verify it appears in GraphyVAC within ~2s
+- End-to-end instructions: start MCP server + agent + sync service, add a test fan via agent chat, verify it appears in Graphivac within ~2s
 
 ---
 *Phase: 06-refactor-graphivac-api*

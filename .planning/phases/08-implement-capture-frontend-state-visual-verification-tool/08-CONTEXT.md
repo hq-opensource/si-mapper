@@ -6,7 +6,7 @@
 <domain>
 ## Phase Boundary
 
-Add a single new agent tool (`capture_frontend_state`) that takes an on-demand Playwright screenshot of the live GraphyVAC canvas, saves it as a session artifact, and returns a confirmation dict. The agent then calls the existing `load_artifacts` tool to inject the image inline into its context window, enabling visual comparison against the reference image.
+Add a single new agent tool (`capture_frontend_state`) that takes an on-demand Playwright screenshot of the live Graphivac canvas, saves it as a session artifact, and returns a confirmation dict. The agent then calls the existing `load_artifacts` tool to inject the image inline into its context window, enabling visual comparison against the reference image.
 
 This closes the self-correction loop: the agent can verify what it actually built, not just what it told `internal_grid`. No callbacks, no new infrastructure — piggybacks entirely on the existing artifact system.
 
@@ -16,7 +16,7 @@ This closes the self-correction loop: the agent can verify what it actually buil
 ## Implementation Decisions
 
 ### View URL construction
-- Build the GraphyVAC view URL from the 4 existing env vars already in `.env`:
+- Build the Graphivac view URL from the 4 existing env vars already in `.env`:
   `GRAPHIVAC_BASE_URL`, `GRAPHIVAC_ORG_ID`, `GRAPHIVAC_PROJECT_ID`, `GRAPHIVAC_GRID_ID`
 - Use the **view-only mode**, not the editor — appending `?iframe=t&init-zoom=t` to the constructed URL.
   Format: `https://graphivac.hvac.io/o/{ORG_ID}/p/{PROJECT_ID}/g/{GRID_ID}?iframe=t&init-zoom=t`
@@ -25,7 +25,7 @@ This closes the self-correction loop: the agent can verify what it actually buil
 
 ### Playwright startup timing
 - **No explicit sleep/wait** inside the tool before capture.
-- The Playwright browser launch + page navigation + `networkidle` wait is itself enough time for the GraphyVAC REST PUT (fired by `after_model_callback`) to complete.
+- The Playwright browser launch + page navigation + `networkidle` wait is itself enough time for the Graphivac REST PUT (fired by `after_model_callback`) to complete.
 - The agent calling the tool creates natural latency — by the time Chromium starts and the page loads, the canvas will reflect the latest `internal_grid` state.
 
 ### Verification trigger — when the agent calls this tool
@@ -64,7 +64,7 @@ This closes the self-correction loop: the agent can verify what it actually buil
 ### Agent instruction to update
 - `agent/master_architecture/prompts/master_instruction.md` — Add the Visual Verification Protocol section explaining the 2-step call sequence.
 
-### GraphyVAC view URL pattern
+### Graphivac view URL pattern
 - `mapper/src/app/page/components/ExternalPageIframe.tsx` — Reference for the iframe URL format (`?iframe=t&init-zoom=t`). The view-only URL is what Playwright navigates to.
 - `agent/.env` (or `.env.example`) — Existing env vars: `GRAPHIVAC_BASE_URL`, `GRAPHIVAC_ORG_ID`, `GRAPHIVAC_PROJECT_ID`, `GRAPHIVAC_GRID_ID`.
 

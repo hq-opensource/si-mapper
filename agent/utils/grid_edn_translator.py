@@ -1,7 +1,7 @@
 """
 Bidirectional EDN <-> internal_grid translator.
 
-Converts between the GraphyVAC EDN comps dict format and the agent's
+Converts between the Graphivac EDN comps dict format and the agent's
 internal_grid components list format.
 
 Public API:
