@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package } from "lucide-react";
+import { Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package, Code2 } from "lucide-react";
 import { AgentState } from "./AgentStateOverlay";
 import { useState, useEffect } from "react";
 import { useThoughts } from "@/context/ThoughtsContext";
@@ -8,8 +8,8 @@ import { formatAgentName } from "@/lib/utils";
 
 interface AgentNavbarProps {
     agentState: AgentState;
-    activeTab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts';
-    onTabChange: (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts') => void;
+    activeTab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'code';
+    onTabChange: (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'code') => void;
 }
 
 export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarProps) {
@@ -28,6 +28,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         { id: 'tools', label: 'Tools', icon: Wrench },
         { id: 'performance', label: 'Performance', icon: BarChart2 },
         { id: 'artifacts', label: 'Artifacts', icon: Package },
+        { id: 'code', label: 'Code', icon: Code2 },
         { id: 'files', label: 'Files', icon: Folder },
         { id: 'debug', label: 'Debug', icon: BarChart2 },
     ] as const;

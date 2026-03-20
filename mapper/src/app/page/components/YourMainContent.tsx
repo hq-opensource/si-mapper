@@ -13,6 +13,7 @@ import { SharedPageContainer } from "./SharedPageContainer";
 import { StatusPlaceholder } from "./StatusPlaceholder";
 import { PerformanceDashboard } from "./PerformanceDashboard";
 import { ArtifactsDashboard } from "./ArtifactsDashboard";
+import { CodeWindow } from "./CodeWindow";
 
 // Define WorkAreaWrapper outside to prevent remounting subcomponents on every render (stable component tree)
 const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -31,7 +32,7 @@ const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
 
 function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agentState: AgentState }) {
   // Determine initial view based on props but allow internal navigation
-  const [activeTab, setActiveTab] = useState<'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts'>(isEditMode ? 'edit' : 'view');
+  const [activeTab, setActiveTab] = useState<'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'code'>(isEditMode ? 'edit' : 'view');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   // Initialize theme: Default to light mode, ignore system preference
   useEffect(() => {
@@ -48,7 +49,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
     localStorage.setItem('app-theme', newTheme);
   };
 
-  const handleTabChange = (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts') => {
+  const handleTabChange = (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'code') => {
     setActiveTab(tab);
   };
 
@@ -64,6 +65,8 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
         return <PerformanceDashboard />;
       case 'artifacts':
         return <ArtifactsDashboard />;
+      case 'code':
+        return <CodeWindow />;
 
       case 'view':
         return (
