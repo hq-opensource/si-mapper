@@ -3,6 +3,7 @@ import time
 from typing import Optional, List, Any, Dict
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmResponse
+from google.genai import types as genai_types
 import logging
 from .string_utils import format_agent_name
 from .grid_sync_agent_to_graphivac import _run_sync_out
@@ -102,18 +103,109 @@ def _log_artifact_visibility(agent_name: str, llm_request: Any) -> None:
             print(f"{SEP}\n")
 
 
-def shared_before_model_callback(
+async def _ensure_pending_artifacts_injected(
+    callback_context: CallbackContext,
+    llm_request: Any,
+) -> None:
+    """
+    Sticky artifact re-injection safety net.
+
+    ADK's load_artifacts tool injects artifact bytes only when the LAST entry
+    in llm_request.contents is a load_artifacts function_response (see
+    load_artifacts_tool.py _append_artifacts_to_llm_request, line ~212).
+    When the model calls load_artifacts alongside other tools in the same
+    response, those other tools' function_responses become the last entry,
+    and ADK's check fires for the wrong tool — the image is never injected.
+
+    This function detects that situation and manually re-injects the pending
+    artifact bytes directly into llm_request.contents (in memory only, never
+    written to session history — same as ADK's own approach).
+
+    State lifecycle:
+      - Set:   in shared_model_callback when model calls load_artifacts
+               (stores requested artifact names in state["temp:_pending_artifacts"])
+      - Clear: in shared_model_callback when model produces a non-tool text
+               response (meaning it has processed the artifacts)
+    """
+    state = callback_context.state
+    pending = state.get("temp:_pending_artifacts", [])
+    if not pending:
+        return
+
+    # Check if ADK's own mechanism already fired (last content = load_artifacts response).
+    # If so, don't double-inject.
+    contents = getattr(llm_request, "contents", None) or []
+    last_content_is_load_artifacts = (
+        contents
+        and getattr(contents[-1], "parts", None)
+        and getattr(contents[-1].parts[0], "function_response", None)
+        and contents[-1].parts[0].function_response.name == "load_artifacts"
+    )
+    if last_content_is_load_artifacts:
+        return  # ADK handled it
+
+    # Also skip if blobs are already present (e.g., from a prior injection this step).
+    has_blobs = any(
+        getattr(part, "inline_data", None)
+        for content in contents
+        for part in (getattr(content, "parts", []) or [])
+    )
+    if has_blobs:
+        return
+
+    # ADK's injection missed — inject manually.
+    SEP = "─" * 68
+    agent_name = callback_context.agent_name
+    print(f"\n{SEP}")
+    print(f"  🔄 STICKY ARTIFACT RE-INJECTION — {agent_name}")
+    print(SEP)
+    print(f"  ADK check missed (load_artifacts was not last tool). Re-injecting: {pending}")
+
+    injected = []
+    for name in pending:
+        artifact = await callback_context.load_artifact(name)
+        if artifact is None and not name.startswith("user:"):
+            artifact = await callback_context.load_artifact(f"user:{name}")
+        if artifact is None:
+            print(f"  ⚠️  Artifact '{name}' not found in artifact service, skipping.")
+            continue
+
+        size_info = ""
+        if artifact.inline_data and artifact.inline_data.data:
+            size_info = f" ({len(artifact.inline_data.data) / 1024:.1f} KB, {artifact.inline_data.mime_type})"
+
+        llm_request.contents.append(
+            genai_types.Content(
+                role="user",
+                parts=[
+                    genai_types.Part.from_text(f"Artifact {name} is:"),
+                    artifact,
+                ],
+            )
+        )
+        injected.append(name)
+        print(f"  ✅ Injected '{name}'{size_info}")
+
+    if injected:
+        print(f"  Model will now see {len(injected)} artifact(s) this call.")
+    print(f"{SEP}\n")
+
+
+async def shared_before_model_callback(
     callback_context: CallbackContext,
     llm_request: Any,  # google.adk.models.llm_request.LlmRequest
 ) -> Optional[LlmResponse]:
     """
     Records the wall-clock start time of every LLM call so that
     shared_model_callback can compute the exact round-trip duration.
-    Also logs artifact visibility so we can confirm the model actually
-    receives image/blob data when load_artifacts is called.
+    Also:
+    - Logs artifact visibility to confirm the model receives image/blob data.
+    - Re-injects pending artifacts when ADK's own injection mechanism missed
+      them (happens when load_artifacts was called alongside other tools).
     Returning None means "do not intercept — proceed normally".
     """
     _call_start_times[callback_context.agent_name] = time.perf_counter()
+    await _ensure_pending_artifacts_injected(callback_context, llm_request)
     _log_artifact_visibility(callback_context.agent_name, llm_request)
     return None
 
@@ -233,28 +325,50 @@ async def shared_model_callback(
     logger.debug(f"[{agent_name}] Response Parts: {parts_info}")
     # --------------------------------
 
-    # ── Artifact race-condition detector ──────────────────────────────────────
-    # If the model calls load_artifacts AND other tools in the same turn, the
-    # artifact content will be injected for the *next* LLM call but the model
-    # won't have a chance to process it before more tool calls flush it out.
+    # ── Artifact pending-state management ────────────────────────────────────
+    # Track requested artifact names so _ensure_pending_artifacts_injected
+    # can re-inject them if ADK's own injection check missed (race condition
+    # when load_artifacts was called alongside other tools).
     fn_calls_in_response = [
         p.function_call.name
         for p in llm_response.content.parts
         if getattr(p, "function_call", None)
     ]
+
     if "load_artifacts" in fn_calls_in_response:
+        # Extract artifact names from the load_artifacts function call args.
+        requested_names: list[str] = []
+        for p in llm_response.content.parts:
+            fn_call = getattr(p, "function_call", None)
+            if fn_call and fn_call.name == "load_artifacts":
+                requested_names = (fn_call.args or {}).get("artifact_names", [])
+                break
+        if requested_names:
+            state["temp:_pending_artifacts"] = requested_names
+
         other_tools = [t for t in fn_calls_in_response if t != "load_artifacts"]
         SEP = "─" * 68
         print(f"\n{SEP}")
         print(f"  📥 load_artifacts CALLED — {agent_name}")
         print(SEP)
+        print(f"  Requested artifacts: {requested_names}")
         print(f"  All tool calls in this response: {fn_calls_in_response}")
         if other_tools:
-            print(f"  ⚠️  WARNING: load_artifacts called alongside other tools: {other_tools}")
-            print(f"  ⚠️  The artifact content will be injected NEXT call but model may not pause to read it!")
+            print(f"  ⚠️  Called alongside other tools: {other_tools}")
+            print(f"  ⚠️  ADK injection may miss — sticky re-injection will fire next call if needed.")
         else:
-            print(f"  ✅ load_artifacts called alone — model should receive artifact content next call.")
+            print(f"  ✅ Called alone — ADK injection should work. Sticky re-injection is standby.")
         print(f"{SEP}\n")
+    # When model produces a real text response (not just more tool calls),
+    # it has processed whatever artifacts were pending — clear the pending state.
+    has_text_response = any(
+        p.text and p.text.strip() and not getattr(p, "thought", False)
+        for p in llm_response.content.parts
+    )
+    if has_text_response and "load_artifacts" not in fn_calls_in_response:
+        if state.get("temp:_pending_artifacts"):
+            logger.debug(f"[{agent_name}] Clearing temp:_pending_artifacts (model produced text response)")
+            state["temp:_pending_artifacts"] = []
     # ─────────────────────────────────────────────────────────────────────────
 
     # 1. NEW: Process structured events
