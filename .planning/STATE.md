@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 07
+current_phase: 08
 status: unknown
-last_updated: "2026-03-19T13:57:30.385Z"
+last_updated: "2026-03-20T00:19:58.603Z"
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 2
-  total_plans: 6
+  total_plans: 8
   completed_plans: 6
 ---
 
@@ -16,10 +16,10 @@ progress:
 
 ## Project Progress
 
-- **Current Phase:** 07
-- **Overall Completion:** [████████░░] 83%
-- **Active Plan:** 07-03 (paused at human-verify checkpoint)
-- **Last Completed:** 07-03 Task 1 (Integration Test Script)
+- **Current Phase:** 08
+- **Overall Completion:** [█████████░] 90%
+- **Active Plan:** 08-01 (complete)
+- **Last Completed:** 08-01 (capture_frontend_state_tool)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -48,11 +48,12 @@ progress:
 - **Decision (06-03):** Tests use MockToolContext (no ADK runtime) and sys.modules stubs before import; call_tool mocked with async recorder for MCP mapping tests; asyncio.run() preferred over deprecated get_event_loop().run_until_complete().
 - **Decision (07-01):** Rotation uses Keyword('rot') not Keyword('rotation') — pre-existing bug fixed in new translator; edn_to_mutable.py is a standalone local copy; SYMBOL_TO_AGENT has 23 entries; unknown EDN symbols silently dropped with warning log.
 - **Decision (07-02):** No diff, no snapshot: after_callback does full comps rebuild from internal_grid every turn; only comps key replaced in _raw_edn_grid preserving title/font metadata; retry-once on PUT failure with types.Content error injection on unrecoverable failure.
+- **Decision (08-01):** Playwright imported lazily inside run_async (not top-level) so the module loads at agent startup even before chromium is installed; artifact path fixed to verification/latest_snapshot.png for predictable load_artifacts calls.
 
 ### Next Steps
 
-1. Run integration test against real GraphyVAC and verify 4 test components appear in UI (07-03 Task 2 checkpoint).
-2. After human approval, Phase 07 is complete.
+1. Install chromium for playwright: `cd agent && uv run playwright install chromium`
+2. Phase 08 complete — capture_frontend_state_tool is available to the Master Agent for visual self-correction.
 
 ### Session Log
 
@@ -62,6 +63,7 @@ progress:
 - **2026-03-19:** Completed 07-01-PLAN.md. Created edn_to_mutable.py + grid_edn_translator.py (23-entry SYMBOL_TO_AGENT, bidirectional). 15 unit tests pass covering all 25 types. Rotation bug fix confirmed.
 - **2026-03-19:** Completed 07-02-PLAN.md. Rewrote both sync callbacks. before_callback uses translator + saves _raw_edn_grid. after_callback does full comps rebuild + single REST PUT. MCP eliminated from sync lifecycle.
 - **2026-03-19:** 07-03 Task 1 complete (e0596f1). Created tests/test_integration_grid_sync.py standalone integration test. Paused at checkpoint Task 2 (human visual verification in GraphyVAC UI).
+- **2026-03-20:** Completed 08-01-PLAN.md. Created capture_frontend_state_tool.py (CaptureFrontendStateTool, headless Playwright screenshot). Registered in create_master_agent.py. Added playwright>=1.40.0 to pyproject.toml.
 
 ## Roadmap Evolution
 
