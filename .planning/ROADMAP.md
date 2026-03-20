@@ -80,9 +80,9 @@
     - [ ] Identify and extract key performance metrics (latency, token usage, success rate).
     - [ ] Render metrics in a frontend dashboard/HUD for developer visibility.
 
-### Phase 6: Refactor GraphyVAC API
+### Phase 6: Refactor Graphivac API
 
-**Goal:** Decouple agent from direct MCP calls by introducing an internal state layer (ToolContext.state) and a standalone sync service that replicates state to GraphyVAC via existing MCP server.
+**Goal:** Decouple agent from direct MCP calls by introducing an internal state layer (ToolContext.state) and a standalone sync service that replicates state to Graphivac via existing MCP server.
 **Requirements**: [REFAC-01, REFAC-02, REFAC-03, REFAC-04]
 **Depends on:** Phase 5
 **Plans:** 3/3 plans complete
@@ -101,11 +101,11 @@ Plans:
 Plans:
 - [ ] 07-01-PLAN.md — Bidirectional EDN-JSON translator module + unit tests (TDD)
 - [ ] 07-02-PLAN.md — Rewrite sync callbacks (before: translator + _raw_edn_grid, after: full rebuild + REST PUT)
-- [ ] 07-03-PLAN.md — Integration test against real GraphyVAC + human verification
+- [ ] 07-03-PLAN.md — Integration test against real Graphivac + human verification
 
 ### Phase 8: Implement capture_frontend_state visual verification tool
 
-**Goal:** Upgrade the Master Agent from a "data-blind" command issuer into a "vision-guided" engineer by adding a two-tool visual verification loop. The agent will be able to take an on-demand screenshot of the live GraphyVAC CAD canvas (via Playwright headless capture), save it as a session artifact, and then use the existing `load_artifacts` tool to inject the image inline into its context — allowing it to visually compare the canvas against the original HVAC reference image and self-correct before declaring a phase complete.
+**Goal:** Upgrade the Master Agent from a "data-blind" command issuer into a "vision-guided" engineer by adding a two-tool visual verification loop. The agent will be able to take an on-demand screenshot of the live Graphivac CAD canvas (via Playwright headless capture), save it as a session artifact, and then use the existing `load_artifacts` tool to inject the image inline into its context — allowing it to visually compare the canvas against the original HVAC reference image and self-correct before declaring a phase complete.
 
 **Architecture:**
 The implementation leverages the existing ADK artifact system already in use by `ingest_category_files` and `load_artifacts`. The two-step verification loop is entirely agent-driven (no callbacks required):

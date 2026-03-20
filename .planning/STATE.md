@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 08
 status: unknown
-last_updated: "2026-03-20T00:19:58.603Z"
+last_updated: "2026-03-20T00:27:43.130Z"
 progress:
   total_phases: 8
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 6
+  completed_plans: 8
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 08
-- **Overall Completion:** [█████████░] 90%
-- **Active Plan:** 08-01 (complete)
-- **Last Completed:** 08-01 (capture_frontend_state_tool)
+- **Overall Completion:** [██████████] 100%
+- **Active Plan:** 08-02 (complete)
+- **Last Completed:** 08-02 (Visual Verification Protocol + unit tests)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -49,21 +49,23 @@ progress:
 - **Decision (07-01):** Rotation uses Keyword('rot') not Keyword('rotation') — pre-existing bug fixed in new translator; edn_to_mutable.py is a standalone local copy; SYMBOL_TO_AGENT has 23 entries; unknown EDN symbols silently dropped with warning log.
 - **Decision (07-02):** No diff, no snapshot: after_callback does full comps rebuild from internal_grid every turn; only comps key replaced in _raw_edn_grid preserving title/font metadata; retry-once on PUT failure with types.Content error injection on unrecoverable failure.
 - **Decision (08-01):** Playwright imported lazily inside run_async (not top-level) so the module loads at agent startup even before chromium is installed; artifact path fixed to verification/latest_snapshot.png for predictable load_artifacts calls.
+- **Decision (08-02):** Visual Verification Protocol inserted BEFORE the STOP block in master_instruction.md to maintain operational instruction doc structure; test_url_construction kept as separate test function for intent clarity.
 
 ### Next Steps
 
 1. Install chromium for playwright: `cd agent && uv run playwright install chromium`
-2. Phase 08 complete — capture_frontend_state_tool is available to the Master Agent for visual self-correction.
+2. Phase 08 fully complete — agent has capture_frontend_state_tool registered, Visual Verification Protocol in master_instruction.md, and 4 unit tests passing.
 
 ### Session Log
 
 - **2026-03-18:** Completed 06-01-PLAN.md. Created internal_grid_tools.py (6 functions, 25 component types). Wired into master agent.
-- **2026-03-18:** Completed 06-02-PLAN.md. Created sync_service/ (McpSyncClient, SyncEngine, main.py). Standalone polling service that replicates internal_grid to GraphyVAC via MCP every 2s.
+- **2026-03-18:** Completed 06-02-PLAN.md. Created sync_service/ (McpSyncClient, SyncEngine, main.py). Standalone polling service that replicates internal_grid to Graphivac via MCP every 2s.
 - **2026-03-18:** 06-03 Task 1 complete (3553d2e). 26 unit tests pass: 17 for internal_grid_tools, 9 for sync_engine. Paused at checkpoint Task 2 (human end-to-end verification).
 - **2026-03-19:** Completed 07-01-PLAN.md. Created edn_to_mutable.py + grid_edn_translator.py (23-entry SYMBOL_TO_AGENT, bidirectional). 15 unit tests pass covering all 25 types. Rotation bug fix confirmed.
 - **2026-03-19:** Completed 07-02-PLAN.md. Rewrote both sync callbacks. before_callback uses translator + saves _raw_edn_grid. after_callback does full comps rebuild + single REST PUT. MCP eliminated from sync lifecycle.
-- **2026-03-19:** 07-03 Task 1 complete (e0596f1). Created tests/test_integration_grid_sync.py standalone integration test. Paused at checkpoint Task 2 (human visual verification in GraphyVAC UI).
+- **2026-03-19:** 07-03 Task 1 complete (e0596f1). Created tests/test_integration_grid_sync.py standalone integration test. Paused at checkpoint Task 2 (human visual verification in Graphivac UI).
 - **2026-03-20:** Completed 08-01-PLAN.md. Created capture_frontend_state_tool.py (CaptureFrontendStateTool, headless Playwright screenshot). Registered in create_master_agent.py. Added playwright>=1.40.0 to pyproject.toml.
+- **2026-03-19:** Completed 08-02-PLAN.md. Added Visual Verification Protocol to master_instruction.md. Created agent/tests/test_capture_frontend_state.py (4 unit tests, all passing, mocked Playwright).
 
 ## Roadmap Evolution
 
