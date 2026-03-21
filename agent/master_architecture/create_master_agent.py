@@ -16,6 +16,8 @@ from tools.internal_grid_tools import (
 )
 from tools.metadata_tools import write_metadata, write_metadata_batch
 from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
+from sub_agents.ontology_generator.agent import OntologyGeneratorAgent
+from sub_agents.ontology_validator.agent import OntologyValidatorAgent
 
 # --- Configuration ---
 load_dotenv()
@@ -70,9 +72,16 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         capture_frontend_state_tool,
     ]
     
+    # --- Ontology sub-agents (flat, master sequences them) ---
+    ontology_subagents = [
+        OntologyGeneratorAgent(model_name=model_name),
+        OntologyValidatorAgent(model_name=model_name),
+    ]
+    all_subagents = (subagents or []) + ontology_subagents
+
     master_agent = MasterLlmAgent(
         model_name=model_name,
-        subagents=subagents,
+        subagents=all_subagents,
         tools=[skill_tools] + task_tools,
         session_id=session_id
     )
