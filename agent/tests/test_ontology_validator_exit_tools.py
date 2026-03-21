@@ -34,7 +34,7 @@ def test_checkpoint_code_first_call_appends_fix_0():
     tc = _make_tool_context()
     checkpoint_code(tc, code="v1")
 
-    snapshots = tc.state["ontology_code_snapshots"]
+    snapshots = tc.state["python_code_snapshots"]
     assert len(snapshots) == 1
     assert snapshots[0] == {
         "label": "Fix 0",
@@ -57,7 +57,7 @@ def test_checkpoint_code_second_call_appends_fix_1():
     checkpoint_code(tc, code="v1")
     checkpoint_code(tc, code="v2")
 
-    snapshots = tc.state["ontology_code_snapshots"]
+    snapshots = tc.state["python_code_snapshots"]
     assert len(snapshots) == 2
     assert snapshots[1] == {
         "label": "Fix 1",
@@ -99,7 +99,7 @@ def test_exit_validator_success_calls_checkpoint_internally():
     tc = _make_tool_context()
     exit_validator_success(tc, code="final", summary="done")
 
-    snapshots = tc.state["ontology_code_snapshots"]
+    snapshots = tc.state["python_code_snapshots"]
     # checkpoint_code was called internally → at least one snapshot
     assert len(snapshots) >= 1
 
@@ -109,11 +109,31 @@ def test_exit_validator_success_patches_last_snapshot_to_final():
     tc = _make_tool_context()
     exit_validator_success(tc, code="final", summary="done")
 
-    snapshots = tc.state["ontology_code_snapshots"]
+    snapshots = tc.state["python_code_snapshots"]
     last = snapshots[-1]
     assert last["label"] == "Final"
     assert last["status"] == "validated"
     assert last["code"] == "final"
+
+
+def test_exit_validator_success_writes_ttl_to_ttl_code_snapshots():
+    """When ttl_content is provided, it is written to ttl_code_snapshots."""
+    tc = _make_tool_context()
+    exit_validator_success(tc, code="final", summary="done", ttl_content="@prefix : <http://example.org/> .")
+
+    ttl_snapshots = tc.state["ttl_code_snapshots"]
+    assert len(ttl_snapshots) == 1
+    assert ttl_snapshots[0]["label"] == "TTL"
+    assert ttl_snapshots[0]["status"] == "validated"
+    assert "@prefix" in ttl_snapshots[0]["code"]
+
+
+def test_exit_validator_success_no_ttl_snapshots_when_no_ttl_content():
+    """When ttl_content is empty, ttl_code_snapshots is not set."""
+    tc = _make_tool_context()
+    exit_validator_success(tc, code="final", summary="done")
+
+    assert "ttl_code_snapshots" not in tc.state
 
 
 def test_exit_validator_success_sets_validation_success_true():

@@ -17,7 +17,6 @@ from utils.logging_config import configure_logging
 from utils.mcp_utils import create_mcp_toolset
 from utils.callback_utils import GLOBAL_SESSION_STORE
 from utils.adk_patch import apply_adk_patches
-
 # Apply patches for Gemini 3.1 compatibility (Runtime Fix)
 apply_adk_patches()
 
@@ -53,12 +52,19 @@ def create_app() -> FastAPI:
     if session_id not in GLOBAL_SESSION_STORE:
         GLOBAL_SESSION_STORE[session_id] = {
             "detailed_equipment_dict": {},
-            "completed_sub_agents": []
+            "completed_sub_agents": [],
+            "python_code_snapshots": [],
+            "ttl_code_snapshots": []
         }
     GLOBAL_SESSION_STORE["latest"] = GLOBAL_SESSION_STORE[session_id]
     
-    # Create Master Agent
-    master_agent = create_master_agent(session_id=session_id, model_name=SHARED_ADK_MODEL)
+    # 3. Create Master Agent
+    # OntologyGeneratorAgent and OntologyValidatorAgent are instantiated
+    # inside create_master_agent — no external subagents needed here.
+    master_agent = create_master_agent(
+        session_id=session_id,
+        model_name=SHARED_ADK_MODEL,
+    )
 
     # 3. Wrap with ADK
     adk_agent = ADKAgent(

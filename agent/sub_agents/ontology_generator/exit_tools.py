@@ -3,7 +3,7 @@ Exit tools for the ontology generator sub-agent.
 
 ``exit_generator_success``
     Called by the generator agent when it has successfully produced ontology
-    code. Appends an Initial snapshot to ``ontology_code_snapshots`` and
+    code. Appends an Initial snapshot to ``python_code_snapshots`` and
     escalates to terminate the generator loop.
 
 ``exit_generator_failure``
@@ -30,11 +30,11 @@ def exit_generator_success(
         getattr(tool_context, "agent_name", "unknown"),
     )
     # Read-copy-write pattern — never mutate the state list directly
-    snapshots = list(tool_context.state.get("ontology_code_snapshots", []))
+    snapshots = list(tool_context.state.get("python_code_snapshots", []))
     snapshots.append(
         {"label": "Initial", "code": code, "iteration": 0, "status": "generated"}
     )
-    tool_context.state["ontology_code_snapshots"] = snapshots
+    tool_context.state["python_code_snapshots"] = snapshots
     tool_context.state["ontology_code_iteration_count"] = 0
     tool_context.state["ONTOLOGY_GENERATION_SUCCESS"] = True
     tool_context.state["EXIT_LEVEL_4"] = True

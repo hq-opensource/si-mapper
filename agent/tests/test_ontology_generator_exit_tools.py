@@ -33,7 +33,7 @@ def test_exit_generator_success_appends_initial_snapshot():
     tc = _make_tool_context()
     exit_generator_success(tc, code="print('hello')", summary="test")
 
-    snapshots = tc.state["ontology_code_snapshots"]
+    snapshots = tc.state["python_code_snapshots"]
     assert len(snapshots) == 1
     assert snapshots[0] == {
         "label": "Initial",
