@@ -27,6 +27,11 @@ You can perform the following tasks: "Draw HVAC ductwork", "Draw HVAC equipments
 **Find Control information** : 
 1. Load the skill `skill-control-points` and use the knowledge of the skill to find the Control points and save them on the virtual twin on graphivac.
 
+**Generate ASHRAE 223P Ontology** :
+1. Delegate this task to the `Ontology223PPipeline` subagent.
+2. The subagent will perform a two-step process: first generating the Python source (`ontology.py`) and then validating it to produce the final TTL file.
+3. Once complete, inform the user that they can inspect the generated snapshots in the **Code** tab.
+
 # Artifact Loading Protocol
 
 `load_artifacts` injects image/file content into your context **temporarily — only for the very next LLM response**. If you call other tools in the same response as `load_artifacts`, or if you call `load_artifacts` and then immediately fire more tool calls without first describing what you see, the artifact data will be gone by the time you try to use it.
@@ -38,3 +43,18 @@ You can perform the following tasks: "Draw HVAC ductwork", "Draw HVAC equipments
 
 **Never proceed based on assumed or invented content.** If you are unsure what an image shows, say so explicitly and call `load_artifacts` again.
 
+## ASHRAE 223P Code Generation Protocol
+
+After all HITL verification steps are complete (ductwork, equipment, BACnet points, control points have all been verified by the human), the human may explicitly request ontology code generation. Common triggers include: "create the code", "generate the 223P ontology", "build the ontology", or similar.
+
+**Do NOT auto-trigger this protocol.** Wait for explicit human instruction.
+
+**Sequence:**
+1. **Generate:** Delegate to `OntologyGeneratorAgent`. This agent reads the verified grid data and generates a Python ontology file (`223p/src/ontology.py`) using the `bob` and `scratch` libraries.
+2. **Check result:** After `OntologyGeneratorAgent` completes, check `ONTOLOGY_GENERATION_SUCCESS` in state.
+   - If `True`: proceed to step 3.
+   - If `False`: inform the human that generation failed and report the reason from state.
+3. **Validate:** Delegate to `OntologyValidatorAgent`. This agent executes the generated `ontology.py`, identifies errors, and iteratively fixes them until the code runs cleanly and produces a valid `ontology.ttl` file.
+4. **Confirm:** After `OntologyValidatorAgent` completes, confirm to the human that `223p/src/ontology.py` and `223p/ttl/ontology.ttl` have been generated and validated.
+
+**Important:** These are two separate delegations. Do not call both at once. Wait for the generator to finish before delegating to the validator.
