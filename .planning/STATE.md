@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 09
 status: unknown
-last_updated: "2026-03-20T20:29:18.422Z"
+last_updated: "2026-03-21T12:09:43Z"
 progress:
   total_phases: 9
   completed_phases: 3
   total_plans: 12
-  completed_plans: 9
+  completed_plans: 10
 ---
 
 # State: HVAC Reconstruction Project
@@ -18,8 +18,8 @@ progress:
 
 - **Current Phase:** 09
 - **Overall Completion:** [████████░░] 75%
-- **Active Plan:** 09-01 (complete)
-- **Last Completed:** 09-01 (Generator/Validator exit tools with snapshot lifecycle)
+- **Active Plan:** 09-04 (complete)
+- **Last Completed:** 09-04 (Frontend TTL/Python code viewer tabs with CodeWindow component)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -52,12 +52,15 @@ progress:
 - **Decision (08-02):** Visual Verification Protocol inserted BEFORE the STOP block in master_instruction.md to maintain operational instruction doc structure; test_url_construction kept as separate test function for intent clarity.
 - **Decision (09-01):** checkpoint_code is the ONLY exit tool that does NOT set actions.escalate — loop continuation is the key invariant for the validator iteration cycle.
 - **Decision (09-01):** Read-copy-write pattern enforced for all list mutations in ToolContext.state to avoid ADK session mutation issues: list(state.get(..., [])) → append → reassign.
+- **Decision (09-02):** Internal agent names use short suffix (OntologyGeneratorInternal / OntologyValidatorInternal), not the longer *AgentInternal pattern from _223p.
+- **Decision (09-02):** LoopWrapper stores sub-agent in sub_agents[0] (inherited from LoopAgent) — tests access internal agent via agent.sub_agents[0].name.
+- **Decision (09-04):** User renamed 'code' tab to 'TTL' and added separate 'Python' tab — accepted as intentional UX improvement reflecting distinct data artifacts (python_code_snapshots vs ttl_code_snapshots). CodeWindow accepts type prop to serve both tabs.
 
 ### Next Steps
 
-1. Execute 09-02: Wire exit_generator_success/failure into ontology generator agent.py
-2. Execute 09-03: Wire checkpoint_code/exit_validator_success/failure into ontology validator agent.py
-3. Install chromium for playwright: `cd agent && uv run playwright install chromium` (from Phase 08)
+1. Phase 09 complete — all 4 plans executed
+2. Execute Phase 10: TTL to Neo4j database integration with frontend graph visualization
+3. Install chromium for playwright: `cd agent && uv run playwright install chromium` (from Phase 08, still pending)
 
 ### Session Log
 
@@ -70,6 +73,8 @@ progress:
 - **2026-03-20:** Completed 08-01-PLAN.md. Created capture_frontend_state_tool.py (CaptureFrontendStateTool, headless Playwright screenshot). Registered in create_master_agent.py. Added playwright>=1.40.0 to pyproject.toml.
 - **2026-03-19:** Completed 08-02-PLAN.md. Added Visual Verification Protocol to master_instruction.md. Created agent/tests/test_capture_frontend_state.py (4 unit tests, all passing, mocked Playwright).
 - **2026-03-20:** Completed 09-01-PLAN.md. Created ontology_generator/exit_tools.py (2 functions) and ontology_validator/exit_tools.py (3 functions including checkpoint_code). 22 unit tests all passing. Read-copy-write pattern established for snapshot state management.
+- **2026-03-21:** Completed 09-02-PLAN.md. Created OntologyGeneratorAgent (LoopWrapper, max_iterations=50) and OntologyValidatorAgent (LoopWrapper, max_iterations=100). Validator prompt adds mandatory checkpoint_code step after each write_ontology. All 30 tests pass (8 new + 22 from plan 01).
+- **2026-03-21:** Completed 09-04-PLAN.md. Created CodeWindow.tsx (dual-type code viewer component). Added TTL and Python tabs to AgentNavbar and YourMainContent. Human verified tabs render correctly. User extended the plan by splitting single 'code' tab into separate 'ttl' and 'python' tabs — accepted as UX improvement.
 
 ## Roadmap Evolution
 
