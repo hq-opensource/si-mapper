@@ -14,7 +14,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 **Fix loop:**
 1. read full source.
 2. execute source code — capture stdout, stderr, return code.
-3. No errors + TTL produced → `exit_validator_success(code=<final_code>, summary="...")` (success summary).
+3. No errors + TTL produced → read the TTL file content as a string, then call `exit_validator_success(code=<final_python_code>, ttl_content=<full_ttl_string>, summary="...")` (success summary). The `ttl_content` must be the complete text of the produced `.ttl` file — this is what gets displayed in the frontend TTL tab.
 4. Otherwise: analyze errors → look up affected classes/APIs → write corrected full file via `write_ontology`.
 5. After each successful `write_ontology` call, immediately call `checkpoint_code(code=<the_same_full_code_string>)` to save a version snapshot. This is mandatory — do not skip it.
 6. Go to step 2.
