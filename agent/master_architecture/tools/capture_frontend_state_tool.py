@@ -3,6 +3,8 @@ from __future__ import annotations
 import asyncio
 import os
 import logging
+from datetime import datetime
+from pathlib import Path
 from typing import Any
 from typing_extensions import override
 
@@ -59,7 +61,7 @@ class CaptureFrontendStateTool(BaseTool):
         try:
             from playwright.async_api import async_playwright
             async with async_playwright() as p:
-                browser = await p.chromium.launch(headless=True)
+                browser = await p.chromium.launch(headless=False)
                 page = await browser.new_page()
                 await page.goto(view_url, wait_until="load")
                 await asyncio.sleep(3)
@@ -68,13 +70,24 @@ class CaptureFrontendStateTool(BaseTool):
         except Exception as e:
             return {"status": "error", "message": f"Could not capture canvas snapshot: {e}"}
 
+        # Save to mapper/uploads/snapshots/
+        snapshots_dir = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "snapshots"
+        snapshots_dir.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        snapshot_filename = f"snapshot_{timestamp}.png"
+        snapshot_path = snapshots_dir / snapshot_filename
+        snapshot_path.write_bytes(png_bytes)
+        (snapshots_dir / "latest_snapshot.png").write_bytes(png_bytes)
+        logger.debug(f"Snapshot saved to: {snapshot_path}")
+
         part = types.Part(inline_data=types.Blob(mime_type="image/png", data=png_bytes))
         await tool_context.save_artifact(filename="verification/latest_snapshot.png", artifact=part)
 
         return {
             "status": "success",
             "artifact": "verification/latest_snapshot.png",
-            "message": "Snapshot saved. Call load_artifacts(artifact_names=['verification/latest_snapshot.png']) to inspect it.",
+            "local_path": str(snapshot_path),
+            "message": f"Snapshot saved to {snapshot_path}. Call load_artifacts(artifact_names=['verification/latest_snapshot.png']) to inspect it.",
         }
 
 

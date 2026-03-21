@@ -1,5 +1,5 @@
 ---
-name: skill-bacnet
+name: skill-bacnet-points
 description: Specialized instructions for identifying and extracting BACnet points from CSV files and mapping them to HVAC equipment on the grid.
 ---
 

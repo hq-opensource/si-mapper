@@ -106,10 +106,6 @@ export function SvarFileManager() {
                             onAction={handleAction}
                             init={(api) => { 
                                 apiRef.current = api;
-                                // Set grid view and info panel by default
-                                setTimeout(() => {
-                                    api.setState({ view: "grid", info: true });
-                                }, 100);
                             }}
                         />
                     </div>

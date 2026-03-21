@@ -153,3 +153,13 @@ Plans:
 - [ ] 09-02-PLAN.md — Agent files (OntologyGeneratorAgent + OntologyValidatorAgent LoopWrappers + prompts)
 - [ ] 09-03-PLAN.md — Wire into master architecture (create_master_agent.py + master_instruction.md)
 - [ ] 09-04-PLAN.md — Frontend Code tab (CodeWindow.tsx + navbar/content wiring)
+
+### Phase 10: TTL to Neo4j database integration with frontend graph visualization
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 9
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 10 to break down)

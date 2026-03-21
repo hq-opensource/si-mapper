@@ -10,6 +10,7 @@ import { formatAgentName } from '@/lib/utils';
 export function ArtifactsDashboard() {
     const { events } = useThoughts();
     const bottomRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [isHovering, setIsHovering] = useState(false);
 
     // Filter artifact events
@@ -21,11 +22,11 @@ export function ArtifactsDashboard() {
     const latestEvent = artifactEvents.length > 0 ? artifactEvents[artifactEvents.length - 1] : null;
     const latestMetadata = (latestEvent?.metadata || {}) as Record<string, any>;
 
-    // Auto-scroll logic
+    // Auto-scroll logic refined for consistency
     useEffect(() => {
         if (isHovering) return;
         if (bottomRef.current && artifactEvents.length > 0) {
-            bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            bottomRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
         }
     }, [artifactEvents.length, isHovering]);
 
@@ -46,12 +47,19 @@ export function ArtifactsDashboard() {
             title="Artifacts Control"
             subtitle="Artifact Injection & Context Management"
             icon={Package}
+            containerRef={containerRef}
             fullWidth
             fullHeight
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
             footerContent={
                 <div className="flex items-center gap-4">
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase border transition-all duration-500
+                        ${isHovering
+                            ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                            : 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.1)]'}`}>
+                        {isHovering ? 'Manual Override' : 'System Managed'}
+                    </div>
                     <div className="px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase border bg-indigo-500/10 text-indigo-500 border-indigo-500/20">
                         Active artifacts: {String(latestMetadata.total_blobs || 0)}
                     </div>
@@ -59,7 +67,7 @@ export function ArtifactsDashboard() {
             }
         >
             <div className="p-8 space-y-12 h-fit">
-                {/* History Section (Bottom) */}
+                {/* History Section (Now Chronological for Auto-scroll) */}
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <h4 className="text-sm font-black text-[var(--foreground)] uppercase tracking-widest flex items-center gap-2">
@@ -69,7 +77,7 @@ export function ArtifactsDashboard() {
                     </div>
 
                     <div className="space-y-4">
-                        {artifactEvents.slice().reverse().map((event: AgentEvent) => {
+                        {artifactEvents.map((event: AgentEvent) => {
                             const meta = (event.metadata || {}) as Record<string, any>;
                             return (
                                 <div key={event.id} className="bg-[var(--background)] border border-[var(--muted-foreground)]/10 rounded-2xl p-6 hover:border-[var(--accent)]/30 transition-all group">
@@ -148,7 +156,7 @@ export function ArtifactsDashboard() {
                                 </div>
                             );
                         })}
-                        <div ref={bottomRef} className="h-20" />
+                        <div ref={bottomRef} className="h-40" />
                     </div>
                 </div>
             </div>

@@ -81,8 +81,8 @@ Some equipment sits outside the duct (below its parent component):
 - Placement: Same X-coordinate, Y + 1 unit down
 - Example: Fan at `[15, 5]` → VFD at `[15, 6]`
 
-
-
+## Naming convention
+Name the equipmens as they are named in the original multimodal data. If the equipment is not named, then create a name for it following the format: `TYPE-ID` where TYPE is the type of the equipment and ID is a unique identifier.
 
 
 

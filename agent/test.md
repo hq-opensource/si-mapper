@@ -3,7 +3,7 @@ Create the Air Handling Unit (AHU) system saved on the HVAC folder on the fronte
 
 Check the content of the hvac folder. There is a design of an hvac system there with its respective legend. I want that you read both files, understand them, and replicate them here using your tools. Create the hvac system on the image here on the canvas using the tools available to you.
 
-Create the duct work of the hvac system on the image here on the canvas using the tools available to you.
+Create the duct work of the hvac system on the image here on the canvas using the tools available to you. Verify that the ductwork reflects the original multimodal data. 
 
 Check the content of the hvac folder. There is a design of an hvac system there with its respective legend. I want that you read both files, understand them, and replicate them here using your tools. 
 

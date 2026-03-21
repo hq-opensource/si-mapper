@@ -47,7 +47,7 @@ def _put_grid_edn(mutable_grid: dict) -> int:
         _graphivac_url(),
         headers={"Content-Type": "application/edn"},
         data=edn_format.dumps(mutable_grid),
-        timeout=15,
+        timeout=60,
     )
     response.raise_for_status()
     return response.status_code
