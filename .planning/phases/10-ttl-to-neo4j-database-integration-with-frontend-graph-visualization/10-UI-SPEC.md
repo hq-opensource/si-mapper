@@ -56,14 +56,16 @@ Source: extracted from existing components. All sizes use CSS `var(--font-sans)`
 |------|------|--------|-------------|
 | Body | 14px (`text-sm`) | 400 (regular) | 1.5 (`leading-relaxed`) |
 | Label | 10px (`text-[10px]`) | 700 (bold) | 1.0 (tracking `0.4em` uppercase) |
-| Heading | 36px (`text-4xl`) | 900 (black) | 1.0 (`leading-none`) |
+| Heading | 36px (`text-4xl`) | 700 (bold) | 1.0 (`leading-none`) |
 | Display | 12px (`text-xs`) | 700 (bold) | 1.0 (pill labels, tracking-wide uppercase) |
+
+Permitted weights: **400 (regular)** and **700 (bold)** only. No third weight.
 
 Toolbar button labels: 14px (`text-sm`), weight 700 (bold) — matches existing nav item pattern.
 
-Node info card property values: 14px (`text-sm`), weight 400, line-height 1.5.
+Node info card property values: 14px (`text-sm`), weight 400 (`font-normal`), line-height 1.5.
 
-Node labels rendered by Sigma.js: 12px, weight 600, controlled via Sigma `labelSize` setting (not CSS).
+Node labels rendered by Sigma.js: 12px, weight 700, controlled via Sigma `labelSize` / `labelWeight` settings (not CSS).
 
 ---
 
@@ -136,15 +138,25 @@ Active FA2 button (running): `text-[var(--accent)] bg-[var(--accent)]/15 border-
 
 Toolbar icons (lucide-react): `ZoomIn`, `ZoomOut`, `RotateCcw` (reset), `Play`/`Pause` (FA2 toggle).
 
+Each toolbar button is icon-only and MUST include both a `title` tooltip and an `aria-label` attribute:
+
+| Button | `aria-label` | `title` (tooltip) |
+|--------|-------------|-------------------|
+| Zoom In | `"Zoom in"` | `"Zoom In"` |
+| Zoom Out | `"Zoom out"` | `"Zoom Out"` |
+| Reset Layout | `"Reset layout"` | `"Reset Layout"` |
+| FA2 paused (stopped state) | `"Run layout"` | `"Run Layout"` |
+| FA2 running (active state) | `"Pause layout"` | `"Pause Layout"` |
+
 ### Node Info Card Overlay
 
 Positioned: `absolute bottom-4 right-4 z-20 w-[280px]`
 
 Container: `p-4 rounded-xl border border-[var(--accent)]/20 bg-[var(--background)]/90 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.12)] animate-in fade-in slide-in-from-bottom-2 duration-200`
 
-Header row: node label in `text-sm font-black text-[var(--foreground)] truncate` + RDF type badge in `text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--accent)] opacity-80`
+Header row: node label in `text-sm font-bold text-[var(--foreground)] truncate` + RDF type badge in `text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--accent)] opacity-80`
 
-Property rows: `text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)] opacity-60` for keys, `text-sm font-medium text-[var(--foreground)]` for values.
+Property rows: `text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)] opacity-60` for keys, `text-sm font-normal text-[var(--foreground)]` for values.
 
 Separator between header and properties: `border-t border-[var(--muted-foreground)]/10 my-3`
 
@@ -269,11 +281,11 @@ import { StatusPlaceholder } from './StatusPlaceholder';
   defaultEdgeType: 'arrow',
   labelFont: 'Outfit, Inter, system-ui',
   labelSize: 12,
-  labelWeight: '600',
+  labelWeight: '700',
   labelColor: { color: '#94a3b8' },  // var(--muted-foreground) dark value
   edgeLabelFont: 'Outfit, Inter, system-ui',
   edgeLabelSize: 10,
-  edgeLabelWeight: '600',
+  edgeLabelWeight: '700',
   zoomToSizeRatioFunction: (x: number) => x,
   itemSizesReference: 'positions',
 }
