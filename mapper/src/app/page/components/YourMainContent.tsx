@@ -32,7 +32,7 @@ const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
 
 function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agentState: AgentState }) {
   // Determine initial view based on props but allow internal navigation
-  const [activeTab, setActiveTab] = useState<'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'code'>(isEditMode ? 'edit' : 'view');
+  const [activeTab, setActiveTab] = useState<'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl'>(isEditMode ? 'edit' : 'view');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   // Initialize theme: Default to light mode, ignore system preference
   useEffect(() => {
@@ -49,7 +49,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
     localStorage.setItem('app-theme', newTheme);
   };
 
-  const handleTabChange = (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'code') => {
+  const handleTabChange = (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl') => {
     setActiveTab(tab);
   };
 
@@ -65,8 +65,10 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
         return <PerformanceDashboard />;
       case 'artifacts':
         return <ArtifactsDashboard />;
-      case 'code':
-        return <CodeWindow />;
+      case 'python':
+        return <CodeWindow type="python" />;
+      case 'ttl':
+        return <CodeWindow type="ttl" />;
 
       case 'view':
         return (

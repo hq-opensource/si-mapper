@@ -8,8 +8,8 @@ import { formatAgentName } from "@/lib/utils";
 
 interface AgentNavbarProps {
     agentState: AgentState;
-    activeTab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'code';
-    onTabChange: (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'code') => void;
+    activeTab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl';
+    onTabChange: (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl') => void;
 }
 
 export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarProps) {
@@ -28,7 +28,8 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         { id: 'tools', label: 'Tools', icon: Wrench },
         { id: 'performance', label: 'Performance', icon: BarChart2 },
         { id: 'artifacts', label: 'Artifacts', icon: Package },
-        { id: 'code', label: 'Code', icon: Code2 },
+        { id: 'python', label: 'Python', icon: Code2 },
+        { id: 'ttl', label: 'TTL', icon: Database },
         { id: 'files', label: 'Files', icon: Folder },
         { id: 'debug', label: 'Debug', icon: BarChart2 },
     ] as const;

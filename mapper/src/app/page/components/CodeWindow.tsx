@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useThoughts } from '../../../context/ThoughtsContext';
-import { Code2 } from 'lucide-react';
+import { Code2, Database } from 'lucide-react';
 import { SharedPageContainer } from './SharedPageContainer';
 import { StatusPlaceholder } from './StatusPlaceholder';
 
@@ -13,9 +13,15 @@ interface SnapshotEntry {
     status: 'generated' | 'fix' | 'validated';
 }
 
-export function CodeWindow() {
+interface CodeWindowProps {
+    type: 'python' | 'ttl';
+}
+
+export function CodeWindow({ type }: CodeWindowProps) {
     const { data } = useThoughts();
-    const snapshots = (data?.ontology_code_snapshots ?? []) as SnapshotEntry[];
+    const snapshots = ((type === 'python' 
+        ? data?.python_code_snapshots 
+        : data?.ttl_code_snapshots) ?? []) as SnapshotEntry[];
     const [selectedIdx, setSelectedIdx] = useState<number>(0);
 
     // Auto-advance to latest snapshot when new ones arrive
@@ -27,17 +33,17 @@ export function CodeWindow() {
 
     return (
         <SharedPageContainer
-            title="Ontology Code"
-            subtitle="ASHRAE 223P Generated Source"
-            icon={Code2}
+            title={type === 'python' ? "Python Source" : "Ontology TTL"}
+            subtitle={type === 'python' ? "ontology.py Generation" : "ASHRAE 223P Serialized Output"}
+            icon={type === 'python' ? Code2 : Database}
             fullWidth
             fullHeight
         >
             {snapshots.length === 0 ? (
                 <StatusPlaceholder
-                    icon={Code2}
-                    title="No ontology code generated yet"
-                    subtitle="Code snapshots will appear here after ontology generation"
+                    icon={type === 'python' ? Code2 : Database}
+                    title={type === 'python' ? "No Python code generated yet" : "No TTL code generated yet"}
+                    subtitle={type === 'python' ? "Code snapshots will appear here during generation" : "TTL versions will appear here after validation"}
                 />
             ) : (
                 <div className="flex flex-col h-full">
