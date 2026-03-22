@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 11
 status: unknown
-last_updated: "2026-03-22T18:38:00.000Z"
+last_updated: "2026-03-22T18:30:36.868Z"
 progress:
   total_phases: 11
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 20
-  completed_plans: 19
+  completed_plans: 20
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 11
-- **Overall Completion:** [██████████] 95%
-- **Active Plan:** 11-02 (complete)
-- **Last Completed:** 11-02 (search_class_mapping JSONL grep tool with TDD — 7 tests pass, both libraries, caching)
+- **Overall Completion:** [██████████] 100%
+- **Active Plan:** 11-03 (complete)
+- **Last Completed:** 11-03 (tool swap in both ontology agents — scan_python_files_filtered + search_class_mapping wired, prompts rewritten, full_*.jsonl deleted, 12 agent tests pass)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -74,11 +74,12 @@ progress:
 - **Decision (11-01):** Files with OSError during read are skipped in filtered results rather than included with error placeholder — simpler and avoids returning noise.
 - **Decision (11-02):** search_class_mapping uses case-insensitive substring OR logic across keywords — consistent with scan_python_files_filtered pattern from 11-01.
 - **Decision (11-02):** _MAPPINGS_DIR uses _PROJECT_ROOT anchor (not relative path) for portability; tests use real JSONL files (not mocks) since they are small static repo fixtures; _mapping_cache is module-level for lazy JSONL loading.
+- **Decision (11-03):** Tool swap complete — both ontology agents now import only scan_python_files_filtered + search_class_mapping; list_library_classes, get_class_details, scan_python_files removed from both agents.
+- **Decision (11-03):** full_bob.jsonl and full_scratch.jsonl deleted — superseded by classes_*.jsonl + path field returned by search_class_mapping; generator workflow updated to 9-step sequence with explicit class lookup step.
 
 ### Next Steps
 
-1. Phase 11 in progress — 11-04 complete (LESSONS.md-first reading logic established)
-2. Remaining Phase 11 plans pending
+1. Phase 11 complete — all plans (11-01, 11-02, 11-03, 11-04) done
 
 ### Session Log
 
@@ -101,6 +102,7 @@ progress:
 - **2026-03-22:** Completed 11-04-PLAN.md. Added LESSONS.md-first Step 0 to SKILL.md Reading Protocol with no-fallback rule. Added Section 7 Distillation Protocol (HITL-gated). Created LESSONS.md skeleton with 6 category headers ready for first distillation.
 - **2026-03-22:** Completed 11-01-PLAN.md. Added scan_python_files_filtered (TDD, 7 tests) to tool.py with SCAN_PYTHON_FILES_FILTERED_SCHEMA and __all__ export. Keyword filtering reduces coding-agent context window consumption.
 - **2026-03-22:** Completed 11-02-PLAN.md. Added search_class_mapping (TDD, 7 tests) to tool.py with SEARCH_CLASS_MAPPING_SCHEMA, __all__ export, _load_mapping helper, and _mapping_cache. Single-call JSONL grep replaces expensive two-call list_library_classes + get_class_details workflow. 14 tests pass total.
+- **2026-03-22:** Completed 11-03-PLAN.md. Swapped old tools to scan_python_files_filtered + search_class_mapping in both ontology_generator and ontology_validator agent.py files. Rewrote both prompt.md files with new targeted workflow. Extended agent tests (4 new tests). Deleted full_bob.jsonl and full_scratch.jsonl. 12 agent tests pass.
 
 ## Roadmap Evolution
 
