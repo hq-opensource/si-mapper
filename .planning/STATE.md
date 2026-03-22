@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 10
 status: unknown
-last_updated: "2026-03-22T13:38:42.268Z"
+last_updated: "2026-03-22T13:44:25.737Z"
 progress:
   total_phases: 10
   completed_phases: 4
   total_plans: 16
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 10
-- **Overall Completion:** [████████░░] 81%
-- **Active Plan:** 10-02 (complete)
-- **Last Completed:** 10-01 (Neo4j Docker + LoadTtlToNeo4jTool + 4 tests + master agent registration)
+- **Overall Completion:** [█████████░] 94%
+- **Active Plan:** 10-03 (complete)
+- **Last Completed:** 10-03 (GraphWindow.tsx Sigma.js graph visualization + Graph tab wiring)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -62,6 +62,8 @@ progress:
 - **Decision (10-01):** Path mock chain for multi-segment paths: set __truediv__ on both root and leaf to return the same leaf MagicMock — ensures all 4 path segments resolve to the controllable mock.
 - **Decision (10-02):** Jest config uses .js extension (not .ts) to avoid ts-node dependency on Jest 30.
 - **Decision (10-02):** Neo4j mock uses globalThis bridge to expose mock fn from hoisted jest.mock() factory, avoiding temporal dead zone caused by global driver singleton being created at module import time.
+- **Decision (10-03):** Dynamic sigma.setSetting(nodeReducer) inside useEffect avoids stale closure over React state — do NOT pass reducers as SigmaContainer props.
+- **Decision (10-03):** SigmaContent coordinator groups all SigmaContainer children (GraphLoader, GraphEvents, ToolbarInner, NodeInfoCardInner) to share isRunning/layoutControls/activeNode state via callbacks without a context provider.
 
 ### Next Steps
 
@@ -85,6 +87,7 @@ progress:
 - **2026-03-21:** Completed 09-03-PLAN.md. Wired OntologyGeneratorAgent and OntologyValidatorAgent into create_master_agent.py via all_subagents. Added ASHRAE 223P Code Generation Protocol section to master_instruction.md with explicit HITL gate and two-step delegation sequence. 30 tests pass.
 - **2026-03-22:** Completed 10-01-PLAN.md. Neo4j Docker service with Neosemantics n10s plugin. Created LoadTtlToNeo4jTool (8-query Cypher wipe+reimport). 4 unit tests pass. Registered in master agent. Neo4j Import Protocol added to master_instruction.md.
 - **2026-03-22:** Completed 10-02-PLAN.md. Installed Sigma.js + neo4j-driver packages (7 production + 4 dev). Created GET /api/graph API route with global Neo4j driver singleton, RDF localName stripping, blank node coalesce handling, and error handling. Set up Jest with ts-jest. 2 unit tests pass (success case + 500 error case).
+- **2026-03-22:** Completed 10-03-PLAN.md. Created GraphWindow.tsx (506 lines) — Sigma.js WebGL graph with ForceAtlas2, dynamic sigma.setSetting reducers, toolbar overlay, NodeInfoCard, and empty/loading/error states. Wired into Graph tab in YourMainContent.tsx. TypeScript compiles without errors.
 
 ## Roadmap Evolution
 
