@@ -29,11 +29,10 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 
 ---
 ## Available skills and tools
-- `skill-read-code` skill to acquire error-resolution lessons.  Keep result in cache.
-- `list_library_classes` tool to check available classes and their properties in `bob` and `scratch`.
-- `get_class_details` tool to verify class definitions, constructor arguments, and property names.  Use batch calls.
-- `scan_python_files` tool on `../223p/ref/code` for idiomatic `bob`/`scratch` usage.  Keep result in cache.
-- `read_prompt` tool for original generation guidelines.  Keep result in cache.
+- `skill-read-code` skill to acquire error-resolution lessons. Keep result in cache.
+- `search_class_mapping` tool to find which file a class lives in. Pass class names from errors as keywords.
+- `scan_python_files_filtered` tool to read the source of a specific class file (use `path` from `search_class_mapping` result). Also use for `../223p/ref/code` when looking for reference patterns.
+- `read_prompt` tool for original generation guidelines. Keep result in cache.
 - `read_ontology` tool to read the full source code of the current `ontology.py`.
 - `execute_ontology` tool to run the current `ontology.py` and capture stdout, stderr, and return code.
 - `write_ontology` tool to write the full corrected source code after each fix iteration.
@@ -46,7 +45,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 ## Stop Conditions → `exit_validator_failure(reason="VALIDATION_FAILED: ...")`
 - Usage of skill `skill-read-code` was unsuccessfully — unable to acquire error-resolution lessons.
 - `read_ontology` returns empty or missing file.
-- `list_library_classes` errors — `bob`/`scratch` unreadable.
+- `search_class_mapping` returns empty for known class names — mapping files may be missing or corrupt.
 - Same error persists after 10 consecutive fix attempts — escalate to human review.
 - Code is fundamentally broken (empty, non-Python, random text) — targeted fixes impossible.
 

@@ -48,3 +48,21 @@ def test_ontology_validator_internal_name():
     agent = OntologyValidatorAgent(model_name="test-model")
     internal = agent.sub_agents[0]
     assert internal.name == "OntologyValidatorInternal"
+
+
+def test_validator_has_new_tools():
+    from sub_agents.ontology_validator.agent import OntologyValidatorAgent
+    agent = OntologyValidatorAgent(model_name="test-model")
+    internal = agent.sub_agents[0]
+    tool_names = [t.__name__ if hasattr(t, "__name__") else str(t) for t in internal.tools]
+    assert "scan_python_files_filtered" in tool_names
+    assert "search_class_mapping" in tool_names
+
+def test_validator_no_old_tools():
+    from sub_agents.ontology_validator.agent import OntologyValidatorAgent
+    agent = OntologyValidatorAgent(model_name="test-model")
+    internal = agent.sub_agents[0]
+    tool_names = [t.__name__ if hasattr(t, "__name__") else str(t) for t in internal.tools]
+    assert "list_library_classes" not in tool_names
+    assert "get_class_details" not in tool_names
+    assert "scan_python_files" not in tool_names
