@@ -30,9 +30,9 @@ import shutil
 import subprocess
 import sys
 import textwrap
-from typing import Any
+from typing import Any, Optional
 from google.adk.skills import load_skill_from_dir
-from google.adk.tools import skill_toolset
+from google.adk.tools import skill_toolset, ToolContext
 
 __all__ = [
     # Library introspection
@@ -444,7 +444,7 @@ def read_ontology() -> str:
     return _read_text_file(ONTOLOGY_FILE)
 
 
-def write_ontology(content: str) -> str:
+def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> str:
     """Overwrite ``223p/src/ontology.py`` with *content*.
 
     A numbered backup is created before writing
@@ -455,6 +455,17 @@ def write_ontology(content: str) -> str:
         {"path": "...", "success": true, "backup": "<backup path>"}
         {"path": "...", "success": false, "error": "<message>"}  // on failure
     """
+    if tool_context:
+        # Update session state for the frontend (Python snapshots)
+        snapshots = list(tool_context.state.get("python_code_snapshots", []))
+        label = f"Iteration {len(snapshots) + 1}"
+        snapshots.append({
+            "label": label,
+            "code": content,
+            "iteration": len(snapshots),
+            "status": "generated"
+        })
+        tool_context.state["python_code_snapshots"] = snapshots
     os.makedirs(os.path.dirname(ONTOLOGY_FILE), exist_ok=True)
 
     backup_path, backup_err = _backup_file(ONTOLOGY_FILE)
@@ -472,7 +483,7 @@ def write_ontology(content: str) -> str:
         return json.dumps({"path": ONTOLOGY_FILE, "success": False, "error": str(exc)})
 
 
-def execute_ontology() -> str:
+def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
     """
     Execute 223p/src/ontology.py in a subprocess using the agent's virtual
     environment Python interpreter.
@@ -515,6 +526,24 @@ def execute_ontology() -> str:
         candidate = os.path.join(TTL_OUTPUT_DIR, "ontology.ttl")
         if os.path.exists(candidate):
             ttl_file = candidate
+            
+            # Update session state for the frontend (TTL snapshots)
+            if tool_context:
+                try:
+                    with open(ttl_file, "r", encoding="utf-8") as f:
+                        ttl_content = f.read()
+                    
+                    snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
+                    label = f"Version {len(snapshots) + 1}"
+                    snapshots.append({
+                        "label": label,
+                        "code": ttl_content,
+                        "iteration": len(snapshots),
+                        "status": "validated"
+                    })
+                    tool_context.state["ttl_code_snapshots"] = snapshots
+                except Exception as e:
+                    logger.warning(f"Failed to read TTL file for snapshot: {e}")
 
     return json.dumps({"success": success, "returncode": proc.returncode,
                        "stdout": proc.stdout, "stderr": proc.stderr,
