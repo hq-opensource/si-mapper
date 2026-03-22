@@ -45,6 +45,8 @@ __all__ = [
     "SCAN_PYTHON_FILES_SCHEMA",
     "scan_python_files_filtered",
     "SCAN_PYTHON_FILES_FILTERED_SCHEMA",
+    "search_class_mapping",
+    "SEARCH_CLASS_MAPPING_SCHEMA",
     # Ontology tools
     "ONTOLOGY_FILE",
     "TTL_OUTPUT_DIR",
@@ -478,6 +480,73 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", "..", ".."))
 
 ONTOLOGY_FILE = os.path.join(_PROJECT_ROOT, "223p", "src", "ontology.py")
+
+# ---------------------------------------------------------------------------
+# Tool: search_class_mapping
+# ---------------------------------------------------------------------------
+
+_MAPPINGS_DIR = os.path.join(
+    _PROJECT_ROOT, "agent", "skills", "skill-read-code", "assets", "mappings"
+)
+_JSONL_FILES = {
+    "bob": "classes_bob.jsonl",
+    "scratch": "classes_scratch.jsonl",
+}
+_mapping_cache: dict[str, list[dict]] = {}
+
+
+def _load_mapping(library: str) -> list[dict]:
+    if library not in _mapping_cache:
+        path = os.path.join(_MAPPINGS_DIR, _JSONL_FILES[library])
+        entries = []
+        with open(path, "r", encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if line:
+                    entries.append(json.loads(line))
+        _mapping_cache[library] = entries
+    return _mapping_cache[library]
+
+
+def search_class_mapping(keywords: list[str]) -> str:
+    """
+    Grep-like search across classes_bob.jsonl and classes_scratch.jsonl.
+    Returns entries where class_name contains any keyword (case-insensitive).
+    Each result includes a 'library' field ('bob' or 'scratch').
+    """
+    lower_keywords = [kw.lower() for kw in keywords]
+    results = []
+    for library in ("bob", "scratch"):
+        for entry in _load_mapping(library):
+            name_lower = entry["class_name"].lower()
+            if any(kw in name_lower for kw in lower_keywords):
+                results.append({**entry, "library": library})
+    return json.dumps(results, ensure_ascii=False, indent=2)
+
+
+SEARCH_CLASS_MAPPING_SCHEMA: dict[str, Any] = {
+    "type": "function",
+    "function": {
+        "name": "search_class_mapping",
+        "description": (
+            "Search the ASHRAE 223P class mappings (bob and scratch libraries) "
+            "for classes matching any of the given keywords. Returns a list of "
+            "{class_name, path, types, library} dicts. Use the 'path' field to "
+            "then read the actual Python source with scan_python_files_filtered."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "keywords": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Keywords to match against class_name (case-insensitive substring).",
+                },
+            },
+            "required": ["keywords"],
+        },
+    },
+}
 TTL_OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "223p", "ttl")
 
 # Reused across schemas that take no parameters.

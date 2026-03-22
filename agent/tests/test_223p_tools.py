@@ -88,3 +88,78 @@ class TestScanPythonFilesFiltered:
         assert "files" in result
         assert isinstance(result["root"], str)
         assert isinstance(result["files"], dict)
+
+
+class TestSearchClassMapping:
+    """Tests for search_class_mapping — uses real JSONL files in the repo."""
+
+    def test_finds_matching_entries(self):
+        """keywords=["AirHandlingUnit"] returns at least 1 result with that class_name."""
+        from sub_agents._223p.tool import search_class_mapping
+
+        results = json.loads(search_class_mapping(keywords=["AirHandlingUnit"]))
+
+        assert isinstance(results, list)
+        assert len(results) >= 1
+        assert any("AirHandlingUnit" in r["class_name"] for r in results)
+
+    def test_case_insensitive(self):
+        """keywords=["airhandling"] (lowercase) matches 'AirHandlingUnit'."""
+        from sub_agents._223p.tool import search_class_mapping
+
+        results = json.loads(search_class_mapping(keywords=["airhandling"]))
+
+        assert len(results) >= 1
+        assert all("AirHandlingUnit" in r["class_name"] or "airhandling" in r["class_name"].lower() for r in results)
+
+    def test_adds_library_field(self):
+        """Each result dict has a 'library' key with value 'bob' or 'scratch'."""
+        from sub_agents._223p.tool import search_class_mapping
+
+        results = json.loads(search_class_mapping(keywords=["Boiler"]))
+
+        assert len(results) >= 1
+        for r in results:
+            assert "library" in r
+            assert r["library"] in ("bob", "scratch")
+
+    def test_returns_all_fields(self):
+        """Each result dict has 'class_name', 'path', 'types', and 'library' keys."""
+        from sub_agents._223p.tool import search_class_mapping
+
+        results = json.loads(search_class_mapping(keywords=["Chiller"]))
+
+        assert len(results) >= 1
+        for r in results:
+            assert "class_name" in r
+            assert "path" in r
+            assert "types" in r
+            assert "library" in r
+
+    def test_no_matches(self):
+        """keywords=["zzz_nonexistent_zzz"] returns empty list."""
+        from sub_agents._223p.tool import search_class_mapping
+
+        results = json.loads(search_class_mapping(keywords=["zzz_nonexistent_zzz"]))
+
+        assert results == []
+
+    def test_multiple_keywords(self):
+        """keywords=["Fan", "Boiler"] returns entries matching either keyword."""
+        from sub_agents._223p.tool import search_class_mapping
+
+        results = json.loads(search_class_mapping(keywords=["Fan", "Boiler"]))
+
+        names = [r["class_name"].lower() for r in results]
+        assert any("fan" in n for n in names), "Expected Fan matches"
+        assert any("boiler" in n for n in names), "Expected Boiler matches"
+
+    def test_searches_both_libraries(self):
+        """A keyword matching entries in both files returns results from both bob and scratch."""
+        from sub_agents._223p.tool import search_class_mapping
+
+        results = json.loads(search_class_mapping(keywords=["AirHandlingUnit"]))
+
+        libraries = {r["library"] for r in results}
+        assert "bob" in libraries, "Expected bob results"
+        assert "scratch" in libraries, "Expected scratch results"
