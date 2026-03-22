@@ -1,79 +1,125 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useThoughts } from '../../../context/ThoughtsContext';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Code2, Database } from 'lucide-react';
 import { SharedPageContainer } from './SharedPageContainer';
 import { StatusPlaceholder } from './StatusPlaceholder';
 
-interface SnapshotEntry {
-    label: string;
-    code: string;
-    iteration: number;
-    status: 'generated' | 'fix' | 'validated';
+interface FileEntry {
+    id: string;
+    name: string;
+    date: number; // unix timestamp in seconds
 }
 
 interface CodeWindowProps {
     type: 'python' | 'ttl';
 }
 
-export function CodeWindow({ type }: CodeWindowProps) {
-    const { data } = useThoughts();
-    const snapshots = ((type === 'python' 
-        ? data?.python_code_snapshots 
-        : data?.ttl_code_snapshots) ?? []) as SnapshotEntry[];
-    const [selectedIdx, setSelectedIdx] = useState<number>(0);
+const POLL_INTERVAL = 3000;
+const FOLDER: Record<string, string> = { python: 'python', ttl: 'ttl' };
+const EXT: Record<string, string> = { python: '.py', ttl: '.ttl' };
+const LATEST: Record<string, string> = { python: 'latest_ontology.py', ttl: 'latest_ontology.ttl' };
 
-    // Auto-advance to latest snapshot when new ones arrive
-    useEffect(() => {
-        if (snapshots.length > 0) {
-            setSelectedIdx(snapshots.length - 1);
+function formatLabel(filename: string): string {
+    const match = filename.match(/ontology_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/);
+    if (!match) return filename;
+    const [, year, month, day, hour, min] = match;
+    const d = new Date(+year, +month - 1, +day, +hour, +min);
+    return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+export function CodeWindow({ type }: CodeWindowProps) {
+    const [files, setFiles] = useState<FileEntry[]>([]);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [content, setContent] = useState<string>('');
+    const [loadingContent, setLoadingContent] = useState(false);
+    const fileCountRef = useRef(0);
+
+    const fetchFiles = useCallback(async () => {
+        try {
+            const res = await fetch(`/api/files?id=${FOLDER[type]}`);
+            if (!res.ok) return;
+            const items: FileEntry[] = await res.json();
+            const versioned = items
+                .filter(f => f.name !== LATEST[type] && f.name.endsWith(EXT[type]))
+                .sort((a, b) => a.date - b.date); // oldest → newest left to right
+
+            if (versioned.length > fileCountRef.current && versioned.length > 0) {
+                setSelectedId(versioned[versioned.length - 1].id);
+            }
+            fileCountRef.current = versioned.length;
+            setFiles(versioned);
+        } catch {
+            // silent — folder may not exist yet
         }
-    }, [snapshots.length]);
+    }, [type]);
+
+    useEffect(() => {
+        fetchFiles();
+        const timer = setInterval(fetchFiles, POLL_INTERVAL);
+        return () => clearInterval(timer);
+    }, [fetchFiles]);
+
+    useEffect(() => {
+        if (!selectedId) return;
+        setLoadingContent(true);
+        fetch(`/api/files/view?id=${encodeURIComponent(selectedId)}`)
+            .then(r => r.text())
+            .then(text => { setContent(text); setLoadingContent(false); })
+            .catch(() => setLoadingContent(false));
+    }, [selectedId]);
+
+    const icon = type === 'python' ? Code2 : Database;
 
     return (
         <SharedPageContainer
             title={type === 'python' ? "Python Source" : "Ontology TTL"}
             subtitle={type === 'python' ? "ontology.py Generation" : "ASHRAE 223P Serialized Output"}
-            icon={type === 'python' ? Code2 : Database}
+            icon={icon}
             fullWidth
             fullHeight
         >
-            {snapshots.length === 0 ? (
+            {files.length === 0 ? (
                 <StatusPlaceholder
-                    icon={type === 'python' ? Code2 : Database}
+                    icon={icon}
                     title={type === 'python' ? "No Python code generated yet" : "No TTL code generated yet"}
                     subtitle={type === 'python' ? "Code snapshots will appear here during generation" : "TTL versions will appear here after validation"}
                 />
             ) : (
                 <div className="flex flex-col h-full">
-                    {/* Version selector pill row */}
                     <div className="flex items-center gap-2 p-4 border-b border-[var(--muted-foreground)]/20 flex-wrap">
-                        {snapshots.map((snap, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setSelectedIdx(idx)}
-                                className={`
-                                    px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200
-                                    ${selectedIdx === idx
-                                        ? 'bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30'
-                                        : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 border border-transparent'
-                                    }
-                                `}
-                            >
-                                {snap.label}
-                                {snap.status === 'validated' && (
-                                    <span className="ml-1.5 inline-block w-2 h-2 rounded-full bg-green-500" />
-                                )}
-                            </button>
-                        ))}
+                        {files.map((file, idx) => {
+                            const isLatest = idx === files.length - 1;
+                            const isSelected = file.id === selectedId;
+                            return (
+                                <button
+                                    key={file.id}
+                                    onClick={() => setSelectedId(file.id)}
+                                    className={`
+                                        px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200
+                                        ${isSelected
+                                            ? 'bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30'
+                                            : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 border border-transparent'
+                                        }
+                                    `}
+                                >
+                                    {formatLabel(file.name)}
+                                    {isLatest && (
+                                        <span className="ml-1.5 inline-block w-2 h-2 rounded-full bg-green-500" />
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
 
-                    {/* Code display */}
                     <div className="flex-1 overflow-auto p-4">
-                        <pre className="whitespace-pre-wrap font-mono text-sm text-[var(--foreground)] leading-relaxed">
-                            <code>{snapshots[selectedIdx]?.code ?? ''}</code>
-                        </pre>
+                        {loadingContent ? (
+                            <div className="text-[var(--muted-foreground)] text-sm">Loading...</div>
+                        ) : (
+                            <pre className="whitespace-pre-wrap font-mono text-sm text-[var(--foreground)] leading-relaxed">
+                                <code>{content}</code>
+                            </pre>
+                        )}
                     </div>
                 </div>
             )}

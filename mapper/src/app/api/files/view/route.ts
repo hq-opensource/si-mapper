@@ -37,6 +37,7 @@ export async function GET(request: Request) {
         else if (ext === '.txt') contentType = 'text/plain';
         else if (ext === '.json') contentType = 'application/json';
         else if (ext === '.csv') contentType = 'text/csv';
+        else if (ext === '.py' || ext === '.ttl' || ext === '.md') contentType = 'text/plain; charset=utf-8';
 
         return new Response(buffer, {
             headers: {
