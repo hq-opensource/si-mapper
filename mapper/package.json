@@ -13,6 +13,8 @@
     "dev:mcp": "cd ../mcp_server && VIRTUAL_ENV= PYTHONWARNINGS=ignore uv run server/main.py",
     "dev:ui": "next dev --turbopack",
     "build": "next build",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "lint": "next lint",
     "install:python": "./scripts/setup.sh || scripts\\setup.bat",
     "postinstall": "pnpm run install:python"
@@ -54,13 +56,17 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "concurrently": "^9.1.2",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "tailwindcss": "^4",
+    "ts-jest": "^29.4.6",
     "typescript": "^5"
   },
   "pnpm": {
