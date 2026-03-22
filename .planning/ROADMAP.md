@@ -53,6 +53,11 @@
 | REFAC-02 | Phase 6 | Completed |
 | REFAC-03 | Phase 6 | Completed |
 | REFAC-04 | Phase 6 | Completed |
+| P10-01 | Phase 10 | Planned |
+| P10-02 | Phase 10 | Planned |
+| P10-03 | Phase 10 | Planned |
+| P10-04 | Phase 10 | Planned |
+| P10-05 | Phase 10 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -156,10 +161,13 @@ Plans:
 
 ### Phase 10: TTL to Neo4j database integration with frontend graph visualization
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Load the generated `ontology.ttl` into a Neo4j graph database (with Neosemantics plugin) via a new master agent tool, expose it through a Next.js API route, and render an interactive Sigma.js WebGL graph visualization in the existing Graph tab with ForceAtlas2 layout, hover/click interactions, zoom-triggered labels, and a toolbar overlay.
+**Requirements**: [P10-01, P10-02, P10-03, P10-04, P10-05]
 **Depends on:** Phase 9
-**Plans:** 0 plans
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 10 to break down)
+- [ ] 10-01-PLAN.md — Docker Neo4j service + Python load_ttl_to_neo4j tool + master agent wiring + tests
+- [ ] 10-02-PLAN.md — npm deps (Sigma.js, graphology, neo4j-driver) + GET /api/graph API route
+- [ ] 10-03-PLAN.md — GraphWindow.tsx (Sigma.js + ForceAtlas2 + interactions + toolbar) + tab wiring
+- [ ] 10-04-PLAN.md — End-to-end human verification (Neo4j + import + API + graph visualization)
