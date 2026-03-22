@@ -13,10 +13,29 @@ Exit tools for the ontology generator sub-agent.
 from __future__ import annotations
 
 import logging
+from datetime import datetime
+from pathlib import Path
 
 from google.adk.tools import ToolContext
 
 logger = logging.getLogger(__name__)
+
+# Project root → mapper/uploads/python/
+_UPLOADS_PYTHON = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "python"
+
+
+def _persist_python(code: str, label: str) -> None:
+    """Write versioned + latest Python file to mapper/uploads/python/."""
+    try:
+        _UPLOADS_PYTHON.mkdir(parents=True, exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        versioned = _UPLOADS_PYTHON / f"ontology_{ts}.py"
+        latest = _UPLOADS_PYTHON / "latest_ontology.py"
+        versioned.write_text(code, encoding="utf-8")
+        latest.write_text(code, encoding="utf-8")
+        logger.info("[%s] Python written → %s + latest_ontology.py", label, versioned.name)
+    except Exception as exc:  # pragma: no cover
+        logger.warning("[%s] Failed to persist Python to uploads: %s", label, exc)
 
 
 def exit_generator_success(
@@ -36,6 +55,7 @@ def exit_generator_success(
     )
     tool_context.state["python_code_snapshots"] = snapshots
     tool_context.state["ontology_code_iteration_count"] = 0
+    _persist_python(code, "exit_generator_success")
     tool_context.state["ONTOLOGY_GENERATION_SUCCESS"] = True
     tool_context.state["EXIT_LEVEL_4"] = True
     tool_context.actions.escalate = True

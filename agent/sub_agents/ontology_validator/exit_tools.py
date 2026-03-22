@@ -17,10 +17,44 @@ Exit tools for the ontology validator sub-agent.
 from __future__ import annotations
 
 import logging
+from datetime import datetime
+from pathlib import Path
 
 from google.adk.tools import ToolContext
 
 logger = logging.getLogger(__name__)
+
+# Project root → mapper/uploads/
+_UPLOADS_PYTHON = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "python"
+_UPLOADS_TTL = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "ttl"
+
+
+def _persist_python(code: str) -> None:
+    """Write versioned + latest Python file to mapper/uploads/python/."""
+    try:
+        _UPLOADS_PYTHON.mkdir(parents=True, exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        versioned = _UPLOADS_PYTHON / f"ontology_{ts}.py"
+        latest = _UPLOADS_PYTHON / "latest_ontology.py"
+        versioned.write_text(code, encoding="utf-8")
+        latest.write_text(code, encoding="utf-8")
+        logger.info("[exit_validator_success] Python written → %s + latest_ontology.py", versioned.name)
+    except Exception as exc:  # pragma: no cover
+        logger.warning("[exit_validator_success] Failed to persist Python: %s", exc)
+
+
+def _persist_ttl(ttl_content: str) -> None:
+    """Write versioned + latest TTL file to mapper/uploads/ttl/."""
+    try:
+        _UPLOADS_TTL.mkdir(parents=True, exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        versioned = _UPLOADS_TTL / f"ontology_{ts}.ttl"
+        latest = _UPLOADS_TTL / "latest_ontology.ttl"
+        versioned.write_text(ttl_content, encoding="utf-8")
+        latest.write_text(ttl_content, encoding="utf-8")
+        logger.info("[exit_validator_success] TTL written → %s + latest_ontology.ttl", versioned.name)
+    except Exception as exc:  # pragma: no cover
+        logger.warning("[exit_validator_success] Failed to persist TTL: %s", exc)
 
 
 def checkpoint_code(tool_context: ToolContext, code: str) -> dict:
@@ -68,6 +102,8 @@ def exit_validator_success(
             {"label": "TTL", "code": ttl_content, "iteration": 0, "status": "validated"}
         )
         tool_context.state["ttl_code_snapshots"] = ttl_snapshots
+        _persist_ttl(ttl_content)
+    _persist_python(code)
     tool_context.state["ONTOLOGY_VALIDATION_SUCCESS"] = True
     tool_context.state["EXIT_LEVEL_4"] = True
     tool_context.actions.escalate = True
