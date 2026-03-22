@@ -46,7 +46,7 @@ export async function GET() {
     const nodes = nodeRecords.map((r) => ({
       id: r.get("uri") as string,
       label: localName(r.get("uri") as string),
-      type: ((r.get("labels") as string[]) ?? [])[0] ?? "Resource",
+      type: ((r.get("labels") as string[]) ?? []).find((l) => l !== "Resource") ?? "Resource",
       properties: r.get("props") as Record<string, unknown>,
     }));
 

@@ -13,7 +13,11 @@ import { SharedPageContainer } from "./SharedPageContainer";
 import { PerformanceDashboard } from "./PerformanceDashboard";
 import { ArtifactsDashboard } from "./ArtifactsDashboard";
 import { CodeWindow } from "./CodeWindow";
-import { GraphWindow } from "./GraphWindow";
+import dynamic from "next/dynamic";
+const GraphWindow = dynamic(
+  () => import("./GraphWindow").then((m) => ({ default: m.GraphWindow })),
+  { ssr: false }
+);
 
 // Define WorkAreaWrapper outside to prevent remounting subcomponents on every render (stable component tree)
 const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
