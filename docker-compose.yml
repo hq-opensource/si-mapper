@@ -45,6 +45,21 @@ services:
       - deploy
       - tools
 
+  neo4j:
+    image: neo4j:5
+    container_name: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    env_file:
+      - neo4j/neo4j.env
+    environment:
+      NEO4J_PLUGINS: '["n10s"]'
+    volumes:
+      - neo4j_data:/data
+    profiles:
+      - graph
+
 #  toolbox_postgres:
 #    image: us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:latest
 #    container_name: toolbox_postgres
@@ -85,3 +100,4 @@ services:
 
 volumes:
   portainer_data:
+  neo4j_data:
