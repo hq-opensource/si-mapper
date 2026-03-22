@@ -2,24 +2,24 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 10
+current_phase: 11
 status: unknown
-last_updated: "2026-03-22T17:53:19.026Z"
+last_updated: "2026-03-22T18:21:31.098Z"
 progress:
   total_phases: 11
   completed_phases: 5
   total_plans: 20
-  completed_plans: 16
+  completed_plans: 18
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 10
-- **Overall Completion:** [█████████░] 94%
-- **Active Plan:** 10-04 (complete)
-- **Last Completed:** 10-04 (E2E verification — all 5 steps passed; 4 bugs fixed: n10s YIELD, SSR, FA2 layout, color coding)
+- **Current Phase:** 11
+- **Overall Completion:** [█████████░] 85%
+- **Active Plan:** 11-04 (complete)
+- **Last Completed:** 11-04 (LESSONS.md-first reading logic via Step 0 + Distillation Protocol in SKILL.md + LESSONS.md skeleton)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -68,12 +68,13 @@ progress:
 - **Decision (10-04):** GraphWindow must use Next.js dynamic() with ssr:false — WebGL2RenderingContext is undefined in Node.js SSR.
 - **Decision (10-04):** n10s always inserts "Resource" as the first label; skip it and use the second label as the node display type for color coding.
 - **Decision (10-04):** TTL persisted to uploads/ttl/latest_ontology.ttl so agent tool can reload without re-upload from user.
+- **Decision (11-04):** LESSONS.md is authoritative when present — no fallback to raw asset walk; Step 0 in Reading Protocol has a hard stop to reduce context consumption.
+- **Decision (11-04):** Distillation is HITL-gated — explicit human instruction only, never auto-trigger.
 
 ### Next Steps
 
-1. Phase 09 complete — all 4 plans executed
-2. Execute Phase 10: TTL to Neo4j database integration with frontend graph visualization
-3. Install chromium for playwright: `cd agent && uv run playwright install chromium` (from Phase 08, still pending)
+1. Phase 11 in progress — 11-04 complete (LESSONS.md-first reading logic established)
+2. Remaining Phase 11 plans pending
 
 ### Session Log
 
@@ -93,6 +94,7 @@ progress:
 - **2026-03-22:** Completed 10-02-PLAN.md. Installed Sigma.js + neo4j-driver packages (7 production + 4 dev). Created GET /api/graph API route with global Neo4j driver singleton, RDF localName stripping, blank node coalesce handling, and error handling. Set up Jest with ts-jest. 2 unit tests pass (success case + 500 error case).
 - **2026-03-22:** Completed 10-03-PLAN.md. Created GraphWindow.tsx (506 lines) — Sigma.js WebGL graph with ForceAtlas2, dynamic sigma.setSetting reducers, toolbar overlay, NodeInfoCard, and empty/loading/error states. Wired into Graph tab in YourMainContent.tsx. TypeScript compiles without errors.
 - **2026-03-22:** Completed 10-04-PLAN.md (E2E verification). Human approved all 5 steps. 4 bugs fixed during verification: n10s YIELD syntax removed, SSR crash fixed via dynamic import (ssr:false), FA2 iterations tuned 200→1000, node type color coding fixed by skipping n10s "Resource" label. TTL file persisted to uploads/ttl/latest_ontology.ttl. Phase 10 complete.
+- **2026-03-22:** Completed 11-04-PLAN.md. Added LESSONS.md-first Step 0 to SKILL.md Reading Protocol with no-fallback rule. Added Section 7 Distillation Protocol (HITL-gated). Created LESSONS.md skeleton with 6 category headers ready for first distillation.
 
 ## Roadmap Evolution
 
