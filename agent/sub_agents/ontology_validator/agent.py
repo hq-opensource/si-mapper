@@ -48,11 +48,10 @@ from google.genai import types
 
 from sub_agents._223p.tool import (
     execute_ontology,
-    get_class_details,
-    list_library_classes,
     read_ontology,
     read_prompt,
-    scan_python_files,
+    scan_python_files_filtered,
+    search_class_mapping,
     write_ontology,
     skills_toolset,
 )
@@ -139,9 +138,8 @@ class OntologyValidatorInternal(LlmAgent):
             execute_ontology,
             read_ontology,
             write_ontology,
-            list_library_classes,
-            get_class_details,
-            scan_python_files,
+            scan_python_files_filtered,
+            search_class_mapping,
             read_prompt,
             checkpoint_code,
             exit_validator_success,

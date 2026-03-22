@@ -40,9 +40,8 @@ from google.adk.agents import LlmAgent
 from google.genai import types
 
 from sub_agents._223p.tool import (
-    list_library_classes,
-    get_class_details,
-    scan_python_files,
+    scan_python_files_filtered,
+    search_class_mapping,
     write_ontology,
     skills_toolset,
 )
@@ -119,9 +118,8 @@ class OntologyGeneratorInternal(LlmAgent):
         # Local tools provided by this sub-agent
         local_tools: list[Any] = [
             skills_toolset,
-            list_library_classes,
-            get_class_details,
-            scan_python_files,
+            scan_python_files_filtered,
+            search_class_mapping,
             write_ontology,
             exit_generator_success,
             exit_generator_failure,
