@@ -43,6 +43,8 @@ __all__ = [
     "GET_CLASS_DETAILS_SCHEMA",
     "scan_python_files",
     "SCAN_PYTHON_FILES_SCHEMA",
+    "scan_python_files_filtered",
+    "SCAN_PYTHON_FILES_FILTERED_SCHEMA",
     # Ontology tools
     "ONTOLOGY_FILE",
     "TTL_OUTPUT_DIR",
@@ -380,6 +382,89 @@ SCAN_PYTHON_FILES_SCHEMA: dict[str, Any] = {
                 }
             },
             "required": ["path"],
+        },
+    },
+}
+
+
+# ------------------------------------------------------------------
+# Tool: scan_python_files_filtered
+# ------------------------------------------------------------------
+
+def scan_python_files_filtered(path: str, keywords: list[str]) -> str:
+    """
+    Recursively scan a directory and return the full source content of every
+    ``.py`` file whose content contains at least one of the given keywords
+    (case-insensitive substring match).
+
+    Returns a JSON object with the same shape as ``scan_python_files``::
+
+        {
+          "root": "<resolved absolute path>",
+          "files": {
+            "subdir/module.py": "<source code>",
+            ...
+          },
+          "error": "<message>"   // only present on failure
+        }
+
+    Use this instead of ``scan_python_files`` when you know which class names
+    or terms you need — it reduces context window consumption by only returning
+    files that are relevant.
+    """
+    resolved = os.path.realpath(os.path.expanduser(path))
+
+    if not os.path.exists(resolved):
+        return json.dumps({"error": f"Path not found: {resolved!r}", "root": resolved, "files": {}})
+    if not os.path.isdir(resolved):
+        return json.dumps({"error": f"Path is not a directory: {resolved!r}", "root": resolved, "files": {}})
+
+    lower_keywords = [kw.lower() for kw in keywords]
+
+    files: dict[str, str] = {}
+    for dirpath, _dirnames, filenames in os.walk(resolved):
+        for filename in sorted(filenames):
+            if not filename.endswith(".py"):
+                continue
+            abs_path = os.path.join(dirpath, filename)
+            rel_path = os.path.relpath(abs_path, resolved).replace("\\", "/")
+            try:
+                with open(abs_path, "r", encoding="utf-8", errors="replace") as fh:
+                    content = fh.read()
+            except OSError as exc:
+                files[rel_path] = f"<ERROR reading file: {exc}>"
+                continue
+            content_lower = content.lower()
+            if any(kw in content_lower for kw in lower_keywords):
+                files[rel_path] = content
+
+    return json.dumps({"root": resolved, "files": files}, ensure_ascii=False, indent=2)
+
+
+SCAN_PYTHON_FILES_FILTERED_SCHEMA: dict[str, Any] = {
+    "type": "function",
+    "function": {
+        "name": "scan_python_files_filtered",
+        "description": (
+            "Recursively scan a directory and return the full source code of .py files "
+            "whose content contains at least one of the given keywords (case-insensitive "
+            "substring match). Use this instead of scan_python_files when you know "
+            "which class names or terms you need."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Absolute or relative path to the directory to scan.",
+                },
+                "keywords": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of keywords to filter by. A file is included if its content contains at least one keyword (case-insensitive).",
+                },
+            },
+            "required": ["path", "keywords"],
         },
     },
 }
