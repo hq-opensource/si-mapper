@@ -1,0 +1,99 @@
+{"class_name": "AirHandlingUnit", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "AirToAirHeatPump", "path": "scratch/application.py", "types": ["HeatPump"]}
+{"class_name": "Boiler", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "Chiller", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "CoolingTower", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "DualDuctTerminal", "path": "scratch/application.py", "types": ["TerminalUnit"]}
+{"class_name": "ElectricalDistribution", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "ElectricalPanel", "path": "scratch/application.py", "types": ["ElectricalDistribution"]}
+{"class_name": "FanCoilUnit", "path": "scratch/application.py", "types": ["TerminalUnit"]}
+{"class_name": "FanPoweredTerminal", "path": "scratch/application.py", "types": ["TerminalUnit"]}
+{"class_name": "FumeHood", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "Furnace", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "GroundToAirHeatPump", "path": "scratch/application.py", "types": ["HeatPump"]}
+{"class_name": "HeatExchanger", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "HeatPump", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "HotWaterHeater", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "SingleDuctTerminal", "path": "scratch/application.py", "types": ["TerminalUnit"]}
+{"class_name": "TerminalUnit", "path": "scratch/application.py", "types": ["Node"]}
+{"class_name": "WaterToAirHeatPump", "path": "scratch/application.py", "types": ["HeatPump"]}
+{"class_name": "WaterToWaterHeatPump", "path": "scratch/application.py", "types": ["HeatPump"]}
+{"class_name": "Door", "path": "scratch/architectural/door.py", "types": ["Door"]}
+{"class_name": "Window", "path": "scratch/architectural/window.py", "types": ["Window"]}
+{"class_name": "SABusBidirectionalConnectionPoint", "path": "scratch/connections/jci.py", "types": ["BidirectionalConnectionPoint", "SABusConnectionPoint"]}
+{"class_name": "SABusConnection", "path": "scratch/connections/jci.py", "types": ["Connection"]}
+{"class_name": "SABusConnectionPoint", "path": "scratch/connections/jci.py", "types": ["ConnectionPoint"]}
+{"class_name": "MechanicalBidirectionalConnectionPoint", "path": "scratch/connections/mechanical.py", "types": ["BidirectionalConnectionPoint", "MechanicalConnectionPoint"]}
+{"class_name": "MechanicalConnection", "path": "scratch/connections/mechanical.py", "types": ["Connection"]}
+{"class_name": "MechanicalConnectionPoint", "path": "scratch/connections/mechanical.py", "types": ["ConnectionPoint"]}
+{"class_name": "MechanicalInletConnectionPoint", "path": "scratch/connections/mechanical.py", "types": ["InletConnectionPoint", "MechanicalConnectionPoint"]}
+{"class_name": "MechanicalOutletConnectionPoint", "path": "scratch/connections/mechanical.py", "types": ["OutletConnectionPoint", "MechanicalConnectionPoint"]}
+{"class_name": "Controller", "path": "scratch/control/controller.py", "types": ["Controller"]}
+{"class_name": "VAVController", "path": "scratch/control/controller.py", "types": ["Controller"]}
+{"class_name": "ChargingStation", "path": "scratch/electricity/chargingstation.py", "types": ["Equipment"]}
+{"class_name": "EffectivePowerConsumed", "path": "scratch/electricity/chargingstation.py", "types": ["Function"]}
+{"class_name": "CircuitBreaker", "path": "scratch/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "SinglePhaseDistributionPanel", "path": "scratch/electricity/distribution.py", "types": ["System"]}
+{"class_name": "SinglePoleCircuitBreaker", "path": "scratch/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "TandemSinglePoleCircuitBreaker", "path": "scratch/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "ThreePhaseDistributionPanel", "path": "scratch/electricity/distribution.py", "types": ["System"]}
+{"class_name": "ThreePolesCircuitBreaker", "path": "scratch/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "ThreePolesMainCircuitBreaker", "path": "scratch/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "TwoPolesCircuitBreaker", "path": "scratch/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "TwoPolesMainCircuitBreaker", "path": "scratch/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "ThreePhaseElectricalMeter", "path": "scratch/electricity/meter.py", "types": ["Equipment"]}
+{"class_name": "MotorStarter", "path": "scratch/electricity/starter.py", "types": ["Equipment"]}
+{"class_name": "MotorStarter_600VLL_3Ph_60Hz", "path": "scratch/electricity/starter.py", "types": ["Equipment"]}
+{"class_name": "CurrentRelay", "path": "scratch/electricity/switch.py", "types": ["Equipment"]}
+{"class_name": "DimmableSwitch", "path": "scratch/electricity/switch.py", "types": ["SinglePoleSwitch"]}
+{"class_name": "SinglePoleSwitch", "path": "scratch/electricity/switch.py", "types": ["Switch"]}
+{"class_name": "Switch", "path": "scratch/electricity/switch.py", "types": ["Equipment"]}
+{"class_name": "TimerSwitch", "path": "scratch/electricity/switch.py", "types": ["SinglePoleSwitch"]}
+{"class_name": "VFD", "path": "scratch/electricity/vfd.py", "types": ["VFD"]}
+{"class_name": "VFD_FB", "path": "scratch/electricity/vfd.py", "types": ["Function"]}
+{"class_name": "BaseActuator", "path": "scratch/hvac/actuator.py", "types": ["Actuator"]}
+{"class_name": "ElectricalOnOffActuator", "path": "scratch/hvac/actuator.py", "types": ["BaseActuator"]}
+{"class_name": "ElectricalProportionalActuator", "path": "scratch/hvac/actuator.py", "types": ["BaseActuator"]}
+{"class_name": "PneumaticOnOffActuator", "path": "scratch/hvac/actuator.py", "types": ["BaseActuator"]}
+{"class_name": "PneumaticProportionalActuator", "path": "scratch/hvac/actuator.py", "types": ["BaseActuator"]}
+{"class_name": "AirFlowMonitor", "path": "scratch/hvac/airflowstation.py", "types": ["Equipment"]}
+{"class_name": "AirHandlingUnit", "path": "scratch/hvac/airhandlingunit.py", "types": ["SystemFromTemplate", "AirHandlingUnit"]}
+{"class_name": "AgnosticChiller", "path": "scratch/hvac/chiller.py", "types": ["Chiller", "Chiller"]}
+{"class_name": "Chiller", "path": "scratch/hvac/chiller.py", "types": ["Chiller", "Chiller"]}
+{"class_name": "Damper", "path": "scratch/hvac/damper.py", "types": ["Damper"]}
+{"class_name": "DamperAndActuator", "path": "scratch/hvac/damper.py", "types": ["System"]}
+{"class_name": "ElectricalActuatedOnOffDamper", "path": "scratch/hvac/damper.py", "types": ["DamperAndActuator"]}
+{"class_name": "ElectricalActuatedProportionalDamper", "path": "scratch/hvac/damper.py", "types": ["DamperAndActuator"]}
+{"class_name": "FireDamper", "path": "scratch/hvac/damper.py", "types": ["Damper"]}
+{"class_name": "GravityDamper", "path": "scratch/hvac/damper.py", "types": ["Damper"]}
+{"class_name": "PneumaticActuatedOnOffDamper", "path": "scratch/hvac/damper.py", "types": ["DamperAndActuator"]}
+{"class_name": "PneumaticActuatedProportionalDamper", "path": "scratch/hvac/damper.py", "types": ["DamperAndActuator"]}
+{"class_name": "Fan", "path": "scratch/hvac/fan.py", "types": ["Fan"]}
+{"class_name": "Accumulator", "path": "scratch/hvac/heatexchanger.py", "types": ["Equipment"]}
+{"class_name": "Accumulator4SidesDuct", "path": "scratch/hvac/heatexchanger.py", "types": ["Equipment"]}
+{"class_name": "AirToAirHeatPump", "path": "scratch/hvac/heatpump.py", "types": ["SystemFromTemplate", "AirToAirHeatPump"]}
+{"class_name": "ElectricalHumidifier", "path": "scratch/hvac/humidifier.py", "types": ["ElectricalHumidifier"]}
+{"class_name": "ParticleCounter", "path": "scratch/hvac/particlecounter.py", "types": ["Equipment"]}
+{"class_name": "Pump", "path": "scratch/hvac/pump.py", "types": ["Pump"]}
+{"class_name": "PumpWithStarter", "path": "scratch/hvac/pump.py", "types": ["Pump"]}
+{"class_name": "PumpWithVFD", "path": "scratch/hvac/pump.py", "types": ["Pump"]}
+{"class_name": "ElectricalHeatingCoilWithSCR", "path": "scratch/hvac/scr.py", "types": ["System"]}
+{"class_name": "SCR", "path": "scratch/hvac/scr.py", "types": ["Actuator"]}
+{"class_name": "Tank", "path": "scratch/hvac/tank.py", "types": ["Equipment"]}
+{"class_name": "Triac", "path": "scratch/hvac/triac.py", "types": ["Equipment"]}
+{"class_name": "ThreeWayActuatedValve", "path": "scratch/hvac/valve.py", "types": ["System"]}
+{"class_name": "ThreeWayDivertingActuatedOnOffValve", "path": "scratch/hvac/valve.py", "types": ["ThreeWayValveDiverting"]}
+{"class_name": "ThreeWayDivertingActuatedProportionalValve", "path": "scratch/hvac/valve.py", "types": ["ThreeWayDivertingSystem"]}
+{"class_name": "ThreeWayDivertingSystem", "path": "scratch/hvac/valve.py", "types": ["ThreeWayActuatedValve"]}
+{"class_name": "ThreeWayMixingActuatedOnOffValve", "path": "scratch/hvac/valve.py", "types": ["ThreeWayValveMixing"]}
+{"class_name": "ThreeWayMixingActuatedProportionalValve", "path": "scratch/hvac/valve.py", "types": ["ThreeWayMixingSystem"]}
+{"class_name": "ThreeWayMixingSystem", "path": "scratch/hvac/valve.py", "types": ["ThreeWayActuatedValve"]}
+{"class_name": "ThreeWayValveDiverting", "path": "scratch/hvac/valve.py", "types": ["ThreeWayValveDiverting"]}
+{"class_name": "ThreeWayValveMixing", "path": "scratch/hvac/valve.py", "types": ["ThreeWayValveMixing"]}
+{"class_name": "TwoWayActuatedOnOffValve", "path": "scratch/hvac/valve.py", "types": ["TwoWayActuatedValve"]}
+{"class_name": "TwoWayActuatedProportionalValve", "path": "scratch/hvac/valve.py", "types": ["TwoWayActuatedValve"]}
+{"class_name": "TwoWayActuatedValve", "path": "scratch/hvac/valve.py", "types": ["System"]}
+{"class_name": "TwoWayValve", "path": "scratch/hvac/valve.py", "types": ["TwoWayValve"]}
+{"class_name": "VAV", "path": "scratch/hvac/vav.py", "types": ["SystemFromTemplate", "SingleDuctTerminal"]}
+{"class_name": "VAV_Dual", "path": "scratch/hvac/vav.py", "types": ["System", "SingleDuctTerminal"]}
+{"class_name": "EthernetFirewall", "path": "scratch/network/firewall.py", "types": ["Equipment"]}

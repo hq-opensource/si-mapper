@@ -119,13 +119,13 @@ function GraphLoader({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] 
 
     // Run ForceAtlas2 synchronously — graph loads pre-positioned, no animation needed
     forceAtlas2.assign(graph, {
-      iterations: 1000,
+      iterations: 2000,
       settings: {
-        gravity: 1,
-        scalingRatio: 10,
+        gravity: 0.2,
+        scalingRatio: 30,
         barnesHutOptimize: true,
         barnesHutTheta: 0.5,
-        slowDown: 5,
+        slowDown: 1,
         adjustSizes: true,
       },
     });

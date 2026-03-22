@@ -1,0 +1,752 @@
+{"class_name": "AirHandlingUnit", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "AirToAirHeatPump", "path": "bob/application.py", "types": ["HeatPump"]}
+{"class_name": "Boiler", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "Chiller", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "CoolingTower", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "DualDuctTerminal", "path": "bob/application.py", "types": ["TerminalUnit"]}
+{"class_name": "ElectricalDistribution", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "ElectricalPanel", "path": "bob/application.py", "types": ["ElectricalDistribution"]}
+{"class_name": "FanCoilUnit", "path": "bob/application.py", "types": ["TerminalUnit"]}
+{"class_name": "FanPoweredTerminal", "path": "bob/application.py", "types": ["TerminalUnit"]}
+{"class_name": "FumeHood", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "Furnace", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "GroundToAirHeatPump", "path": "bob/application.py", "types": ["HeatPump"]}
+{"class_name": "HeatExchanger", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "HeatPump", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "HotWaterHeater", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "SingleDuctTerminal", "path": "bob/application.py", "types": ["TerminalUnit"]}
+{"class_name": "TerminalUnit", "path": "bob/application.py", "types": ["Node"]}
+{"class_name": "WaterToAirHeatPump", "path": "bob/application.py", "types": ["HeatPump"]}
+{"class_name": "WaterToWaterHeatPump", "path": "bob/application.py", "types": ["HeatPump"]}
+{"class_name": "AnalogInputObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "AnalogOutputObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "AnalogValueObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "BinaryInputObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "BinaryOutputObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "BinaryValueObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "CalendarObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "Device", "path": "bob/bacnet.py", "types": ["Controller"]}
+{"class_name": "DeviceObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "Object", "path": "bob/bacnet.py", "types": ["Node"]}
+{"class_name": "ScheduleObject", "path": "bob/bacnet.py", "types": ["Object"]}
+{"class_name": "ActuatableProperty", "path": "bob/core.py", "types": ["Property"]}
+{"class_name": "BidirectionalConnectionPoint", "path": "bob/core.py", "types": ["ConnectionPoint"]}
+{"class_name": "BidirectionalZoneConnectionPoint", "path": "bob/core.py", "types": ["ZoneConnectionPoint"]}
+{"class_name": "BoundaryConnectionPoint", "path": "bob/core.py", "types": []}
+{"class_name": "Connectable", "path": "bob/core.py", "types": ["Node"]}
+{"class_name": "Connection", "path": "bob/core.py", "types": ["Node"]}
+{"class_name": "ConnectionMetaclass", "path": "bob/core.py", "types": ["NodeMetaclass"]}
+{"class_name": "ConnectionPoint", "path": "bob/core.py", "types": ["Node"]}
+{"class_name": "Constituent", "path": "bob/core.py", "types": ["EnumerationKind"]}
+{"class_name": "Container", "path": "bob/core.py", "types": ["Node"]}
+{"class_name": "DataGraph", "path": "bob/core.py", "types": ["Graph"]}
+{"class_name": "DomainSpace", "path": "bob/core.py", "types": ["Connectable"]}
+{"class_name": "EnumerableProperty", "path": "bob/core.py", "types": ["Property"]}
+{"class_name": "EnumeratedActuatableProperty", "path": "bob/core.py", "types": ["EnumerableProperty", "ActuatableProperty"]}
+{"class_name": "EnumeratedObservableProperty", "path": "bob/core.py", "types": ["EnumerableProperty", "ObservableProperty"]}
+{"class_name": "EnumerationKind", "path": "bob/core.py", "types": ["Node"]}
+{"class_name": "Equipment", "path": "bob/core.py", "types": ["Container", "Connectable"]}
+{"class_name": "ExternalReference", "path": "bob/core.py", "types": ["Node"]}
+{"class_name": "ExternalReferenceValue", "path": "bob/core.py", "types": []}
+{"class_name": "InletConnectionPoint", "path": "bob/core.py", "types": ["ConnectionPoint"]}
+{"class_name": "InletZoneConnectionPoint", "path": "bob/core.py", "types": ["ZoneConnectionPoint"]}
+{"class_name": "Junction", "path": "bob/core.py", "types": ["Connectable"]}
+{"class_name": "LocationReference", "path": "bob/core.py", "types": []}
+{"class_name": "Node", "path": "bob/core.py", "types": []}
+{"class_name": "NodeMetaclass", "path": "bob/core.py", "types": ["type"]}
+{"class_name": "ObservableProperty", "path": "bob/core.py", "types": ["Property"]}
+{"class_name": "OptionalConnectionPoint", "path": "bob/core.py", "types": ["BoundaryConnectionPoint"]}
+{"class_name": "OutletConnectionPoint", "path": "bob/core.py", "types": ["ConnectionPoint"]}
+{"class_name": "OutletZoneConnectionPoint", "path": "bob/core.py", "types": ["ZoneConnectionPoint"]}
+{"class_name": "PhysicalSpace", "path": "bob/core.py", "types": ["Container", "Node"]}
+{"class_name": "Property", "path": "bob/core.py", "types": ["Node"]}
+{"class_name": "PropertyReference", "path": "bob/core.py", "types": []}
+{"class_name": "QuantifiableActuatableProperty", "path": "bob/core.py", "types": ["QuantifiableProperty", "ActuatableProperty"]}
+{"class_name": "QuantifiableObservableProperty", "path": "bob/core.py", "types": ["QuantifiableProperty", "ObservableProperty"]}
+{"class_name": "QuantifiableProperty", "path": "bob/core.py", "types": ["Property"]}
+{"class_name": "SchemaGraph", "path": "bob/core.py", "types": ["Graph"]}
+{"class_name": "Setpoint", "path": "bob/core.py", "types": ["QuantifiableProperty"]}
+{"class_name": "System", "path": "bob/core.py", "types": ["Container"]}
+{"class_name": "Zone", "path": "bob/core.py", "types": ["Container", "Node"]}
+{"class_name": "ZoneConnectionPoint", "path": "bob/core.py", "types": ["Node"]}
+{"class_name": "ZoneGroup", "path": "bob/core.py", "types": ["Container", "Node"]}
+{"class_name": "NetworkProfile", "path": "bob/externalreference.py", "types": ["Node"]}
+{"class_name": "Function", "path": "bob/functions.py", "types": ["Node"]}
+{"class_name": "FunctionInput", "path": "bob/functions.py", "types": ["PropertyReference"]}
+{"class_name": "FunctionOutput", "path": "bob/functions.py", "types": ["PropertyReference"]}
+{"class_name": "G36DigitalOutput", "path": "bob/functions.py", "types": ["FunctionOutput"]}
+{"class_name": "G36AnalogInput", "path": "bob/producer.py", "types": ["FunctionInput"]}
+{"class_name": "G36AnalogOutput", "path": "bob/producer.py", "types": ["FunctionOutput"]}
+{"class_name": "G36DigitalInput", "path": "bob/producer.py", "types": ["FunctionInput"]}
+{"class_name": "G36DigitalOutput", "path": "bob/producer.py", "types": ["FunctionOutput"]}
+{"class_name": "Producer", "path": "bob/producer.py", "types": ["_Producer"]}
+{"class_name": "ProducerInput", "path": "bob/producer.py", "types": ["Node"]}
+{"class_name": "ProducerOutput", "path": "bob/producer.py", "types": ["Node"]}
+{"class_name": "old_Producer", "path": "bob/producer.py", "types": ["Container", "Node"]}
+{"class_name": "SystemFromTemplate", "path": "bob/template.py", "types": ["System"]}
+{"class_name": "AirBidirectionalConnectionPoint", "path": "bob/connections/air.py", "types": ["AirConnectionPoint", "BidirectionalConnectionPoint"]}
+{"class_name": "AirConnection", "path": "bob/connections/air.py", "types": ["Connection"]}
+{"class_name": "AirConnectionPoint", "path": "bob/connections/air.py", "types": ["ConnectionPoint"]}
+{"class_name": "AirInletConnectionPoint", "path": "bob/connections/air.py", "types": ["AirConnectionPoint", "InletConnectionPoint"]}
+{"class_name": "AirInletZoneConnectionPoint", "path": "bob/connections/air.py", "types": ["AirZoneConnectionPoint", "InletZoneConnectionPoint"]}
+{"class_name": "AirOutletConnectionPoint", "path": "bob/connections/air.py", "types": ["AirConnectionPoint", "OutletConnectionPoint"]}
+{"class_name": "AirOutletZoneConnectionPoint", "path": "bob/connections/air.py", "types": ["AirZoneConnectionPoint", "OutletZoneConnectionPoint"]}
+{"class_name": "AirZoneConnectionPoint", "path": "bob/connections/air.py", "types": ["ZoneConnectionPoint"]}
+{"class_name": "CompressedAirConnection", "path": "bob/connections/air.py", "types": ["Connection"]}
+{"class_name": "CompressedAirConnectionPoint", "path": "bob/connections/air.py", "types": ["ConnectionPoint"]}
+{"class_name": "CompressedAirInletConnectionPoint", "path": "bob/connections/air.py", "types": ["CompressedAirConnectionPoint", "InletConnectionPoint"]}
+{"class_name": "CompressedAirOutletConnectionPoint", "path": "bob/connections/air.py", "types": ["CompressedAirConnectionPoint", "OutletConnectionPoint"]}
+{"class_name": "ModulationSignalConnection", "path": "bob/connections/controlsignal.py", "types": ["Connection"]}
+{"class_name": "ModulationSignalConnectionPoint", "path": "bob/connections/controlsignal.py", "types": ["ConnectionPoint"]}
+{"class_name": "ModulationSignalInletConnectionPoint", "path": "bob/connections/controlsignal.py", "types": ["InletConnectionPoint", "ModulationSignalConnectionPoint"]}
+{"class_name": "ModulationSignalOutletConnectionPoint", "path": "bob/connections/controlsignal.py", "types": ["OutletConnectionPoint", "ModulationSignalConnectionPoint"]}
+{"class_name": "OnOffSignalConnection", "path": "bob/connections/controlsignal.py", "types": ["Connection"]}
+{"class_name": "OnOffSignalConnectionPoint", "path": "bob/connections/controlsignal.py", "types": ["ConnectionPoint"]}
+{"class_name": "OnOffSignalInletConnectionPoint", "path": "bob/connections/controlsignal.py", "types": ["InletConnectionPoint", "OnOffSignalConnectionPoint"]}
+{"class_name": "OnOffSignalOutletConnectionPoint", "path": "bob/connections/controlsignal.py", "types": ["OutletConnectionPoint", "OnOffSignalConnectionPoint"]}
+{"class_name": "ElectricalConnection", "path": "bob/connections/electricity.py", "types": ["Connection"]}
+{"class_name": "ElectricalConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ConnectionPoint"]}
+{"class_name": "ElectricalInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["InletConnectionPoint", "ElectricalConnectionPoint"]}
+{"class_name": "ElectricalOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["OutletConnectionPoint", "ElectricalConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_10000VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_10000VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_10000VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_10000VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_10000VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_10000VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_5770VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_10000VLL_5770VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_5770VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_10000VLL_5770VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_5770VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_10000VLL_5770VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_5770VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_10000VLL_5770VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_5770VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_10000VLL_5770VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_10000VLL_5770VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_10000VLL_5770VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_110VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_110VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_110VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_110VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_110VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_110VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_120VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_120VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_120VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_120VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_120VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_120VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_127VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_127VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_127VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_127VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_127VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_127VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_12VConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_12VConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_12VInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_12VConnectionPoint"]}
+{"class_name": "Electricity_12VOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_12VConnectionPoint"]}
+{"class_name": "Electricity_139VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_139VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_139VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_139VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_139VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_139VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_1730VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_1730VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_1730VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_1730VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_1730VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_1730VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_1900VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_1900VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_1900VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_1900VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_1900VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_1900VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_190VLL_110VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_190VLL_110VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_190VLL_110VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_190VLL_110VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_190VLL_110VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_190VLL_110VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_190VLL_110VLN_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_190VLL_110VLN_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_190VLL_110VLN_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_190VLL_110VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_190VLL_110VLN_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_190VLL_110VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_190VLL_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_190VLL_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_190VLL_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_190VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_190VLL_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_190VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_190VLL_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_190VLL_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_190VLL_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_190VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_190VLL_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_190VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_208VLL_120VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_208VLL_120VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_208VLL_120VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_208VLL_120VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_208VLL_120VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_208VLL_120VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_208VLL_120VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_208VLL_120VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_208VLL_120VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_208VLL_120VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_208VLL_120VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_208VLL_120VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_208VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_208VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_208VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_208VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_208VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_208VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_208VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_208VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_208VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_208VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_208VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_208VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_219VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_219VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_219VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_219VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_219VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_219VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_220VLL_127VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_220VLL_127VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_220VLL_127VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_220VLL_127VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_220VLL_127VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_220VLL_127VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_220VLL_127VLN_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_220VLL_127VLN_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_220VLL_127VLN_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_220VLL_127VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_220VLL_127VLN_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_220VLL_127VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_220VLL_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_220VLL_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_220VLL_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_220VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_220VLL_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_220VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_220VLL_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_220VLL_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_220VLL_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_220VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_220VLL_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_220VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_231VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_231VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_231VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_231VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_231VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_231VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_2400VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_2400VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_2400VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_2400VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_2400VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_2400VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_120VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_120VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_120VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_120VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_120VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_120VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_139VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_139VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_139VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_139VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_139VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_139VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_139VLN_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_139VLN_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_139VLN_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_139VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_139VLN_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_139VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_208VLN_120VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_208VLN_120VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_208VLN_120VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_208VLN_120VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_208VLN_120VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_208VLN_120VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_208VLN_120VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_208VLN_120VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_208VLN_120VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_208VLN_120VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_208VLN_120VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_208VLN_120VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_240VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_240VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_240VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_240VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_240VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_240VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_24VConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_24VConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_24VInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_24VConnectionPoint"]}
+{"class_name": "Electricity_24VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_24VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_24VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_24VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_24VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_24VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_24VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_24VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_24VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_24VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_24VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_24VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_24VOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_24VConnectionPoint"]}
+{"class_name": "Electricity_277VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_277VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_277VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_277VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_277VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_277VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1730VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3000VLL_1730VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1730VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3000VLL_1730VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1730VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3000VLL_1730VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1730VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3000VLL_1730VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1730VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3000VLL_1730VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1730VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3000VLL_1730VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3000VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3000VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3000VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3000VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3000VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3000VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3000VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1900VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3300VLL_1900VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1900VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3300VLL_1900VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1900VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3300VLL_1900VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1900VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3300VLL_1900VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1900VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3300VLL_1900VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1900VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3300VLL_1900VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3300VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3300VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3300VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3300VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3300VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3300VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3300VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3460VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3460VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3460VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3460VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3460VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3460VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_347VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_347VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_347VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_347VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_347VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_347VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_380VConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_380VInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_380VConnectionPoint"]}
+{"class_name": "Electricity_380VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_380VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_380VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_380VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_380VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VLL_219VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_380VLL_219VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_380VLL_219VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_380VLL_219VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VLL_219VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_380VLL_219VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VLL_219VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_380VLL_219VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_380VLL_219VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_380VLL_219VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VLL_219VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_380VLL_219VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_380VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_380VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_380VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_380VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_380VOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_380VConnectionPoint"]}
+{"class_name": "Electricity_3810VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_3810VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_3810VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_3810VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_3810VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_3810VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_400VLL_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_400VLL_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_400VLL_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_400VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_400VLL_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_400VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_400VLL_231VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_400VLL_231VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_400VLL_231VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_400VLL_231VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_400VLL_231VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_400VLL_231VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_400VLL_231VLN_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_400VLL_231VLN_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_400VLL_231VLN_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_400VLL_231VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_400VLL_231VLN_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_400VLL_231VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_400VLL_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_400VLL_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_400VLL_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_400VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_400VLL_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_400VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_415VLL_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_415VLL_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_415VLL_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_415VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_415VLL_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_415VLL_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_415VLL_240VLN_1Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_415VLL_240VLN_1Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_415VLL_240VLN_1Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_415VLL_240VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_415VLL_240VLN_1Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_415VLL_240VLN_1Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_415VLL_240VLN_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_415VLL_240VLN_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_415VLL_240VLN_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_415VLL_240VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_415VLL_240VLN_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_415VLL_240VLN_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_415VLL_3Ph_50HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_415VLL_3Ph_50HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_415VLL_3Ph_50HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_415VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_415VLL_3Ph_50HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_415VLL_3Ph_50HzConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_4160VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_4160VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_4160VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_2400VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_4160VLL_2400VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_2400VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_4160VLL_2400VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_2400VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_4160VLL_2400VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_2400VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_4160VLL_2400VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_2400VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_4160VLL_2400VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_2400VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_4160VLL_2400VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_4160VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_4160VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_4160VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_4160VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_480VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_480VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_480VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_480VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_480VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_480VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_480VLL_277VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_480VLL_277VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_480VLL_277VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_480VLL_277VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_480VLL_277VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_480VLL_277VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_480VLL_277VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_480VLL_277VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_480VLL_277VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_480VLL_277VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_480VLL_277VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_480VLL_277VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_480VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_480VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_480VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_480VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_480VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_480VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_48VConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_48VConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_48VInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_48VConnectionPoint"]}
+{"class_name": "Electricity_48VOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_48VConnectionPoint"]}
+{"class_name": "Electricity_5770VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_5770VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_5770VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_5770VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_5770VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_5770VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_5VConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_5VConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_5VInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_5VConnectionPoint"]}
+{"class_name": "Electricity_5VOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_5VConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6000VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6000VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6000VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3460VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6000VLL_3460VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3460VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6000VLL_3460VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3460VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6000VLL_3460VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3460VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6000VLL_3460VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3460VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6000VLL_3460VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3460VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6000VLL_3460VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6000VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6000VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6000VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6000VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_600VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_600VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_600VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_600VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_600VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_600VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_600VLL_347VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_600VLL_347VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_600VLL_347VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_600VLL_347VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_600VLL_347VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_600VLL_347VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_600VLL_347VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_600VLL_347VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_600VLL_347VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_600VLL_347VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_600VLL_347VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_600VLL_347VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_600VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_600VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_600VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_600VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_600VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_600VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6600VLL_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6600VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6600VLL_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3810VLN_1Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6600VLL_3810VLN_1Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3810VLN_1Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6600VLL_3810VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3810VLN_1Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6600VLL_3810VLN_1Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3810VLN_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6600VLL_3810VLN_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3810VLN_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6600VLL_3810VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3810VLN_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6600VLL_3810VLN_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3Ph_60HzConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6600VLL_3Ph_60HzConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3Ph_60HzInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6600VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6600VLL_3Ph_60HzOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6600VLL_3Ph_60HzConnectionPoint"]}
+{"class_name": "Electricity_6VConnection", "path": "bob/connections/electricity.py", "types": ["ElectricalConnection"]}
+{"class_name": "Electricity_6VConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalConnectionPoint"]}
+{"class_name": "Electricity_6VInletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalInletConnectionPoint", "Electricity_6VConnectionPoint"]}
+{"class_name": "Electricity_6VOutletConnectionPoint", "path": "bob/connections/electricity.py", "types": ["ElectricalOutletConnectionPoint", "Electricity_6VConnectionPoint"]}
+{"class_name": "LightConnectionPoint", "path": "bob/connections/light.py", "types": ["ConnectionPoint"]}
+{"class_name": "LightInletConnectionPoint", "path": "bob/connections/light.py", "types": ["LightConnectionPoint", "InletConnectionPoint"]}
+{"class_name": "LightInletZoneConnectionPoint", "path": "bob/connections/light.py", "types": ["LightZoneConnectionPoint", "InletZoneConnectionPoint"]}
+{"class_name": "LightOutletConnectionPoint", "path": "bob/connections/light.py", "types": ["LightConnectionPoint", "OutletConnectionPoint"]}
+{"class_name": "LightOutletZoneConnectionPoint", "path": "bob/connections/light.py", "types": ["LightZoneConnectionPoint", "OutletZoneConnectionPoint"]}
+{"class_name": "LightVisibleConnection", "path": "bob/connections/light.py", "types": ["Connection"]}
+{"class_name": "LightVisibleConnectionPoint", "path": "bob/connections/light.py", "types": ["ConnectionPoint"]}
+{"class_name": "LightVisibleInletConnectionPoint", "path": "bob/connections/light.py", "types": ["LightVisibleConnectionPoint", "InletConnectionPoint"]}
+{"class_name": "LightVisibleInletZoneConnectionPoint", "path": "bob/connections/light.py", "types": ["LightVisibleZoneConnectionPoint", "InletZoneConnectionPoint"]}
+{"class_name": "LightVisibleOutletConnectionPoint", "path": "bob/connections/light.py", "types": ["LightVisibleConnectionPoint", "OutletConnectionPoint"]}
+{"class_name": "LightVisibleOutletZoneConnectionPoint", "path": "bob/connections/light.py", "types": ["LightVisibleZoneConnectionPoint", "OutletZoneConnectionPoint"]}
+{"class_name": "LightVisibleZoneConnectionPoint", "path": "bob/connections/light.py", "types": ["ZoneConnectionPoint"]}
+{"class_name": "LightZoneConnectionPoint", "path": "bob/connections/light.py", "types": ["ZoneConnectionPoint"]}
+{"class_name": "ChilledWaterConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "ChilledWaterConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "ChilledWaterInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["InletConnectionPoint", "ChilledWaterConnectionPoint"]}
+{"class_name": "ChilledWaterOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["OutletConnectionPoint", "ChilledWaterConnectionPoint"]}
+{"class_name": "CondensateConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "CondensateConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "CondensateInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["InletConnectionPoint", "CondensateConnectionPoint"]}
+{"class_name": "CondensateOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["OutletConnectionPoint", "CondensateConnectionPoint"]}
+{"class_name": "CondenserConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "CondenserConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "CondenserInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["InletConnectionPoint", "CondenserConnectionPoint"]}
+{"class_name": "CondenserOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["OutletConnectionPoint", "CondenserConnectionPoint"]}
+{"class_name": "FluidBidirectionalConnectionPoint", "path": "bob/connections/liquid.py", "types": ["FluidConnectionPoint", "BidirectionalConnectionPoint"]}
+{"class_name": "FluidConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "FluidConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "FluidInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["FluidConnectionPoint", "InletConnectionPoint"]}
+{"class_name": "FluidOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["FluidConnectionPoint", "OutletConnectionPoint"]}
+{"class_name": "Glycol15PercentConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "Glycol15PercentConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "Glycol15PercentInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["InletConnectionPoint", "Glycol15PercentConnectionPoint"]}
+{"class_name": "Glycol15PercentOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["OutletConnectionPoint", "Glycol15PercentConnectionPoint"]}
+{"class_name": "Glycol30PercentConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "Glycol30PercentConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "Glycol30PercentInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["InletConnectionPoint", "Glycol15PercentConnectionPoint"]}
+{"class_name": "Glycol30PercentOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["OutletConnectionPoint", "Glycol15PercentConnectionPoint"]}
+{"class_name": "HotWaterConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "HotWaterConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "HotWaterInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["HotWaterConnectionPoint", "InletConnectionPoint"]}
+{"class_name": "HotWaterOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["HotWaterConnectionPoint", "OutletConnectionPoint"]}
+{"class_name": "MixedWaterConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "MixedWaterConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "MixedWaterInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["InletConnectionPoint", "MixedWaterConnectionPoint"]}
+{"class_name": "MixedWaterOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["OutletConnectionPoint", "MixedWaterConnectionPoint"]}
+{"class_name": "SteamConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "SteamConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "SteamInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["InletConnectionPoint", "SteamConnectionPoint"]}
+{"class_name": "SteamOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["OutletConnectionPoint", "SteamConnectionPoint"]}
+{"class_name": "WaterBidirectionalConnectionPoint", "path": "bob/connections/liquid.py", "types": ["WaterConnectionPoint", "BidirectionalConnectionPoint"]}
+{"class_name": "WaterConnection", "path": "bob/connections/liquid.py", "types": ["Connection"]}
+{"class_name": "WaterConnectionPoint", "path": "bob/connections/liquid.py", "types": ["ConnectionPoint"]}
+{"class_name": "WaterInletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["WaterConnectionPoint", "InletConnectionPoint"]}
+{"class_name": "WaterOutletConnectionPoint", "path": "bob/connections/liquid.py", "types": ["WaterConnectionPoint", "OutletConnectionPoint"]}
+{"class_name": "MechanicalBidirectionalConnectionPoint", "path": "bob/connections/mechanical.py", "types": ["BidirectionalConnectionPoint", "MechanicalConnectionPoint"]}
+{"class_name": "MechanicalConnection", "path": "bob/connections/mechanical.py", "types": ["Connection"]}
+{"class_name": "MechanicalConnectionPoint", "path": "bob/connections/mechanical.py", "types": ["ConnectionPoint"]}
+{"class_name": "MechanicalInletConnectionPoint", "path": "bob/connections/mechanical.py", "types": ["InletConnectionPoint", "MechanicalConnectionPoint"]}
+{"class_name": "MechanicalOutletConnectionPoint", "path": "bob/connections/mechanical.py", "types": ["OutletConnectionPoint", "MechanicalConnectionPoint"]}
+{"class_name": "NaturalGasConnection", "path": "bob/connections/naturalgas.py", "types": ["Connection"]}
+{"class_name": "NaturalGasConnectionPoint", "path": "bob/connections/naturalgas.py", "types": ["ConnectionPoint"]}
+{"class_name": "NaturalGasInletConnectionPoint", "path": "bob/connections/naturalgas.py", "types": ["InletConnectionPoint", "NaturalGasConnectionPoint"]}
+{"class_name": "NaturalGasOutletConnectionPoint", "path": "bob/connections/naturalgas.py", "types": ["OutletConnectionPoint", "NaturalGasConnectionPoint"]}
+{"class_name": "EthernetBidirectionalConnectionPoint", "path": "bob/connections/network.py", "types": ["BidirectionalConnectionPoint", "EthernetConnectionPoint"]}
+{"class_name": "EthernetConnection", "path": "bob/connections/network.py", "types": ["Connection"]}
+{"class_name": "EthernetConnectionPoint", "path": "bob/connections/network.py", "types": ["ConnectionPoint"]}
+{"class_name": "PoEBidirectionalConnectionPoint", "path": "bob/connections/network.py", "types": ["BidirectionalConnectionPoint", "PoEConnectionPoint"]}
+{"class_name": "PoEConnection", "path": "bob/connections/network.py", "types": ["Connection"]}
+{"class_name": "PoEConnectionPoint", "path": "bob/connections/network.py", "types": ["ConnectionPoint"]}
+{"class_name": "RS485BidirectionalConnectionPoint", "path": "bob/connections/network.py", "types": ["BidirectionalConnectionPoint", "RS485ConnectionPoint"]}
+{"class_name": "RS485Connection", "path": "bob/connections/network.py", "types": ["Connection"]}
+{"class_name": "RS485ConnectionPoint", "path": "bob/connections/network.py", "types": ["ConnectionPoint"]}
+{"class_name": "OccupancyConnection", "path": "bob/connections/occupancy.py", "types": ["Connection"]}
+{"class_name": "OccupancyConnectionPoint", "path": "bob/connections/occupancy.py", "types": ["ConnectionPoint"]}
+{"class_name": "OccupancyInletConnectionPoint", "path": "bob/connections/occupancy.py", "types": ["OccupancyConnectionPoint", "InletConnectionPoint"]}
+{"class_name": "OccupancyInletZoneConnectionPoint", "path": "bob/connections/occupancy.py", "types": ["OccupancyZoneConnectionPoint", "InletZoneConnectionPoint"]}
+{"class_name": "OccupancyOutletConnectionPoint", "path": "bob/connections/occupancy.py", "types": ["OccupancyConnectionPoint", "OutletConnectionPoint"]}
+{"class_name": "OccupancyOutletZoneConnectionPoint", "path": "bob/connections/occupancy.py", "types": ["OccupancyZoneConnectionPoint", "OutletZoneConnectionPoint"]}
+{"class_name": "OccupancyZoneConnectionPoint", "path": "bob/connections/occupancy.py", "types": ["ZoneConnectionPoint"]}
+{"class_name": "RefrigerantBidirectionalConnectionPoint", "path": "bob/connections/refrigerant.py", "types": ["BidirectionalConnectionPoint", "RefrigerantConnectionPoint"]}
+{"class_name": "RefrigerantConnection", "path": "bob/connections/refrigerant.py", "types": ["Connection"]}
+{"class_name": "RefrigerantConnectionPoint", "path": "bob/connections/refrigerant.py", "types": ["ConnectionPoint"]}
+{"class_name": "RefrigerantInletConnectionPoint", "path": "bob/connections/refrigerant.py", "types": ["InletConnectionPoint", "RefrigerantConnectionPoint"]}
+{"class_name": "RefrigerantOutletConnectionPoint", "path": "bob/connections/refrigerant.py", "types": ["OutletConnectionPoint", "RefrigerantConnectionPoint"]}
+{"class_name": "Door", "path": "bob/equipment/architectural/door.py", "types": ["Equipment"]}
+{"class_name": "Window", "path": "bob/equipment/architectural/window.py", "types": ["Equipment"]}
+{"class_name": "Controller", "path": "bob/equipment/control/controller.py", "types": ["Equipment"]}
+{"class_name": "CircuitBreaker", "path": "bob/equipment/electricity/distribution.py", "types": ["Equipment"]}
+{"class_name": "SinglePhaseDistributionPanel", "path": "bob/equipment/electricity/distribution.py", "types": ["System"]}
+{"class_name": "SinglePoleCircuitBreaker", "path": "bob/equipment/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "TandemSinglePoleCircuitBreaker", "path": "bob/equipment/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "ThreePhaseDistributionPanel", "path": "bob/equipment/electricity/distribution.py", "types": ["System"]}
+{"class_name": "ThreePolesCircuitBreaker", "path": "bob/equipment/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "ThreePolesMainCircuitBreaker", "path": "bob/equipment/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "Transformer", "path": "bob/equipment/electricity/distribution.py", "types": ["Equipment"]}
+{"class_name": "TwoPolesCircuitBreaker", "path": "bob/equipment/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "TwoPolesMainCircuitBreaker", "path": "bob/equipment/electricity/distribution.py", "types": ["CircuitBreaker"]}
+{"class_name": "ThreePhaseElectricalMeter", "path": "bob/equipment/electricity/meter.py", "types": ["Equipment"]}
+{"class_name": "MotorStarter", "path": "bob/equipment/electricity/starter.py", "types": ["_MotorStarter"]}
+{"class_name": "CurrentRelay", "path": "bob/equipment/electricity/switch.py", "types": ["Equipment"]}
+{"class_name": "DimmableSwitch", "path": "bob/equipment/electricity/switch.py", "types": ["SinglePoleSwitch"]}
+{"class_name": "SinglePoleSwitch", "path": "bob/equipment/electricity/switch.py", "types": ["Switch"]}
+{"class_name": "Switch", "path": "bob/equipment/electricity/switch.py", "types": ["Equipment"]}
+{"class_name": "TimerSwitch", "path": "bob/equipment/electricity/switch.py", "types": ["SinglePoleSwitch"]}
+{"class_name": "VFD", "path": "bob/equipment/electricity/vfd.py", "types": ["_VFD"]}
+{"class_name": "Actuator", "path": "bob/equipment/hvac/actuator.py", "types": ["Equipment"]}
+{"class_name": "AirFlowMonitor", "path": "bob/equipment/hvac/airflowstation.py", "types": ["Equipment"]}
+{"class_name": "AirHandlingUnit", "path": "bob/equipment/hvac/airhandlingunit.py", "types": ["SystemFromTemplate", "AirHandlingUnit"]}
+{"class_name": "FanCoil", "path": "bob/equipment/hvac/airhandlingunit.py", "types": ["System", "FanCoilUnit"]}
+{"class_name": "DomesticHotWaterHeater", "path": "bob/equipment/hvac/boiler.py", "types": ["SystemFromTemplate", "HotWaterHeater"]}
+{"class_name": "ElectricalHotWaterBoiler", "path": "bob/equipment/hvac/boiler.py", "types": ["HotWaterBoiler", "Boiler"]}
+{"class_name": "HotWaterBoiler", "path": "bob/equipment/hvac/boiler.py", "types": ["Equipment", "Boiler"]}
+{"class_name": "NaturalGasHotWaterBoiler", "path": "bob/equipment/hvac/boiler.py", "types": ["HotWaterBoiler", "Boiler"]}
+{"class_name": "AgnosticChiller", "path": "bob/equipment/hvac/chiller.py", "types": ["Equipment", "Chiller"]}
+{"class_name": "Chiller", "path": "bob/equipment/hvac/chiller.py", "types": ["Equipment", "Chiller"]}
+{"class_name": "ChilledWaterCoil", "path": "bob/equipment/hvac/coil.py", "types": ["Coil"]}
+{"class_name": "Coil", "path": "bob/equipment/hvac/coil.py", "types": ["Equipment"]}
+{"class_name": "DXCoolingCoil", "path": "bob/equipment/hvac/coil.py", "types": ["Coil"]}
+{"class_name": "ElectricalHeatingCoil", "path": "bob/equipment/hvac/coil.py", "types": ["Equipment"]}
+{"class_name": "ElectricalRadiantHeatingCoil", "path": "bob/equipment/hvac/coil.py", "types": ["Equipment"]}
+{"class_name": "HeatpumpCoil", "path": "bob/equipment/hvac/coil.py", "types": ["Coil"]}
+{"class_name": "HotWaterCoil", "path": "bob/equipment/hvac/coil.py", "types": ["Coil"]}
+{"class_name": "ImmersedResistanceHeaterElement", "path": "bob/equipment/hvac/coil.py", "types": ["Equipment"]}
+{"class_name": "WaterCoil", "path": "bob/equipment/hvac/coil.py", "types": ["Coil"]}
+{"class_name": "AirCompressor", "path": "bob/equipment/hvac/compressor.py", "types": ["Equipment"]}
+{"class_name": "RefrigerationGasCompressor", "path": "bob/equipment/hvac/compressor.py", "types": ["Equipment"]}
+{"class_name": "Damper", "path": "bob/equipment/hvac/damper.py", "types": ["Equipment"]}
+{"class_name": "Fan", "path": "bob/equipment/hvac/fan.py", "types": ["Equipment"]}
+{"class_name": "Filter", "path": "bob/equipment/hvac/filter.py", "types": ["Equipment"]}
+{"class_name": "GasMonitor", "path": "bob/equipment/hvac/gas.py", "types": ["Equipment"]}
+{"class_name": "GeothermalWell", "path": "bob/equipment/hvac/geothermal.py", "types": ["Equipment"]}
+{"class_name": "Accumulator", "path": "bob/equipment/hvac/heatexchanger.py", "types": ["Equipment"]}
+{"class_name": "Accumulator4SidesDuct", "path": "bob/equipment/hvac/heatexchanger.py", "types": ["Equipment"]}
+{"class_name": "AirHeatExchanger", "path": "bob/equipment/hvac/heatexchanger.py", "types": ["Equipment"]}
+{"class_name": "ElectricalHumidifier", "path": "bob/equipment/hvac/humidifier.py", "types": ["Humidifier"]}
+{"class_name": "Humidifier", "path": "bob/equipment/hvac/humidifier.py", "types": ["Equipment"]}
+{"class_name": "NaturalGasHumidifier", "path": "bob/equipment/hvac/humidifier.py", "types": ["Humidifier"]}
+{"class_name": "SteamPipe", "path": "bob/equipment/hvac/humidifier.py", "types": ["Equipment"]}
+{"class_name": "ParticleCounter", "path": "bob/equipment/hvac/particlecounter.py", "types": ["Equipment"]}
+{"class_name": "Pump", "path": "bob/equipment/hvac/pump.py", "types": ["Equipment"]}
+{"class_name": "PumpWithStarter", "path": "bob/equipment/hvac/pump.py", "types": ["Pump"]}
+{"class_name": "PumpWithVFD", "path": "bob/equipment/hvac/pump.py", "types": ["Pump"]}
+{"class_name": "SCR", "path": "bob/equipment/hvac/scr.py", "types": ["Equipment"]}
+{"class_name": "FlowSwitch", "path": "bob/equipment/hvac/stats.py", "types": ["Equipment"]}
+{"class_name": "HighStaticPressureStat", "path": "bob/equipment/hvac/stats.py", "types": ["Pressurestat"]}
+{"class_name": "Humidistat", "path": "bob/equipment/hvac/stats.py", "types": ["Equipment"]}
+{"class_name": "MechanicalModulatingThermostat", "path": "bob/equipment/hvac/stats.py", "types": ["Thermostat"]}
+{"class_name": "MechanicalOnOffThermostat", "path": "bob/equipment/hvac/stats.py", "types": ["Thermostat"]}
+{"class_name": "NetworkRoomSensor", "path": "bob/equipment/hvac/stats.py", "types": ["Equipment"]}
+{"class_name": "NetworkThermostat", "path": "bob/equipment/hvac/stats.py", "types": ["Thermostat"]}
+{"class_name": "Pressurestat", "path": "bob/equipment/hvac/stats.py", "types": ["Equipment"]}
+{"class_name": "Thermostat", "path": "bob/equipment/hvac/stats.py", "types": ["Equipment"]}
+{"class_name": "Tank", "path": "bob/equipment/hvac/tank.py", "types": ["Equipment"]}
+{"class_name": "Triac", "path": "bob/equipment/hvac/triac.py", "types": ["Equipment"]}
+{"class_name": "ExpansionValve", "path": "bob/equipment/hvac/valve.py", "types": ["Valve"]}
+{"class_name": "NaturalGasValve", "path": "bob/equipment/hvac/valve.py", "types": ["Valve"]}
+{"class_name": "PneumaticValve", "path": "bob/equipment/hvac/valve.py", "types": ["Valve"]}
+{"class_name": "ReversingValve", "path": "bob/equipment/hvac/valve.py", "types": ["Valve"]}
+{"class_name": "ThreeWayValveDiverting", "path": "bob/equipment/hvac/valve.py", "types": ["Valve"]}
+{"class_name": "ThreeWayValveMixing", "path": "bob/equipment/hvac/valve.py", "types": ["Valve"]}
+{"class_name": "TwoWayValve", "path": "bob/equipment/hvac/valve.py", "types": ["Valve"]}
+{"class_name": "Valve", "path": "bob/equipment/hvac/valve.py", "types": ["Equipment"]}
+{"class_name": "GenericSingleDuctTerminal", "path": "bob/equipment/hvac/vav.py", "types": ["Equipment", "SingleDuctTerminal"]}
+{"class_name": "SingleDuctTerminal", "path": "bob/equipment/hvac/vav.py", "types": ["System", "SingleDuctTerminal"]}
+{"class_name": "Luminaire", "path": "bob/equipment/lighting/light.py", "types": ["Equipment"]}
+{"class_name": "EthernetFirewall", "path": "bob/equipment/network/firewall.py", "types": ["Equipment"]}
+{"class_name": "EthernetSwitch", "path": "bob/equipment/network/switch.py", "types": ["Equipment"]}
+{"class_name": "PoESwitch", "path": "bob/equipment/network/switch.py", "types": ["Equipment"]}
+{"class_name": "BACnetExternalReference", "path": "bob/externalreference/bacnet.py", "types": ["ExternalReference"]}
+{"class_name": "NiagaraORDReference", "path": "bob/externalreference/timeseries.py", "types": ["ExternalReference"]}
+{"class_name": "TimeSeriesReference", "path": "bob/externalreference/timeseries.py", "types": ["ExternalReference"]}
+{"class_name": "Causality", "path": "bob/producer/causality.py", "types": ["Producer"]}
+{"class_name": "Differential", "path": "bob/producer/causality.py", "types": ["Producer"]}
+{"class_name": "HandOffAutoMotorStarter", "path": "bob/producer/causality.py", "types": ["Producer"]}
+{"class_name": "VFDProducer", "path": "bob/producer/causality.py", "types": ["Producer"]}
+{"class_name": "G36AirFlowControl", "path": "bob/producer/g36.py", "types": ["G36Sequence"]}
+{"class_name": "G36Figure_A_2", "path": "bob/producer/g36.py", "types": ["G36VAVCoolingOnly"]}
+{"class_name": "G36Figure_A_3", "path": "bob/producer/g36.py", "types": ["G36VAVCoolingOnly"]}
+{"class_name": "G36OccupancyControl", "path": "bob/producer/g36.py", "types": ["G36Sequence"]}
+{"class_name": "G36Sequence", "path": "bob/producer/g36.py", "types": ["Function"]}
+{"class_name": "G36VAVCoolingOnly", "path": "bob/producer/g36.py", "types": ["G36Sequence"]}
+{"class_name": "G36VAVCoolingOnly0", "path": "bob/producer/g36.py", "types": ["G36Sequence"]}
+{"class_name": "G36VentilationAndCO2Control", "path": "bob/producer/g36.py", "types": ["G36Sequence"]}
+{"class_name": "G36ZoneFromDomainSpace", "path": "bob/producer/g36.py", "types": ["DomainSpace"]}
+{"class_name": "G36ZoneFromZone", "path": "bob/producer/g36.py", "types": ["Zone"]}
+{"class_name": "G36ZoneGroup", "path": "bob/producer/g36.py", "types": ["Zone"]}
+{"class_name": "G36ZoneTemperatureControl", "path": "bob/producer/g36.py", "types": ["G36Sequence"]}
+{"class_name": "IndoorAir", "path": "bob/producer/hvacspace.py", "types": ["Function"]}
+{"class_name": "OccupancyFunction", "path": "bob/producer/occupancy.py", "types": ["Function"]}
+{"class_name": "Amps", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "ElectricApparentEnergy", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "ElectricApparentPower", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "ElectricEnergy", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "ElectricPower", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "ElectricPowerW", "path": "bob/properties/electricity.py", "types": ["ElectricPower"]}
+{"class_name": "ElectricPowerkW", "path": "bob/properties/electricity.py", "types": ["ElectricPower"]}
+{"class_name": "ElectricReactiveEnergy", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "ElectricReactivePower", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Frequency", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "PowerFactor", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Volts", "path": "bob/properties/electricity.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Flow", "path": "bob/properties/flow.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "DifferentialStaticPressure", "path": "bob/properties/force.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "HP", "path": "bob/properties/force.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Nm", "path": "bob/properties/force.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Pressure", "path": "bob/properties/force.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Brightness", "path": "bob/properties/light.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "RelativeLuminousFlux", "path": "bob/properties/light.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Kbit_per_seconds", "path": "bob/properties/network.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Mbit_per_seconds", "path": "bob/properties/network.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "ParticulateCount", "path": "bob/properties/particulate.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Area", "path": "bob/properties/physical.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Length", "path": "bob/properties/physical.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "AirChangePerHour", "path": "bob/properties/rate.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Count", "path": "bob/properties/rate.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "GasConcentration", "path": "bob/properties/ratio.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Percent", "path": "bob/properties/ratio.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "PercentCommand", "path": "bob/properties/ratio.py", "types": ["QuantifiableActuatableProperty"]}
+{"class_name": "RPM", "path": "bob/properties/ratio.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "RelativeHumidity", "path": "bob/properties/ratio.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Setpoint", "path": "bob/properties/setpoint.py", "types": ["QuantifiableProperty"]}
+{"class_name": "DaylightDetected", "path": "bob/properties/states.py", "types": ["EnumeratedObservableProperty"]}
+{"class_name": "Motion", "path": "bob/properties/states.py", "types": ["EnumeratedObservableProperty"]}
+{"class_name": "NormalAlarmStatus", "path": "bob/properties/states.py", "types": ["EnumeratedObservableProperty"]}
+{"class_name": "OccupancyStatus", "path": "bob/properties/states.py", "types": ["EnumeratedObservableProperty"]}
+{"class_name": "OnOffCommand", "path": "bob/properties/states.py", "types": ["EnumeratedActuatableProperty"]}
+{"class_name": "OnOffStatus", "path": "bob/properties/states.py", "types": ["EnumeratedObservableProperty"]}
+{"class_name": "OpenCloseCommand", "path": "bob/properties/states.py", "types": ["EnumeratedActuatableProperty"]}
+{"class_name": "OpenCloseStatus", "path": "bob/properties/states.py", "types": ["EnumeratedActuatableProperty"]}
+{"class_name": "Schedule", "path": "bob/properties/states.py", "types": ["EnumerableProperty"]}
+{"class_name": "SmokePresence", "path": "bob/properties/states.py", "types": ["EnumeratedObservableProperty"]}
+{"class_name": "Temperature", "path": "bob/properties/temperature.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "DifferentialTime", "path": "bob/properties/time.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "Hour", "path": "bob/properties/time.py", "types": ["DifferentialTime"]}
+{"class_name": "Minute", "path": "bob/properties/time.py", "types": ["DifferentialTime"]}
+{"class_name": "Second", "path": "bob/properties/time.py", "types": ["DifferentialTime"]}
+{"class_name": "Gallons", "path": "bob/properties/volume.py", "types": ["QuantifiableObservableProperty"]}
+{"class_name": "CurrentSensor", "path": "bob/sensor/electricity.py", "types": ["Sensor"]}
+{"class_name": "DryContactSensor", "path": "bob/sensor/electricity.py", "types": ["Sensor"]}
+{"class_name": "VoltageSensor", "path": "bob/sensor/electricity.py", "types": ["Sensor"]}
+{"class_name": "SmokeDetectionSensor", "path": "bob/sensor/fire.py", "types": ["Sensor"]}
+{"class_name": "AirFlowSensor", "path": "bob/sensor/flow.py", "types": ["FlowSensor"]}
+{"class_name": "FlowSensor", "path": "bob/sensor/flow.py", "types": ["Sensor"]}
+{"class_name": "FlowSetpoint", "path": "bob/sensor/flow.py", "types": ["Setpoint"]}
+{"class_name": "WaterFlowSensor", "path": "bob/sensor/flow.py", "types": ["FlowSensor"]}
+{"class_name": "CH4Sensor", "path": "bob/sensor/gas.py", "types": ["GasConcentrationSensor"]}
+{"class_name": "CO2Sensor", "path": "bob/sensor/gas.py", "types": ["GasConcentrationSensor"]}
+{"class_name": "COSensor", "path": "bob/sensor/gas.py", "types": ["GasConcentrationSensor"]}
+{"class_name": "GasConcentrationSensor", "path": "bob/sensor/gas.py", "types": ["Sensor"]}
+{"class_name": "GasConcentrationSetpoint", "path": "bob/sensor/gas.py", "types": ["Setpoint"]}
+{"class_name": "NO2Sensor", "path": "bob/sensor/gas.py", "types": ["GasConcentrationSensor"]}
+{"class_name": "AirHumiditySensor", "path": "bob/sensor/humidity.py", "types": ["HumiditySensor"]}
+{"class_name": "HumiditySensor", "path": "bob/sensor/humidity.py", "types": ["Sensor"]}
+{"class_name": "HumiditySetpoint", "path": "bob/sensor/humidity.py", "types": ["Setpoint"]}
+{"class_name": "DaylightSensor", "path": "bob/sensor/light.py", "types": ["Sensor"]}
+{"class_name": "OccupancySensor", "path": "bob/sensor/motion.py", "types": ["Sensor"]}
+{"class_name": "OccupantCounterSensor", "path": "bob/sensor/motion.py", "types": ["OccupantMotionSensor"]}
+{"class_name": "OccupantMotionSensor", "path": "bob/sensor/motion.py", "types": ["OccupancySensor"]}
+{"class_name": "OccupantPresenceSensor", "path": "bob/sensor/motion.py", "types": ["OccupancySensor"]}
+{"class_name": "PositionSensor", "path": "bob/sensor/motion.py", "types": ["Sensor"]}
+{"class_name": "CoarseParticulateSensor", "path": "bob/sensor/particle.py", "types": ["ParticulateSensor"]}
+{"class_name": "FineParticulateSensor", "path": "bob/sensor/particle.py", "types": ["ParticulateSensor"]}
+{"class_name": "ParticulateSensor", "path": "bob/sensor/particle.py", "types": ["Sensor"]}
+{"class_name": "UltraFineParticulateSensor", "path": "bob/sensor/particle.py", "types": ["ParticulateSensor"]}
+{"class_name": "AirDifferentialStaticPressureSensor", "path": "bob/sensor/pressure.py", "types": ["DifferentialStaticPressureSensor"]}
+{"class_name": "DifferentialStaticPressureSensor", "path": "bob/sensor/pressure.py", "types": ["Sensor"]}
+{"class_name": "PressureSensor", "path": "bob/sensor/pressure.py", "types": ["Sensor"]}
+{"class_name": "WaterDifferentialStaticPressureSensor", "path": "bob/sensor/pressure.py", "types": ["DifferentialStaticPressureSensor"]}
+{"class_name": "IntrusionSensor", "path": "bob/sensor/security.py", "types": ["Sensor"]}
+{"class_name": "Sensor", "path": "bob/sensor/sensor.py", "types": ["_Sensor"]}
+{"class_name": "AirTemperatureSensor", "path": "bob/sensor/temperature.py", "types": ["TemperatureSensor"]}
+{"class_name": "TemperatureSensor", "path": "bob/sensor/temperature.py", "types": ["Sensor"]}
+{"class_name": "TemperatureSetpoint", "path": "bob/sensor/temperature.py", "types": ["Setpoint"]}
+{"class_name": "WaterTemperatureSensor", "path": "bob/sensor/temperature.py", "types": ["TemperatureSensor"]}
+{"class_name": "HVACSpace", "path": "bob/space/hvac.py", "types": ["DomainSpace"]}
+{"class_name": "HVACZone", "path": "bob/space/hvac.py", "types": ["Zone"]}
+{"class_name": "LightingSpace", "path": "bob/space/light.py", "types": ["DomainSpace"]}
+{"class_name": "LightingZone", "path": "bob/space/light.py", "types": ["Zone"]}
+{"class_name": "Basement", "path": "bob/space/physical.py", "types": ["Floor"]}
+{"class_name": "Bathroom", "path": "bob/space/physical.py", "types": ["Room"]}
+{"class_name": "Building", "path": "bob/space/physical.py", "types": ["PhysicalSpace"]}
+{"class_name": "Corridor", "path": "bob/space/physical.py", "types": ["Room"]}
+{"class_name": "Floor", "path": "bob/space/physical.py", "types": ["PhysicalSpace"]}
+{"class_name": "Hall", "path": "bob/space/physical.py", "types": ["Room"]}
+{"class_name": "MechanicalRoom", "path": "bob/space/physical.py", "types": ["Room"]}
+{"class_name": "Office", "path": "bob/space/physical.py", "types": ["Room"]}
+{"class_name": "Roof", "path": "bob/space/physical.py", "types": ["PhysicalSpace"]}
+{"class_name": "Room", "path": "bob/space/physical.py", "types": ["PhysicalSpace"]}
+{"class_name": "Site", "path": "bob/space/physical.py", "types": ["PhysicalSpace"]}
