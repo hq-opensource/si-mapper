@@ -1,11 +1,11 @@
 "use client";
 
 import { SigmaContainer, useLoadGraph, useSigma, useRegisterEvents } from "@react-sigma/core";
-import forceAtlas2 from "graphology-layout-forceatlas2";
+import { useWorkerLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
 import { MultiDirectedGraph } from "graphology";
 import "@react-sigma/core/lib/style.css";
-import { useEffect, useState, useCallback } from "react";
-import { ZoomIn, ZoomOut, RotateCcw, Network } from "lucide-react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { ZoomIn, ZoomOut, RotateCcw, Network, Info, Activity } from "lucide-react";
 import { StatusPlaceholder } from "./StatusPlaceholder";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -29,25 +29,28 @@ interface GraphData {
   edges: GraphEdge[];
 }
 
-// ─── Color Palette ────────────────────────────────────────────────────────────
+// ─── VIP Color Palette ────────────────────────────────────────────────────────
 
+// High-end, vibrant colors that pop in both light and dark modes
 const TYPE_COLORS: Record<string, string> = {
-  // OWL concepts
-  owl__Class: "#4f46e5",
-  owl__ObjectProperty: "#f59e0b",
-  owl__DatatypeProperty: "#10b981",
-  owl__AnnotationProperty: "#06b6d4",
-  owl__Restriction: "#ec4899",
-  owl__NamedIndividual: "#8b5cf6",
+  // OWL/Ontology concepts - Neon & Glowy tones
+  owl__Class: "#818cf8", // Electric Indigo
+  owl__ObjectProperty: "#fbbf24", // Vibrant Amber
+  owl__DatatypeProperty: "#34d399", // Neon Emerald
+  owl__AnnotationProperty: "#22d3ee", // Bright Cyan
+  owl__Restriction: "#f472b6", // Soft Neon Pink
+  owl__NamedIndividual: "#a78bfa", // Electric Violet
+  
   // RDFS
-  rdfs__Class: "#4f46e5",
-  rdfs__Property: "#f59e0b",
-  // ASHRAE 223P instances (if present in data)
-  Equipment: "#4f46e5",
-  ConnectionPoint: "#f59e0b",
-  System: "#8b5cf6",
-  Sensor: "#06b6d4",
-  Zone: "#ec4899",
+  rdfs__Class: "#818cf8",
+  rdfs__Property: "#fbbf24",
+  
+  // HVAC / Building specific (VIP styles)
+  Equipment: "#6366f1", // Deep Indigo
+  ConnectionPoint: "#f59e0b", // Gold Amber
+  System: "#8b5cf6", // Purple Aura
+  Sensor: "#06b6d4", // Cyber Cyan
+  Zone: "#ec4899", // Rose Pink
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -76,24 +79,37 @@ function friendlyType(type: string): string {
   return TYPE_LABELS[type] ?? type.replace("__", ": ").replace(/_/g, " ");
 }
 
-// ─── GraphLoader: builds graph and runs synchronous FA2 layout ───────────────
+// ─── GraphLoader: builds graph and runs dynamic FA2 layout ───────────────
 
 function GraphLoader({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] }) {
   const loadGraph = useLoadGraph();
+  const { start, stop } = useWorkerLayoutForceAtlas2({
+    settings: {
+      gravity: 0.01, // Very low constant gravity to keep it centered
+      scalingRatio: 10, // Adjusted for LinLog mode
+      linLogMode: true, // Key for distinct clustering in knowledge graphs
+      outboundAttractionDistribution: true, // Pushes hubs to center, others to periphery
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      slowDown: 2, 
+      adjustSizes: true,
+    }
+  });
 
   useEffect(() => {
     if (nodes.length === 0) return;
 
     const graph = new MultiDirectedGraph();
 
-    // Add nodes with random seed positions
+    // Add nodes with Organic Scattering
+    // We scatter them in a wide space so they can find their clusters naturally
     nodes.forEach((n) => {
       graph.addNode(n.id, {
         label: n.label,
-        size: 6,
+        size: 5,
         color: getNodeColor(n.type),
-        x: Math.random() * 100,
-        y: Math.random() * 100,
+        x: (Math.random() - 0.5) * 1000,
+        y: (Math.random() - 0.5) * 1000,
         nodeType: n.type,
         properties: n.properties,
       });
@@ -105,34 +121,33 @@ function GraphLoader({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] 
         graph.addEdgeWithKey(e.id, e.source, e.target, {
           label: e.label,
           type: "arrow",
+          size: 1,
+          color: "rgba(148, 163, 184, 0.4)", // Muted link color
         });
       } catch {
         // skip edges referencing missing nodes
       }
     });
 
-    // Degree-based node sizing
+    // Degree-based node sizing with better range
     graph.forEachNode((key) => {
       const deg = graph.degree(key);
-      graph.setNodeAttribute(key, "size", Math.max(4, Math.log(deg + 1) * 8));
-    });
-
-    // Run ForceAtlas2 synchronously — graph loads pre-positioned, no animation needed
-    forceAtlas2.assign(graph, {
-      iterations: 2000,
-      settings: {
-        gravity: 0.2,
-        scalingRatio: 30,
-        barnesHutOptimize: true,
-        barnesHutTheta: 0.5,
-        slowDown: 1,
-        adjustSizes: true,
-      },
+      graph.setNodeAttribute(key, "size", Math.max(6, Math.min(22, Math.log(deg + 1) * 10)));
     });
 
     loadGraph(graph);
+    
+    // Start layout animation
+    start();
+    
+    // Stop after 3 seconds to preserve CPU
+    const timer = setTimeout(() => stop(), 3000);
+    return () => {
+      clearTimeout(timer);
+      stop();
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, edges]);
+  }, [nodes, edges, loadGraph]);
 
   return null;
 }
@@ -177,16 +192,31 @@ function GraphEvents({ onActiveNode }: { onActiveNode: (nodeId: string | null) =
     const neighbors = new Set(sigma.getGraph().neighbors(activeNode));
 
     sigma.setSetting("nodeReducer", (node: string, data: Record<string, unknown>) => {
-      if (node === activeNode) return { ...data, highlighted: true, size: (data.size as number) * 1.5 };
-      if (neighbors.has(node)) return data;
-      return { ...data, color: "rgba(100,116,139,0.25)", size: (data.size as number) * 0.7 };
+      if (node === activeNode) return { 
+        ...data, 
+        highlighted: true, 
+        size: (data.size as number) * 1.8,
+        color: "#6366f1", // Highlight with accent color
+        zIndex: 999 
+      };
+      if (neighbors.has(node)) return {
+        ...data,
+        highlighted: true,
+        size: (data.size as number) * 1.2
+      };
+      return { ...data, color: "rgba(100,116,139,0.15)", size: (data.size as number) * 0.6, label: "" };
     });
 
     sigma.setSetting("edgeReducer", (edge: string, data: Record<string, unknown>) => {
       const src = sigma.getGraph().source(edge);
       const tgt = sigma.getGraph().target(edge);
-      if (src === activeNode || tgt === activeNode) return data;
-      return { ...data, color: "rgba(100,116,139,0.08)" };
+      if (src === activeNode || tgt === activeNode) return {
+        ...data,
+        color: "#6366f1", // Accent color for active paths
+        size: 3,
+        zIndex: 1
+      };
+      return { ...data, color: "rgba(100,116,139,0.04)" };
     });
   }, [hoveredNode, clickedNode, sigma]);
 
@@ -213,34 +243,57 @@ function NodeInfoCardInner({ activeNode }: { activeNode: string | null }) {
   const namespace = uri.includes("#") ? uri.split("#")[0].split("/").pop() : uri.split("/").slice(-2, -1)[0];
 
   return (
-    <div className="absolute bottom-4 right-4 z-20 w-[300px]">
-      <div className="p-4 rounded-xl border border-[var(--accent)]/20 bg-[var(--background)]/90 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <span className="text-sm font-bold text-[var(--foreground)] truncate flex-1">{label}</span>
+    <div className="absolute bottom-6 right-6 z-20 w-[340px] animate-in slide-in-from-right-8 duration-500">
+      <div className="p-6 rounded-2xl border border-[var(--accent)]/30 bg-[var(--background)]/80 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] overflow-hidden group">
+        {/* Decorative background glow */}
+        <div 
+          className="absolute -top-12 -right-12 w-24 h-24 rounded-full blur-3xl opacity-20 pointer-events-none group-hover:opacity-40 transition-opacity duration-700"
+          style={{ backgroundColor: getNodeColor(type) }}
+        />
+        
+        <div className="flex items-start justify-between gap-3 mb-5 relative z-10">
+          <div className="flex-1 min-w-0">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--muted-foreground)] mb-1">
+              Active Selection
+            </h4>
+            <span className="text-lg font-bold text-[var(--foreground)] truncate block leading-tight">
+              {label}
+            </span>
+          </div>
           <span
-            className="text-[10px] font-bold uppercase tracking-[0.25em] shrink-0 px-2 py-0.5 rounded-full"
-            style={{ backgroundColor: `${getNodeColor(type)}22`, color: getNodeColor(type) }}
+            className="text-[10px] font-bold uppercase tracking-[0.2em] shrink-0 px-3 py-1 rounded-full border border-current"
+            style={{ backgroundColor: `${getNodeColor(type)}15`, color: getNodeColor(type), borderColor: `${getNodeColor(type)}30` }}
           >
             {friendlyType(type)}
           </span>
         </div>
 
-        <div className="border-t border-[var(--muted-foreground)]/10 mb-3" />
-
-        <div className="space-y-2 text-sm">
+        <div className="space-y-4 relative z-10">
           {namespace && (
-            <div className="flex gap-2">
-              <span className="text-[var(--muted-foreground)] text-xs w-24 shrink-0 pt-0.5">Namespace</span>
-              <span className="text-[var(--foreground)] font-mono text-xs break-all">{namespace}</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider flex items-center gap-1.5">
+                <Info size={10} /> Namespace
+              </span>
+              <span className="text-xs font-mono text-[var(--foreground)] bg-[var(--foreground)]/5 p-2 rounded-lg border border-[var(--foreground)]/5 truncate">
+                {namespace}
+              </span>
             </div>
           )}
-          <div className="flex gap-2">
-            <span className="text-[var(--muted-foreground)] text-xs w-24 shrink-0 pt-0.5">Connections</span>
-            <span className="text-[var(--foreground)]">{degree}</span>
+          
+          <div className="flex gap-8">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider flex items-center gap-1.5">
+                <Activity size={10} /> Degree
+              </span>
+              <span className="text-xl font-black text-[var(--foreground)]">{degree}</span>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <span className="text-[var(--muted-foreground)] text-xs w-24 shrink-0 pt-0.5">URI</span>
-            <span className="text-[var(--foreground)] font-mono text-[11px] break-all opacity-70">{uri}</span>
+
+          <div className="flex flex-col gap-1 border-t border-[var(--foreground)]/5 pt-4 mt-2">
+            <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Resource URI</span>
+            <span className="text-xs font-mono text-[var(--foreground)] opacity-50 break-all select-all hover:opacity-100 transition-opacity duration-300">
+              {uri}
+            </span>
           </div>
         </div>
       </div>
@@ -252,18 +305,19 @@ function NodeInfoCardInner({ activeNode }: { activeNode: string | null }) {
 
 function ToolbarInner() {
   const sigma = useSigma();
-  const btn = "p-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2 border border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5";
+  const btn = "p-3 rounded-xl text-sm transition-all duration-300 flex items-center justify-center border border-[var(--muted-foreground)]/10 text-[var(--muted-foreground)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 hover:border-[var(--accent)]/20 shadow-sm active:scale-90 group";
 
   return (
-    <div className="absolute top-4 left-4 z-20 flex flex-col gap-1 p-2 rounded-xl border border-[var(--muted-foreground)]/20 bg-[var(--background)]/80 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+    <div className="absolute top-6 left-6 z-20 flex flex-col gap-2 p-2 rounded-2xl border border-[var(--muted-foreground)]/10 bg-[var(--background)]/60 backdrop-blur-xl shadow-[0_15px_30px_rgba(0,0,0,0.05)]">
       <button className={btn} onClick={() => sigma.getCamera().animatedZoom()} aria-label="Zoom in" title="Zoom In">
-        <ZoomIn size={16} />
+        <ZoomIn size={18} className="group-hover:scale-110 transition-transform" />
       </button>
       <button className={btn} onClick={() => sigma.getCamera().animatedUnzoom()} aria-label="Zoom out" title="Zoom Out">
-        <ZoomOut size={16} />
+        <ZoomOut size={18} className="group-hover:scale-110 transition-transform" />
       </button>
+      <div className="h-[1px] mx-2 bg-[var(--muted-foreground)]/10 my-1" />
       <button className={btn} onClick={() => sigma.getCamera().animatedReset()} aria-label="Reset view" title="Reset View">
-        <RotateCcw size={16} />
+        <RotateCcw size={18} className="group-hover:rotate-[-45deg] transition-transform" />
       </button>
     </div>
   );
@@ -301,12 +355,29 @@ export function GraphWindow() {
     return () => { cancelled = true; };
   }, []);
 
+  // Resolve theme colors for Sigma
+  const [themeColors, setThemeColors] = useState({ foreground: "#94a3b8" });
+
+  useEffect(() => {
+    const updateColors = () => {
+      const style = getComputedStyle(document.documentElement);
+      const foreground = style.getPropertyValue('--muted-foreground').trim() || "#94a3b8";
+      setThemeColors({ foreground });
+    };
+
+    updateColors();
+    // Observe theme class changes
+    const observer = new MutationObserver(updateColors);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   if (loading) return <div className="w-full h-full flex items-center justify-center"><StatusPlaceholder icon={Network} title="LOADING GRAPH" subtitle="Fetching nodes and relationships from Neo4j..." /></div>;
   if (error) return <div className="w-full h-full flex items-center justify-center"><StatusPlaceholder icon={Network} title="GRAPH UNAVAILABLE" subtitle="Could not connect to the graph API. Ensure Neo4j is running." /></div>;
   if (!data || data.nodes.length === 0) return <div className="w-full h-full flex items-center justify-center"><StatusPlaceholder icon={Network} title="NO GRAPH DATA" subtitle="Run 'Load TTL to Neo4j' from the agent to import the current ontology" /></div>;
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full bg-[radial-gradient(circle_at_center,var(--accent)/[0.03]_0%,transparent_70%)]">
       <SigmaContainer
         graph={MultiDirectedGraph}
         style={{ height: "100%", width: "100%" }}
@@ -314,14 +385,15 @@ export function GraphWindow() {
           renderEdgeLabels: true,
           defaultEdgeType: "arrow",
           labelFont: "Outfit, Inter, system-ui",
-          labelSize: 12,
-          labelWeight: "700",
-          labelColor: { color: "#94a3b8" },
+          labelSize: 13,
+          labelWeight: "600",
+          labelColor: { color: themeColors.foreground },
           edgeLabelFont: "Outfit, Inter, system-ui",
-          edgeLabelSize: 10,
-          edgeLabelWeight: "400",
+          edgeLabelSize: 9,
+          edgeLabelWeight: "500",
           zoomToSizeRatioFunction: (x: number) => x,
-          itemSizesReference: "positions",
+          itemSizesReference: "screen", // Ensure radius is in pixels, not graph units
+          zIndex: true,
         }}
       >
         <SigmaContent nodes={data.nodes} edges={data.edges} />
