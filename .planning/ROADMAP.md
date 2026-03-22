@@ -58,6 +58,10 @@
 | P10-03 | Phase 10 | Planned |
 | P10-04 | Phase 10 | Planned |
 | P10-05 | Phase 10 | Planned |
+| P11-01 | Phase 11 | Planned |
+| P11-02 | Phase 11 | Planned |
+| P11-03 | Phase 11 | Planned |
+| P11-04 | Phase 11 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -171,3 +175,16 @@ Plans:
 - [ ] 10-02-PLAN.md — npm deps (Sigma.js, graphology, neo4j-driver) + GET /api/graph API route
 - [ ] 10-03-PLAN.md — GraphWindow.tsx (Sigma.js + ForceAtlas2 + interactions + toolbar) + tab wiring
 - [ ] 10-04-PLAN.md — End-to-end human verification (Neo4j + import + API + graph visualization)
+
+### Phase 11: optimization of the coding agent
+
+**Goal:** Reduce context window consumption in the Ontology Generator and Validator agents by replacing three expensive, unconditional operations with cheaper, targeted alternatives: keyword-filtered file scanning, grep-like JSONL class lookup, and LESSONS.md-first skill reading.
+**Requirements**: [P11-01, P11-02, P11-03, P11-04]
+**Depends on:** Phase 10
+**Plans:** 4 plans
+
+Plans:
+- [ ] 11-01-PLAN.md — TDD: scan_python_files_filtered tool + unit tests
+- [ ] 11-02-PLAN.md — TDD: search_class_mapping tool + unit tests
+- [ ] 11-03-PLAN.md — Agent tool swap + prompt rewrites + agent tests + JSONL cleanup
+- [ ] 11-04-PLAN.md — SKILL.md LESSONS.md-first logic + LESSONS.md skeleton
