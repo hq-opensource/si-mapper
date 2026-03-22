@@ -58,3 +58,17 @@ After all HITL verification steps are complete (ductwork, equipment, BACnet poin
 4. **Confirm:** After `OntologyValidatorAgent` completes, confirm to the human that `223p/src/ontology.py` and `223p/ttl/ontology.ttl` have been generated and validated.
 
 **Important:** These are two separate delegations. Do not call both at once. Wait for the generator to finish before delegating to the validator.
+
+## Neo4j Import Protocol
+
+After the `OntologyValidatorAgent` has successfully validated and produced `ontology.ttl`, the human may request loading the ontology into the Neo4j graph database. Common triggers include: "load to neo4j", "import to graph", "populate the graph", or similar.
+
+**Do NOT auto-trigger this protocol.** Wait for explicit human instruction.
+
+**Sequence:**
+1. **Import:** Call `load_ttl_to_neo4j`. This tool wipes the entire Neo4j database and reimports the current `ontology.ttl` file using Neosemantics.
+2. **Verify result:** Check the returned dict:
+   - If `status` is `"success"`: report `triples_loaded`, `node_count`, and `relationship_count` to the human. Inform them the Graph tab in the frontend will now show the ontology.
+   - If `status` is `"error"`: report the error message. Common issues: Neo4j not running (tell human to run `docker compose --profile graph up -d neo4j`), or `ontology.ttl` not found (tell human to run the ASHRAE 223P Code Generation Protocol first).
+
+**Important:** Each call to `load_ttl_to_neo4j` performs a complete wipe-and-reimport. There is no incremental update. This is the intended behavior — the TTL file is the source of truth.

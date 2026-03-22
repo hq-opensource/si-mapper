@@ -16,6 +16,7 @@ from tools.internal_grid_tools import (
 )
 from tools.metadata_tools import write_metadata, write_metadata_batch
 from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
+from master_architecture.tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
 from sub_agents.ontology_generator.agent import OntologyGeneratorAgent
 from sub_agents.ontology_validator.agent import OntologyValidatorAgent
 
@@ -70,6 +71,7 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         write_metadata,
         write_metadata_batch,
         capture_frontend_state_tool,
+        load_ttl_to_neo4j_tool,
     ]
     
     # --- Ontology sub-agents (flat, master sequences them) ---
