@@ -5,15 +5,15 @@ import { ExternalPageIframe } from "./ExternalPageIframe";
 import { AgentNavbar } from "./AgentNavbar"; // New component
 import { type AgentState } from "./AgentStateOverlay";
 import { SvarFileManager } from "@/components/SvarFileManager";
-import { BarChart2, Folder, Eye, Edit3 } from "lucide-react";
+import { Folder, Eye, Edit3 } from "lucide-react";
 import { ThoughtsWindow } from "./ThoughtsWindow";
 import { ToolCallsWindow } from "./ToolCallsWindow";
 import { StateWindow } from "./StateWindow";
 import { SharedPageContainer } from "./SharedPageContainer";
-import { StatusPlaceholder } from "./StatusPlaceholder";
 import { PerformanceDashboard } from "./PerformanceDashboard";
 import { ArtifactsDashboard } from "./ArtifactsDashboard";
 import { CodeWindow } from "./CodeWindow";
+import { GraphWindow } from "./GraphWindow";
 
 // Define WorkAreaWrapper outside to prevent remounting subcomponents on every render (stable component tree)
 const WorkAreaWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -108,21 +108,7 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
           </SharedPageContainer>
         );
       case 'graph':
-        return (
-          <SharedPageContainer
-            title="Architecture Graph"
-            subtitle="Visual System Topology"
-            icon={BarChart2}
-            fullWidth
-            fullHeight
-          >
-            <StatusPlaceholder
-              icon={BarChart2}
-              title="Graph Mode"
-              subtitle="Coming Soon"
-            />
-          </SharedPageContainer>
-        );
+        return <GraphWindow />;
       case 'debug':
         const colorVars = [
           { name: '--background', value: 'var(--background)' },
