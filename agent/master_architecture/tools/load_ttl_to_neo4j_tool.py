@@ -53,7 +53,7 @@ class LoadTtlToNeo4jTool(BaseTool):
 
                 # Step 2: Drop existing n10s config (handles missing gracefully)
                 driver.execute_query(
-                    "CALL n10s.graphconfig.drop() YIELD configExisted RETURN configExisted",
+                    "CALL n10s.graphconfig.drop()",
                     database_="neo4j",
                 )
 
