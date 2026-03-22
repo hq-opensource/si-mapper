@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 11
 status: unknown
-last_updated: "2026-03-22T18:21:31.098Z"
+last_updated: "2026-03-22T18:38:00.000Z"
 progress:
   total_phases: 11
   completed_phases: 5
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 11
-- **Overall Completion:** [█████████░] 85%
-- **Active Plan:** 11-04 (complete)
-- **Last Completed:** 11-04 (LESSONS.md-first reading logic via Step 0 + Distillation Protocol in SKILL.md + LESSONS.md skeleton)
+- **Overall Completion:** [██████████] 95%
+- **Active Plan:** 11-02 (complete)
+- **Last Completed:** 11-02 (search_class_mapping JSONL grep tool with TDD — 7 tests pass, both libraries, caching)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -72,6 +72,8 @@ progress:
 - **Decision (11-04):** Distillation is HITL-gated — explicit human instruction only, never auto-trigger.
 - **Decision (11-01):** scan_python_files_filtered uses case-insensitive substring matching (any kw in content.lower()) — OR logic across keywords.
 - **Decision (11-01):** Files with OSError during read are skipped in filtered results rather than included with error placeholder — simpler and avoids returning noise.
+- **Decision (11-02):** search_class_mapping uses case-insensitive substring OR logic across keywords — consistent with scan_python_files_filtered pattern from 11-01.
+- **Decision (11-02):** _MAPPINGS_DIR uses _PROJECT_ROOT anchor (not relative path) for portability; tests use real JSONL files (not mocks) since they are small static repo fixtures; _mapping_cache is module-level for lazy JSONL loading.
 
 ### Next Steps
 
@@ -98,6 +100,7 @@ progress:
 - **2026-03-22:** Completed 10-04-PLAN.md (E2E verification). Human approved all 5 steps. 4 bugs fixed during verification: n10s YIELD syntax removed, SSR crash fixed via dynamic import (ssr:false), FA2 iterations tuned 200→1000, node type color coding fixed by skipping n10s "Resource" label. TTL file persisted to uploads/ttl/latest_ontology.ttl. Phase 10 complete.
 - **2026-03-22:** Completed 11-04-PLAN.md. Added LESSONS.md-first Step 0 to SKILL.md Reading Protocol with no-fallback rule. Added Section 7 Distillation Protocol (HITL-gated). Created LESSONS.md skeleton with 6 category headers ready for first distillation.
 - **2026-03-22:** Completed 11-01-PLAN.md. Added scan_python_files_filtered (TDD, 7 tests) to tool.py with SCAN_PYTHON_FILES_FILTERED_SCHEMA and __all__ export. Keyword filtering reduces coding-agent context window consumption.
+- **2026-03-22:** Completed 11-02-PLAN.md. Added search_class_mapping (TDD, 7 tests) to tool.py with SEARCH_CLASS_MAPPING_SCHEMA, __all__ export, _load_mapping helper, and _mapping_cache. Single-call JSONL grep replaces expensive two-call list_library_classes + get_class_details workflow. 14 tests pass total.
 
 ## Roadmap Evolution
 
