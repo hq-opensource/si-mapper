@@ -40,6 +40,17 @@ Navigate and interpret the `resources assets` folder to extract **error-to-resol
 
 ## 3. Reading Protocol
 
+**Step 0 — Check for LESSONS.md first:**
+If `LESSONS.md` exists in this skill's directory (next to this `SKILL.md` file):
+- Read `LESSONS.md` only.
+- Do NOT walk `assets/` or read any `_N.py` files.
+- Do NOT fall back to Steps 1-5 below. LESSONS.md is authoritative.
+- Proceed directly to applying the lessons to your current task.
+
+If `LESSONS.md` does not exist, continue with Steps 1-5 below (raw asset walk).
+
+---
+
 **Step 1 — Sequential order within a session:**
 ```
 <prefix>_1.py → <prefix>_2.py → … → <prefix>.py
@@ -99,3 +110,19 @@ FOR EACH dated session folder (chronological order):
 - [ ] Each diff classified into a category from Section 4?
 - [ ] Final fix recorded from `<prefix>.py` only (not from any `_N` file)?
 - [ ] Error patterns reappearing across sessions flagged as recurring risks?
+
+---
+
+## 7. Distillation Protocol
+
+> This section is for the **master agent**, not the ontology sub-agents.
+
+When the user explicitly requests lesson distillation (e.g. "update lessons", "distill lessons"):
+
+1. **Read all dated session folders** using the Reading Algorithm (Section 5).
+2. **Extract error-to-resolution lessons** organized by the 6 categories in Section 4.
+3. **Write `LESSONS.md`** in this skill's directory with structured findings.
+4. **Format:** Use the 6 category headers (Imports, Instantiation pattern, Connection wiring, Sensor API, Serialization, Structural approach). Under each header, list concrete lessons as bullet points with the pattern: `- **Error:** [what went wrong] -> **Fix:** [what resolved it]`.
+5. **Overwrite** any existing `LESSONS.md` — each distillation is a full refresh, not incremental.
+
+**Trigger:** Explicit human instruction only. Never auto-trigger distillation.
