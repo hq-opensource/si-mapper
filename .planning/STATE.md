@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 10
 status: unknown
-last_updated: "2026-03-22T13:44:25.737Z"
+last_updated: "2026-03-22T17:53:19.026Z"
 progress:
-  total_phases: 10
-  completed_phases: 4
-  total_plans: 16
-  completed_plans: 15
+  total_phases: 11
+  completed_phases: 5
+  total_plans: 20
+  completed_plans: 16
 ---
 
 # State: HVAC Reconstruction Project
@@ -18,8 +18,8 @@ progress:
 
 - **Current Phase:** 10
 - **Overall Completion:** [█████████░] 94%
-- **Active Plan:** 10-03 (complete)
-- **Last Completed:** 10-03 (GraphWindow.tsx Sigma.js graph visualization + Graph tab wiring)
+- **Active Plan:** 10-04 (complete)
+- **Last Completed:** 10-04 (E2E verification — all 5 steps passed; 4 bugs fixed: n10s YIELD, SSR, FA2 layout, color coding)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -64,6 +64,10 @@ progress:
 - **Decision (10-02):** Neo4j mock uses globalThis bridge to expose mock fn from hoisted jest.mock() factory, avoiding temporal dead zone caused by global driver singleton being created at module import time.
 - **Decision (10-03):** Dynamic sigma.setSetting(nodeReducer) inside useEffect avoids stale closure over React state — do NOT pass reducers as SigmaContainer props.
 - **Decision (10-03):** SigmaContent coordinator groups all SigmaContainer children (GraphLoader, GraphEvents, ToolbarInner, NodeInfoCardInner) to share isRunning/layoutControls/activeNode state via callbacks without a context provider.
+- **Decision (10-04):** n10s void stored procedures (e.g. n10s.graphconfig.drop()) do not support YIELD — omit YIELD clause entirely.
+- **Decision (10-04):** GraphWindow must use Next.js dynamic() with ssr:false — WebGL2RenderingContext is undefined in Node.js SSR.
+- **Decision (10-04):** n10s always inserts "Resource" as the first label; skip it and use the second label as the node display type for color coding.
+- **Decision (10-04):** TTL persisted to uploads/ttl/latest_ontology.ttl so agent tool can reload without re-upload from user.
 
 ### Next Steps
 
@@ -88,6 +92,7 @@ progress:
 - **2026-03-22:** Completed 10-01-PLAN.md. Neo4j Docker service with Neosemantics n10s plugin. Created LoadTtlToNeo4jTool (8-query Cypher wipe+reimport). 4 unit tests pass. Registered in master agent. Neo4j Import Protocol added to master_instruction.md.
 - **2026-03-22:** Completed 10-02-PLAN.md. Installed Sigma.js + neo4j-driver packages (7 production + 4 dev). Created GET /api/graph API route with global Neo4j driver singleton, RDF localName stripping, blank node coalesce handling, and error handling. Set up Jest with ts-jest. 2 unit tests pass (success case + 500 error case).
 - **2026-03-22:** Completed 10-03-PLAN.md. Created GraphWindow.tsx (506 lines) — Sigma.js WebGL graph with ForceAtlas2, dynamic sigma.setSetting reducers, toolbar overlay, NodeInfoCard, and empty/loading/error states. Wired into Graph tab in YourMainContent.tsx. TypeScript compiles without errors.
+- **2026-03-22:** Completed 10-04-PLAN.md (E2E verification). Human approved all 5 steps. 4 bugs fixed during verification: n10s YIELD syntax removed, SSR crash fixed via dynamic import (ssr:false), FA2 iterations tuned 200→1000, node type color coding fixed by skipping n10s "Resource" label. TTL file persisted to uploads/ttl/latest_ontology.ttl. Phase 10 complete.
 
 ## Roadmap Evolution
 
