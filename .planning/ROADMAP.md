@@ -53,11 +53,11 @@
 | REFAC-02 | Phase 6 | Completed |
 | REFAC-03 | Phase 6 | Completed |
 | REFAC-04 | Phase 6 | Completed |
-| P10-01 | Phase 10 | Planned |
-| P10-02 | Phase 10 | Planned |
-| P10-03 | Phase 10 | Planned |
-| P10-04 | Phase 10 | Planned |
-| P10-05 | Phase 10 | Planned |
+| P10-01 | Phase 10 | Completed |
+| P10-02 | Phase 10 | Completed |
+| P10-03 | Phase 10 | Completed |
+| P10-04 | Phase 10 | Completed |
+| P10-05 | Phase 10 | Completed |
 | P11-01 | Phase 11 | Planned |
 | P11-02 | Phase 11 | Planned |
 | P11-03 | Phase 11 | Planned |
@@ -171,10 +171,10 @@ Plans:
 **Plans:** 4/4 plans complete
 
 Plans:
-- [ ] 10-01-PLAN.md — Docker Neo4j service + Python load_ttl_to_neo4j tool + master agent wiring + tests
-- [ ] 10-02-PLAN.md — npm deps (Sigma.js, graphology, neo4j-driver) + GET /api/graph API route
-- [ ] 10-03-PLAN.md — GraphWindow.tsx (Sigma.js + ForceAtlas2 + interactions + toolbar) + tab wiring
-- [ ] 10-04-PLAN.md — End-to-end human verification (Neo4j + import + API + graph visualization)
+- [x] 10-01-PLAN.md — Docker Neo4j service + Python load_ttl_to_neo4j tool + master agent wiring + tests
+- [x] 10-02-PLAN.md — npm deps (Sigma.js, graphology, neo4j-driver) + GET /api/graph API route
+- [x] 10-03-PLAN.md — GraphWindow.tsx (Sigma.js + ForceAtlas2 + interactions + toolbar) + tab wiring
+- [x] 10-04-PLAN.md — End-to-end human verification (Neo4j + import + API + graph visualization)
 
 ### Phase 11: optimization of the coding agent
 
