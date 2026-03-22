@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 10
 status: unknown
-last_updated: "2026-03-21T16:51:19.245Z"
+last_updated: "2026-03-22T13:35:07.753Z"
 progress:
   total_phases: 10
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 16
+  completed_plans: 13
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 10
-- **Overall Completion:** [██████████] 100%
-- **Active Plan:** 09-03 (complete)
-- **Last Completed:** 09-03 (Wire ontology sub-agents into master architecture + ASHRAE 223P protocol)
+- **Overall Completion:** [████████░░] 81%
+- **Active Plan:** 10-02 (complete)
+- **Last Completed:** 10-02 (Install npm deps + create GET /api/graph API route + unit tests)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -57,6 +57,8 @@ progress:
 - **Decision (09-04):** User renamed 'code' tab to 'TTL' and added separate 'Python' tab — accepted as intentional UX improvement reflecting distinct data artifacts (python_code_snapshots vs ttl_code_snapshots). CodeWindow accepts type prop to serve both tabs.
 - **Decision (09-03):** ASHRAE 223P Code Generation Protocol requires explicit human instruction — no auto-trigger to prevent unintended ontology generation.
 - **Decision (09-03):** all_subagents = (subagents or []) + ontology_subagents preserves existing caller interface while always including ontology sub-agents.
+- **Decision (10-02):** Jest config uses .js extension (not .ts) to avoid ts-node dependency on Jest 30.
+- **Decision (10-02):** Neo4j mock uses globalThis bridge to expose mock fn from hoisted jest.mock() factory, avoiding temporal dead zone caused by global driver singleton being created at module import time.
 
 ### Next Steps
 
@@ -78,6 +80,7 @@ progress:
 - **2026-03-21:** Completed 09-02-PLAN.md. Created OntologyGeneratorAgent (LoopWrapper, max_iterations=50) and OntologyValidatorAgent (LoopWrapper, max_iterations=100). Validator prompt adds mandatory checkpoint_code step after each write_ontology. All 30 tests pass (8 new + 22 from plan 01).
 - **2026-03-21:** Completed 09-04-PLAN.md. Created CodeWindow.tsx (dual-type code viewer component). Added TTL and Python tabs to AgentNavbar and YourMainContent. Human verified tabs render correctly. User extended the plan by splitting single 'code' tab into separate 'ttl' and 'python' tabs — accepted as UX improvement.
 - **2026-03-21:** Completed 09-03-PLAN.md. Wired OntologyGeneratorAgent and OntologyValidatorAgent into create_master_agent.py via all_subagents. Added ASHRAE 223P Code Generation Protocol section to master_instruction.md with explicit HITL gate and two-step delegation sequence. 30 tests pass.
+- **2026-03-22:** Completed 10-02-PLAN.md. Installed Sigma.js + neo4j-driver packages (7 production + 4 dev). Created GET /api/graph API route with global Neo4j driver singleton, RDF localName stripping, blank node coalesce handling, and error handling. Set up Jest with ts-jest. 2 unit tests pass (success case + 500 error case).
 
 ## Roadmap Evolution
 
