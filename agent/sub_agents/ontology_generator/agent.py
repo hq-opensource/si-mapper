@@ -45,6 +45,7 @@ from sub_agents._223p.tool import (
     write_ontology,
     skills_toolset,
 )
+from tools.internal_grid_tools import read_internal_grid
 from sub_agents.ontology_generator.exit_tools import (
     exit_generator_success,
     exit_generator_failure,
@@ -118,6 +119,7 @@ class OntologyGeneratorInternal(LlmAgent):
         # Local tools provided by this sub-agent
         local_tools: list[Any] = [
             skills_toolset,
+            read_internal_grid,
             scan_python_files_filtered,
             search_class_mapping,
             write_ontology,

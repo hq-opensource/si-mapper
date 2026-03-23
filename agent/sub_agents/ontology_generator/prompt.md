@@ -17,9 +17,8 @@ Generate Python code that models equipment, connections, and relationships from 
 ---
 
 ## Data Source
-- **Primary**: `read_grid` — equipment, ducts, pipes, coordinates.
-- **Secondary**: other read-only MCP tools only when `read_grid` is insufficient.
-- ⚠️ **Never call MCP write tools.**
+- **Primary**: `read_internal_grid` — returns all components and coordinates from the agent's internal state.
+- If the internal grid is empty, the master agent must synchronize the frontend before calling this agent.
 
 ---
 
@@ -67,7 +66,7 @@ Generate Python code that models equipment, connections, and relationships from 
 
 ## Workflow
 
-1. **Grid** — Call `read_grid` to get all components and coordinates. Extract equipment class names from the result (e.g. "Fan", "Coil", "Damper").
+1. **Grid** — Call `read_internal_grid` to get all components and coordinates. Extract equipment class names from the result (e.g. "Fan", "Coil", "Damper").
 2. **Class lookup** — Call `search_class_mapping(keywords=[<class names from step 1>])` to find which library file each class lives in. Note the `path` field for each match.
 3. **Library source** — Call `scan_python_files_filtered` with the parent directory of the path returned by `search_class_mapping` and the class name keywords to read the actual class source. No full catalog dump needed.
 4. **Samples** — Call `scan_python_files_filtered` on `../223p/ref/code` with the same class name keywords to find relevant reference implementations.
@@ -81,6 +80,6 @@ Generate Python code that models equipment, connections, and relationships from 
 
 ## Stop Conditions → call `exit_loop_generator_failure(reason="...")`
 Fail immediately (no text response) if any of the following:
-- `read_grid` returns empty, no equipment, only ducts/pipes, or an error.
+- `read_internal_grid` returns empty, no equipment, only ducts/pipes, or an error.
 - `bob`/`scratch` libraries are unreadable or not found.
 - Code samples are unreadable.

@@ -14,7 +14,6 @@ from ag_ui_adk import ADKAgent, add_adk_fastapi_endpoint
 # Local imports
 from master_architecture.create_master_agent import create_master_agent
 from utils.logging_config import configure_logging
-from utils.mcp_utils import create_mcp_toolset
 from utils.callback_utils import GLOBAL_SESSION_STORE
 from utils.adk_patch import apply_adk_patches
 # Apply patches for Gemini 3.1 compatibility (Runtime Fix)
@@ -24,7 +23,6 @@ apply_adk_patches()
 load_dotenv()
 logger = configure_logging()
 
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://127.0.0.1:8080/mcp/")
 SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
 logger.info(f"Using SHARED_ADK_MODEL: {SHARED_ADK_MODEL}")
 APP_TITLE = "SI-MAPPER Agent"
@@ -34,17 +32,7 @@ AGENT_NAME = "si_mapper_agent"
 def create_app() -> FastAPI:
     """Initializes and configures the FastAPI application."""
     
-    # 1. Initialize Tools
-    # Note: Toolsets are loaded once at startup in this pattern
-    logger.info("Initializing MCP Toolsets...")
-    try:
-        si_mapper_toolset = create_mcp_toolset(MCP_SERVER_URL)
-    except Exception as e:
-        logger.error(f"Failed to create toolsets: {e}")
-        # We might want to re-raise or handle gracefully, for now letting it fail is visible.
-        raise e
-
-    # 2. Create Session & Agent
+    # 1. Create Session & Agent
     session_id = f"session-{uuid.uuid4().hex[:8]}"
     logger.info(f"Starting Global Session: {session_id}")
     
@@ -58,13 +46,12 @@ def create_app() -> FastAPI:
         }
     GLOBAL_SESSION_STORE["latest"] = GLOBAL_SESSION_STORE[session_id]
     
-    # 3. Create Master Agent
+    # 2. Create Master Agent
     # OntologyGeneratorAgent and OntologyValidatorAgent are instantiated
     # inside create_master_agent — no external subagents needed here.
     master_agent = create_master_agent(
         session_id=session_id,
         model_name=SHARED_ADK_MODEL,
-        mcp_tools=[si_mapper_toolset],
     )
 
     # 3. Wrap with ADK
