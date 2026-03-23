@@ -212,7 +212,7 @@ export function GraphWindow() {
       physics: {
         enabled: true,
         stabilization: {
-          enabled: true,
+          enabled: false, // Show live movements instead of pre-calculating
           iterations: 1000,
           updateInterval: 50,
           fit: true
@@ -353,12 +353,17 @@ export function GraphWindow() {
       {/* Toolbar */}
       <div className="absolute top-6 left-6 z-20 flex items-center gap-3 p-2 rounded-2xl border border-[var(--muted-foreground)]/10 bg-[var(--background)]/60 backdrop-blur-xl shadow-[0_15px_30px_rgba(0,0,0,0.05)]">
         <form onSubmit={handleSearch} className="flex items-center pl-2">
+          {stabilizationProgress ? (
+            <Activity className="w-4 h-4 text-[var(--primary)] animate-spin mr-2" />
+          ) : (
+            <Network className="w-4 h-4 text-[var(--muted-foreground)] mr-2" />
+          )}
           <input 
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search graph..."
-            className="w-40 px-3 py-1.5 bg-[var(--muted)]/20 border border-white/5 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-[var(--primary)]/50 transition-all placeholder:text-[var(--muted-foreground)]/40"
+            placeholder={stabilizationProgress ? `Stabilizing (${stabilizationProgress.current})...` : "Search graph..."}
+            className="w-40 px-1 py-1.5 bg-transparent border-none rounded-xl text-[11px] font-bold focus:outline-none transition-all placeholder:text-[var(--muted-foreground)]/40"
           />
         </form>
         <div className="w-[1px] h-6 bg-[var(--muted-foreground)]/10 mx-1" />
@@ -395,40 +400,7 @@ export function GraphWindow() {
         </div>
       </div>
 
-      {/* Stabilization Overlay */}
-      {stabilizationProgress && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[var(--background)]/80 backdrop-blur-md">
-          <div className="p-8 rounded-3xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-2xl flex flex-col items-center gap-6 max-w-sm w-full mx-4">
-            <div className="relative w-20 h-20">
-              <div className="absolute inset-0 border-4 border-[var(--primary)]/10 rounded-full" />
-              <div 
-                className="absolute inset-0 border-4 border-[var(--primary)] rounded-full border-t-transparent animate-spin" 
-                style={{ animationDuration: '2s' }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Activity className="w-8 h-8 text-[var(--primary)] animate-pulse" />
-              </div>
-            </div>
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-bold bg-gradient-to-br from-[var(--foreground)] to-[var(--muted-foreground)] bg-clip-text text-transparent">
-                Stabilizing Graph
-              </h3>
-              <p className="text-sm text-[var(--muted-foreground)] font-medium">
-                Optimizing layout coordinates...
-              </p>
-            </div>
-            <div className="w-full bg-[var(--muted)]/30 h-1.5 rounded-full overflow-hidden border border-white/5">
-              <div 
-                className="h-full bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] transition-all duration-300 ease-out shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-                style={{ width: `${(stabilizationProgress.current / stabilizationProgress.total) * 100}%` }}
-              />
-            </div>
-            <span className="text-[10px] font-black tracking-widest uppercase text-[var(--muted-foreground)] opacity-50">
-              Iteration {stabilizationProgress.current} / {stabilizationProgress.total}
-            </span>
-          </div>
-        </div>
-      )}
+      {/* Stabilization Overlay removed in favor of toolbar indicator */}
 
       {/* Details Card (Reusing InfoCard logic but for vis-network) */}
       {activeNode && (
