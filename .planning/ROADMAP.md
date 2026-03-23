@@ -188,3 +188,13 @@ Plans:
 - [ ] 11-02-PLAN.md — TDD: search_class_mapping tool + unit tests
 - [ ] 11-03-PLAN.md — Agent tool swap + prompt rewrites + agent tests + JSONL cleanup
 - [ ] 11-04-PLAN.md — SKILL.md LESSONS.md-first logic + LESSONS.md skeleton
+
+### Phase 12: Session persistence and management with database backend
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 11
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 12 to break down)
