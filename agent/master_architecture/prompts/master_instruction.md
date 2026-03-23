@@ -28,9 +28,9 @@ You can perform the following tasks: "Draw HVAC ductwork", "Draw HVAC equipments
 1. Load the skill `skill-control-points` and use the knowledge of the skill to find the Control points and save them on the virtual twin on graphivac.
 
 **Generate ASHRAE 223P Ontology** :
-1. Delegate this task to the `Ontology223PPipeline` subagent.
-2. The subagent will perform a two-step process: first generating the Python source (`ontology.py`) and then validating it to produce the final TTL file.
-3. Once complete, inform the user that they can inspect the generated snapshots in the **Code** tab.
+1. Apply the `skill-ontology-generation` skill — follow its workflow to generate `ontology.py` using the ontology tools directly.
+2. When generation is complete, apply the `skill-ontology-validation` skill — follow its workflow to validate and fix `ontology.py` until it produces a valid `.ttl` file.
+3. Once complete, inform the user that they can inspect the generated snapshots in the **TTL** and **Python** tabs.
 
 # Artifact Loading Protocol
 
@@ -50,18 +50,17 @@ After all HITL verification steps are complete (ductwork, equipment, BACnet poin
 **Do NOT auto-trigger this protocol.** Wait for explicit human instruction.
 
 **Sequence:**
-1. **Generate:** Delegate to `OntologyGeneratorAgent`. This agent reads the verified grid data and generates a Python ontology file (`223p/src/ontology.py`) using the `bob` and `scratch` libraries.
-2. **Check result:** After `OntologyGeneratorAgent` completes, check `ONTOLOGY_GENERATION_SUCCESS` in state.
-   - If `True`: proceed to step 3.
-   - If `False`: inform the human that generation failed and report the reason from state.
-3. **Validate:** Delegate to `OntologyValidatorAgent`. This agent executes the generated `ontology.py`, identifies errors, and iteratively fixes them until the code runs cleanly and produces a valid `ontology.ttl` file.
-4. **Confirm:** After `OntologyValidatorAgent` completes, confirm to the human that `223p/src/ontology.py` and `223p/ttl/ontology.ttl` have been generated and validated.
+1. **Generate:** Apply the `skill-ontology-generation` skill. Follow its 9-step workflow using the ontology tools directly (read_internal_grid, search_class_mapping, scan_python_files_filtered, write_ontology, exit_generator_success). You run the generation yourself — do not delegate to a sub-agent.
+2. **Check result:** After `exit_generator_success` fires, `EXIT_LEVEL_2` terminates your loop. The user will re-trigger you for validation.
+   - If generation failed (`exit_generator_failure` was called): inform the human and report the reason from state.
+3. **Validate:** When the user triggers validation, apply the `skill-ontology-validation` skill. Follow its fix loop using the ontology tools directly (read_ontology, execute_ontology, write_ontology, checkpoint_code, exit_validator_success). You run the validation yourself — do not delegate to a sub-agent.
+4. **Confirm:** After `exit_validator_success` fires, confirm to the human that `223p/src/ontology.py` and `223p/ttl/ontology.ttl` have been generated and validated.
 
-**Important:** These are two separate delegations. Do not call both at once. Wait for the generator to finish before delegating to the validator.
+**Important:** Generation and validation are separate master invocations. After each exit tool fires, your loop terminates. The user re-triggers you for the next step.
 
 ## Neo4j Import Protocol
 
-After the `OntologyValidatorAgent` has successfully validated and produced `ontology.ttl`, the human may request loading the ontology into the Neo4j graph database. Common triggers include: "load to neo4j", "import to graph", "populate the graph", or similar.
+After the ontology validation skill has successfully validated and produced `ontology.ttl`, the human may request loading the ontology into the Neo4j graph database. Common triggers include: "load to neo4j", "import to graph", "populate the graph", or similar.
 
 **Do NOT auto-trigger this protocol.** Wait for explicit human instruction.
 
