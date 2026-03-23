@@ -1,6 +1,6 @@
 """
 Adapted exit tools for ontology generation/validation running directly in the master agent.
-These set EXIT_LEVEL_2 (master loop termination) instead of EXIT_LEVEL_4 (sub-agent loop termination).
+These set EXIT_LEVEL_2 so the master loop (MasterMainLoopAgent.is_loop_finished) terminates correctly.
 """
 from __future__ import annotations
 
