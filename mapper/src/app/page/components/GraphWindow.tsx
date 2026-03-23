@@ -2,10 +2,12 @@
 
 import { SigmaContainer, useLoadGraph, useSigma, useRegisterEvents } from "@react-sigma/core";
 import { useWorkerLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
+import noverlap from "graphology-layout-noverlap";
 import { MultiDirectedGraph } from "graphology";
 import "@react-sigma/core/lib/style.css";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { ZoomIn, ZoomOut, RotateCcw, Network, Info, Activity } from "lucide-react";
+import { useTheme } from "next-themes";
 import { StatusPlaceholder } from "./StatusPlaceholder";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -81,17 +83,17 @@ function friendlyType(type: string): string {
 
 // ─── GraphLoader: builds graph and runs dynamic FA2 layout ───────────────
 
-function GraphLoader({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] }) {
+function GraphLoader({ nodes, edges, theme }: { nodes: GraphNode[]; edges: GraphEdge[]; theme: string }) {
   const loadGraph = useLoadGraph();
   const { start, stop } = useWorkerLayoutForceAtlas2({
     settings: {
-      gravity: 0.01, // Very low constant gravity to keep it centered
-      scalingRatio: 10, // Adjusted for LinLog mode
-      linLogMode: true, // Key for distinct clustering in knowledge graphs
-      outboundAttractionDistribution: true, // Pushes hubs to center, others to periphery
+      gravity: 0.5, // GitNexus style: keeps clusters coherent but not collapsed
+      scalingRatio: 25, // High spread
+      linLogMode: true,
+      outboundAttractionDistribution: true,
       barnesHutOptimize: true,
-      barnesHutTheta: 0.5,
-      slowDown: 2, 
+      barnesHutTheta: 0.6,
+      slowDown: 1, 
       adjustSizes: true,
     }
   });
@@ -101,15 +103,28 @@ function GraphLoader({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] 
 
     const graph = new MultiDirectedGraph();
 
-    // Add nodes with Organic Scattering
-    // We scatter them in a wide space so they can find their clusters naturally
+    // Add nodes with Type-Based Clustering
+    // We group different types of nodes (e.g., Classes vs Individuals) in different sectors
+    // This gives the layout engine a logical starting point to form meaningful clusters
+    const typeSectors: Record<string, { centerX: number, centerY: number }> = {};
+    const types = Array.from(new Set(nodes.map(n => n.type)));
+    
+    types.forEach((type, i) => {
+      const angle = (i / types.length) * 2 * Math.PI;
+      typeSectors[type] = {
+        centerX: Math.cos(angle) * 300,
+        centerY: Math.sin(angle) * 300
+      };
+    });
+
     nodes.forEach((n) => {
+      const sector = typeSectors[n.type] || { centerX: 0, centerY: 0 };
       graph.addNode(n.id, {
         label: n.label,
         size: 5,
         color: getNodeColor(n.type),
-        x: (Math.random() - 0.5) * 1000,
-        y: (Math.random() - 0.5) * 1000,
+        x: sector.centerX + (Math.random() - 0.5) * 150,
+        y: sector.centerY + (Math.random() - 0.5) * 150,
         nodeType: n.type,
         properties: n.properties,
       });
@@ -122,7 +137,7 @@ function GraphLoader({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] 
           label: e.label,
           type: "arrow",
           size: 1,
-          color: "rgba(148, 163, 184, 0.4)", // Muted link color
+          color: theme === "dark" ? "rgba(255, 255, 255, 0.25)" : "rgba(0, 0, 0, 0.2)",
         });
       } catch {
         // skip edges referencing missing nodes
@@ -135,15 +150,19 @@ function GraphLoader({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] 
       graph.setNodeAttribute(key, "size", Math.max(6, Math.min(22, Math.log(deg + 1) * 10)));
     });
 
+    // Run noverlap to clean up any collisions before starting animation
+    try {
+      noverlap.assign(graph, { settings: { ratio: 1.1, margin: 10 } });
+    } catch (e) {
+      console.warn("Noverlap failed", e);
+    }
+
     loadGraph(graph);
     
-    // Start layout animation
+    // Start layout animation and keep it running for natural self-arrangement
     start();
     
-    // Stop after 3 seconds to preserve CPU
-    const timer = setTimeout(() => stop(), 3000);
     return () => {
-      clearTimeout(timer);
       stop();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,7 +173,7 @@ function GraphLoader({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] 
 
 // ─── GraphEvents ──────────────────────────────────────────────────────────────
 
-function GraphEvents({ onActiveNode }: { onActiveNode: (nodeId: string | null) => void }) {
+function GraphEvents({ onActiveNode, theme }: { onActiveNode: (nodeId: string | null) => void, theme: string }) {
   const sigma = useSigma();
   const registerEvents = useRegisterEvents();
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
@@ -192,33 +211,45 @@ function GraphEvents({ onActiveNode }: { onActiveNode: (nodeId: string | null) =
     const neighbors = new Set(sigma.getGraph().neighbors(activeNode));
 
     sigma.setSetting("nodeReducer", (node: string, data: Record<string, unknown>) => {
-      if (node === activeNode) return { 
-        ...data, 
-        highlighted: true, 
-        size: (data.size as number) * 1.8,
-        color: "#6366f1", // Highlight with accent color
-        zIndex: 999 
-      };
-      if (neighbors.has(node)) return {
-        ...data,
-        highlighted: true,
-        size: (data.size as number) * 1.2
-      };
-      return { ...data, color: "rgba(100,116,139,0.15)", size: (data.size as number) * 0.6, label: "" };
+      const res: any = { ...data };
+      const isSelected = node === activeNode;
+      const isNeighbor = neighbors.has(node);
+      const isHighlighted = isSelected || isNeighbor;
+
+      if (isHighlighted) {
+        res.color = data.color;
+        res.size = isSelected ? 14 : 9;
+        res.zIndex = isSelected ? 3 : 2;
+        res.highlighted = isSelected;
+      } else {
+        res.color = data.color + "18"; 
+        res.label = null;
+        res.size = (data.size as number || 5) * 0.7;
+        res.zIndex = 0;
+      }
+      return res;
     });
 
     sigma.setSetting("edgeReducer", (edge: string, data: Record<string, unknown>) => {
+      const res: any = { ...data };
       const src = sigma.getGraph().source(edge);
       const tgt = sigma.getGraph().target(edge);
-      if (src === activeNode || tgt === activeNode) return {
-        ...data,
-        color: "#6366f1", // Accent color for active paths
-        size: 3,
-        zIndex: 1
-      };
-      return { ...data, color: "rgba(100,116,139,0.04)" };
+      const isSelected = src === activeNode || tgt === activeNode;
+      
+      if (isSelected) {
+        res.color = theme === "dark" ? "#e0e7ff" : "#4338ca";
+        res.size = 2.5;
+        res.zIndex = 2;
+      } else {
+        res.color = theme === "dark" 
+          ? "rgba(255, 255, 255, 0.15)" 
+          : "rgba(0, 0, 0, 0.12)";
+        res.size = 1;
+        res.zIndex = 0;
+      }
+      return res;
     });
-  }, [hoveredNode, clickedNode, sigma]);
+  }, [hoveredNode, clickedNode, sigma, theme]);
 
   return null;
 }
@@ -325,14 +356,14 @@ function ToolbarInner() {
 
 // ─── SigmaContent ─────────────────────────────────────────────────────────────
 
-function SigmaContent({ nodes, edges }: { nodes: GraphNode[]; edges: GraphEdge[] }) {
+function SigmaContent({ nodes, edges, theme }: { nodes: GraphNode[]; edges: GraphEdge[], theme: string }) {
   const [activeNode, setActiveNode] = useState<string | null>(null);
   const handleActiveNode = useCallback((id: string | null) => setActiveNode(id), []);
 
   return (
     <>
-      <GraphLoader nodes={nodes} edges={edges} />
-      <GraphEvents onActiveNode={handleActiveNode} />
+      <GraphLoader nodes={nodes} edges={edges} theme={theme} />
+      <GraphEvents onActiveNode={handleActiveNode} theme={theme} />
       <ToolbarInner />
       <NodeInfoCardInner activeNode={activeNode} />
     </>
@@ -356,6 +387,7 @@ export function GraphWindow() {
   }, []);
 
   // Resolve theme colors for Sigma
+  const { theme } = useTheme();
   const [themeColors, setThemeColors] = useState({ foreground: "#94a3b8" });
 
   useEffect(() => {
@@ -396,7 +428,7 @@ export function GraphWindow() {
           zIndex: true,
         }}
       >
-        <SigmaContent nodes={data.nodes} edges={data.edges} />
+        <SigmaContent nodes={data.nodes} edges={data.edges} theme={theme ?? "light"} />
       </SigmaContainer>
     </div>
   );
