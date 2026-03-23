@@ -2,24 +2,24 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 11
+current_phase: 13
 status: unknown
-last_updated: "2026-03-22T18:35:41.330Z"
+last_updated: "2026-03-23T21:35:48.429Z"
 progress:
-  total_phases: 11
+  total_phases: 13
   completed_phases: 6
-  total_plans: 20
-  completed_plans: 20
+  total_plans: 22
+  completed_plans: 21
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 11
-- **Overall Completion:** [██████████] 100%
-- **Active Plan:** 11-03 (complete)
-- **Last Completed:** 11-03 (tool swap in both ontology agents — scan_python_files_filtered + search_class_mapping wired, prompts rewritten, full_*.jsonl deleted, 12 agent tests pass)
+- **Current Phase:** 13
+- **Overall Completion:** [██████████] 95%
+- **Active Plan:** 13-01 (complete)
+- **Last Completed:** 13-01 (adapted 4 ontology exit tools from EXIT_LEVEL_4 to EXIT_LEVEL_2, created skill-ontology-generation and skill-ontology-validation SKILL.md files ready for auto-discovery)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -76,6 +76,8 @@ progress:
 - **Decision (11-02):** _MAPPINGS_DIR uses _PROJECT_ROOT anchor (not relative path) for portability; tests use real JSONL files (not mocks) since they are small static repo fixtures; _mapping_cache is module-level for lazy JSONL loading.
 - **Decision (11-03):** Tool swap complete — both ontology agents now import only scan_python_files_filtered + search_class_mapping; list_library_classes, get_class_details, scan_python_files removed from both agents.
 - **Decision (11-03):** full_bob.jsonl and full_scratch.jsonl deleted — superseded by classes_*.jsonl + path field returned by search_class_mapping; generator workflow updated to 9-step sequence with explicit class lookup step.
+- **Decision (13-01):** Inlined checkpoint_code logic in exit_validator_success to avoid cross-module import — checkpoint_code stays in original sub_agents/ontology_validator/exit_tools.py for plan 02 to import directly.
+- **Decision (13-01):** EXIT_LEVEL_2 pattern: master-level exit tools set EXIT_LEVEL_2 + actions.escalate=True so MasterMainLoopAgent.is_loop_finished terminates correctly.
 
 ### Next Steps
 
@@ -103,6 +105,7 @@ progress:
 - **2026-03-22:** Completed 11-01-PLAN.md. Added scan_python_files_filtered (TDD, 7 tests) to tool.py with SCAN_PYTHON_FILES_FILTERED_SCHEMA and __all__ export. Keyword filtering reduces coding-agent context window consumption.
 - **2026-03-22:** Completed 11-02-PLAN.md. Added search_class_mapping (TDD, 7 tests) to tool.py with SEARCH_CLASS_MAPPING_SCHEMA, __all__ export, _load_mapping helper, and _mapping_cache. Single-call JSONL grep replaces expensive two-call list_library_classes + get_class_details workflow. 14 tests pass total.
 - **2026-03-22:** Completed 11-03-PLAN.md. Swapped old tools to scan_python_files_filtered + search_class_mapping in both ontology_generator and ontology_validator agent.py files. Rewrote both prompt.md files with new targeted workflow. Extended agent tests (4 new tests). Deleted full_bob.jsonl and full_scratch.jsonl. 12 agent tests pass.
+- **2026-03-23:** Completed 13-01-PLAN.md. Created ontology_exit_tools.py (4 functions, EXIT_LEVEL_2). Created skill-ontology-generation/SKILL.md and skill-ontology-validation/SKILL.md — auto-discoverable skills for master agent. Original sub-agent files untouched.
 
 ## Roadmap Evolution
 

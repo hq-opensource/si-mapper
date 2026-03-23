@@ -211,7 +211,7 @@ Plans:
 **Goal:** Remove OntologyGeneratorAgent and OntologyValidatorAgent as AgentTool-wrapped sub-agents, give all ontology tools directly to MasterLlmAgent, and convert sub-agent prompts into two ADK skills (skill-ontology-generation and skill-ontology-validation) so the master runs generation and validation in its own loop, fixing sub-agent event streaming issues.
 **Requirements**: [P13-01, P13-02, P13-03, P13-04, P13-05, P13-06, P13-07]
 **Depends on:** Phase 12
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 13-01-PLAN.md — Adapted exit tools (EXIT_LEVEL_2) + two new SKILL.md files
