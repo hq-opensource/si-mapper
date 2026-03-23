@@ -17,8 +17,21 @@ from tools.internal_grid_tools import (
 from tools.metadata_tools import write_metadata, write_metadata_batch
 from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
 from master_architecture.tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
-from sub_agents.ontology_generator.agent import OntologyGeneratorAgent
-from sub_agents.ontology_validator.agent import OntologyValidatorAgent
+from sub_agents._223p.tool import (
+    scan_python_files_filtered,
+    search_class_mapping,
+    write_ontology,
+    read_ontology,
+    execute_ontology,
+    read_prompt,
+)
+from sub_agents.ontology_validator.exit_tools import checkpoint_code
+from master_architecture.tools.ontology_exit_tools import (
+    exit_generator_success,
+    exit_generator_failure,
+    exit_validator_success,
+    exit_validator_failure,
+)
 
 # --- Configuration ---
 load_dotenv()
@@ -72,14 +85,22 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         write_metadata_batch,
         capture_frontend_state_tool,
         load_ttl_to_neo4j_tool,
+        # Ontology tools (previously in sub-agents, now direct)
+        scan_python_files_filtered,
+        search_class_mapping,
+        write_ontology,
+        read_ontology,
+        execute_ontology,
+        read_prompt,
+        # Ontology exit/checkpoint tools
+        checkpoint_code,
+        exit_generator_success,
+        exit_generator_failure,
+        exit_validator_success,
+        exit_validator_failure,
     ]
-    
-    # --- Ontology sub-agents (flat, master sequences them) ---
-    ontology_subagents = [
-        OntologyGeneratorAgent(model_name=model_name),
-        OntologyValidatorAgent(model_name=model_name),
-    ]
-    all_subagents = (subagents or []) + ontology_subagents
+
+    all_subagents = subagents or []
 
     master_agent = MasterLlmAgent(
         model_name=model_name,
