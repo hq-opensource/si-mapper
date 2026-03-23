@@ -154,16 +154,22 @@ export function GraphWindow() {
     }));
 
     const visEdges = data.edges.map(e => {
-      // Logic to match ontology.html dashed styles
+      // Logic to match ontology.html styles
       const label = e.label.toLowerCase();
-      const isDashed = label.includes("isdeltaquantity") || 
-                       label.includes("modulation") || 
-                       label.includes("amps") || 
-                       label.includes("volts") || 
-                       label.includes("fluid") || 
-                       label.includes("water") || 
-                       label.includes("steam") ||
-                       label.includes("air");
+      // Dashed for flows, properties, and measures (bob, scratch, qudt, etc.)
+      const isMeasurement = label.includes(":") && (
+        label.includes("bob:") || 
+        label.includes("scratch:") || 
+        label.includes("qudt:") ||
+        label.includes("modulation") ||
+        label.includes("volts") ||
+        label.includes("amps") ||
+        label.includes("pressure") ||
+        label.includes("temp") ||
+        label.includes("freq") ||
+        label.includes("speed")
+      );
+      
       const isContains = label.includes("contains");
 
       return {
@@ -174,17 +180,19 @@ export function GraphWindow() {
         font: {
           align: "top",
           size: 10,
-          color: theme === "dark" ? "#94a3b8" : "#64748b"
+          color: theme === "dark" ? "#94a3b8" : "#64748b",
+          strokeWidth: 0
         },
         color: {
-          color: theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)",
-          highlight: theme === "dark" ? "#818cf8" : "#4f46e5"
+          inherit: "from",
+          opacity: 0.6
         },
         arrows: {
           to: { enabled: true, scaleFactor: 0.5 }
         },
-        dashes: isDashed ? [5, 5] : false,
-        width: isContains ? 8 : 1
+        dashes: isMeasurement ? [5, 5] : false,
+        width: isContains ? 6 : 1.5,
+        selectionWidth: 3
       };
     });
 
@@ -407,29 +415,47 @@ export function GraphWindow() {
         <NodeInfoCard nodes={data.nodes} activeNodeId={activeNode} />
       )}
 
-      {/* Legend Overlay */}
-      <div className="absolute bottom-6 left-6 z-10 p-4 rounded-2xl border border-[var(--muted-foreground)]/10 bg-[var(--background)]/60 backdrop-blur-xl shadow-lg select-none pointer-events-none">
-        <h5 className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Graph Legend</h5>
-        <div className="flex flex-col gap-2.5">
+      {/* Universal Legend (Bottom Center) */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 p-4 rounded-2xl border border-[var(--muted-foreground)]/10 bg-[var(--background)]/60 backdrop-blur-xl shadow-lg select-none pointer-events-none w-max max-w-[90vw]">
+        <div className="grid grid-cols-4 grid-rows-2 gap-x-8 gap-y-3">
+          {/* Column 1: Equipment & System */}
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 bg-[#6366f1] rounded-sm" /> 
-            <span className="text-[10px] font-bold text-[var(--foreground)] uppercase">Equipment / Sensor</span>
+            <span className="text-[10px] font-bold tracking-wider text-[var(--foreground)] uppercase">Equipment / Sensor</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-4 h-2 bg-[#8b5cf6] rounded-none" /> 
-            <span className="text-[10px] font-bold text-[var(--foreground)] uppercase">System Container</span>
+            <span className="text-[10px] font-bold tracking-wider text-[var(--foreground)] uppercase">System Container</span>
+          </div>
+
+          {/* Column 2: Points */}
+          <div className="flex items-center gap-3">
+            <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[9px] border-b-[#f59e0b]" /> 
+            <span className="text-[10px] font-bold tracking-wider text-[var(--foreground)] uppercase">Inlet Point</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[10px] border-b-[#f59e0b]" /> 
-            <span className="text-[10px] font-bold text-[var(--foreground)] uppercase">Inlet Point</span>
+            <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[9px] border-t-[#f59e0b]" /> 
+            <span className="text-[10px] font-bold tracking-wider text-[var(--foreground)] uppercase">Outlet Point</span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[10px] border-t-[#f59e0b]" /> 
-            <span className="text-[10px] font-bold text-[var(--foreground)] uppercase">Outlet Point</span>
-          </div>
+
+          {/* Column 3: Properties & Metadata */}
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 bg-[#34d399] rounded-full" /> 
-            <span className="text-[10px] font-bold text-[var(--foreground)] uppercase">Property / Observation</span>
+            <span className="text-[10px] font-bold tracking-wider text-[var(--foreground)] uppercase">Property / Observation</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 bg-[#64748b] rounded-full" /> 
+            <span className="text-[10px] font-bold tracking-wider text-[var(--foreground)] uppercase">Definition / Metadata</span>
+          </div>
+
+          {/* Column 4: Edges */}
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-[2.5px] bg-[var(--muted-foreground)]/40" /> 
+            <span className="text-[10px] font-bold tracking-wider text-[var(--foreground)] uppercase">Standard Link</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-0 border-t border-dashed border-[var(--muted-foreground)]/50" /> 
+            <span className="text-[10px] font-bold tracking-wider text-[var(--foreground)] uppercase">Flow / Property</span>
           </div>
         </div>
       </div>
