@@ -62,6 +62,13 @@
 | P11-02 | Phase 11 | Planned |
 | P11-03 | Phase 11 | Planned |
 | P11-04 | Phase 11 | Planned |
+| P13-01 | Phase 13 | Planned |
+| P13-02 | Phase 13 | Planned |
+| P13-03 | Phase 13 | Planned |
+| P13-04 | Phase 13 | Planned |
+| P13-05 | Phase 13 | Planned |
+| P13-06 | Phase 13 | Planned |
+| P13-07 | Phase 13 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -198,3 +205,14 @@ Plans:
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 12 to break down)
+
+### Phase 13: Migrate OntologyGenerator and OntologyValidator sub-agents to master agent skills
+
+**Goal:** Remove OntologyGeneratorAgent and OntologyValidatorAgent as AgentTool-wrapped sub-agents, give all ontology tools directly to MasterLlmAgent, and convert sub-agent prompts into two ADK skills (skill-ontology-generation and skill-ontology-validation) so the master runs generation and validation in its own loop, fixing sub-agent event streaming issues.
+**Requirements**: [P13-01, P13-02, P13-03, P13-04, P13-05, P13-06, P13-07]
+**Depends on:** Phase 12
+**Plans:** 2 plans
+
+Plans:
+- [ ] 13-01-PLAN.md — Adapted exit tools (EXIT_LEVEL_2) + two new SKILL.md files
+- [ ] 13-02-PLAN.md — Rewire create_master_agent.py + max_iterations=100 + master_instruction.md update + tests
