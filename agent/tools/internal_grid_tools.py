@@ -328,4 +328,5 @@ def read_internal_grid(
     n = len(components)
     data = json.dumps(components, indent=2)
 
+    print(f"[GRID] READ internal_grid → {n} component(s)" + (f" (filtered: {component_type})" if component_type else ""), flush=True)
     return f":::thought\n[System] Internal grid ({n} components): {data}\n:::"

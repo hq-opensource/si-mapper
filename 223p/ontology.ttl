@@ -9,703 +9,96 @@
 
 [] a s223:Function ;
     rdfs:label "differential calculation" ;
-    s223:hasInput _:N1892b4b4163c4896aeb7d66c422d0553,
-        _:Nc8beae49555543c386e61f02e8a4e7f9 ;
-    s223:hasOutput _:Nd4bbf069b110414b955b9fe493b93bf3 ;
+    s223:hasInput _:N4aef94d9ef4a47c0bb09c987b937ec5b,
+        _:Na1d00e4ba59b453cb8bbeef4336fdafa ;
+    s223:hasOutput _:N03f4a8416f2a4c2f8b56451689ae8994 ;
     rdfs:comment "Will output High minus Low" .
 
 [] a s223:System ;
     rdfs:label "HVAC System" ;
-    s223:hasMember _:N0a79813d194745dea262a12e9db03e17,
-        [ a s223:Connectable,
-                s223:Equipment,
-                s223:Sensor,
-                s223:TemperatureSensor,
-                bob:AirTemperatureSensor ;
-            rdfs:label "LL-1" ;
-            s223:hasObservationLocation _:N38ced519d794450ab06cfd9b9659675f ;
-            s223:hasProperty _:Nb760db1faf3a423c92240fc130e119c1 ;
-            s223:observes _:Nb760db1faf3a423c92240fc130e119c1 ],
+    s223:hasMember _:N07a236d84c3c4548ac6e5775c012e2cc,
+        _:N0ac47027377845fea2adcb3380caf997,
         [ a s223:Connectable,
                 s223:Equipment,
                 s223:Sensor,
                 s223:TemperatureSensor,
                 bob:AirTemperatureSensor ;
             rdfs:label "ST-RETOUR" ;
-            s223:hasObservationLocation _:Na8bf209c48ae4747b4ad16f9259fd27c ;
-            s223:hasProperty _:Na4e3b3270e6e48a8813defc1d7c76963 ;
-            s223:observes _:Na4e3b3270e6e48a8813defc1d7c76963 ],
+            s223:hasObservationLocation _:N920a023d05bb430894a1d7014f708e4e ;
+            s223:hasProperty _:N9e598e7b5a9b46619a5164c0c1f16029 ;
+            s223:observes _:N9e598e7b5a9b46619a5164c0c1f16029 ],
+        _:N2ee32213540746d28baca083f03182d1,
+        _:N2f09b947d0a74a7a94a5858eb5286288,
         [ a s223:Connectable,
                 s223:Equipment,
-                s223:Sensor,
-                s223:TemperatureSensor,
-                bob:AirTemperatureSensor ;
-            rdfs:label "ST-ALIM" ;
-            s223:hasObservationLocation _:N38ced519d794450ab06cfd9b9659675f ;
-            s223:hasProperty _:N85ec26435f9e480189ce70d721afd9c2 ;
-            s223:observes _:N85ec26435f9e480189ce70d721afd9c2 ],
-        _:N3fe0248f59f2470c94e46eb5cf09b5f5,
-        _:N4278b6642c7842fd94be541aeeae70a8,
-        _:N5dd9eaba6ef04712a3bf210d524aa43a,
-        [ a s223:Connectable,
-                s223:Equipment,
-                s223:PressureSensor,
+                s223:HumiditySensor,
                 s223:Sensor ;
-            rdfs:label "SDP-1" ;
-            s223:hasObservationLocation _:Nf93d5d0d03c44047b8a85d3299320cec ;
-            s223:hasProperty _:N1892b4b4163c4896aeb7d66c422d0553,
-                _:Nc8beae49555543c386e61f02e8a4e7f9,
-                _:Nd4bbf069b110414b955b9fe493b93bf3 ;
-            s223:hasReferenceLocation _:Nbc161adf278d4e3a9d54b94253f2d079 ;
-            s223:observes _:Nd4bbf069b110414b955b9fe493b93bf3 ;
-            bob:differential_static_pressure _:Nd4bbf069b110414b955b9fe493b93bf3 ;
-            bob:hasReferenceLocation _:Nbc161adf278d4e3a9d54b94253f2d079 ;
-            bob:observation_pressure _:Nc8beae49555543c386e61f02e8a4e7f9 ;
-            bob:reference_pressure _:N1892b4b4163c4896aeb7d66c422d0553 ],
-        _:N8197a2faecc4431aa1a7879539bb52d7,
-        _:N8b361bbdbd0c47e0a37193e01faeac4e,
-        _:N98a90f85d0be41e892dc9b569b5ff3b7,
-        _:N9ee3fa49353b42e18de15e45bda1b9df,
-        _:N9f98254637c1471b8d5fc05a17d44139,
-        _:Nb55561a728db4af9885f0516a870be19,
-        _:Ncb19f31c3ef842dcb1ce41ecdcae8331,
-        _:Ncff63e5401a34f3a803b330209710307,
+            rdfs:label "SH-RETOUR" ;
+            s223:hasObservationLocation _:N920a023d05bb430894a1d7014f708e4e ;
+            s223:hasProperty _:N3dc7260f4b344d4db26eb2f6a5419728 ;
+            s223:observes _:N3dc7260f4b344d4db26eb2f6a5419728 ],
+        _:N3429dd26fa1349d7a7bd2d6c5293aab5,
+        _:N36a9fbd21c2343cc9016c634c93c1804,
+        _:N5165f04475ef46f18ef2155daf456044,
+        _:N61b05b2e0de84d678c019f519dfe353c,
+        _:N6338f9ad965d45a8bc422ed6ec0c52ee,
+        _:N634a4c61ee1a421980f2728117a5d733,
         [ a s223:Connectable,
                 s223:Equipment,
                 s223:Sensor,
                 s223:TemperatureSensor,
                 bob:AirTemperatureSensor ;
             rdfs:label "ST-MELANGE" ;
-            s223:hasObservationLocation _:Nbc161adf278d4e3a9d54b94253f2d079 ;
-            s223:hasProperty _:Na54c2039d8d24beda92c4c1ff33db4a8 ;
-            s223:observes _:Na54c2039d8d24beda92c4c1ff33db4a8 ],
-        _:Nee36d4d34d3046df83aacf4462a1281b,
+            s223:hasObservationLocation _:N791270aaf61247d1a74c2af9a1ad85dd ;
+            s223:hasProperty _:Na4d02ddb0f424788a3f48dbe1c6d6445 ;
+            s223:observes _:Na4d02ddb0f424788a3f48dbe1c6d6445 ],
+        _:N8ef2c3c891cd4dc38b4e341e68412180,
+        [ a s223:Connectable,
+                s223:Equipment,
+                s223:Sensor,
+                s223:TemperatureSensor,
+                bob:AirTemperatureSensor ;
+            rdfs:label "ST-ALIM" ;
+            s223:hasObservationLocation _:Na47b24bb6ae84117aaa47ecd101e7ef7 ;
+            s223:hasProperty _:N50b215b76ade4adc8b402fbe18393bad ;
+            s223:observes _:N50b215b76ade4adc8b402fbe18393bad ],
+        _:N9fdcb55989c84ff68956ac7e872d20a1,
+        [ a s223:Connectable,
+                s223:Equipment,
+                s223:Sensor,
+                s223:TemperatureSensor,
+                bob:AirTemperatureSensor ;
+            rdfs:label "LL-1" ;
+            s223:hasObservationLocation _:Na47b24bb6ae84117aaa47ecd101e7ef7 ;
+            s223:hasProperty _:N29c2c6db971d4a7dba7a149084019d67 ;
+            s223:observes _:N29c2c6db971d4a7dba7a149084019d67 ],
+        _:Nc1977199c91649439a1b29dd27f956c1,
         [ a s223:Connectable,
                 s223:Equipment,
                 s223:PressureSensor,
                 s223:Sensor ;
             rdfs:label "SSP-1" ;
-            s223:hasObservationLocation _:N38ced519d794450ab06cfd9b9659675f ;
-            s223:hasProperty _:Ndeca6a2d689d4b71ac3161a099ee2a29 ;
-            s223:observes _:Ndeca6a2d689d4b71ac3161a099ee2a29 ],
-        _:Nf463792c2bf341ca87af1d33839ba9c3,
+            s223:hasObservationLocation _:Na47b24bb6ae84117aaa47ecd101e7ef7 ;
+            s223:hasProperty _:N7436965828844015a67733c0e7b23259 ;
+            s223:observes _:N7436965828844015a67733c0e7b23259 ],
         [ a s223:Connectable,
                 s223:Equipment,
-                s223:HumiditySensor,
+                s223:PressureSensor,
                 s223:Sensor ;
-            rdfs:label "SH-RETOUR" ;
-            s223:hasObservationLocation _:Na8bf209c48ae4747b4ad16f9259fd27c ;
-            s223:hasProperty _:N8b0e9f903bee4b378138204df88eb5f1 ;
-            s223:observes _:N8b0e9f903bee4b378138204df88eb5f1 ] .
+            rdfs:label "SDP-1" ;
+            s223:hasObservationLocation _:N65c3ceae44bd446c8fe41c4287766884 ;
+            s223:hasProperty _:N03f4a8416f2a4c2f8b56451689ae8994,
+                _:N4aef94d9ef4a47c0bb09c987b937ec5b,
+                _:Na1d00e4ba59b453cb8bbeef4336fdafa ;
+            s223:hasReferenceLocation _:N791270aaf61247d1a74c2af9a1ad85dd ;
+            s223:observes _:N03f4a8416f2a4c2f8b56451689ae8994 ;
+            bob:differential_static_pressure _:N03f4a8416f2a4c2f8b56451689ae8994 ;
+            bob:hasReferenceLocation _:N791270aaf61247d1a74c2af9a1ad85dd ;
+            bob:observation_pressure _:Na1d00e4ba59b453cb8bbeef4336fdafa ;
+            bob:reference_pressure _:N4aef94d9ef4a47c0bb09c987b937ec5b ],
+        _:Nf1139f1f81d14ece8ad498fc9ab0e6b3 .
 
-_:N01d96fbb464f4b9f9a7e2bf3c3cc6df4 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:ElectricalConnectionPoint ;
-    rdfs:label "VFD-1A.electricalOutlet" ;
-    s223:cnx _:N667a90f5030c4396b217ebe4e86562a3 ;
-    s223:connectsThrough _:N667a90f5030c4396b217ebe4e86562a3 ;
-    s223:hasMedium s223:Constituent-Electricity ;
-    s223:isConnectionPointOf _:N4278b6642c7842fd94be541aeeae70a8 .
-
-_:N022848322d2a48ad8132bba8464715f3 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:WaterConnectionPoint ;
-    rdfs:label "HUM-1.waterInlet" ;
-    s223:cnx _:Ncb19f31c3ef842dcb1ce41ecdcae8331 ;
-    s223:hasMedium s223:Fluid-Water ;
-    s223:isConnectionPointOf _:Ncb19f31c3ef842dcb1ce41ecdcae8331 .
-
-_:N02f2eb56aeb046158284f04b5f1a7c04 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-PAF-BAS.airOutlet" ;
-    s223:cnx _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:connectsThrough _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N9f98254637c1471b8d5fc05a17d44139 ;
-    s223:pairedConnectionPoint _:N88d581665a8c4e38b395329238d78522 .
-
-_:N053f0dde270e443891ed0826a3d831a1 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:WaterConnectionPoint ;
-    rdfs:label "HUM-1.drainOutlet" ;
-    s223:hasMedium s223:Fluid-Water ;
-    s223:isConnectionPointOf _:Ncb19f31c3ef842dcb1ce41ecdcae8331 .
-
-_:N075a6f86838e43f2852001c88689337e a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Temperature ;
-    rdfs:label "averageSurfaceTemperature" ;
-    qudt:hasQuantityKind qudtqk:Temperature .
-
-_:N0917fb9ef14d493aa96cfb74d1f12b99 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "1-R.airOutlet" ;
-    s223:cnx _:N3ace6eca4c5c409db0f28707a853e634 ;
-    s223:connectsThrough _:N3ace6eca4c5c409db0f28707a853e634 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:pairedConnectionPoint _:N9ca3fa3c598447fca45ac2edd57f8b6c .
-
-_:N09292c0755364b1ea51f9eb8aed79d74 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Temperature ;
-    rdfs:label "averageSurfaceTemperature" ;
-    qudt:hasQuantityKind qudtqk:Temperature .
-
-_:N0a79813d194745dea262a12e9db03e17 a s223:Coil,
-        s223:Connectable,
-        s223:CoolingCoil,
-        s223:Equipment ;
-    rdfs:label "CC-1" ;
-    s223:cnx _:N439a518b7654484986e880e029bd166e,
-        _:Nce10a00e2d6f474a966e184719b38b7e ;
-    s223:connected _:N3fe0248f59f2470c94e46eb5cf09b5f5,
-        _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:connectedFrom _:N3fe0248f59f2470c94e46eb5cf09b5f5 ;
-    s223:connectedThrough _:N4b8ce78ed8db463ba41c047cfe374c71,
-        _:N4c4f32a2cc7148b3886462753a1bd309 ;
-    s223:connectedTo _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:hasConnectionPoint _:N3bb39fa153a44159bb08297ea72a7f5c,
-        _:N439a518b7654484986e880e029bd166e,
-        _:N770da66bf50a4c26a97e992518e21b92,
-        _:Nce10a00e2d6f474a966e184719b38b7e ;
-    s223:hasProperty _:N075a6f86838e43f2852001c88689337e,
-        _:N954ad86963c147158ebad7decf5a62f6,
-        _:Nb96087404d2c4b86ada78ee01a6f07f9 ;
-    s223:hasRole s223:Role-Cooling ;
-    bob:airInlet _:N770da66bf50a4c26a97e992518e21b92 ;
-    bob:airOutlet _:Nce10a00e2d6f474a966e184719b38b7e ;
-    bob:chilledWaterInlet _:N3bb39fa153a44159bb08297ea72a7f5c ;
-    bob:chilledWaterOutlet _:N439a518b7654484986e880e029bd166e .
-
-_:N1892b4b4163c4896aeb7d66c422d0553 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Pressure ;
-    rdfs:label "SDP-1.ReferencePressure" ;
-    s223:ofMedium s223:Fluid-Air ;
-    qudt:hasQuantityKind qudtqk:Pressure ;
-    qudt:hasUnit unit:PA .
-
-_:N191707f6009d4babba31ad22e19d9cfe a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:ElectricalConnectionPoint ;
-    rdfs:label "1-E.electricalInlet" ;
-    s223:cnx _:Nb55561a728db4af9885f0516a870be19 ;
-    s223:hasMedium s223:Constituent-Electricity ;
-    s223:isConnectionPointOf _:Nb55561a728db4af9885f0516a870be19 .
-
-_:N1a1b39ee436d46e39d0e8d61d0a6f078 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:ElectricalConnectionPoint ;
-    rdfs:label "VFD-1A.electricalInlet" ;
-    s223:cnx _:N4278b6642c7842fd94be541aeeae70a8 ;
-    s223:hasMedium s223:Constituent-Electricity ;
-    s223:isConnectionPointOf _:N4278b6642c7842fd94be541aeeae70a8 .
-
-_:N21bb9824450d4aff84b8c58d3047e2b1 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-PAF-HAUT.airOutlet" ;
-    s223:cnx _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:connectsThrough _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N8b361bbdbd0c47e0a37193e01faeac4e ;
-    s223:pairedConnectionPoint _:N36f3a9927a48460388a9c7b27b2123c9 .
-
-_:N2ce0717b6b3d4f5e932c9a02ae1667fa a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:ElectricalConnectionPoint ;
-    rdfs:label "VFD-1R.electricalOutlet" ;
-    s223:cnx _:Ne23d563802b34ebb94e74ba33fc04c3b ;
-    s223:connectsThrough _:Ne23d563802b34ebb94e74ba33fc04c3b ;
-    s223:hasMedium s223:Constituent-Electricity ;
-    s223:isConnectionPointOf _:N8197a2faecc4431aa1a7879539bb52d7 .
-
-_:N36f3a9927a48460388a9c7b27b2123c9 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-PAF-HAUT.airInlet" ;
-    s223:cnx _:N8b361bbdbd0c47e0a37193e01faeac4e ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N8b361bbdbd0c47e0a37193e01faeac4e ;
-    s223:pairedConnectionPoint _:N21bb9824450d4aff84b8c58d3047e2b1 .
-
-_:N37943ea621014ab7bfb572ffdf9ca95b a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-EVAC.airOutlet" ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:Nf463792c2bf341ca87af1d33839ba9c3 ;
-    s223:pairedConnectionPoint _:Nae6ed2d220f34cdbbb70745591f900ee .
-
-_:N38ced519d794450ab06cfd9b9659675f a s223:Connection ;
-    rdfs:label "SupplyAir" ;
-    s223:connectsAt _:Ne81bd505c7794637bdb488c9c5289a11 ;
-    s223:connectsFrom _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:hasMedium s223:Fluid-Air .
-
-_:N3ace6eca4c5c409db0f28707a853e634 a s223:Connection ;
-    rdfs:label "HD-2" ;
-    s223:cnx _:N7f33d739e1e5475b969432a439f75b74,
-        _:Nbd443e37123146ecbc3e824461e06349 ;
-    s223:connectsAt _:N0917fb9ef14d493aa96cfb74d1f12b99,
-        _:N7f33d739e1e5475b969432a439f75b74,
-        _:Nbd443e37123146ecbc3e824461e06349 ;
-    s223:connectsFrom _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:connectsTo _:N9ee3fa49353b42e18de15e45bda1b9df,
-        _:Ncff63e5401a34f3a803b330209710307 ;
-    s223:hasMedium s223:Fluid-Air .
-
-_:N3bb39fa153a44159bb08297ea72a7f5c a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:ChilledWaterConnectionPoint ;
-    rdfs:label "CC-1.chilledWaterInlet" ;
-    s223:cnx _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:hasMedium s223:Water-ChilledWater ;
-    s223:isConnectionPointOf _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:pairedConnectionPoint _:N439a518b7654484986e880e029bd166e .
-
-_:N3c0abbc612fc4ad0a24e6d36074699f2 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:ElectricalConnectionPoint ;
-    rdfs:label "VFD-1R.electricalInlet" ;
-    s223:cnx _:N8197a2faecc4431aa1a7879539bb52d7 ;
-    s223:hasMedium s223:Constituent-Electricity ;
-    s223:isConnectionPointOf _:N8197a2faecc4431aa1a7879539bb52d7 .
-
-_:N3fe0248f59f2470c94e46eb5cf09b5f5 a s223:Connectable,
-        s223:Equipment,
-        s223:Filter ;
-    rdfs:label "FLT-1" ;
-    s223:cnx _:Nbc161adf278d4e3a9d54b94253f2d079 ;
-    s223:connected _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:connectedThrough _:N4c4f32a2cc7148b3886462753a1bd309,
-        _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:connectedTo _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:hasConnectionPoint _:Nbc161adf278d4e3a9d54b94253f2d079,
-        _:Nf93d5d0d03c44047b8a85d3299320cec ;
-    bob:airInlet _:Nf93d5d0d03c44047b8a85d3299320cec ;
-    bob:airOutlet _:Nbc161adf278d4e3a9d54b94253f2d079 .
-
-_:N4278b6642c7842fd94be541aeeae70a8 a s223:Connectable,
-        s223:Controller,
-        s223:Equipment,
-        s223:VariableFrequencyDrive ;
-    rdfs:label "VFD-1A" ;
-    s223:cnx _:N01d96fbb464f4b9f9a7e2bf3c3cc6df4 ;
-    s223:connected _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:connectedThrough _:N667a90f5030c4396b217ebe4e86562a3 ;
-    s223:connectedTo _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:hasConnectionPoint _:N01d96fbb464f4b9f9a7e2bf3c3cc6df4,
-        _:N1a1b39ee436d46e39d0e8d61d0a6f078 .
-
-_:N439a518b7654484986e880e029bd166e a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:ChilledWaterConnectionPoint ;
-    rdfs:label "CC-1.chilledWaterOutlet" ;
-    s223:hasMedium s223:Water-ChilledWater ;
-    s223:isConnectionPointOf _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:pairedConnectionPoint _:N3bb39fa153a44159bb08297ea72a7f5c .
-
-_:N4b8ce78ed8db463ba41c047cfe374c71 a s223:Connection ;
-    s223:cnx _:Nf0618ad26c904742bd475d2b75efaccd ;
-    s223:connectsAt _:Nce10a00e2d6f474a966e184719b38b7e,
-        _:Nf0618ad26c904742bd475d2b75efaccd ;
-    s223:connectsFrom _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:connectsTo _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:hasMedium s223:Fluid-Air .
-
-_:N4c4f32a2cc7148b3886462753a1bd309 a s223:Connection ;
-    s223:cnx _:N770da66bf50a4c26a97e992518e21b92 ;
-    s223:connectsAt _:N770da66bf50a4c26a97e992518e21b92,
-        _:Nbc161adf278d4e3a9d54b94253f2d079 ;
-    s223:connectsFrom _:N3fe0248f59f2470c94e46eb5cf09b5f5 ;
-    s223:connectsTo _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:hasMedium s223:Fluid-Air .
-
-_:N5dd9eaba6ef04712a3bf210d524aa43a a s223:Connectable,
-        s223:Equipment,
-        s223:Fan ;
-    rdfs:label "1-A" ;
-    s223:cnx _:N7e1cfb6eaab64bf096d951fe44cb401a ;
-    s223:connected _:N0a79813d194745dea262a12e9db03e17,
-        _:N4278b6642c7842fd94be541aeeae70a8,
-        _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:connectedFrom _:N0a79813d194745dea262a12e9db03e17,
-        _:N4278b6642c7842fd94be541aeeae70a8 ;
-    s223:connectedThrough _:N4b8ce78ed8db463ba41c047cfe374c71,
-        _:N667a90f5030c4396b217ebe4e86562a3,
-        _:Na22e6238a4de44e7b1cfe5a666f8dedb ;
-    s223:connectedTo _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:hasConnectionPoint _:N7e1cfb6eaab64bf096d951fe44cb401a,
-        _:Naedb0e3cabf04e2bb80ef7fa3c4c47c2,
-        _:Nf0618ad26c904742bd475d2b75efaccd ;
-    bob:airInlet _:Nf0618ad26c904742bd475d2b75efaccd ;
-    bob:airOutlet _:N7e1cfb6eaab64bf096d951fe44cb401a .
-
-_:N667a90f5030c4396b217ebe4e86562a3 a s223:Connection ;
-    s223:cnx _:Naedb0e3cabf04e2bb80ef7fa3c4c47c2 ;
-    s223:connectsAt _:N01d96fbb464f4b9f9a7e2bf3c3cc6df4,
-        _:Naedb0e3cabf04e2bb80ef7fa3c4c47c2 ;
-    s223:connectsFrom _:N4278b6642c7842fd94be541aeeae70a8 ;
-    s223:connectsTo _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:hasMedium s223:Constituent-Electricity .
-
-_:N770da66bf50a4c26a97e992518e21b92 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "CC-1.airInlet" ;
-    s223:cnx _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:connectsThrough _:N4c4f32a2cc7148b3886462753a1bd309 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:pairedConnectionPoint _:Nce10a00e2d6f474a966e184719b38b7e .
-
-_:N7d9937780eb74e2da27fa91809816c7a a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "1-E.airOutlet" ;
-    s223:cnx _:Nfb0c3aa5018f4c8fb171a916be12b8f9 ;
-    s223:connectsThrough _:Nfb0c3aa5018f4c8fb171a916be12b8f9 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:Nb55561a728db4af9885f0516a870be19 ;
-    s223:pairedConnectionPoint _:Nf4e942d9abc046dca9fc652e285af322 .
-
-_:N7e1cfb6eaab64bf096d951fe44cb401a a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "1-A.airOutlet" ;
-    s223:cnx _:Na22e6238a4de44e7b1cfe5a666f8dedb ;
-    s223:connectsThrough _:Na22e6238a4de44e7b1cfe5a666f8dedb ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:pairedConnectionPoint _:Nf0618ad26c904742bd475d2b75efaccd .
-
-_:N7f33d739e1e5475b969432a439f75b74 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-RETOUR.airInlet" ;
-    s223:cnx _:Ncff63e5401a34f3a803b330209710307 ;
-    s223:connectsThrough _:N3ace6eca4c5c409db0f28707a853e634 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:Ncff63e5401a34f3a803b330209710307 ;
-    s223:pairedConnectionPoint _:Nfcc530b97ab2478cacbb270fc9af513c .
-
-_:N8197a2faecc4431aa1a7879539bb52d7 a s223:Connectable,
-        s223:Controller,
-        s223:Equipment,
-        s223:VariableFrequencyDrive ;
-    rdfs:label "VFD-1R" ;
-    s223:cnx _:N2ce0717b6b3d4f5e932c9a02ae1667fa ;
-    s223:connected _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:connectedThrough _:Ne23d563802b34ebb94e74ba33fc04c3b ;
-    s223:connectedTo _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:hasConnectionPoint _:N2ce0717b6b3d4f5e932c9a02ae1667fa,
-        _:N3c0abbc612fc4ad0a24e6d36074699f2 .
-
-_:N85ec26435f9e480189ce70d721afd9c2 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Temperature ;
-    rdfs:label "observed_property" ;
-    s223:ofMedium s223:Fluid-Air ;
-    qudt:hasQuantityKind qudtqk:Temperature ;
-    qudt:hasUnit unit:DEG_C .
-
-_:N88d581665a8c4e38b395329238d78522 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-PAF-BAS.airInlet" ;
-    s223:cnx _:N9f98254637c1471b8d5fc05a17d44139 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N9f98254637c1471b8d5fc05a17d44139 ;
-    s223:pairedConnectionPoint _:N02f2eb56aeb046158284f04b5f1a7c04 .
-
-_:N8b0e9f903bee4b378138204df88eb5f1 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:RelativeHumidity ;
-    rdfs:label "observed_property" ;
-    s223:ofMedium s223:Fluid-Air ;
-    qudt:hasQuantityKind qudtqk:RelativeHumidity ;
-    qudt:hasUnit unit:PERCENT_RH .
-
-_:N8b361bbdbd0c47e0a37193e01faeac4e a s223:Connectable,
-        s223:Damper,
-        s223:Equipment ;
-    rdfs:label "MD-PAF-HAUT" ;
-    s223:cnx _:N21bb9824450d4aff84b8c58d3047e2b1 ;
-    s223:connectedThrough _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:hasConnectionPoint _:N21bb9824450d4aff84b8c58d3047e2b1,
-        _:N36f3a9927a48460388a9c7b27b2123c9 ;
-    bob:airInlet _:N36f3a9927a48460388a9c7b27b2123c9 ;
-    bob:airOutlet _:N21bb9824450d4aff84b8c58d3047e2b1 .
-
-_:N902c0e7ee97e41f496cf5c3ca322fce3 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:SteamConnectionPoint ;
-    rdfs:label "HUM-1.steamOutlet" ;
-    s223:hasMedium s223:Water-Steam ;
-    s223:isConnectionPointOf _:Ncb19f31c3ef842dcb1ce41ecdcae8331 .
-
-_:N954ad86963c147158ebad7decf5a62f6 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Pressure ;
-    rdfs:label "internalPressure" ;
-    qudt:hasQuantityKind qudtqk:Pressure .
-
-_:N98a90f85d0be41e892dc9b569b5ff3b7 a s223:Coil,
-        s223:Connectable,
-        s223:Equipment,
-        s223:HeatingCoil ;
-    rdfs:label "HC-1" ;
-    s223:cnx _:Nb23efbdc320a426293adb608cd24a4a3,
-        _:Ne81bd505c7794637bdb488c9c5289a11 ;
-    s223:connected _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:connectedFrom _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:connectedThrough _:N38ced519d794450ab06cfd9b9659675f,
-        _:Na22e6238a4de44e7b1cfe5a666f8dedb ;
-    s223:hasConnectionPoint _:Nb23efbdc320a426293adb608cd24a4a3,
-        _:Ndd4c4eaeee68487689145cbd82ea8462,
-        _:Ne0c4c9f018a64def9018d359e01954a2,
-        _:Ne81bd505c7794637bdb488c9c5289a11 ;
-    s223:hasProperty _:N09292c0755364b1ea51f9eb8aed79d74,
-        _:N9ab431285f9046c5a0daa51579cf9ce8,
-        _:Ne10fb1d291b04fb6859d544e28a33b35 ;
-    s223:hasRole s223:Role-Heating ;
-    bob:airInlet _:Ndd4c4eaeee68487689145cbd82ea8462 ;
-    bob:airOutlet _:Ne81bd505c7794637bdb488c9c5289a11 ;
-    bob:hotWaterInlet _:Ne0c4c9f018a64def9018d359e01954a2 ;
-    bob:hotWaterOutlet _:Nb23efbdc320a426293adb608cd24a4a3 .
-
-_:N9ab431285f9046c5a0daa51579cf9ce8 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Pressure ;
-    rdfs:label "internalPressure" ;
-    qudt:hasQuantityKind qudtqk:Pressure .
-
-_:N9ca3fa3c598447fca45ac2edd57f8b6c a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "1-R.airInlet" ;
-    s223:cnx _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:connectsThrough _:Na8bf209c48ae4747b4ad16f9259fd27c ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:pairedConnectionPoint _:N0917fb9ef14d493aa96cfb74d1f12b99 .
-
-_:N9e7358c2c061492589ba6c1dedf89c97 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-MELANGE.airOutlet" ;
-    s223:cnx _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:connectsThrough _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N9ee3fa49353b42e18de15e45bda1b9df ;
-    s223:pairedConnectionPoint _:Nbd443e37123146ecbc3e824461e06349 .
-
-_:N9ee3fa49353b42e18de15e45bda1b9df a s223:Connectable,
-        s223:Damper,
-        s223:Equipment ;
-    rdfs:label "MD-MELANGE" ;
-    s223:cnx _:N9e7358c2c061492589ba6c1dedf89c97 ;
-    s223:connectedThrough _:N3ace6eca4c5c409db0f28707a853e634,
-        _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:hasConnectionPoint _:N9e7358c2c061492589ba6c1dedf89c97,
-        _:Nbd443e37123146ecbc3e824461e06349 ;
-    bob:airInlet _:Nbd443e37123146ecbc3e824461e06349 ;
-    bob:airOutlet _:N9e7358c2c061492589ba6c1dedf89c97 .
-
-_:N9f98254637c1471b8d5fc05a17d44139 a s223:Connectable,
-        s223:Damper,
-        s223:Equipment ;
-    rdfs:label "MD-PAF-BAS" ;
-    s223:cnx _:N02f2eb56aeb046158284f04b5f1a7c04 ;
-    s223:connectedThrough _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:hasConnectionPoint _:N02f2eb56aeb046158284f04b5f1a7c04,
-        _:N88d581665a8c4e38b395329238d78522 ;
-    bob:airInlet _:N88d581665a8c4e38b395329238d78522 ;
-    bob:airOutlet _:N02f2eb56aeb046158284f04b5f1a7c04 .
-
-_:Na22e6238a4de44e7b1cfe5a666f8dedb a s223:Connection ;
-    s223:cnx _:Ndd4c4eaeee68487689145cbd82ea8462 ;
-    s223:connectsAt _:N7e1cfb6eaab64bf096d951fe44cb401a,
-        _:Ndd4c4eaeee68487689145cbd82ea8462 ;
-    s223:connectsFrom _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:connectsTo _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:hasMedium s223:Fluid-Air .
-
-_:Na4e3b3270e6e48a8813defc1d7c76963 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Temperature ;
-    rdfs:label "observed_property" ;
-    s223:ofMedium s223:Fluid-Air ;
-    qudt:hasQuantityKind qudtqk:Temperature ;
-    qudt:hasUnit unit:DEG_C .
-
-_:Na4e4b4edd93846f1a90d998d3c7fbc83 a s223:Connection ;
-    rdfs:label "ExhaustAir" ;
-    s223:cnx _:Nf4e942d9abc046dca9fc652e285af322 ;
-    s223:connectsAt _:Nf4e942d9abc046dca9fc652e285af322 ;
-    s223:connectsTo _:Nb55561a728db4af9885f0516a870be19 ;
-    s223:hasMedium s223:Fluid-Air .
-
-_:Na54c2039d8d24beda92c4c1ff33db4a8 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Temperature ;
-    rdfs:label "observed_property" ;
-    s223:ofMedium s223:Fluid-Air ;
-    qudt:hasQuantityKind qudtqk:Temperature ;
-    qudt:hasUnit unit:DEG_C .
-
-_:Na8bf209c48ae4747b4ad16f9259fd27c a s223:Connection ;
-    rdfs:label "ReturnAir" ;
-    s223:cnx _:N9ca3fa3c598447fca45ac2edd57f8b6c ;
-    s223:connectsAt _:N9ca3fa3c598447fca45ac2edd57f8b6c ;
-    s223:connectsTo _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:hasMedium s223:Fluid-Air .
-
-_:Nae6ed2d220f34cdbbb70745591f900ee a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-EVAC.airInlet" ;
-    s223:cnx _:Nf463792c2bf341ca87af1d33839ba9c3 ;
-    s223:connectsThrough _:Nfb0c3aa5018f4c8fb171a916be12b8f9 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:Nf463792c2bf341ca87af1d33839ba9c3 ;
-    s223:pairedConnectionPoint _:N37943ea621014ab7bfb572ffdf9ca95b .
-
-_:Naedb0e3cabf04e2bb80ef7fa3c4c47c2 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:ElectricalConnectionPoint ;
-    rdfs:label "1-A.electricalInlet" ;
-    s223:cnx _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:connectsThrough _:N667a90f5030c4396b217ebe4e86562a3 ;
-    s223:hasMedium s223:Constituent-Electricity ;
-    s223:isConnectionPointOf _:N5dd9eaba6ef04712a3bf210d524aa43a .
-
-_:Nb23efbdc320a426293adb608cd24a4a3 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:HotWaterConnectionPoint ;
-    rdfs:label "HC-1.hotWaterOutlet" ;
-    s223:hasMedium s223:Water-HotWater ;
-    s223:isConnectionPointOf _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:pairedConnectionPoint _:Ne0c4c9f018a64def9018d359e01954a2 .
-
-_:Nb55561a728db4af9885f0516a870be19 a s223:Connectable,
-        s223:Equipment,
-        s223:Fan ;
-    rdfs:label "1-E" ;
-    s223:cnx _:N7d9937780eb74e2da27fa91809816c7a ;
-    s223:connectedThrough _:Na4e4b4edd93846f1a90d998d3c7fbc83,
-        _:Nfb0c3aa5018f4c8fb171a916be12b8f9 ;
-    s223:hasConnectionPoint _:N191707f6009d4babba31ad22e19d9cfe,
-        _:N7d9937780eb74e2da27fa91809816c7a,
-        _:Nf4e942d9abc046dca9fc652e285af322 ;
-    bob:airInlet _:Nf4e942d9abc046dca9fc652e285af322 ;
-    bob:airOutlet _:N7d9937780eb74e2da27fa91809816c7a .
-
-_:Nb760db1faf3a423c92240fc130e119c1 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Temperature ;
-    rdfs:label "observed_property" ;
-    s223:ofMedium s223:Fluid-Air ;
-    qudt:hasQuantityKind qudtqk:Temperature ;
-    qudt:hasUnit unit:DEG_C .
-
-_:Nb96087404d2c4b86ada78ee01a6f07f9 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Temperature ;
-    rdfs:label "internalTemperature" ;
-    qudt:hasQuantityKind qudtqk:Temperature .
-
-_:Nbc161adf278d4e3a9d54b94253f2d079 a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "FLT-1.airOutlet" ;
-    s223:cnx _:N4c4f32a2cc7148b3886462753a1bd309 ;
-    s223:connectsThrough _:N4c4f32a2cc7148b3886462753a1bd309 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N3fe0248f59f2470c94e46eb5cf09b5f5 ;
-    s223:pairedConnectionPoint _:Nf93d5d0d03c44047b8a85d3299320cec .
-
-_:Nbd443e37123146ecbc3e824461e06349 a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-MELANGE.airInlet" ;
-    s223:cnx _:N9ee3fa49353b42e18de15e45bda1b9df ;
-    s223:connectsThrough _:N3ace6eca4c5c409db0f28707a853e634 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N9ee3fa49353b42e18de15e45bda1b9df ;
-    s223:pairedConnectionPoint _:N9e7358c2c061492589ba6c1dedf89c97 .
-
-_:Nc8beae49555543c386e61f02e8a4e7f9 a s223:ObservableProperty,
-        s223:Property,
-        s223:QuantifiableObservableProperty,
-        s223:QuantifiableProperty,
-        bob:Pressure ;
-    rdfs:label "SDP-1.ObservationPressure" ;
-    s223:ofMedium s223:Fluid-Air ;
-    qudt:hasQuantityKind qudtqk:Pressure ;
-    qudt:hasUnit unit:PA .
-
-_:Ncb19f31c3ef842dcb1ce41ecdcae8331 a s223:Connectable,
-        s223:Equipment,
-        s223:Humidifier ;
-    rdfs:label "HUM-1" ;
-    s223:cnx _:N053f0dde270e443891ed0826a3d831a1,
-        _:N902c0e7ee97e41f496cf5c3ca322fce3 ;
-    s223:hasConnectionPoint _:N022848322d2a48ad8132bba8464715f3,
-        _:N053f0dde270e443891ed0826a3d831a1,
-        _:N902c0e7ee97e41f496cf5c3ca322fce3 ;
-    bob:drainOutlet _:N053f0dde270e443891ed0826a3d831a1 ;
-    bob:steamOutlet _:N902c0e7ee97e41f496cf5c3ca322fce3 ;
-    bob:waterInlet _:N022848322d2a48ad8132bba8464715f3 .
-
-_:Nce10a00e2d6f474a966e184719b38b7e a s223:ConnectionPoint,
-        s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "CC-1.airOutlet" ;
-    s223:cnx _:N4b8ce78ed8db463ba41c047cfe374c71 ;
-    s223:connectsThrough _:N4b8ce78ed8db463ba41c047cfe374c71 ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N0a79813d194745dea262a12e9db03e17 ;
-    s223:pairedConnectionPoint _:N770da66bf50a4c26a97e992518e21b92 .
-
-_:Ncff63e5401a34f3a803b330209710307 a s223:Connectable,
-        s223:Damper,
-        s223:Equipment ;
-    rdfs:label "MD-RETOUR" ;
-    s223:cnx _:Nfcc530b97ab2478cacbb270fc9af513c ;
-    s223:connectedThrough _:N3ace6eca4c5c409db0f28707a853e634 ;
-    s223:hasConnectionPoint _:N7f33d739e1e5475b969432a439f75b74,
-        _:Nfcc530b97ab2478cacbb270fc9af513c ;
-    bob:airInlet _:N7f33d739e1e5475b969432a439f75b74 ;
-    bob:airOutlet _:Nfcc530b97ab2478cacbb270fc9af513c .
-
-_:Nd4bbf069b110414b955b9fe493b93bf3 a s223:ObservableProperty,
+_:N03f4a8416f2a4c2f8b56451689ae8994 a s223:ObservableProperty,
         s223:Property,
         s223:QuantifiableObservableProperty,
         s223:QuantifiableProperty,
@@ -716,17 +109,382 @@ _:Nd4bbf069b110414b955b9fe493b93bf3 a s223:ObservableProperty,
     qudt:hasUnit unit:PA ;
     qudt:isDeltaQuantity true .
 
-_:Ndd4c4eaeee68487689145cbd82ea8462 a s223:ConnectionPoint,
+_:N071f35b521f34a34b268366192b54c54 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-EVAC.airInlet" ;
+    s223:cnx _:Nf1139f1f81d14ece8ad498fc9ab0e6b3 ;
+    s223:connectsThrough _:N5bd1e2fc58e94ea68e34210e1fe703af ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:Nf1139f1f81d14ece8ad498fc9ab0e6b3 ;
+    s223:pairedConnectionPoint _:Naacfb803db964192a6825efe9dcfdd15 .
+
+_:N07a236d84c3c4548ac6e5775c012e2cc a s223:Connectable,
+        s223:Damper,
+        s223:Equipment ;
+    rdfs:label "MD-PAF-HAUT" ;
+    s223:cnx _:Nbf849d9ce4aa466995dcb7a760063b40 ;
+    s223:connectedThrough _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:hasConnectionPoint _:N32a86336c2e44937b9fa26328d657813,
+        _:Nbf849d9ce4aa466995dcb7a760063b40 ;
+    bob:airInlet _:N32a86336c2e44937b9fa26328d657813 ;
+    bob:airOutlet _:Nbf849d9ce4aa466995dcb7a760063b40 .
+
+_:N0ac47027377845fea2adcb3380caf997 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment ;
+    rdfs:label "MD-RETOUR" ;
+    s223:cnx _:N9a0a0a0fc3bd4aed8b5ed7551ecf4e7d ;
+    s223:connectedThrough _:Nfcf9eb848ebf4a2f9f0d7cb54b6134ec ;
+    s223:hasConnectionPoint _:N40ee904a27644e5f8a50e4d9306f6f94,
+        _:N9a0a0a0fc3bd4aed8b5ed7551ecf4e7d ;
+    bob:airInlet _:N40ee904a27644e5f8a50e4d9306f6f94 ;
+    bob:airOutlet _:N9a0a0a0fc3bd4aed8b5ed7551ecf4e7d .
+
+_:N0c65a7b405754c2d82e555d6185b1c74 a s223:Connection ;
+    s223:cnx _:N7be4ce508683479896409172f84fd8f4 ;
+    s223:connectsAt _:N4420f8935d644f6ebaedb231cbbfd785,
+        _:N7be4ce508683479896409172f84fd8f4 ;
+    s223:connectsFrom _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:connectsTo _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:hasMedium s223:Fluid-Air .
+
+_:N1770d91fcd2c4b888b4a07fb37f2b2ae a s223:Connection ;
+    s223:cnx _:N6b6c53af13cf42cea45be9db0d0062b9 ;
+    s223:connectsAt _:N1e809e816278412aafefe13e01a960b4,
+        _:N6b6c53af13cf42cea45be9db0d0062b9 ;
+    s223:connectsFrom _:N634a4c61ee1a421980f2728117a5d733 ;
+    s223:connectsTo _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:hasMedium s223:Constituent-Electricity .
+
+_:N18b314cba0e14dedaed9a6b5e991ba62 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
         bob:AirConnectionPoint ;
     rdfs:label "HC-1.airInlet" ;
-    s223:cnx _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:connectsThrough _:Na22e6238a4de44e7b1cfe5a666f8dedb ;
+    s223:cnx _:N8ef2c3c891cd4dc38b4e341e68412180 ;
+    s223:connectsThrough _:N78ebed6124b447df83f39fc40144a143 ;
     s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:pairedConnectionPoint _:Ne81bd505c7794637bdb488c9c5289a11 .
+    s223:isConnectionPointOf _:N8ef2c3c891cd4dc38b4e341e68412180 ;
+    s223:pairedConnectionPoint _:N9b819b09b53b4e369b9a04cfd3022d0c .
 
-_:Ndeca6a2d689d4b71ac3161a099ee2a29 a s223:ObservableProperty,
+_:N1e809e816278412aafefe13e01a960b4 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "VFD-1R.electricalOutlet" ;
+    s223:cnx _:N1770d91fcd2c4b888b4a07fb37f2b2ae ;
+    s223:connectsThrough _:N1770d91fcd2c4b888b4a07fb37f2b2ae ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf _:N634a4c61ee1a421980f2728117a5d733 .
+
+_:N1f1e7b3017a64db28c5cfb1c17486698 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "VFD-1A.electricalInlet" ;
+    s223:cnx _:N61b05b2e0de84d678c019f519dfe353c ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf _:N61b05b2e0de84d678c019f519dfe353c .
+
+_:N1f88ced61deb47ac920ce1935282c776 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-R.airOutlet" ;
+    s223:cnx _:Nfcf9eb848ebf4a2f9f0d7cb54b6134ec ;
+    s223:connectsThrough _:Nfcf9eb848ebf4a2f9f0d7cb54b6134ec ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:pairedConnectionPoint _:Nf693922c3a524d77a06b11b4920da6a3 .
+
+_:N2550dba4ef39443f990ddf18c1867f80 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "averageSurfaceTemperature" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+_:N29c2c6db971d4a7dba7a149084019d67 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+_:N2ee32213540746d28baca083f03182d1 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment ;
+    rdfs:label "MD-PAF-BAS" ;
+    s223:cnx _:N587640f4c9df4c049cd9aa643158071d ;
+    s223:connectedThrough _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:hasConnectionPoint _:N587640f4c9df4c049cd9aa643158071d,
+        _:N7a543cf99d144e649dd217b9108f6e3a ;
+    bob:airInlet _:N7a543cf99d144e649dd217b9108f6e3a ;
+    bob:airOutlet _:N587640f4c9df4c049cd9aa643158071d .
+
+_:N2f09b947d0a74a7a94a5858eb5286288 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan ;
+    rdfs:label "1-R" ;
+    s223:cnx _:N1f88ced61deb47ac920ce1935282c776 ;
+    s223:connected _:N634a4c61ee1a421980f2728117a5d733 ;
+    s223:connectedFrom _:N634a4c61ee1a421980f2728117a5d733 ;
+    s223:connectedThrough _:N1770d91fcd2c4b888b4a07fb37f2b2ae,
+        _:N920a023d05bb430894a1d7014f708e4e,
+        _:Nfcf9eb848ebf4a2f9f0d7cb54b6134ec ;
+    s223:hasConnectionPoint _:N1f88ced61deb47ac920ce1935282c776,
+        _:N6b6c53af13cf42cea45be9db0d0062b9,
+        _:Nf693922c3a524d77a06b11b4920da6a3 ;
+    bob:airInlet _:Nf693922c3a524d77a06b11b4920da6a3 ;
+    bob:airOutlet _:N1f88ced61deb47ac920ce1935282c776 .
+
+_:N32a86336c2e44937b9fa26328d657813 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-PAF-HAUT.airInlet" ;
+    s223:cnx _:N07a236d84c3c4548ac6e5775c012e2cc ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N07a236d84c3c4548ac6e5775c012e2cc ;
+    s223:pairedConnectionPoint _:Nbf849d9ce4aa466995dcb7a760063b40 .
+
+_:N3429dd26fa1349d7a7bd2d6c5293aab5 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment ;
+    rdfs:label "MD-MELANGE" ;
+    s223:cnx _:N3490939ef84444a194729361e881ff5c ;
+    s223:connectedThrough _:N4e809ea207b141a582fbaeecfe971524,
+        _:Nfcf9eb848ebf4a2f9f0d7cb54b6134ec ;
+    s223:hasConnectionPoint _:N3490939ef84444a194729361e881ff5c,
+        _:N866c4113db9344a29db792800b5dbdde ;
+    bob:airInlet _:N866c4113db9344a29db792800b5dbdde ;
+    bob:airOutlet _:N3490939ef84444a194729361e881ff5c .
+
+_:N3490939ef84444a194729361e881ff5c a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-MELANGE.airOutlet" ;
+    s223:cnx _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:connectsThrough _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N3429dd26fa1349d7a7bd2d6c5293aab5 ;
+    s223:pairedConnectionPoint _:N866c4113db9344a29db792800b5dbdde .
+
+_:N36a9fbd21c2343cc9016c634c93c1804 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan ;
+    rdfs:label "1-E" ;
+    s223:cnx _:Nbefa98d569364e738fe822da4ae5a13f ;
+    s223:connectedThrough _:N5bd1e2fc58e94ea68e34210e1fe703af,
+        _:N9247139c376b4029a3312e35570cff0b ;
+    s223:hasConnectionPoint _:N5618d96264b14ed597b134608000f41f,
+        _:N93c7f93fee874152ac8e25b8060072ae,
+        _:Nbefa98d569364e738fe822da4ae5a13f ;
+    bob:airInlet _:N93c7f93fee874152ac8e25b8060072ae ;
+    bob:airOutlet _:Nbefa98d569364e738fe822da4ae5a13f .
+
+_:N3dc7260f4b344d4db26eb2f6a5419728 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RelativeHumidity ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:RelativeHumidity ;
+    qudt:hasUnit unit:PERCENT_RH .
+
+_:N40ee904a27644e5f8a50e4d9306f6f94 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-RETOUR.airInlet" ;
+    s223:cnx _:N0ac47027377845fea2adcb3380caf997 ;
+    s223:connectsThrough _:Nfcf9eb848ebf4a2f9f0d7cb54b6134ec ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N0ac47027377845fea2adcb3380caf997 ;
+    s223:pairedConnectionPoint _:N9a0a0a0fc3bd4aed8b5ed7551ecf4e7d .
+
+_:N4420f8935d644f6ebaedb231cbbfd785 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "CC-1.airOutlet" ;
+    s223:cnx _:N0c65a7b405754c2d82e555d6185b1c74 ;
+    s223:connectsThrough _:N0c65a7b405754c2d82e555d6185b1c74 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:pairedConnectionPoint _:N71dd98f35b224950b40efa910f737ddc .
+
+_:N4aef94d9ef4a47c0bb09c987b937ec5b a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "SDP-1.ReferencePressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:PA .
+
+_:N4d4ece0fe54f4fabb60e06fc1296b9e1 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:SteamConnectionPoint ;
+    rdfs:label "HUM-1.steamOutlet" ;
+    s223:hasMedium s223:Water-Steam ;
+    s223:isConnectionPointOf _:N6338f9ad965d45a8bc422ed6ec0c52ee .
+
+_:N4e809ea207b141a582fbaeecfe971524 a s223:Connection ;
+    rdfs:label "HD-4" ;
+    s223:cnx _:N65c3ceae44bd446c8fe41c4287766884 ;
+    s223:connectsAt _:N3490939ef84444a194729361e881ff5c,
+        _:N587640f4c9df4c049cd9aa643158071d,
+        _:N65c3ceae44bd446c8fe41c4287766884,
+        _:Nbf849d9ce4aa466995dcb7a760063b40 ;
+    s223:connectsFrom _:N07a236d84c3c4548ac6e5775c012e2cc,
+        _:N2ee32213540746d28baca083f03182d1,
+        _:N3429dd26fa1349d7a7bd2d6c5293aab5 ;
+    s223:connectsTo _:N5165f04475ef46f18ef2155daf456044 ;
+    s223:hasMedium s223:Fluid-Air .
+
+_:N50b215b76ade4adc8b402fbe18393bad a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+_:N51443550e85d4931b4bcb6d25052a78c a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "internalPressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+_:N5165f04475ef46f18ef2155daf456044 a s223:Connectable,
+        s223:Equipment,
+        s223:Filter ;
+    rdfs:label "FLT-1" ;
+    s223:cnx _:N791270aaf61247d1a74c2af9a1ad85dd ;
+    s223:connected _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:connectedThrough _:N4e809ea207b141a582fbaeecfe971524,
+        _:N9fe44fc42e3b4928a07f958c5485c942 ;
+    s223:connectedTo _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:hasConnectionPoint _:N65c3ceae44bd446c8fe41c4287766884,
+        _:N791270aaf61247d1a74c2af9a1ad85dd ;
+    bob:airInlet _:N65c3ceae44bd446c8fe41c4287766884 ;
+    bob:airOutlet _:N791270aaf61247d1a74c2af9a1ad85dd .
+
+_:N5618d96264b14ed597b134608000f41f a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-E.electricalInlet" ;
+    s223:cnx _:N36a9fbd21c2343cc9016c634c93c1804 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf _:N36a9fbd21c2343cc9016c634c93c1804 .
+
+_:N587640f4c9df4c049cd9aa643158071d a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-PAF-BAS.airOutlet" ;
+    s223:cnx _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:connectsThrough _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N2ee32213540746d28baca083f03182d1 ;
+    s223:pairedConnectionPoint _:N7a543cf99d144e649dd217b9108f6e3a .
+
+_:N5bd1e2fc58e94ea68e34210e1fe703af a s223:Connection ;
+    rdfs:label "HD-1" ;
+    s223:cnx _:N071f35b521f34a34b268366192b54c54 ;
+    s223:connectsAt _:N071f35b521f34a34b268366192b54c54,
+        _:Nbefa98d569364e738fe822da4ae5a13f ;
+    s223:connectsFrom _:N36a9fbd21c2343cc9016c634c93c1804 ;
+    s223:connectsTo _:Nf1139f1f81d14ece8ad498fc9ab0e6b3 ;
+    s223:hasMedium s223:Fluid-Air .
+
+_:N608a809f7fd241608a585c83e5ef95d0 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "internalTemperature" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+_:N61b05b2e0de84d678c019f519dfe353c a s223:Connectable,
+        s223:Controller,
+        s223:Equipment,
+        s223:VariableFrequencyDrive ;
+    rdfs:label "VFD-1A" ;
+    s223:cnx _:Nfda8f6e08fb24a42abd438765513de04 ;
+    s223:connected _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:connectedThrough _:N9b87347ab37c4a5c9c25ed654ef6dcd0 ;
+    s223:connectedTo _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:hasConnectionPoint _:N1f1e7b3017a64db28c5cfb1c17486698,
+        _:Nfda8f6e08fb24a42abd438765513de04 .
+
+_:N6338f9ad965d45a8bc422ed6ec0c52ee a s223:Connectable,
+        s223:Equipment,
+        s223:Humidifier ;
+    rdfs:label "HUM-1" ;
+    s223:cnx _:N4d4ece0fe54f4fabb60e06fc1296b9e1,
+        _:Ncdc0dd780d97408ea169ccea9eedf451 ;
+    s223:hasConnectionPoint _:N4d4ece0fe54f4fabb60e06fc1296b9e1,
+        _:Ncdc0dd780d97408ea169ccea9eedf451,
+        _:Ne71e6320e5174b2e8dc302d864162eef ;
+    bob:drainOutlet _:Ncdc0dd780d97408ea169ccea9eedf451 ;
+    bob:steamOutlet _:N4d4ece0fe54f4fabb60e06fc1296b9e1 ;
+    bob:waterInlet _:Ne71e6320e5174b2e8dc302d864162eef .
+
+_:N634a4c61ee1a421980f2728117a5d733 a s223:Connectable,
+        s223:Controller,
+        s223:Equipment,
+        s223:VariableFrequencyDrive ;
+    rdfs:label "VFD-1R" ;
+    s223:cnx _:N1e809e816278412aafefe13e01a960b4 ;
+    s223:connected _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:connectedThrough _:N1770d91fcd2c4b888b4a07fb37f2b2ae ;
+    s223:connectedTo _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:hasConnectionPoint _:N1e809e816278412aafefe13e01a960b4,
+        _:Nf9796ac17d6a4602907dc09a5695badc .
+
+_:N65c3ceae44bd446c8fe41c4287766884 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "FLT-1.airInlet" ;
+    s223:cnx _:N5165f04475ef46f18ef2155daf456044 ;
+    s223:connectsThrough _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N5165f04475ef46f18ef2155daf456044 ;
+    s223:pairedConnectionPoint _:N791270aaf61247d1a74c2af9a1ad85dd .
+
+_:N6b6c53af13cf42cea45be9db0d0062b9 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-R.electricalInlet" ;
+    s223:cnx _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:connectsThrough _:N1770d91fcd2c4b888b4a07fb37f2b2ae ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf _:N2f09b947d0a74a7a94a5858eb5286288 .
+
+_:N6fcb83a8a798431589a1f6fa059c99ea a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "internalPressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+_:N71dd98f35b224950b40efa910f737ddc a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "CC-1.airInlet" ;
+    s223:cnx _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:connectsThrough _:N9fe44fc42e3b4928a07f958c5485c942 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:pairedConnectionPoint _:N4420f8935d644f6ebaedb231cbbfd785 .
+
+_:N7436965828844015a67733c0e7b23259 a s223:ObservableProperty,
         s223:Property,
         s223:QuantifiableObservableProperty,
         s223:QuantifiableProperty,
@@ -736,16 +494,226 @@ _:Ndeca6a2d689d4b71ac3161a099ee2a29 a s223:ObservableProperty,
     qudt:hasQuantityKind qudtqk:Pressure ;
     qudt:hasUnit unit:PA .
 
-_:Ne0c4c9f018a64def9018d359e01954a2 a s223:ConnectionPoint,
+_:N7627d6eee877479d86cd984c298271c1 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ChilledWaterConnectionPoint ;
+    rdfs:label "CC-1.chilledWaterOutlet" ;
+    s223:hasMedium s223:Water-ChilledWater ;
+    s223:isConnectionPointOf _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:pairedConnectionPoint _:Ned2837c63d4748f5bfdf64276ef3bc79 .
+
+_:N78ebed6124b447df83f39fc40144a143 a s223:Connection ;
+    s223:cnx _:N18b314cba0e14dedaed9a6b5e991ba62 ;
+    s223:connectsAt _:N18b314cba0e14dedaed9a6b5e991ba62,
+        _:Nbf58d2ae2fd44367a46f7527885992a8 ;
+    s223:connectsFrom _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:connectsTo _:N8ef2c3c891cd4dc38b4e341e68412180 ;
+    s223:hasMedium s223:Fluid-Air .
+
+_:N791270aaf61247d1a74c2af9a1ad85dd a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "FLT-1.airOutlet" ;
+    s223:cnx _:N9fe44fc42e3b4928a07f958c5485c942 ;
+    s223:connectsThrough _:N9fe44fc42e3b4928a07f958c5485c942 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N5165f04475ef46f18ef2155daf456044 ;
+    s223:pairedConnectionPoint _:N65c3ceae44bd446c8fe41c4287766884 .
+
+_:N7a543cf99d144e649dd217b9108f6e3a a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-PAF-BAS.airInlet" ;
+    s223:cnx _:N2ee32213540746d28baca083f03182d1 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N2ee32213540746d28baca083f03182d1 ;
+    s223:pairedConnectionPoint _:N587640f4c9df4c049cd9aa643158071d .
+
+_:N7be4ce508683479896409172f84fd8f4 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-A.airInlet" ;
+    s223:cnx _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:connectsThrough _:N0c65a7b405754c2d82e555d6185b1c74 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:pairedConnectionPoint _:Nbf58d2ae2fd44367a46f7527885992a8 .
+
+_:N866c4113db9344a29db792800b5dbdde a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-MELANGE.airInlet" ;
+    s223:cnx _:N3429dd26fa1349d7a7bd2d6c5293aab5 ;
+    s223:connectsThrough _:Nfcf9eb848ebf4a2f9f0d7cb54b6134ec ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N3429dd26fa1349d7a7bd2d6c5293aab5 ;
+    s223:pairedConnectionPoint _:N3490939ef84444a194729361e881ff5c .
+
+_:N8ef2c3c891cd4dc38b4e341e68412180 a s223:Coil,
+        s223:Connectable,
+        s223:Equipment,
+        s223:HeatingCoil ;
+    rdfs:label "HC-1" ;
+    s223:cnx _:N9b819b09b53b4e369b9a04cfd3022d0c,
+        _:Nc7629a442a0747209fc53bd6255b16b7 ;
+    s223:connected _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:connectedFrom _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:connectedThrough _:N78ebed6124b447df83f39fc40144a143,
+        _:Na47b24bb6ae84117aaa47ecd101e7ef7 ;
+    s223:hasConnectionPoint _:N18b314cba0e14dedaed9a6b5e991ba62,
+        _:N9b819b09b53b4e369b9a04cfd3022d0c,
+        _:N9f208bf4f1674a0088fd5422c7b7b9fb,
+        _:Nc7629a442a0747209fc53bd6255b16b7 ;
+    s223:hasProperty _:N51443550e85d4931b4bcb6d25052a78c,
+        _:N608a809f7fd241608a585c83e5ef95d0,
+        _:Ndff7a8a69add49c99a8a2c56a8a8c5f0 ;
+    s223:hasRole s223:Role-Heating ;
+    bob:airInlet _:N18b314cba0e14dedaed9a6b5e991ba62 ;
+    bob:airOutlet _:N9b819b09b53b4e369b9a04cfd3022d0c ;
+    bob:hotWaterInlet _:N9f208bf4f1674a0088fd5422c7b7b9fb ;
+    bob:hotWaterOutlet _:Nc7629a442a0747209fc53bd6255b16b7 .
+
+_:N920a023d05bb430894a1d7014f708e4e a s223:Connection ;
+    rdfs:label "ReturnAir" ;
+    s223:cnx _:Nf693922c3a524d77a06b11b4920da6a3 ;
+    s223:connectsAt _:Nf693922c3a524d77a06b11b4920da6a3 ;
+    s223:connectsTo _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:hasMedium s223:Fluid-Air .
+
+_:N9247139c376b4029a3312e35570cff0b a s223:Connection ;
+    rdfs:label "ExhaustAir" ;
+    s223:cnx _:N93c7f93fee874152ac8e25b8060072ae ;
+    s223:connectsAt _:N93c7f93fee874152ac8e25b8060072ae ;
+    s223:connectsTo _:N36a9fbd21c2343cc9016c634c93c1804 ;
+    s223:hasMedium s223:Fluid-Air .
+
+_:N93c7f93fee874152ac8e25b8060072ae a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-E.airInlet" ;
+    s223:cnx _:N36a9fbd21c2343cc9016c634c93c1804 ;
+    s223:connectsThrough _:N9247139c376b4029a3312e35570cff0b ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N36a9fbd21c2343cc9016c634c93c1804 ;
+    s223:pairedConnectionPoint _:Nbefa98d569364e738fe822da4ae5a13f .
+
+_:N947e1345c3624f9684294d7a056dfad8 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-A.electricalInlet" ;
+    s223:cnx _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:connectsThrough _:N9b87347ab37c4a5c9c25ed654ef6dcd0 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf _:N9fdcb55989c84ff68956ac7e872d20a1 .
+
+_:N9a0a0a0fc3bd4aed8b5ed7551ecf4e7d a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-RETOUR.airOutlet" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N0ac47027377845fea2adcb3380caf997 ;
+    s223:pairedConnectionPoint _:N40ee904a27644e5f8a50e4d9306f6f94 .
+
+_:N9b819b09b53b4e369b9a04cfd3022d0c a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "HC-1.airOutlet" ;
+    s223:cnx _:Na47b24bb6ae84117aaa47ecd101e7ef7 ;
+    s223:connectsThrough _:Na47b24bb6ae84117aaa47ecd101e7ef7 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N8ef2c3c891cd4dc38b4e341e68412180 ;
+    s223:pairedConnectionPoint _:N18b314cba0e14dedaed9a6b5e991ba62 .
+
+_:N9b87347ab37c4a5c9c25ed654ef6dcd0 a s223:Connection ;
+    s223:cnx _:N947e1345c3624f9684294d7a056dfad8 ;
+    s223:connectsAt _:N947e1345c3624f9684294d7a056dfad8,
+        _:Nfda8f6e08fb24a42abd438765513de04 ;
+    s223:connectsFrom _:N61b05b2e0de84d678c019f519dfe353c ;
+    s223:connectsTo _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:hasMedium s223:Constituent-Electricity .
+
+_:N9e598e7b5a9b46619a5164c0c1f16029 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+_:N9f208bf4f1674a0088fd5422c7b7b9fb a s223:ConnectionPoint,
         s223:InletConnectionPoint,
         bob:HotWaterConnectionPoint ;
     rdfs:label "HC-1.hotWaterInlet" ;
-    s223:cnx _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
+    s223:cnx _:N8ef2c3c891cd4dc38b4e341e68412180 ;
     s223:hasMedium s223:Water-HotWater ;
-    s223:isConnectionPointOf _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:pairedConnectionPoint _:Nb23efbdc320a426293adb608cd24a4a3 .
+    s223:isConnectionPointOf _:N8ef2c3c891cd4dc38b4e341e68412180 ;
+    s223:pairedConnectionPoint _:Nc7629a442a0747209fc53bd6255b16b7 .
 
-_:Ne10fb1d291b04fb6859d544e28a33b35 a s223:ObservableProperty,
+_:N9fdcb55989c84ff68956ac7e872d20a1 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan ;
+    rdfs:label "1-A" ;
+    s223:cnx _:Nbf58d2ae2fd44367a46f7527885992a8 ;
+    s223:connected _:N61b05b2e0de84d678c019f519dfe353c,
+        _:N8ef2c3c891cd4dc38b4e341e68412180,
+        _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:connectedFrom _:N61b05b2e0de84d678c019f519dfe353c,
+        _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:connectedThrough _:N0c65a7b405754c2d82e555d6185b1c74,
+        _:N78ebed6124b447df83f39fc40144a143,
+        _:N9b87347ab37c4a5c9c25ed654ef6dcd0 ;
+    s223:connectedTo _:N8ef2c3c891cd4dc38b4e341e68412180 ;
+    s223:hasConnectionPoint _:N7be4ce508683479896409172f84fd8f4,
+        _:N947e1345c3624f9684294d7a056dfad8,
+        _:Nbf58d2ae2fd44367a46f7527885992a8 ;
+    bob:airInlet _:N7be4ce508683479896409172f84fd8f4 ;
+    bob:airOutlet _:Nbf58d2ae2fd44367a46f7527885992a8 .
+
+_:N9fe44fc42e3b4928a07f958c5485c942 a s223:Connection ;
+    s223:cnx _:N71dd98f35b224950b40efa910f737ddc ;
+    s223:connectsAt _:N71dd98f35b224950b40efa910f737ddc,
+        _:N791270aaf61247d1a74c2af9a1ad85dd ;
+    s223:connectsFrom _:N5165f04475ef46f18ef2155daf456044 ;
+    s223:connectsTo _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:hasMedium s223:Fluid-Air .
+
+_:Na1d00e4ba59b453cb8bbeef4336fdafa a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "SDP-1.ObservationPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:PA .
+
+_:Na47b24bb6ae84117aaa47ecd101e7ef7 a s223:Connection ;
+    rdfs:label "SupplyAir" ;
+    s223:connectsAt _:N9b819b09b53b4e369b9a04cfd3022d0c ;
+    s223:connectsFrom _:N8ef2c3c891cd4dc38b4e341e68412180 ;
+    s223:hasMedium s223:Fluid-Air .
+
+_:Na4d02ddb0f424788a3f48dbe1c6d6445 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+_:Naacfb803db964192a6825efe9dcfdd15 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-EVAC.airOutlet" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:Nf1139f1f81d14ece8ad498fc9ab0e6b3 ;
+    s223:pairedConnectionPoint _:N071f35b521f34a34b268366192b54c54 .
+
+_:Nac12fe9872e94c598a4b6ffff556c059 a s223:ObservableProperty,
         s223:Property,
         s223:QuantifiableObservableProperty,
         s223:QuantifiableProperty,
@@ -753,117 +721,149 @@ _:Ne10fb1d291b04fb6859d544e28a33b35 a s223:ObservableProperty,
     rdfs:label "internalTemperature" ;
     qudt:hasQuantityKind qudtqk:Temperature .
 
-_:Ne23d563802b34ebb94e74ba33fc04c3b a s223:Connection ;
-    s223:cnx _:Nf71377ea3d7e484fa6ce000a211e95fc ;
-    s223:connectsAt _:N2ce0717b6b3d4f5e932c9a02ae1667fa,
-        _:Nf71377ea3d7e484fa6ce000a211e95fc ;
-    s223:connectsFrom _:N8197a2faecc4431aa1a7879539bb52d7 ;
-    s223:connectsTo _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:hasMedium s223:Constituent-Electricity .
-
-_:Ne6244824ba894dd48e1a560f5349aa3f a s223:Connection ;
-    rdfs:label "HD-4" ;
-    s223:cnx _:Nf93d5d0d03c44047b8a85d3299320cec ;
-    s223:connectsAt _:N02f2eb56aeb046158284f04b5f1a7c04,
-        _:N21bb9824450d4aff84b8c58d3047e2b1,
-        _:N9e7358c2c061492589ba6c1dedf89c97,
-        _:Nf93d5d0d03c44047b8a85d3299320cec ;
-    s223:connectsFrom _:N8b361bbdbd0c47e0a37193e01faeac4e,
-        _:N9ee3fa49353b42e18de15e45bda1b9df,
-        _:N9f98254637c1471b8d5fc05a17d44139 ;
-    s223:connectsTo _:N3fe0248f59f2470c94e46eb5cf09b5f5 ;
-    s223:hasMedium s223:Fluid-Air .
-
-_:Ne81bd505c7794637bdb488c9c5289a11 a s223:ConnectionPoint,
+_:Nbefa98d569364e738fe822da4ae5a13f a s223:ConnectionPoint,
         s223:OutletConnectionPoint,
         bob:AirConnectionPoint ;
-    rdfs:label "HC-1.airOutlet" ;
-    s223:cnx _:N38ced519d794450ab06cfd9b9659675f ;
-    s223:connectsThrough _:N38ced519d794450ab06cfd9b9659675f ;
+    rdfs:label "1-E.airOutlet" ;
+    s223:cnx _:N5bd1e2fc58e94ea68e34210e1fe703af ;
+    s223:connectsThrough _:N5bd1e2fc58e94ea68e34210e1fe703af ;
     s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N98a90f85d0be41e892dc9b569b5ff3b7 ;
-    s223:pairedConnectionPoint _:Ndd4c4eaeee68487689145cbd82ea8462 .
+    s223:isConnectionPointOf _:N36a9fbd21c2343cc9016c634c93c1804 ;
+    s223:pairedConnectionPoint _:N93c7f93fee874152ac8e25b8060072ae .
 
-_:Nee36d4d34d3046df83aacf4462a1281b a s223:Connectable,
-        s223:Equipment,
-        s223:Fan ;
-    rdfs:label "1-R" ;
-    s223:cnx _:N0917fb9ef14d493aa96cfb74d1f12b99 ;
-    s223:connected _:N8197a2faecc4431aa1a7879539bb52d7 ;
-    s223:connectedFrom _:N8197a2faecc4431aa1a7879539bb52d7 ;
-    s223:connectedThrough _:N3ace6eca4c5c409db0f28707a853e634,
-        _:Na8bf209c48ae4747b4ad16f9259fd27c,
-        _:Ne23d563802b34ebb94e74ba33fc04c3b ;
-    s223:hasConnectionPoint _:N0917fb9ef14d493aa96cfb74d1f12b99,
-        _:N9ca3fa3c598447fca45ac2edd57f8b6c,
-        _:Nf71377ea3d7e484fa6ce000a211e95fc ;
-    bob:airInlet _:N9ca3fa3c598447fca45ac2edd57f8b6c ;
-    bob:airOutlet _:N0917fb9ef14d493aa96cfb74d1f12b99 .
-
-_:Nf0618ad26c904742bd475d2b75efaccd a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
+_:Nbf58d2ae2fd44367a46f7527885992a8 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
         bob:AirConnectionPoint ;
-    rdfs:label "1-A.airInlet" ;
-    s223:cnx _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:connectsThrough _:N4b8ce78ed8db463ba41c047cfe374c71 ;
+    rdfs:label "1-A.airOutlet" ;
+    s223:cnx _:N78ebed6124b447df83f39fc40144a143 ;
+    s223:connectsThrough _:N78ebed6124b447df83f39fc40144a143 ;
     s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N5dd9eaba6ef04712a3bf210d524aa43a ;
-    s223:pairedConnectionPoint _:N7e1cfb6eaab64bf096d951fe44cb401a .
+    s223:isConnectionPointOf _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:pairedConnectionPoint _:N7be4ce508683479896409172f84fd8f4 .
 
-_:Nf463792c2bf341ca87af1d33839ba9c3 a s223:Connectable,
+_:Nbf849d9ce4aa466995dcb7a760063b40 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "MD-PAF-HAUT.airOutlet" ;
+    s223:cnx _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:connectsThrough _:N4e809ea207b141a582fbaeecfe971524 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf _:N07a236d84c3c4548ac6e5775c012e2cc ;
+    s223:pairedConnectionPoint _:N32a86336c2e44937b9fa26328d657813 .
+
+_:Nc1977199c91649439a1b29dd27f956c1 a s223:Coil,
+        s223:Connectable,
+        s223:CoolingCoil,
+        s223:Equipment ;
+    rdfs:label "CC-1" ;
+    s223:cnx _:N4420f8935d644f6ebaedb231cbbfd785,
+        _:N7627d6eee877479d86cd984c298271c1 ;
+    s223:connected _:N5165f04475ef46f18ef2155daf456044,
+        _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:connectedFrom _:N5165f04475ef46f18ef2155daf456044 ;
+    s223:connectedThrough _:N0c65a7b405754c2d82e555d6185b1c74,
+        _:N9fe44fc42e3b4928a07f958c5485c942 ;
+    s223:connectedTo _:N9fdcb55989c84ff68956ac7e872d20a1 ;
+    s223:hasConnectionPoint _:N4420f8935d644f6ebaedb231cbbfd785,
+        _:N71dd98f35b224950b40efa910f737ddc,
+        _:N7627d6eee877479d86cd984c298271c1,
+        _:Ned2837c63d4748f5bfdf64276ef3bc79 ;
+    s223:hasProperty _:N2550dba4ef39443f990ddf18c1867f80,
+        _:N6fcb83a8a798431589a1f6fa059c99ea,
+        _:Nac12fe9872e94c598a4b6ffff556c059 ;
+    s223:hasRole s223:Role-Cooling ;
+    bob:airInlet _:N71dd98f35b224950b40efa910f737ddc ;
+    bob:airOutlet _:N4420f8935d644f6ebaedb231cbbfd785 ;
+    bob:chilledWaterInlet _:Ned2837c63d4748f5bfdf64276ef3bc79 ;
+    bob:chilledWaterOutlet _:N7627d6eee877479d86cd984c298271c1 .
+
+_:Nc7629a442a0747209fc53bd6255b16b7 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:HotWaterConnectionPoint ;
+    rdfs:label "HC-1.hotWaterOutlet" ;
+    s223:hasMedium s223:Water-HotWater ;
+    s223:isConnectionPointOf _:N8ef2c3c891cd4dc38b4e341e68412180 ;
+    s223:pairedConnectionPoint _:N9f208bf4f1674a0088fd5422c7b7b9fb .
+
+_:Ncdc0dd780d97408ea169ccea9eedf451 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "HUM-1.drainOutlet" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf _:N6338f9ad965d45a8bc422ed6ec0c52ee .
+
+_:Ndff7a8a69add49c99a8a2c56a8a8c5f0 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "averageSurfaceTemperature" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+_:Ne71e6320e5174b2e8dc302d864162eef a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "HUM-1.waterInlet" ;
+    s223:cnx _:N6338f9ad965d45a8bc422ed6ec0c52ee ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf _:N6338f9ad965d45a8bc422ed6ec0c52ee .
+
+_:Ned2837c63d4748f5bfdf64276ef3bc79 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ChilledWaterConnectionPoint ;
+    rdfs:label "CC-1.chilledWaterInlet" ;
+    s223:cnx _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:hasMedium s223:Water-ChilledWater ;
+    s223:isConnectionPointOf _:Nc1977199c91649439a1b29dd27f956c1 ;
+    s223:pairedConnectionPoint _:N7627d6eee877479d86cd984c298271c1 .
+
+_:Nf1139f1f81d14ece8ad498fc9ab0e6b3 a s223:Connectable,
         s223:Damper,
         s223:Equipment ;
     rdfs:label "MD-EVAC" ;
-    s223:cnx _:N37943ea621014ab7bfb572ffdf9ca95b ;
-    s223:connectedThrough _:Nfb0c3aa5018f4c8fb171a916be12b8f9 ;
-    s223:hasConnectionPoint _:N37943ea621014ab7bfb572ffdf9ca95b,
-        _:Nae6ed2d220f34cdbbb70745591f900ee ;
-    bob:airInlet _:Nae6ed2d220f34cdbbb70745591f900ee ;
-    bob:airOutlet _:N37943ea621014ab7bfb572ffdf9ca95b .
+    s223:cnx _:Naacfb803db964192a6825efe9dcfdd15 ;
+    s223:connectedThrough _:N5bd1e2fc58e94ea68e34210e1fe703af ;
+    s223:hasConnectionPoint _:N071f35b521f34a34b268366192b54c54,
+        _:Naacfb803db964192a6825efe9dcfdd15 ;
+    bob:airInlet _:N071f35b521f34a34b268366192b54c54 ;
+    bob:airOutlet _:Naacfb803db964192a6825efe9dcfdd15 .
 
-_:Nf4e942d9abc046dca9fc652e285af322 a s223:ConnectionPoint,
+_:Nf693922c3a524d77a06b11b4920da6a3 a s223:ConnectionPoint,
         s223:InletConnectionPoint,
         bob:AirConnectionPoint ;
-    rdfs:label "1-E.airInlet" ;
-    s223:cnx _:Nb55561a728db4af9885f0516a870be19 ;
-    s223:connectsThrough _:Na4e4b4edd93846f1a90d998d3c7fbc83 ;
+    rdfs:label "1-R.airInlet" ;
+    s223:cnx _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:connectsThrough _:N920a023d05bb430894a1d7014f708e4e ;
     s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:Nb55561a728db4af9885f0516a870be19 ;
-    s223:pairedConnectionPoint _:N7d9937780eb74e2da27fa91809816c7a .
+    s223:isConnectionPointOf _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:pairedConnectionPoint _:N1f88ced61deb47ac920ce1935282c776 .
 
-_:Nf71377ea3d7e484fa6ce000a211e95fc a s223:ConnectionPoint,
+_:Nf9796ac17d6a4602907dc09a5695badc a s223:ConnectionPoint,
         s223:InletConnectionPoint,
         bob:ElectricalConnectionPoint ;
-    rdfs:label "1-R.electricalInlet" ;
-    s223:cnx _:Nee36d4d34d3046df83aacf4462a1281b ;
-    s223:connectsThrough _:Ne23d563802b34ebb94e74ba33fc04c3b ;
+    rdfs:label "VFD-1R.electricalInlet" ;
+    s223:cnx _:N634a4c61ee1a421980f2728117a5d733 ;
     s223:hasMedium s223:Constituent-Electricity ;
-    s223:isConnectionPointOf _:Nee36d4d34d3046df83aacf4462a1281b .
+    s223:isConnectionPointOf _:N634a4c61ee1a421980f2728117a5d733 .
 
-_:Nf93d5d0d03c44047b8a85d3299320cec a s223:ConnectionPoint,
-        s223:InletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "FLT-1.airInlet" ;
-    s223:cnx _:N3fe0248f59f2470c94e46eb5cf09b5f5 ;
-    s223:connectsThrough _:Ne6244824ba894dd48e1a560f5349aa3f ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:N3fe0248f59f2470c94e46eb5cf09b5f5 ;
-    s223:pairedConnectionPoint _:Nbc161adf278d4e3a9d54b94253f2d079 .
-
-_:Nfb0c3aa5018f4c8fb171a916be12b8f9 a s223:Connection ;
-    rdfs:label "HD-1" ;
-    s223:cnx _:Nae6ed2d220f34cdbbb70745591f900ee ;
-    s223:connectsAt _:N7d9937780eb74e2da27fa91809816c7a,
-        _:Nae6ed2d220f34cdbbb70745591f900ee ;
-    s223:connectsFrom _:Nb55561a728db4af9885f0516a870be19 ;
-    s223:connectsTo _:Nf463792c2bf341ca87af1d33839ba9c3 ;
+_:Nfcf9eb848ebf4a2f9f0d7cb54b6134ec a s223:Connection ;
+    rdfs:label "HD-2" ;
+    s223:cnx _:N40ee904a27644e5f8a50e4d9306f6f94,
+        _:N866c4113db9344a29db792800b5dbdde ;
+    s223:connectsAt _:N1f88ced61deb47ac920ce1935282c776,
+        _:N40ee904a27644e5f8a50e4d9306f6f94,
+        _:N866c4113db9344a29db792800b5dbdde ;
+    s223:connectsFrom _:N2f09b947d0a74a7a94a5858eb5286288 ;
+    s223:connectsTo _:N0ac47027377845fea2adcb3380caf997,
+        _:N3429dd26fa1349d7a7bd2d6c5293aab5 ;
     s223:hasMedium s223:Fluid-Air .
 
-_:Nfcc530b97ab2478cacbb270fc9af513c a s223:ConnectionPoint,
+_:Nfda8f6e08fb24a42abd438765513de04 a s223:ConnectionPoint,
         s223:OutletConnectionPoint,
-        bob:AirConnectionPoint ;
-    rdfs:label "MD-RETOUR.airOutlet" ;
-    s223:hasMedium s223:Fluid-Air ;
-    s223:isConnectionPointOf _:Ncff63e5401a34f3a803b330209710307 ;
-    s223:pairedConnectionPoint _:N7f33d739e1e5475b969432a439f75b74 .
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "VFD-1A.electricalOutlet" ;
+    s223:cnx _:N9b87347ab37c4a5c9c25ed654ef6dcd0 ;
+    s223:connectsThrough _:N9b87347ab37c4a5c9c25ed654ef6dcd0 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf _:N61b05b2e0de84d678c019f519dfe353c .
 
