@@ -1,0 +1,307 @@
+Name,Target Name,Object Name,Type,Object Type,Inst Num,Value,Export Ord,Export,Fault Cause,Description,BACnet Writable
+analogValue_0,P$20inst$2e$20LTE$20en$20KW,P_inst.LTE_en_KW,Bacnet Analog Value Descriptor,Analog Value,0,"264,22 kW {ok} @ 10",h:50a6,{ok},,,no
+analogValue_1,Puissance$20int$e9gr$e9,Puissance_integre_LTE,Bacnet Analog Value Descriptor,Analog Value,1,"262,00 kW {ok} @ 10",h:598b,{ok},,,no
+analogValue_2,PMS_Battery_SOC1,Battery_SOC,Bacnet Analog Value Descriptor,Analog Value,2,"98,4 % {ok} @ 10",h:2786,{ok},,,no
+analogValue_3,WSetPG,Battery_WSet,Bacnet Analog Value Descriptor,Analog Value,3," -30,0 kW {ok} @ 10",h:34a1,{ok},,,no
+analogValue_100,EngyPosSum,BcpLonNetwork.S16E_L116_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,100,"312,8 kW-hr {ok}",h:936d,{ok},,,no
+analogValue_101,PowerSum,BcpLonNetwork.S16E_L116_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,101,"0,00 W {ok}",h:93bb,{ok},,,no
+analogValue_102,PowerFactorAvg,BcpLonNetwork.S16E_L116_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,102,"1,00 {ok}",h:93bd,{ok},,,no
+analogValue_110,EngyPosSum,BcpLonNetwork.L230_SE1_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,110,"15993,6 kW-hr {ok}",h:93bf,{ok},,,no
+analogValue_111,PowerSum,BcpLonNetwork.L230_SE1_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,111,"0,00 W {ok}",h:93c1,{ok},,,no
+analogValue_112,PowerFactorAvg,BcpLonNetwork.L230_SE1_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,112,"1,00 {ok}",h:93c3,{ok},,,no
+binaryValue_0,Mode$20PMA$20Bacnet,PMA_mode_Bacnet,Bacnet Binary Value Prioritized Descriptor,Binary Value,0,false {ok} @ 10,h:b833,{ok},,,no
+analogValue_11,PMA$20ajust$e9$20Bacnet,PMA_ajuste_Bacnet,Bacnet Analog Value Prioritized Descriptor,Analog Value,11,"416,4 {ok} @ 10",h:b82f,{ok},,,"in8,in10"
+analogValue_12,CRATE$20Bacnet,C_RATE_Bacnet,Bacnet Analog Value Prioritized Descriptor,Analog Value,12,"34,3 {ok} @ 10",h:b831,{ok},,,in10
+analogValue_13,PMA_cible_CAL,PMA_cible_CALENDRIER_prog,Bacnet Analog Value Descriptor,Analog Value,13,"190,0 {ok} @ 10",h:bfa9,{ok},,,no
+analogValue_14,PMA$20ajust$e9,PMA_AJUSTE_prog,Bacnet Analog Value Descriptor,Analog Value,14,"282,19 kW {ok} @ 10",h:b607,{ok},,,no
+analogValue_15,C$2drate,PMA_C_RATE_prog,Bacnet Analog Value Descriptor,Analog Value,15,"50,0 % {ok} @ 10",h:60a0,{ok},,,no
+analogValue_120,EngyPosSum,BcpLonNetwork.Syst13_E2.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,120,"0,0 kW-hr {ok}",h:c36d,{ok},,,no
+analogValue_121,PowerFactorAvg,BcpLonNetwork.Syst13_E2.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,121,"1,00 {ok}",h:c36f,{ok},,,no
+analogValue_122,PowerSum,BcpLonNetwork.Syst13_E2.PowerSum,Bacnet Analog Value Descriptor,Analog Value,122,"0,00 W {ok}",h:c371,{ok},,,no
+analogValue_130,EngyPosSum,BcpLonNetwork.L230_SE2_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,130,"141,9 kW-hr {ok}",h:93c5,{ok},,,no
+analogValue_131,PowerSum,BcpLonNetwork.L230_SE2_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,131,"0,00 W {ok}",h:93c7,{ok},,,no
+analogValue_132,PowerFactorAvg,BcpLonNetwork.L230_SE2_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,132,"1,00 {ok}",h:93c9,{ok},,,no
+analogValue_140,EngyPosSum,BcpLonNetwork.S4E2_L120_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,140,"6410,0 kW-hr {ok}",h:93cb,{ok},,,no
+analogValue_141,PowerSum,BcpLonNetwork.S4E2_L120_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,141,"261,33 W {ok}",h:93cd,{ok},,,no
+analogValue_142,PowerFactorAvg,BcpLonNetwork.S4E2_L120_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,142,"0,88 {ok}",h:93cf,{ok},,,no
+analogValue_150,EngyPosSum,BcpLonNetwork.S14E_L134_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,150,"30206,4 kW-hr {ok}",h:93d1,{ok},,,no
+analogValue_151,PowerSum,BcpLonNetwork.S14E_L134_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,151," -0,60 W {ok}",h:93d3,{ok},,,no
+analogValue_152,PowerFactorAvg,BcpLonNetwork.S14E_L134_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,152,"0,66 {ok}",h:93d5,{ok},,,no
+analogValue_160,EngyPosSum,BcpLonNetwork.S12E1_L138_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,160,"2427,2 kW-hr {ok}",h:93d7,{ok},,,no
+analogValue_161,PowerSum,BcpLonNetwork.S12E1_L138_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,161,"129,98 W {ok}",h:93d9,{ok},,,no
+analogValue_162,PowerFactorAvg,BcpLonNetwork.S12E1_L138_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,162,"0,94 {ok}",h:93db,{ok},,,no
+analogValue_170,EngyPosSum,BcpLonNetwork.L111_119_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,170,"60974,8 kW-hr {ok}",h:93dd,{ok},,,no
+analogValue_171,PowerSum,BcpLonNetwork.L111_119_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,171,"0,00 W {ok}",h:93df,{ok},,,no
+analogValue_172,PowerFactorAvg,BcpLonNetwork.L111_119_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,172,"1,00 {ok}",h:93e1,{ok},,,no
+analogValue_180,EngyPosSum,BcpLonNetwork.L120_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,180,"169894,0 kW-hr {ok}",h:93e3,{ok},,,no
+analogValue_181,PowerSum,BcpLonNetwork.L120_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,181,"6857,98 W {ok}",h:93e5,{ok},,,no
+analogValue_182,PowerFactorAvg,BcpLonNetwork.L120_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,182,"1,00 {ok}",h:93e7,{ok},,,no
+analogValue_190,EngyPosSum,BcpLonNetwork.L128_SE10_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,190,"86439,0 kW-hr {ok}",h:93e9,{ok},,,no
+analogValue_191,PowerSum,BcpLonNetwork.L128_SE10_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,191,"8374,11 W {ok}",h:93eb,{ok},,,no
+analogValue_192,PowerFactorAvg,BcpLonNetwork.L128_SE10_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,192,"1,00 {ok}",h:93ed,{ok},,,no
+analogValue_200,EngyPosSum,BcpLonNetwork.L112A_113_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,200,"30651,0 kW-hr {ok}",h:93ef,{ok},,,no
+analogValue_201,PowerSum,BcpLonNetwork.L112A_113_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,201,"2545,39 W {ok}",h:93f1,{ok},,,no
+analogValue_202,PowerFactorAvg,BcpLonNetwork.L112A_113_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,202,"1,00 {ok}",h:93f3,{ok},,,no
+analogValue_210,EngyPosSum,BcpLonNetwork.L136_NI.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,210,"36830,3 kW-hr {ok}",h:93f5,{ok},,,no
+analogValue_211,PowerSum,BcpLonNetwork.L136_NI.PowerSum,Bacnet Analog Value Descriptor,Analog Value,211,"603,43 W {ok}",h:93f7,{ok},,,no
+analogValue_212,PowerFactorAvg,BcpLonNetwork.L136_NI.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,212,"1,00 {ok}",h:93f9,{ok},,,no
+analogValue_220,EngyPosSum,BcpLonNetwork.L101_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,220,"32263,9 kW-hr {ok}",h:93fb,{ok},,,no
+analogValue_221,PowerSum,BcpLonNetwork.L101_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,221,"0,00 W {ok}",h:93fd,{ok},,,no
+analogValue_222,PowerFactorAvg,BcpLonNetwork.L101_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,222,"1,00 {ok}",h:93ff,{ok},,,no
+analogValue_230,EngyPosSum,BcpLonNetwork.L107_L109_ESCPRINC_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,230,"113007,8 kW-hr {ok}",h:9401,{ok},,,no
+analogValue_231,PowerSum,BcpLonNetwork.L107_L109_ESCPRINC_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,231,"1048,52 W {ok}",h:9403,{ok},,,no
+analogInput_232,PowerFactorAvg,BcpLonNetwork.L107_L109_ESCPRINC_CP.PowerFactorAvg,Bacnet Analog Input Descriptor,Analog Input,232,"1,00 {ok}",h:9405,{ok},,,no
+analogValue_240,EngyPosSum,BcpLonNetwork.L113_ECS3_CP_L112A_113_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,240,"12418,1 kW-hr {ok}",h:9407,{ok},,,no
+analogValue_241,PowerSum,BcpLonNetwork.L113_ECS3_CP_L112A_113_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,241,"11,74 W {ok}",h:9409,{ok},,,no
+analogValue_242,PowerFactorAvg,BcpLonNetwork.L113_ECS3_CP_L112A_113_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,242,"1,00 {ok}",h:940b,{ok},,,no
+analogValue_250,EngyPosSum,BcpLonNetwork.L110B_SE11_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,250,"1577,7 kW-hr {ok}",h:940d,{ok},,,no
+analogValue_251,PowerSum,BcpLonNetwork.L110B_SE11_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,251,"8,70 W {ok}",h:940f,{ok},,,no
+analogValue_252,PowerFactorAvg,BcpLonNetwork.L110B_SE11_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,252,"0,29 {ok}",h:9411,{ok},,,no
+analogValue_260,EngyPosSum,BcpLonNetwork.L121_132_AER_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,260,"61312,7 kW-hr {ok}",h:9413,{ok},,,no
+analogValue_261,PowerSum,BcpLonNetwork.L121_132_AER_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,261,"0,00 W {ok}",h:9415,{ok},,,no
+analogValue_262,PowerFactorAvg,BcpLonNetwork.L121_132_AER_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,262,"0,00 {ok}",h:9417,{ok},,,no
+analogValue_270,EngyPosSum,BcpLonNetwork.L125_126_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,270,"169252,4 kW-hr {ok}",h:9419,{ok},,,no
+analogValue_271,PowerSum,BcpLonNetwork.L125_126_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,271,"5923,30 W {ok}",h:941b,{ok},,,no
+analogValue_272,PowerFactorAvg,BcpLonNetwork.L125_126_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,272,"1,00 {ok}",h:941d,{ok},,,no
+analogValue_280,EngyPosSum,BcpLonNetwork.L132A_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,280,"59718,4 kW-hr {ok}",h:941f,{ok},,,no
+analogValue_281,PowerSum,BcpLonNetwork.L132A_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,281,"2332,53 W {ok}",h:9421,{ok},,,no
+analogValue_282,PowerFactorAvg,BcpLonNetwork.L132A_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,282,"1,00 {ok}",h:9423,{ok},,,no
+analogValue_290,EngyPosSum,BcpLonNetwork.L105_108B_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,290,"35170,3 kW-hr {ok}",h:9425,{ok},,,no
+analogValue_291,PowerSum,BcpLonNetwork.L105_108B_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,291,"360,19 W {ok}",h:9427,{ok},,,no
+analogValue_292,PowerFactorAvg,BcpLonNetwork.L105_108B_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,292,"1,00 {ok}",h:9429,{ok},,,no
+analogValue_300,EngyPosSum,BcpLonNetwork.L118B_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,300,"40182,5 kW-hr {ok}",h:942b,{ok},,,no
+analogValue_301,PowerSum,BcpLonNetwork.L118B_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,301,"0,00 W {ok}",h:942d,{ok},,,no
+analogValue_302,PowerFactorAvg,BcpLonNetwork.L118B_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,302,"1,00 {ok}",h:942f,{ok},,,no
+analogValue_310,EngyPosSum,BcpLonNetwork.L102_103_ESC2_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,310,"56108,0 kW-hr {ok}",h:9431,{ok},,,no
+analogValue_311,PowerSum,BcpLonNetwork.L102_103_ESC2_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,311,"1838,20 W {ok}",h:9433,{ok},,,no
+analogValue_312,PowerFactorAvg,BcpLonNetwork.L102_103_ESC2_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,312,"1,00 {ok}",h:9435,{ok},,,no
+analogValue_320,EngyPosSum,BcpLonNetwork.L116_117B_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,320,"14244,3 kW-hr {ok}",h:9437,{ok},,,no
+analogValue_321,PowerSum,BcpLonNetwork.L116_117B_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,321,"0,00 W {ok}",h:9439,{ok},,,no
+analogValue_322,PowerFactorAvg,BcpLonNetwork.L116_117B_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,322,"1,00 {ok}",h:943b,{ok},,,no
+analogValue_330,EngyPosSum,BcpLonNetwork.L108A_108D_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,330,"17642,1 kW-hr {ok}",h:943d,{ok},,,no
+analogValue_331,PowerSum,BcpLonNetwork.L108A_108D_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,331,"88,54 W {ok}",h:943f,{ok},,,no
+analogValue_332,PowerFactorAvg,BcpLonNetwork.L108A_108D_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,332,"1,00 {ok}",h:9441,{ok},,,no
+analogValue_340,EngyPosSum,BcpLonNetwork.S4E3_L126_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,340,"1324,7 kW-hr {ok}",h:9443,{ok},,,no
+analogValue_341,PowerSum,BcpLonNetwork.S4E3_L126_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,341,"5,02 W {ok}",h:9445,{ok},,,no
+analogValue_342,PowerFactorAvg,BcpLonNetwork.S4E3_L126_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,342,"0,59 {ok}",h:9447,{ok},,,no
+analogValue_350,EngyPosSum,BcpLonNetwork.L206C_D_E_SE18_17_13_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,350,"1,1 kW-hr {ok}",h:a66f,{ok},,,no
+analogValue_351,PowerSum,BcpLonNetwork.L206C_D_E_SE18_17_13_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,351,"0,00 W {ok}",h:a671,{ok},,,no
+analogValue_352,PowerFactorAvg,BcpLonNetwork.L206C_D_E_SE18_17_13_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,352,"1,00 {ok}",h:a673,{ok},,,no
+analogValue_360,EngyPosSum,BcpLonNetwork.L110F_128A_129_130_141_ESC4_SE23_24_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,360,"202,5 kW-hr {ok}",h:a675,{ok},,,no
+analogValue_361,PowerSum,BcpLonNetwork.L110F_128A_129_130_141_ESC4_SE23_24_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,361,"3,67 W {ok}",h:a677,{ok},,,no
+analogValue_362,PowerFactorAvg,BcpLonNetwork.L110F_128A_129_130_141_ESC4_SE23_24_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,362,"0,45 {ok}",h:a679,{ok},,,no
+analogValue_370,EngyPosSum,BcpLonNetwork.L224_S11E_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,370,"168580,5 kW-hr {down}",h:a67b,{ok},,,no
+analogValue_371,PowerSum,BcpLonNetwork.L224_S11E_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,371,"0,00 W {down}",h:a67d,{ok},,,no
+analogValue_372,PowerFactorAvg,BcpLonNetwork.L224_S11E_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,372,"1,00 {down}",h:a67f,{ok},,,no
+analogValue_380,EngyPosSum,BcpLonNetwork.L225_S10E_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,380,"1,3 kW-hr {down}",h:a681,{ok},,,no
+analogValue_381,PowerSum,BcpLonNetwork.L225_S10E_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,381,"0,00 W {down}",h:a683,{ok},,,no
+analogValue_382,PowerFactorAvg,BcpLonNetwork.L225_S10E_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,382,"1,00 {down}",h:a685,{ok},,,no
+analogValue_390,EngyPosSum,BcpLonNetwork.S3E1_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,390,"54481,1 kW-hr {ok}",h:a687,{ok},,,no
+analogValue_391,PowerSum,BcpLonNetwork.S3E1_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,391,"582,99 W {ok}",h:a689,{ok},,,no
+analogValue_392,PowerFactorAvg,BcpLonNetwork.S3E1_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,392,"0,62 {ok}",h:a68b,{ok},,,no
+analogValue_400,EngyPosSum,BcpLonNetwork.S3E2_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,400,"44289,9 kW-hr {ok}",h:a68d,{ok},,,no
+analogValue_401,PowerSum,BcpLonNetwork.S3E2_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,401,"488,72 W {ok}",h:a68f,{ok},,,no
+analogValue_402,PowerFactorAvg,BcpLonNetwork.S3E2_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,402,"0,55 {ok}",h:a691,{ok},,,no
+analogValue_410,EngyPosSum,BcpLonNetwork.S3E3_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,410,"64411,8 kW-hr {ok}",h:a693,{ok},,,no
+analogValue_411,PowerSum,BcpLonNetwork.S3E3_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,411,"857,76 W {ok}",h:a695,{ok},,,no
+analogValue_412,PowerFactorAvg,BcpLonNetwork.S3E3_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,412,"0,80 {ok}",h:a697,{ok},,,no
+analogValue_420,EngyPosSum,BcpLonNetwork.S3E8_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,420,"22,2 kW-hr {ok}",h:a699,{ok},,,no
+analogValue_421,PowerSum,BcpLonNetwork.S3E8_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,421,"0,00 W {ok}",h:a69b,{ok},,,no
+analogValue_422,PowerFactorAvg,BcpLonNetwork.S3E8_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,422,"1,00 {ok}",h:a69d,{ok},,,no
+analogValue_430,EngyPosSum,BcpLonNetwork.S3E_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,430,"24001,3 kW-hr {ok}",h:a69f,{ok},,,no
+analogValue_431,PowerSum,BcpLonNetwork.S3E_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,431,"276,85 W {ok}",h:a6a1,{ok},,,no
+analogValue_432,PowerFactorAvg,BcpLonNetwork.S3E_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,432,"0,96 {ok}",h:a6a3,{ok},,,no
+analogValue_440,EngyPosSum,BcpLonNetwork.S2_HUM.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,440,"93174,4 kW-hr {ok}",h:a6a5,{ok},,,no
+analogValue_441,PowerSum,BcpLonNetwork.S2_HUM.PowerSum,Bacnet Analog Value Descriptor,Analog Value,441,"0,00 W {ok}",h:a6a7,{ok},,,no
+analogValue_442,PowerFactorAvg,BcpLonNetwork.S2_HUM.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,442,"0,00 {ok}",h:a6a9,{ok},,,no
+analogValue_450,EngyPosSum,BcpLonNetwork.S1_HUM.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,450,"242480,3 kW-hr {ok}",h:a6ab,{ok},,,no
+analogValue_451,PowerSum,BcpLonNetwork.S1_HUM.PowerSum,Bacnet Analog Value Descriptor,Analog Value,451,"10018,19 W {ok}",h:a6ad,{ok},,,no
+analogValue_452,PowerFactorAvg,BcpLonNetwork.S1_HUM.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,452,"1,00 {ok}",h:a6af,{ok},,,no
+analogValue_460,EngyPosSum,BcpLonNetwork.L206B_SE14_1_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,460,"94569,2 kW-hr {ok}",h:a6b1,{ok},,,no
+analogValue_461,PowerSum,BcpLonNetwork.L206B_SE14_1_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,461,"1323,75 W {ok}",h:a6b3,{ok},,,no
+analogValue_462,PowerFactorAvg,BcpLonNetwork.L206B_SE14_1_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,462,"1,00 {ok}",h:a6b5,{ok},,,no
+analogValue_470,EngyPosSum,BcpLonNetwork.L206A_SE14_2_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,470,"16479,0 kW-hr {ok}",h:a6b7,{ok},,,no
+analogValue_471,PowerSum,BcpLonNetwork.L206A_SE14_2_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,471,"13,77 W {ok}",h:a6b9,{ok},,,no
+analogValue_472,PowerFactorAvg,BcpLonNetwork.L206A_SE14_2_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,472,"0,55 {ok}",h:a6bb,{ok},,,no
+analogValue_480,EngyPosSum,BcpLonNetwork.L201A_CCT7_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,480,"41935,4 kW-hr {ok}",h:a6bd,{ok},,,no
+analogValue_481,PowerSum,BcpLonNetwork.L201A_CCT7_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,481,"0,00 W {ok}",h:a6bf,{ok},,,no
+analogValue_482,PowerFactorAvg,BcpLonNetwork.L201A_CCT7_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,482,"1,00 {ok}",h:a6c1,{ok},,,no
+analogValue_490,EngyPosSum,BcpLonNetwork.L201A_CCT9_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,490,"40467,0 kW-hr {ok}",h:a6c3,{ok},,,no
+analogValue_491,PowerSum,BcpLonNetwork.L201A_CCT9_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,491,"0,00 W {ok}",h:a6c5,{ok},,,no
+analogValue_492,PowerFactorAvg,BcpLonNetwork.L201A_CCT9_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,492,"1,00 {ok}",h:a6c7,{ok},,,no
+analogValue_500,EngyPosSum,BcpLonNetwork.L207_208_213_221_222_ESC3_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,500,"3761,1 kW-hr {ok}",h:a6c9,{ok},,,no
+analogValue_501,PowerSum,BcpLonNetwork.L207_208_213_221_222_ESC3_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,501,"0,00 W {ok}",h:a6cb,{ok},,,no
+analogValue_502,PowerFactorAvg,BcpLonNetwork.L207_208_213_221_222_ESC3_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,502,"0,00 {ok}",h:a6cd,{ok},,,no
+analogValue_510,EngyPosSum,BcpLonNetwork.L227_235_236_ESC4_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,510,"42233,8 kW-hr {ok}",h:a6cf,{ok},,,no
+analogValue_511,PowerSum,BcpLonNetwork.L227_235_236_ESC4_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,511,"462,12 W {ok}",h:a6d1,{ok},,,no
+analogValue_512,PowerFactorAvg,BcpLonNetwork.L227_235_236_ESC4_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,512,"1,00 {ok}",h:a6d3,{ok},,,no
+analogValue_520,EngyPosSum,BcpLonNetwork.L226A_226B_SE15_16_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,520,"4947,8 kW-hr {ok}",h:a6d5,{ok},,,no
+analogValue_521,PowerSum,BcpLonNetwork.L226A_226B_SE15_16_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,521,"0,00 W {ok}",h:a6d7,{ok},,,no
+analogValue_522,PowerFactorAvg,BcpLonNetwork.L226A_226B_SE15_16_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,522,"1,00 {ok}",h:a6d9,{ok},,,no
+analogValue_530,EngyPosSum,BcpLonNetwork.L209_210B_210C_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,530,"33602,7 kW-hr {ok}",h:a6db,{ok},,,no
+analogValue_531,PowerSum,BcpLonNetwork.L209_210B_210C_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,531,"1183,81 W {ok}",h:a6dd,{ok},,,no
+analogValue_532,PowerFactorAvg,BcpLonNetwork.L209_210B_210C_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,532,"1,00 {ok}",h:a6df,{ok},,,no
+analogValue_540,EngyPosSum,BcpLonNetwork.L212_217_218_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,540,"3268,4 kW-hr {ok}",h:a6e1,{ok},,,no
+analogValue_541,PowerSum,BcpLonNetwork.L212_217_218_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,541,"1200,88 W {ok}",h:a6e3,{ok},,,no
+analogValue_542,PowerFactorAvg,BcpLonNetwork.L212_217_218_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,542,"1,00 {ok}",h:a6e5,{ok},,,no
+analogValue_550,EngyPosSum,BcpLonNetwork.L202_203_205E_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,550,"7866,1 kW-hr {ok}",h:a6e7,{ok},,,no
+analogValue_551,PowerSum,BcpLonNetwork.L202_203_205E_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,551,"0,00 W {ok}",h:a6e9,{ok},,,no
+analogValue_552,PowerFactorAvg,BcpLonNetwork.L202_203_205E_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,552,"1,00 {ok}",h:a6eb,{ok},,,no
+analogValue_560,EngyPosSum,BcpLonNetwork.L206C_D_E_SE18_17_13_SE_2.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,560,"21248,3 kW-hr {ok}",h:a6ed,{ok},,,no
+analogValue_561,PowerSum,BcpLonNetwork.L206C_D_E_SE18_17_13_SE_2.PowerSum,Bacnet Analog Value Descriptor,Analog Value,561,"2603,48 W {ok}",h:a6ef,{ok},,,no
+analogValue_562,PowerFactorAvg,BcpLonNetwork.L206C_D_E_SE18_17_13_SE_2.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,562,"0,91 {ok}",h:a6f1,{ok},,,no
+analogValue_570,EngyPosSum,BcpLonNetwork.L204_205A_ESC2_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,570,"14760,3 kW-hr {ok}",h:a6f3,{ok},,,no
+analogValue_571,PowerSum,BcpLonNetwork.L204_205A_ESC2_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,571,"0,00 W {ok}",h:a6f5,{ok},,,no
+analogValue_572,PowerFactorAvg,BcpLonNetwork.L204_205A_ESC2_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,572,"1,00 {ok}",h:a6f7,{ok},,,no
+analogValue_580,EngyPosSum,BcpLonNetwork.L219_220_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,580,"10349,9 kW-hr {ok}",h:a6f9,{ok},,,no
+analogValue_581,PowerSum,BcpLonNetwork.L219_220_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,581,"874,10 W {ok}",h:a6fb,{ok},,,no
+analogValue_582,PowerFactorAvg,BcpLonNetwork.L219_220_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,582,"1,00 {ok}",h:a6fd,{ok},,,no
+analogValue_590,EngyPosSum,BcpLonNetwork.L205B_CP.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,590,"5946,2 kW-hr {ok}",h:a6ff,{ok},,,no
+analogValue_591,PowerSum,BcpLonNetwork.L205B_CP.PowerSum,Bacnet Analog Value Descriptor,Analog Value,591,"0,00 W {ok}",h:a701,{ok},,,no
+analogValue_592,PowerFactorAvg,BcpLonNetwork.L205B_CP.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,592,"1,00 {ok}",h:a703,{ok},,,no
+analogValue_600,EngyPosSum,BcpLonNetwork.S3R_V_R.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,600,"278046,4 kW-hr {ok}",h:a705,{ok},,,no
+analogValue_601,PowerSum,BcpLonNetwork.S3R_V_R.PowerSum,Bacnet Analog Value Descriptor,Analog Value,601,"4235,50 W {ok}",h:a707,{ok},,,no
+analogValue_602,PowerFactorAvg,BcpLonNetwork.S3R_V_R.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,602,"0,99 {ok}",h:a709,{ok},,,no
+analogValue_610,EngyPosSum,BcpLonNetwork.S2R_V_R.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,610,"46442,9 kW-hr {ok}",h:a70b,{ok},,,no
+analogValue_611,PowerSum,BcpLonNetwork.S2R_V_R.PowerSum,Bacnet Analog Value Descriptor,Analog Value,611,"802,05 W {ok}",h:a70d,{ok},,,no
+analogValue_612,PowerFactorAvg,BcpLonNetwork.S2R_V_R.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,612,"0,99 {ok}",h:a70f,{ok},,,no
+analogValue_620,EngyPosSum,BcpLonNetwork.S3A_V_A.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,620,"1021164,4 kW-hr {ok}",h:a711,{ok},,,no
+analogValue_621,PowerSum,BcpLonNetwork.S3A_V_A.PowerSum,Bacnet Analog Value Descriptor,Analog Value,621,"13619,18 W {ok}",h:a713,{ok},,,no
+analogValue_622,PowerFactorAvg,BcpLonNetwork.S3A_V_A.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,622,"0,99 {ok}",h:a715,{ok},,,no
+analogValue_630,EngyPosSum,BcpLonNetwork.S1A_V_A.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,630,"104064,6 kW-hr {ok}",h:a717,{ok},,,no
+analogValue_631,PowerSum,BcpLonNetwork.S1A_V_A.PowerSum,Bacnet Analog Value Descriptor,Analog Value,631,"1694,38 W {ok}",h:a719,{ok},,,no
+analogValue_632,PowerFactorAvg,BcpLonNetwork.S1A_V_A.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,632,"0,99 {ok}",h:a71b,{ok},,,no
+analogValue_640,EngyPosSum,BcpLonNetwork.S1R_V_R.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,640,"44614,3 kW-hr {ok}",h:a71d,{ok},,,no
+analogValue_641,PowerSum,BcpLonNetwork.S1R_V_R.PowerSum,Bacnet Analog Value Descriptor,Analog Value,641,"696,95 W {ok}",h:a71f,{ok},,,no
+analogValue_642,PowerFactorAvg,BcpLonNetwork.S1R_V_R.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,642,"0,99 {ok}",h:a721,{ok},,,no
+analogValue_650,EngyPosSum,BcpLonNetwork.S2A_V_A.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,650,"49837,1 kW-hr {ok}",h:a723,{ok},,,no
+analogValue_651,PowerSum,BcpLonNetwork.S2A_V_A.PowerSum,Bacnet Analog Value Descriptor,Analog Value,651,"661,49 W {ok}",h:a725,{ok},,,no
+analogValue_652,PowerFactorAvg,BcpLonNetwork.S2A_V_A.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,652,"0,99 {ok}",h:a727,{ok},,,no
+analogValue_660,EngyPosSum,BcpLonNetwork.S3_HUM.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,660,"201183,6 kW-hr {ok}",h:a729,{ok},,,no
+analogValue_661,PowerSum,BcpLonNetwork.S3_HUM.PowerSum,Bacnet Analog Value Descriptor,Analog Value,661,"0,00 W {ok}",h:a72b,{ok},,,no
+analogValue_662,PowerFactorAvg,BcpLonNetwork.S3_HUM.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,662,"1,00 {ok}",h:a72d,{ok},,,no
+analogValue_670,EngyPosSum,BcpLonNetwork.REFG_REF.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,670,"139674,9 kW-hr {ok}",h:a72f,{ok},,,no
+analogValue_671,PowerSum,BcpLonNetwork.REFG_REF.PowerSum,Bacnet Analog Value Descriptor,Analog Value,671,"0,00 W {ok}",h:a731,{ok},,,no
+analogValue_672,PowerFactorAvg,BcpLonNetwork.REFG_REF.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,672,"1,00 {ok}",h:a733,{ok},,,no
+analogValue_680,EngyPosSum,BcpLonNetwork.S3_SE3_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,680,"1132624,9 kW-hr {ok}",h:a735,{ok},,,no
+analogValue_681,PowerSum,BcpLonNetwork.S3_SE3_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,681," -4559,17 W {ok}",h:a737,{ok},,,no
+analogValue_682,PowerFactorAvg,BcpLonNetwork.S3_SE3_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,682," -0,33 {ok}",h:a739,{ok},,,no
+analogValue_690,EngyPosSum,BcpLonNetwork.S3E4_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,690,"9,8 kW-hr {ok}",h:a73b,{ok},,,no
+analogValue_691,PowerSum,BcpLonNetwork.S3E4_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,691,"0,00 W {ok}",h:a73d,{ok},,,no
+analogValue_692,PowerFactorAvg,BcpLonNetwork.S3E4_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,692,"1,00 {ok}",h:a73f,{ok},,,no
+analogValue_700,EngyPosSum,BcpLonNetwork.S3E6_V_E.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,700,"56,7 kW-hr {ok}",h:a741,{ok},,,no
+analogValue_701,PowerSum,BcpLonNetwork.S3E6_V_E.PowerSum,Bacnet Analog Value Descriptor,Analog Value,701,"0,00 W {ok}",h:a743,{ok},,,no
+analogValue_702,PowerFactorAvg,BcpLonNetwork.S3E6_V_E.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,702,"1,00 {ok}",h:a745,{ok},,,no
+analogValue_710,EngyPosSum,BcpLonNetwork.L121_AC.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,710,"13419,5 kW-hr {ok}",h:a747,{ok},,,no
+analogValue_711,PowerSum,BcpLonNetwork.L121_AC.PowerSum,Bacnet Analog Value Descriptor,Analog Value,711,"78,81 W {ok}",h:a749,{ok},,,no
+analogValue_712,PowerFactorAvg,BcpLonNetwork.L121_AC.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,712,"0,58 {ok}",h:a74b,{ok},,,no
+analogValue_720,EngyPosSum,BcpLonNetwork.L116_AC.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,720,"45,1 kW-hr {ok}",h:a74d,{ok},,,no
+analogValue_721,PowerSum,BcpLonNetwork.L116_AC.PowerSum,Bacnet Analog Value Descriptor,Analog Value,721,"8,61 W {ok}",h:a74f,{ok},,,no
+analogValue_722,PowerFactorAvg,BcpLonNetwork.L116_AC.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,722,"0,57 {ok}",h:a751,{ok},,,no
+analogValue_730,EngyPosSum,BcpLonNetwork.L110A2_110C_SE21_19_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,730,"13594,5 kW-hr {ok}",h:a753,{ok},,,no
+analogValue_731,PowerSum,BcpLonNetwork.L110A2_110C_SE21_19_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,731,"885,67 W {ok}",h:a755,{ok},,,no
+analogValue_732,PowerFactorAvg,BcpLonNetwork.L110A2_110C_SE21_19_SE.points.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,732,"1,00 {ok}",h:a757,{ok},,,no
+analogValue_740,EngyPosSum,BcpLonNetwork.L110A1_SE22_SE.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,740,"3602,1 kW-hr {ok}",h:a759,{ok},,,no
+analogValue_741,PowerSum,BcpLonNetwork.L110A1_SE22_SE.PowerSum,Bacnet Analog Value Descriptor,Analog Value,741,"904,37 W {ok}",h:a75b,{ok},,,no
+analogValue_742,PowerFactorAvg,BcpLonNetwork.L110A1_SE22_SE.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,742,"1,00 {ok}",h:a75d,{ok},,,no
+analogValue_750,EngyPosSum,BcpLonNetwork.S12A_VSE_A.EngyPosSum,Bacnet Analog Value Descriptor,Analog Value,750,"4236,0 kW-hr {ok}",h:a75f,{ok},,,no
+analogValue_751,PowerSum,BcpLonNetwork.S12A_VSE_A.PowerSum,Bacnet Analog Value Descriptor,Analog Value,751,"0,00 W {ok}",h:a761,{ok},,,no
+analogValue_752,PowerFactorAvg,BcpLonNetwork.S12A_VSE_A.PowerFactorAvg,Bacnet Analog Value Descriptor,Analog Value,752,"1,00 {ok}",h:a763,{ok},,,no
+analogValue_5,WHAvail,WHAvail,Bacnet Analog Value Descriptor,Analog Value,5,174 kW-hr {ok} @ 10,h:34c2,{ok},,,no
+analogValue_6,PcMinChargeBatGdp,PcMinChargeBatGdp,Bacnet Analog Value Descriptor,Analog Value,6,"20,0 % {ok} @ def",h:34c9,{ok},,,no
+analogValue_7,WHRtg,WHRtg,Bacnet Analog Value Descriptor,Analog Value,7,186 kW-hr {ok} @ 10,h:34cb,{ok},,,no
+analogValue_8,WSetGdp,WSetGdp,Bacnet Analog Value Descriptor,Analog Value,8,"0,0 kW {ok} @ 10",h:34d3,{ok},,,no
+analogValue_9,WDisChaRteMax,WDisChaRteMax,Bacnet Analog Value Descriptor,Analog Value,9,"93,0 kW {ok} @ 10",h:34ef,{ok},,,no
+analogValue_10,KwhDispoGdp,KwhDispoGdp,Bacnet Analog Value Descriptor,Analog Value,10,"136,8 kW-hr {ok} @ 10",h:34f9,{ok},,,no
+analogValue_16,Nb_Heure_Hilo_AM,Nb_Heure_Hilo_AM,Bacnet Analog Value Descriptor,Analog Value,16,3 hr {ok} @ 10,h:64e6,{ok},,,no
+analogValue_17,Nb_Heure_Hilo_PM,Nb_Heure_Hilo_PM,Bacnet Analog Value Descriptor,Analog Value,17,4 hr {ok} @ 10,h:64e8,{ok},,,no
+analogValue_4,TEMP_M35_Hilo,TEMP_M35_Hilo,Bacnet Analog Value Descriptor,Analog Value,4,"100,0 {ok} @ def",h:64f1,{ok},,,no
+binaryValue_1,ModeHiloActif,ModeHiloActif,Bacnet Binary Value Descriptor,Binary Value,1,Non {overridden} @ 8,h:6503,{ok},,,no
+binaryValue_2,ModeGdpActif,ModeGdpActif,Bacnet Binary Value Descriptor,Binary Value,2,Non {ok} @ 10,h:2d0b,{ok},,,no
+analogValue_19,Peak_Jan,Peak_Jan,Bacnet Analog Value Descriptor,Analog Value,19,517 kW {ok} @ 10,h:5c79,{ok},,,no
+analogValue_20,Peak_Fev,Peak_Fev,Bacnet Analog Value Descriptor,Analog Value,20,556 kW {ok} @ 10,h:5c7b,{ok},,,no
+analogValue_21,Peak_Mar,Peak_Mar,Bacnet Analog Value Descriptor,Analog Value,21,465 kW {ok} @ 10,h:5c7d,{ok},,,no
+analogValue_22,Peak_Avr,Peak_Avr,Bacnet Analog Value Descriptor,Analog Value,22,306 kW {ok} @ 10,h:5c7f,{ok},,,no
+analogValue_23,Peak_Mai,Peak_Mai,Bacnet Analog Value Descriptor,Analog Value,23,296 kW {ok} @ 10,h:5c81,{ok},,,no
+analogValue_24,Peak_Jun,Peak_Jun,Bacnet Analog Value Descriptor,Analog Value,24,380 kW {ok} @ 10,h:5c83,{ok},,,no
+analogValue_25,Peak_Jui,Peak_Jui,Bacnet Analog Value Descriptor,Analog Value,25,345 kW {ok} @ 10,h:5c85,{ok},,,no
+analogValue_26,Peak_Aou,Peak_Aou,Bacnet Analog Value Descriptor,Analog Value,26,334 kW {ok} @ 10,h:5c87,{ok},,,no
+analogValue_27,Peak_Sep,Peak_Sep,Bacnet Analog Value Descriptor,Analog Value,27,305 kW {ok} @ 10,h:5c89,{ok},,,no
+analogValue_28,Peak_Oct,Peak_Oct,Bacnet Analog Value Descriptor,Analog Value,28,305 kW {ok} @ 10,h:5c8b,{ok},,,no
+analogValue_29,Peak_Nov,Peak_Nov,Bacnet Analog Value Descriptor,Analog Value,29,345 kW {ok} @ 10,h:5c8d,{ok},,,no
+analogValue_30,Peak_Dec,Peak_Dec,Bacnet Analog Value Descriptor,Analog Value,30,537 kW {ok} @ 10,h:5c8f,{ok},,,no
+analogValue_31,Kwh_JourAct,Kwh_JourAct,Bacnet Analog Value Descriptor,Analog Value,31,3065 kW-hr {ok} @ 10,h:5c96,{ok},,,no
+analogValue_32,Kwh_JourDernier,Kwh_JourDernier,Bacnet Analog Value Descriptor,Analog Value,32,5084 kW-hr {ok} @ 10,h:5c9a,{ok},,,no
+analogValue_33,Peak_JourDernier,Peak_JourDernier,Bacnet Analog Value Descriptor,Analog Value,33,376 kW {ok} @ 10,h:5c9e,{ok},,,no
+analogValue_34,Peak_Jour,Peak_Jour,Bacnet Analog Value Descriptor,Analog Value,34,321 kW {ok} @ 10,h:5ca2,{ok},,,no
+analogValue_18,KW$20total$20LTE,KW_total_LTE,Bacnet Analog Value Descriptor,Analog Value,18,3395690 kW-hr {ok} @ 10,h:5d05,{ok},,,no
+analogValue_36,Ajustement$20Pmax,MargeSecurite,Bacnet Analog Value Descriptor,Analog Value,36,"5,0 % {overridden} @ 8",h:5ab4,{ok},,,no
+analogValue_38,PcDechargeMax$20LTE1$20selon$20C$2drate,PcDechargeMax_LTE1_selon_C_rate,Bacnet Analog Value Descriptor,Analog Value,38,"93,0 kW {ok} @ 10",h:609e,{ok},,,no
+analogValue_35,Capacit$e9$20de$20la$20batterie1,Capacite_de_la_batterie1,Bacnet Analog Value Descriptor,Analog Value,35,"174,0 kW-hr {ok} @ 10",h:60a2,{ok},,,no
+analogValue_39,PcKwMoisActuel,PMA_CIBLE_MAX_Mois_Actuel,Bacnet Analog Value Descriptor,Analog Value,39,200 kW {ok} @ 10,h:5b09,{ok},,,no
+PMA_ACTIVE,Pc_kW_MoisAct,PMA_ACTIVE,Bacnet Analog Value Prioritized Descriptor,Analog Value,41,"371,58 kW {ok} @ 10",h:5ac9,{ok},,,no
+analogValue_42,LTE_KW_Integree_15M_plus_P_Bat,LTE_KW_Integree_15M_plus_P_Bat,Bacnet Analog Value Descriptor,Analog Value,42,"265,527 kW {ok} @ 10",h:e8e0,{ok},,,no
+analogValue_43,Seuil_recharge,Seuil_recharge,Bacnet Analog Value Descriptor,Analog Value,43,"363,38 kW {ok}",h:fef6,{ok},,,no
+analogValue_44,Marge_de_controle,Marge_de_controle,Bacnet Analog Value Descriptor,Analog Value,44,"363,3800 kW {ok}",h:fdc5,{ok},,,no
+analogValue_45,Marge_ajustement_positif,Marge_ajustement_positif,Bacnet Analog Value Descriptor,Analog Value,45,"379,78 kW {ok}",h:14163,{ok},,,no
+analogValue_46,LTE_KW_Integree_15M,LTE_KW_Integree_15M_PG,Bacnet Analog Value Descriptor,Analog Value,46,"265,482 kW {ok} @ 10",h:6366,{ok},,,no
+analogValue_47,W,DER_Measure_AC.W,Bacnet Analog Value Descriptor,Analog Value,47,"0,0 kW {ok}",h:23b8,{ok},,,no
+PMA_cible_Bacnet,PMA_cible_Bacnet,PMA_cible_Bacnet,Bacnet Analog Value Prioritized Descriptor,Analog Value,40,"371,6 kW {ok} @ 10",h:d6a9,{ok},,,in10
+analogValue_48,Invalid Ord!,TEXT_MEEB1,Bacnet Analog Value Descriptor,Analog Value,48,Invalid Ord!,h:1437c,{fault},Cannot find exported point,,no
+analogValue_49,LTE_P_INT_00H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_00H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,49,"212,27 {ok} @ def",h:14768,{ok},,,no
+analogValue_50,LTE_P_INT_01H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_01H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,50,"212,39 {ok} @ def",h:1476c,{ok},,,no
+analogValue_51,LTE_P_INT_02H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_02H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,51,"214,02 {ok} @ def",h:14770,{ok},,,no
+analogValue_52,LTE_P_INT_03H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_03H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,52,"230,70 {ok} @ def",h:14774,{ok},,,no
+analogValue_53,LTE_P_INT_04H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_04H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,53,"295,42 {ok} @ def",h:14778,{ok},,,no
+analogValue_54,LTE_P_INT_05H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_05H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,54,"304,46 {ok} @ def",h:1477c,{ok},,,no
+analogValue_55,LTE_P_INT_06H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_06H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,55,"305,88 {ok} @ def",h:14780,{ok},,,no
+analogValue_56,LTE_P_INT_07H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_07H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,56,"324,21 {ok} @ def",h:14784,{ok},,,no
+analogValue_57,LTE_P_INT_08H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_08H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,57,"322,39 {ok} @ def",h:14788,{ok},,,no
+analogValue_58,LTE_P_INT_09H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_09H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,58,"313,63 {ok} @ def",h:1478c,{ok},,,no
+analogValue_59,LTE_P_INT_10H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_10H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,59,"301,64 {ok} @ def",h:14790,{ok},,,no
+analogValue_60,LTE_P_INT_11H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_11H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,60,"285,33 {ok} @ def",h:14794,{ok},,,no
+analogValue_61,LTE_P_INT_12H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_12H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,61,"283,35 {ok} @ def",h:14798,{ok},,,no
+analogValue_62,LTE_P_INT_13H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_13H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,62,"270,55 {ok} @ def",h:1479c,{ok},,,no
+analogValue_63,LTE_P_INT_14H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_14H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,63,"267,60 {ok} @ def",h:147a0,{ok},,,no
+analogValue_64,LTE_P_INT_15H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_15H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,64,"255,13 {ok} @ def",h:147a4,{ok},,,no
+analogValue_65,LTE_P_INT_16H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_16H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,65,"266,07 {ok} @ def",h:147a8,{ok},,,no
+analogValue_66,LTE_P_INT_17H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_17H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,66,"249,57 {ok} @ def",h:147ac,{ok},,,no
+analogValue_67,LTE_P_INT_18H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_18H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,67,"258,04 {ok} @ def",h:147b0,{ok},,,no
+analogValue_68,LTE_P_INT_19H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_19H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,68,"175,28 {ok} @ def",h:147b4,{ok},,,no
+analogValue_69,LTE_P_INT_20H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_20H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,69,"181,23 {ok} @ def",h:147b8,{ok},,,no
+analogValue_70,LTE_P_INT_21H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_21H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,70,"172,93 {ok} @ def",h:147bc,{ok},,,no
+analogValue_71,LTE_P_INT_22H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_22H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,71,"161,78 {ok} @ def",h:147c0,{ok},,,no
+analogValue_72,LTE_P_INT_23H_J_PREC,Programmation.LTE_P_INT_J_PRECEDENT.LTE_P_INT_23H_J_PREC,Bacnet Analog Value Descriptor,Analog Value,72,"155,10 {ok} @ def",h:147c4,{ok},,,no
+analogValue_37,Kp,Programmation.GestionPMA LTE.Kp,Bacnet Analog Value Descriptor,Analog Value,37,"16,129 {ok} @ 10",h:10d24,{ok},,,no
+analogValue_73,LTE_P_INT_00H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_00H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,73,"231,3 {ok} @ def",h:1489f,{ok},,,no
+analogValue_74,LTE_P_INT_01H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_01H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,74,"231,5 {ok} @ def",h:148a4,{ok},,,no
+analogValue_75,LTE_P_INT_02H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_02H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,75,"263,2 {ok} @ def",h:148a9,{ok},,,no
+analogValue_76,LTE_P_INT_03H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_03H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,76,"249,9 {ok} @ def",h:148ae,{ok},,,no
+analogValue_77,LTE_P_INT_04H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_04H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,77,"266,9 {ok} @ def",h:148b3,{ok},,,no
+analogValue_78,LTE_P_INT_05H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_05H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,78,"342,9 {ok} @ def",h:148b8,{ok},,,no
+analogValue_79,LTE_P_INT_06H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_06H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,79,"338,4 {ok} @ def",h:148bd,{ok},,,no
+analogValue_80,LTE_P_INT_07H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_07H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,80,"402,4 {ok} @ def",h:148c2,{ok},,,no
+analogValue_81,LTE_P_INT_08H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_08H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,81,"391,7 {ok} @ def",h:148c7,{ok},,,no
+analogValue_82,LTE_P_INT_09H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_09H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,82,"377,7 {ok} @ def",h:148cc,{ok},,,no
+analogValue_83,LTE_P_INT_10H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_10H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,83,"366,1 {ok} @ def",h:148d1,{ok},,,no
+analogValue_84,LTE_P_INT_11H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_11H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,84,"334,0 {ok} @ def",h:148d6,{ok},,,no
+analogValue_85,LTE_P_INT_12H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_12H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,85,"328,6 {ok} @ def",h:148db,{ok},,,no
+analogValue_86,LTE_P_INT_13H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_13H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,86,"349,0 {ok} @ def",h:148e0,{ok},,,no
+analogValue_87,LTE_P_INT_14H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_14H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,87,"317,5 {ok} @ def",h:148e5,{ok},,,no
+analogValue_88,LTE_P_INT_15H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_15H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,88,"320,8 {ok} @ def",h:148ea,{ok},,,no
+analogValue_89,LTE_P_INT_16H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_16H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,89,"248,1 {ok} @ def",h:148ef,{ok},,,no
+analogValue_90,LTE_P_INT_17H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_17H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,90,"248,1 {ok} @ def",h:148f4,{ok},,,no
+analogValue_91,LTE_P_INT_18H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_18H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,91,"248,1 {ok} @ def",h:148f9,{ok},,,no
+analogValue_92,LTE_P_INT_19H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_19H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,92,"248,1 {ok} @ def",h:148fe,{ok},,,no
+analogValue_93,LTE_P_INT_20H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_20H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,93,"248,1 {ok} @ def",h:14903,{ok},,,no
+analogValue_94,LTE_P_INT_21H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_21H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,94,"248,1 {ok} @ def",h:14908,{ok},,,no
+analogValue_95,LTE_P_INT_22H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_22H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,95,"248,1 {ok} @ def",h:1490d,{ok},,,no
+analogValue_96,LTE_P_INT_23H_DIMANCHE,Programmation.LTE_P_INT_DIMANCHE.LTE_P_INT_23H_DIMANCHE,Bacnet Analog Value Descriptor,Analog Value,96,"248,1 {ok} @ def",h:14912,{ok},,,no
+analogValue_97,GDP_HEURE_DEBUT_AM_API,Programmation.GDP.GDP_HEURE_DEBUT_AM_API,Bacnet Analog Value Prioritized Descriptor,Analog Value,97,"6,0 {ok} @ 10",h:199de,{ok},,,in10
+analogValue_98,GDP_HEURE_FIN_AM_API,Programmation.GDP.GDP_HEURE_FIN_AM_API,Bacnet Analog Value Prioritized Descriptor,Analog Value,98,"9,0 {ok} @ 10",h:199e0,{ok},,,in10
+analogValue_99,GDP_JOUR_API,Programmation.GDP.GDP_JOUR_API,Bacnet Analog Value Prioritized Descriptor,Analog Value,99,"12,0 {ok} @ 10",h:199e9,{ok},,,in10
+analogValue_103,GDP_MOIS_API,Programmation.GDP.GDP_MOIS_API,Bacnet Analog Value Prioritized Descriptor,Analog Value,103,"2,0 {ok} @ 10",h:199eb,{ok},,,in10
+analogValue_104,GDP_ANNEE_API,Programmation.GDP.GDP_ANNEE_API,Bacnet Analog Value Prioritized Descriptor,Analog Value,104,"2025,0 {ok} @ 10",h:199ed,{ok},,,in10
+analogValue_105,GDP_HEURE_DEBUT_PM_API,Programmation.GDP.GDP_HEURE_DEBUT_PM_API,Bacnet Analog Value Prioritized Descriptor,Analog Value,105,"16,0 {ok} @ 10",h:199fa,{ok},,,in10
+analogValue_106,GDP_HEURE_FIN_PM_API,Programmation.GDP.GDP_HEURE_FIN_PM_API,Bacnet Analog Value Prioritized Descriptor,Analog Value,106,"20,0 {ok} @ 10",h:199fd,{ok},,,in10
+analogValue_107,Pmax_predit,Programmation.Ajustement_Pmax_decharge.Pmax_predit,Bacnet Analog Value Prioritized Descriptor,Analog Value,107,"414,2 {ok} @ 10",h:19bf0,{ok},,,in10

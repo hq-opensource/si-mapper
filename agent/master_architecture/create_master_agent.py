@@ -37,7 +37,7 @@ def create_inner_master_agent(
     return main_loop
 
 
-def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAgent] = None) -> LlmAgent:
+def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAgent] = None, mcp_tools: list = None) -> LlmAgent:
     """Creates the Master orchestrator agent hierarchy."""
     logger.debug(f"Creating Master Orchestrator for session {session_id}")
 
@@ -76,8 +76,8 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
     
     # --- Ontology sub-agents (flat, master sequences them) ---
     ontology_subagents = [
-        OntologyGeneratorAgent(model_name=model_name),
-        OntologyValidatorAgent(model_name=model_name),
+        OntologyGeneratorAgent(model_name=model_name, tools=mcp_tools or []),
+        OntologyValidatorAgent(model_name=model_name, tools=mcp_tools or []),
     ]
     all_subagents = (subagents or []) + ontology_subagents
 

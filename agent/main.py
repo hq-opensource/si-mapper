@@ -64,6 +64,7 @@ def create_app() -> FastAPI:
     master_agent = create_master_agent(
         session_id=session_id,
         model_name=SHARED_ADK_MODEL,
+        mcp_tools=[si_mapper_toolset],
     )
 
     # 3. Wrap with ADK
