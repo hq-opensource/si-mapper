@@ -1,0 +1,961 @@
+@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
+@prefix bob: <http://data.ashrae.org/standard223/si-builder#> .
+@prefix ontology: <urn:223p:ontology/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix qudtqk: <http://qudt.org/vocab/quantitykind/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+ontology:00001 a s223:System ;
+    rdfs:label "AHU-1 System" ;
+    s223:hasMember ontology:00008,
+        ontology:00011,
+        ontology:00014,
+        ontology:00017,
+        ontology:00020,
+        ontology:00024,
+        ontology:00028,
+        ontology:00032,
+        ontology:00035,
+        ontology:00038,
+        ontology:00041,
+        ontology:00049,
+        ontology:00057,
+        ontology:00062,
+        ontology:00064,
+        ontology:00066,
+        ontology:00067,
+        ontology:00072,
+        ontology:00078,
+        ontology:00080,
+        ontology:00082 .
+
+ontology:00002 a s223:Connection ;
+    rdfs:label "OutdoorAir" ;
+    s223:cnx ontology:00009,
+        ontology:00012 ;
+    s223:connectsAt ontology:00009,
+        ontology:00012 ;
+    s223:connectsTo ontology:00008,
+        ontology:00011 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00003 a s223:Connection ;
+    rdfs:label "ReturnAirFromZone" ;
+    s223:cnx ontology:00025 ;
+    s223:connectsAt ontology:00025 ;
+    s223:connectsTo ontology:00024 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00004 a s223:Connection ;
+    rdfs:label "ReturnAir" ;
+    s223:cnx ontology:00018 ;
+    s223:connectsAt ontology:00018,
+        ontology:00026 ;
+    s223:connectsFrom ontology:00024 ;
+    s223:connectsTo ontology:00017 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00005 a s223:Connection ;
+    rdfs:label "MixedAir" ;
+    s223:cnx ontology:00039 ;
+    s223:connectsAt ontology:00010,
+        ontology:00013,
+        ontology:00039 ;
+    s223:connectsFrom ontology:00008,
+        ontology:00011 ;
+    s223:connectsTo ontology:00038 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00006 a s223:Connection ;
+    rdfs:label "SupplyAir" ;
+    s223:connectsAt ontology:00022 ;
+    s223:connectsFrom ontology:00020 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00007 a s223:Connection ;
+    rdfs:label "ExhaustAir" ;
+    s223:connectsAt ontology:00030 ;
+    s223:connectsFrom ontology:00028 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00008 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment ;
+    rdfs:label "D-FA1" ;
+    s223:cnx ontology:00010 ;
+    s223:connectedThrough ontology:00002,
+        ontology:00005 ;
+    s223:hasConnectionPoint ontology:00009,
+        ontology:00010 ;
+    bob:airInlet ontology:00009 ;
+    bob:airOutlet ontology:00010 .
+
+ontology:00009 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "D-FA1.airInlet" ;
+    s223:cnx ontology:00008 ;
+    s223:connectsThrough ontology:00002 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00008 ;
+    s223:pairedConnectionPoint ontology:00010 .
+
+ontology:00010 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "D-FA1.airOutlet" ;
+    s223:cnx ontology:00005 ;
+    s223:connectsThrough ontology:00005 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00008 ;
+    s223:pairedConnectionPoint ontology:00009 .
+
+ontology:00011 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment ;
+    rdfs:label "D-FA2" ;
+    s223:cnx ontology:00013 ;
+    s223:connectedThrough ontology:00002,
+        ontology:00005 ;
+    s223:hasConnectionPoint ontology:00012,
+        ontology:00013 ;
+    bob:airInlet ontology:00012 ;
+    bob:airOutlet ontology:00013 .
+
+ontology:00012 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "D-FA2.airInlet" ;
+    s223:cnx ontology:00011 ;
+    s223:connectsThrough ontology:00002 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00011 ;
+    s223:pairedConnectionPoint ontology:00013 .
+
+ontology:00013 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "D-FA2.airOutlet" ;
+    s223:cnx ontology:00005 ;
+    s223:connectsThrough ontology:00005 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00011 ;
+    s223:pairedConnectionPoint ontology:00012 .
+
+ontology:00014 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment ;
+    rdfs:label "D-MIX" ;
+    s223:cnx ontology:00016 ;
+    s223:hasConnectionPoint ontology:00015,
+        ontology:00016 ;
+    bob:airInlet ontology:00015 ;
+    bob:airOutlet ontology:00016 .
+
+ontology:00015 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "D-MIX.airInlet" ;
+    s223:cnx ontology:00014 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00014 ;
+    s223:pairedConnectionPoint ontology:00016 .
+
+ontology:00016 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "D-MIX.airOutlet" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00014 ;
+    s223:pairedConnectionPoint ontology:00015 .
+
+ontology:00017 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment ;
+    rdfs:label "D-EXH" ;
+    s223:cnx ontology:00019 ;
+    s223:connected ontology:00028 ;
+    s223:connectedThrough ontology:00004,
+        ontology:00083 ;
+    s223:connectedTo ontology:00028 ;
+    s223:hasConnectionPoint ontology:00018,
+        ontology:00019 ;
+    bob:airInlet ontology:00018 ;
+    bob:airOutlet ontology:00019 .
+
+ontology:00018 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "D-EXH.airInlet" ;
+    s223:cnx ontology:00017 ;
+    s223:connectsThrough ontology:00004 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00017 ;
+    s223:pairedConnectionPoint ontology:00019 .
+
+ontology:00019 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "D-EXH.airOutlet" ;
+    s223:cnx ontology:00083 ;
+    s223:connectsThrough ontology:00083 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00017 ;
+    s223:pairedConnectionPoint ontology:00018 .
+
+ontology:00020 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan ;
+    rdfs:label "1-A" ;
+    s223:cnx ontology:00022 ;
+    s223:connected ontology:00032,
+        ontology:00049 ;
+    s223:connectedFrom ontology:00032,
+        ontology:00049 ;
+    s223:connectedThrough ontology:00006,
+        ontology:00086,
+        ontology:00087 ;
+    s223:hasConnectionPoint ontology:00021,
+        ontology:00022,
+        ontology:00023 ;
+    bob:airInlet ontology:00021 ;
+    bob:airOutlet ontology:00022 .
+
+ontology:00021 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-A.airInlet" ;
+    s223:cnx ontology:00020 ;
+    s223:connectsThrough ontology:00086 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00020 ;
+    s223:pairedConnectionPoint ontology:00022 .
+
+ontology:00022 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-A.airOutlet" ;
+    s223:cnx ontology:00006 ;
+    s223:connectsThrough ontology:00006 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00020 ;
+    s223:pairedConnectionPoint ontology:00021 .
+
+ontology:00023 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-A.electricalInlet" ;
+    s223:cnx ontology:00020 ;
+    s223:connectsThrough ontology:00087 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf ontology:00020 .
+
+ontology:00024 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan ;
+    rdfs:label "1-R" ;
+    s223:cnx ontology:00026 ;
+    s223:connected ontology:00035 ;
+    s223:connectedFrom ontology:00035 ;
+    s223:connectedThrough ontology:00003,
+        ontology:00004,
+        ontology:00088 ;
+    s223:hasConnectionPoint ontology:00025,
+        ontology:00026,
+        ontology:00027 ;
+    bob:airInlet ontology:00025 ;
+    bob:airOutlet ontology:00026 .
+
+ontology:00025 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-R.airInlet" ;
+    s223:cnx ontology:00024 ;
+    s223:connectsThrough ontology:00003 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00024 ;
+    s223:pairedConnectionPoint ontology:00026 .
+
+ontology:00026 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-R.airOutlet" ;
+    s223:cnx ontology:00004 ;
+    s223:connectsThrough ontology:00004 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00024 ;
+    s223:pairedConnectionPoint ontology:00025 .
+
+ontology:00027 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-R.electricalInlet" ;
+    s223:cnx ontology:00024 ;
+    s223:connectsThrough ontology:00088 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf ontology:00024 .
+
+ontology:00028 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan ;
+    rdfs:label "1-E" ;
+    s223:cnx ontology:00030 ;
+    s223:connected ontology:00017 ;
+    s223:connectedFrom ontology:00017 ;
+    s223:connectedThrough ontology:00007,
+        ontology:00083 ;
+    s223:hasConnectionPoint ontology:00029,
+        ontology:00030,
+        ontology:00031 ;
+    bob:airInlet ontology:00029 ;
+    bob:airOutlet ontology:00030 .
+
+ontology:00029 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-E.airInlet" ;
+    s223:cnx ontology:00028 ;
+    s223:connectsThrough ontology:00083 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00028 ;
+    s223:pairedConnectionPoint ontology:00030 .
+
+ontology:00030 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-E.airOutlet" ;
+    s223:cnx ontology:00007 ;
+    s223:connectsThrough ontology:00007 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00028 ;
+    s223:pairedConnectionPoint ontology:00029 .
+
+ontology:00031 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-E.electricalInlet" ;
+    s223:cnx ontology:00028 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf ontology:00028 .
+
+ontology:00032 a s223:Connectable,
+        s223:Controller,
+        s223:Equipment,
+        s223:VariableFrequencyDrive ;
+    rdfs:label "VFD-1-A" ;
+    s223:cnx ontology:00034 ;
+    s223:connected ontology:00020 ;
+    s223:connectedThrough ontology:00087 ;
+    s223:connectedTo ontology:00020 ;
+    s223:hasConnectionPoint ontology:00033,
+        ontology:00034 .
+
+ontology:00033 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "VFD-1-A.electricalInlet" ;
+    s223:cnx ontology:00032 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf ontology:00032 .
+
+ontology:00034 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "VFD-1-A.electricalOutlet" ;
+    s223:cnx ontology:00087 ;
+    s223:connectsThrough ontology:00087 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf ontology:00032 .
+
+ontology:00035 a s223:Connectable,
+        s223:Controller,
+        s223:Equipment,
+        s223:VariableFrequencyDrive ;
+    rdfs:label "VFD-1-R" ;
+    s223:cnx ontology:00037 ;
+    s223:connected ontology:00024 ;
+    s223:connectedThrough ontology:00088 ;
+    s223:connectedTo ontology:00024 ;
+    s223:hasConnectionPoint ontology:00036,
+        ontology:00037 .
+
+ontology:00036 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "VFD-1-R.electricalInlet" ;
+    s223:cnx ontology:00035 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf ontology:00035 .
+
+ontology:00037 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "VFD-1-R.electricalOutlet" ;
+    s223:cnx ontology:00088 ;
+    s223:connectsThrough ontology:00088 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf ontology:00035 .
+
+ontology:00038 a s223:Connectable,
+        s223:Equipment,
+        s223:Filter ;
+    rdfs:label "FLT-1" ;
+    s223:cnx ontology:00040 ;
+    s223:connected ontology:00041 ;
+    s223:connectedThrough ontology:00005,
+        ontology:00084 ;
+    s223:connectedTo ontology:00041 ;
+    s223:hasConnectionPoint ontology:00039,
+        ontology:00040 ;
+    bob:airInlet ontology:00039 ;
+    bob:airOutlet ontology:00040 .
+
+ontology:00039 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "FLT-1.airInlet" ;
+    s223:cnx ontology:00038 ;
+    s223:connectsThrough ontology:00005 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00038 ;
+    s223:pairedConnectionPoint ontology:00040 .
+
+ontology:00040 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "FLT-1.airOutlet" ;
+    s223:cnx ontology:00084 ;
+    s223:connectsThrough ontology:00084 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00038 ;
+    s223:pairedConnectionPoint ontology:00039 .
+
+ontology:00041 a s223:Coil,
+        s223:Connectable,
+        s223:CoolingCoil,
+        s223:Equipment ;
+    rdfs:label "CC-1" ;
+    s223:cnx ontology:00043,
+        ontology:00045 ;
+    s223:connected ontology:00038,
+        ontology:00049 ;
+    s223:connectedFrom ontology:00038 ;
+    s223:connectedThrough ontology:00084,
+        ontology:00085 ;
+    s223:connectedTo ontology:00049 ;
+    s223:hasConnectionPoint ontology:00042,
+        ontology:00043,
+        ontology:00044,
+        ontology:00045 ;
+    s223:hasProperty ontology:00046,
+        ontology:00047,
+        ontology:00048 ;
+    s223:hasRole s223:Role-Cooling ;
+    bob:airInlet ontology:00042 ;
+    bob:airOutlet ontology:00043 ;
+    bob:chilledWaterInlet ontology:00044 ;
+    bob:chilledWaterOutlet ontology:00045 .
+
+ontology:00042 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "CC-1.airInlet" ;
+    s223:cnx ontology:00041 ;
+    s223:connectsThrough ontology:00084 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00041 ;
+    s223:pairedConnectionPoint ontology:00043 .
+
+ontology:00043 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "CC-1.airOutlet" ;
+    s223:cnx ontology:00085 ;
+    s223:connectsThrough ontology:00085 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00041 ;
+    s223:pairedConnectionPoint ontology:00042 .
+
+ontology:00044 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ChilledWaterConnectionPoint ;
+    rdfs:label "CC-1.chilledWaterInlet" ;
+    s223:cnx ontology:00041 ;
+    s223:hasMedium s223:Water-ChilledWater ;
+    s223:isConnectionPointOf ontology:00041 ;
+    s223:pairedConnectionPoint ontology:00045 .
+
+ontology:00045 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ChilledWaterConnectionPoint ;
+    rdfs:label "CC-1.chilledWaterOutlet" ;
+    s223:hasMedium s223:Water-ChilledWater ;
+    s223:isConnectionPointOf ontology:00041 ;
+    s223:pairedConnectionPoint ontology:00044 .
+
+ontology:00046 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "averageSurfaceTemperature" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+ontology:00047 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "internalPressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+ontology:00048 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "internalTemperature" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+ontology:00049 a s223:Connectable,
+        s223:ElectricResistanceElement,
+        s223:Equipment ;
+    rdfs:label "HC-1" ;
+    s223:cnx ontology:00051 ;
+    s223:connected ontology:00020,
+        ontology:00041 ;
+    s223:connectedFrom ontology:00041 ;
+    s223:connectedThrough ontology:00085,
+        ontology:00086 ;
+    s223:connectedTo ontology:00020 ;
+    s223:hasConnectionPoint ontology:00050,
+        ontology:00051,
+        ontology:00052 ;
+    s223:hasProperty ontology:00053,
+        ontology:00054,
+        ontology:00055,
+        ontology:00056 ;
+    s223:hasRole s223:Role-Heating ;
+    bob:airInlet ontology:00050 ;
+    bob:airOutlet ontology:00051 .
+
+ontology:00050 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "HC-1.airInlet" ;
+    s223:cnx ontology:00049 ;
+    s223:connectsThrough ontology:00085 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00049 ;
+    s223:pairedConnectionPoint ontology:00051 .
+
+ontology:00051 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "HC-1.airOutlet" ;
+    s223:cnx ontology:00086 ;
+    s223:connectsThrough ontology:00086 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf ontology:00049 ;
+    s223:pairedConnectionPoint ontology:00050 .
+
+ontology:00052 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint,
+        bob:Electricity_600VLL_3Ph_60HzConnectionPoint ;
+    rdfs:label "HC-1.electricalInlet" ;
+    s223:cnx ontology:00049 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf ontology:00049 .
+
+ontology:00053 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "amps" ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+ontology:00054 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+ontology:00055 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "modulation" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+ontology:00056 a s223:ActuatableProperty,
+        s223:EnumerableProperty,
+        s223:EnumeratedActuatableProperty,
+        s223:Property ;
+    rdfs:label "onOffCommand" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+ontology:00057 a s223:Connectable,
+        s223:Equipment,
+        s223:Humidifier ;
+    rdfs:label "HUM-1" ;
+    s223:cnx ontology:00058,
+        ontology:00060 ;
+    s223:hasConnectionPoint ontology:00058,
+        ontology:00059,
+        ontology:00060 ;
+    bob:drainOutlet ontology:00060 ;
+    bob:steamOutlet ontology:00058 ;
+    bob:waterInlet ontology:00059 .
+
+ontology:00058 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:SteamConnectionPoint ;
+    rdfs:label "HUM-1.steamOutlet" ;
+    s223:hasMedium s223:Water-Steam ;
+    s223:isConnectionPointOf ontology:00057 .
+
+ontology:00059 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "HUM-1.waterInlet" ;
+    s223:cnx ontology:00057 ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf ontology:00057 .
+
+ontology:00060 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "HUM-1.drainOutlet" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf ontology:00057 .
+
+ontology:00061 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:hasExternalReference ontology:00089 ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+ontology:00062 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor,
+        s223:TemperatureSensor,
+        bob:AirTemperatureSensor ;
+    rdfs:label "ST-MIX" ;
+    s223:hasObservationLocation ontology:00005 ;
+    s223:hasProperty ontology:00061 ;
+    s223:observes ontology:00061 .
+
+ontology:00063 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:hasExternalReference ontology:00090 ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+ontology:00064 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor,
+        s223:TemperatureSensor,
+        bob:AirTemperatureSensor ;
+    rdfs:label "ST-SUP" ;
+    s223:hasObservationLocation ontology:00006 ;
+    s223:hasProperty ontology:00063 ;
+    s223:observes ontology:00063 .
+
+ontology:00065 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:hasExternalReference ontology:00091 ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+ontology:00066 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor,
+        s223:TemperatureSensor,
+        bob:AirTemperatureSensor ;
+    rdfs:label "ST-RET" ;
+    s223:hasObservationLocation ontology:00004 ;
+    s223:hasProperty ontology:00065 ;
+    s223:observes ontology:00065 .
+
+ontology:00067 a s223:Connectable,
+        s223:Equipment,
+        s223:PressureSensor,
+        s223:Sensor ;
+    rdfs:label "SDP-FLT" ;
+    s223:hasObservationLocation ontology:00039 ;
+    s223:hasProperty ontology:00068,
+        ontology:00069,
+        ontology:00070 ;
+    s223:hasReferenceLocation ontology:00040 ;
+    s223:observes ontology:00068 ;
+    bob:differential_static_pressure ontology:00068 ;
+    bob:hasReferenceLocation ontology:00040 ;
+    bob:observation_pressure ontology:00069 ;
+    bob:reference_pressure ontology:00070 .
+
+ontology:00068 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:DifferentialStaticPressure ;
+    rdfs:label "SDP-FLT.DifferentialStaticPressure" ;
+    s223:hasExternalReference ontology:00094 ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:ForcePerArea ;
+    qudt:hasUnit unit:IN_WG ;
+    qudt:isDeltaQuantity true .
+
+ontology:00069 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "SDP-FLT.ObservationPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+ontology:00070 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "SDP-FLT.ReferencePressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+ontology:00071 a s223:Function ;
+    rdfs:label "differential calculation" ;
+    s223:hasInput ontology:00069,
+        ontology:00070 ;
+    s223:hasOutput ontology:00068 ;
+    rdfs:comment "Will output High minus Low" .
+
+ontology:00072 a s223:Connectable,
+        s223:Equipment,
+        s223:PressureSensor,
+        s223:Sensor ;
+    rdfs:label "SSP-SUP" ;
+    s223:hasObservationLocation ontology:00006 ;
+    s223:hasProperty ontology:00073,
+        ontology:00074,
+        ontology:00075 ;
+    s223:observes ontology:00073 ;
+    bob:differential_static_pressure ontology:00073 ;
+    bob:observation_pressure ontology:00074 ;
+    bob:reference_pressure ontology:00075 .
+
+ontology:00073 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:DifferentialStaticPressure ;
+    rdfs:label "SSP-SUP.DifferentialStaticPressure" ;
+    s223:hasExternalReference ontology:00093 ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:ForcePerArea ;
+    qudt:hasUnit unit:IN_WG ;
+    qudt:isDeltaQuantity true .
+
+ontology:00074 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "SSP-SUP.ObservationPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+ontology:00075 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "SSP-SUP.ReferencePressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+ontology:00076 a s223:Function ;
+    rdfs:label "differential calculation" ;
+    s223:hasInput ontology:00074,
+        ontology:00075 ;
+    s223:hasOutput ontology:00073 ;
+    rdfs:comment "Will output High minus Low" .
+
+ontology:00077 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:hasExternalReference ontology:00095 ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+ontology:00078 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor,
+        s223:TemperatureSensor,
+        bob:AirTemperatureSensor ;
+    rdfs:label "SLL-1" ;
+    s223:hasObservationLocation ontology:00006 ;
+    s223:hasProperty ontology:00077 ;
+    s223:observes ontology:00077 .
+
+ontology:00079 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RelativeHumidity ;
+    rdfs:label "observed_property" ;
+    s223:hasExternalReference ontology:00092 ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:RelativeHumidity ;
+    qudt:hasUnit unit:PERCENT_RH .
+
+ontology:00080 a s223:Connectable,
+        s223:Equipment,
+        s223:HumiditySensor,
+        s223:Sensor ;
+    rdfs:label "SH-RET" ;
+    s223:hasObservationLocation ontology:00004 ;
+    s223:hasProperty ontology:00079 ;
+    s223:observes ontology:00079 .
+
+ontology:00081 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RelativeHumidity ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:RelativeHumidity ;
+    qudt:hasUnit unit:PERCENT_RH .
+
+ontology:00082 a s223:Connectable,
+        s223:Equipment,
+        s223:HumiditySensor,
+        s223:Sensor ;
+    rdfs:label "SH-SUP" ;
+    s223:hasObservationLocation ontology:00006 ;
+    s223:hasProperty ontology:00081 ;
+    s223:observes ontology:00081 .
+
+ontology:00083 a s223:Connection ;
+    s223:cnx ontology:00029 ;
+    s223:connectsAt ontology:00019,
+        ontology:00029 ;
+    s223:connectsFrom ontology:00017 ;
+    s223:connectsTo ontology:00028 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00084 a s223:Connection ;
+    s223:cnx ontology:00042 ;
+    s223:connectsAt ontology:00040,
+        ontology:00042 ;
+    s223:connectsFrom ontology:00038 ;
+    s223:connectsTo ontology:00041 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00085 a s223:Connection ;
+    s223:cnx ontology:00050 ;
+    s223:connectsAt ontology:00043,
+        ontology:00050 ;
+    s223:connectsFrom ontology:00041 ;
+    s223:connectsTo ontology:00049 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00086 a s223:Connection ;
+    s223:cnx ontology:00021 ;
+    s223:connectsAt ontology:00021,
+        ontology:00051 ;
+    s223:connectsFrom ontology:00049 ;
+    s223:connectsTo ontology:00020 ;
+    s223:hasMedium s223:Fluid-Air .
+
+ontology:00087 a s223:Connection ;
+    s223:cnx ontology:00023 ;
+    s223:connectsAt ontology:00023,
+        ontology:00034 ;
+    s223:connectsFrom ontology:00032 ;
+    s223:connectsTo ontology:00020 ;
+    s223:hasMedium s223:Constituent-Electricity .
+
+ontology:00088 a s223:Connection ;
+    s223:cnx ontology:00027 ;
+    s223:connectsAt ontology:00027,
+        ontology:00037 ;
+    s223:connectsFrom ontology:00035 ;
+    s223:connectsTo ontology:00024 ;
+    s223:hasMedium s223:Constituent-Electricity .
+
+ontology:00089 a s223:BACnetExternalReference,
+        s223:ExternalReference ;
+    bacnet:device-identifier "device,2500" ;
+    bacnet:object-identifier "analog-input,15" ;
+    bacnet:property-identifier "http://data.ashrae.org/bacnet/2020#PropertyIdentifier.present-value" .
+
+ontology:00090 a s223:BACnetExternalReference,
+        s223:ExternalReference ;
+    bacnet:device-identifier "device,2500" ;
+    bacnet:object-identifier "analog-input,13" ;
+    bacnet:property-identifier "http://data.ashrae.org/bacnet/2020#PropertyIdentifier.present-value" .
+
+ontology:00091 a s223:BACnetExternalReference,
+        s223:ExternalReference ;
+    bacnet:device-identifier "device,2500" ;
+    bacnet:object-identifier "analog-input,14" ;
+    bacnet:property-identifier "http://data.ashrae.org/bacnet/2020#PropertyIdentifier.present-value" .
+
+ontology:00092 a s223:BACnetExternalReference,
+        s223:ExternalReference ;
+    bacnet:device-identifier "device,2500" ;
+    bacnet:object-identifier "analog-input,16" ;
+    bacnet:property-identifier "http://data.ashrae.org/bacnet/2020#PropertyIdentifier.present-value" .
+
+ontology:00093 a s223:BACnetExternalReference,
+        s223:ExternalReference ;
+    bacnet:device-identifier "device,2500" ;
+    bacnet:object-identifier "analog-input,17" ;
+    bacnet:property-identifier "http://data.ashrae.org/bacnet/2020#PropertyIdentifier.present-value" .
+
+ontology:00094 a s223:BACnetExternalReference,
+        s223:ExternalReference ;
+    bacnet:device-identifier "device,2500" ;
+    bacnet:object-identifier "analog-input,18" ;
+    bacnet:property-identifier "http://data.ashrae.org/bacnet/2020#PropertyIdentifier.present-value" .
+
+ontology:00095 a s223:BACnetExternalReference,
+        s223:ExternalReference ;
+    bacnet:device-identifier "device,2500" ;
+    bacnet:object-identifier "binary-value,254" ;
+    bacnet:property-identifier "http://data.ashrae.org/bacnet/2020#PropertyIdentifier.present-value" .
+
