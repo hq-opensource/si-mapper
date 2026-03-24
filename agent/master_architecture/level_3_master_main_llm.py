@@ -5,8 +5,8 @@ from google.adk.planners import BuiltInPlanner
 from google.genai import types
 from google.adk.tools import load_artifacts
 
-from master_architecture.tools.loop_exit_tools import exit_loop_level_2
-from master_architecture.tools.ingest_category_tool import ingest_category_files_tool
+from tools.loop_exit_tools import exit_loop_level_2
+from tools.ingest_category_tool import ingest_category_files_tool
 from tools.progress_tool import update_step, update_status
 from tools.sync_graphivac_tool import sync_agent_to_graphivac
 from tools.sync_graphivac_to_agent_tool import sync_graphivac_to_agent

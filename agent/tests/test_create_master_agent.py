@@ -67,7 +67,7 @@ def test_imports_checkpoint_code_from_validator():
 def test_imports_adapted_exit_tools():
     """create_master_agent.py imports adapted exit tools from master_architecture."""
     src = pathlib.Path("master_architecture/create_master_agent.py").read_text()
-    assert "from master_architecture.tools.ontology_exit_tools import" in src
+    assert "from tools.ontology_exit_tools import" in src
     for tool in ["exit_generator_success", "exit_generator_failure",
                  "exit_validator_success", "exit_validator_failure"]:
         assert tool in src, f"{tool} not found in create_master_agent.py"

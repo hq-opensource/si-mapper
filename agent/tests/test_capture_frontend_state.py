@@ -9,7 +9,7 @@ os.environ.setdefault("GRAPHIVAC_ORG_ID", "test-org")
 os.environ.setdefault("GRAPHIVAC_PROJECT_ID", "test-project")
 os.environ.setdefault("GRAPHIVAC_GRID_ID", "test-grid")
 
-from master_architecture.tools.capture_frontend_state_tool import (
+from tools.capture_frontend_state_tool import (
     CaptureFrontendStateTool,
     capture_frontend_state_tool,
 )

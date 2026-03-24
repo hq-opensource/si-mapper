@@ -102,12 +102,6 @@ export default function CopilotKitPage() {
     active_agent: pooledState?.active_agent || agentState.active_agent,
   } as AgentState;
 
-  // Log state changes
-  useEffect(() => {
-    if (pooledState) {
-      console.log("DEBUG: Pooled State Update:", pooledState);
-    }
-  }, [pooledState]);
 
   // 🪁 Frontend Actions
   useCopilotAction({

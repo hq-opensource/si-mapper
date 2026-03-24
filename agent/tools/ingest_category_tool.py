@@ -57,9 +57,9 @@ class IngestCategoryFilesTool(BaseTool):
 
         # Resolve the 'mapper/uploads' directory relative to this file
         # This file: agent/tools/ingest_category_tool.py
-        # Root: agent/tools/../../
+        # parents: tools/ -> agent/ -> project_root/
         current_file = Path(__file__).resolve()
-        project_root = current_file.parent.parent.parent.parent
+        project_root = current_file.parent.parent.parent
         uploads_dir = project_root / 'mapper' / 'uploads'
         # Try to find the category directory, handling case insensitivity
         found_category_dir = None

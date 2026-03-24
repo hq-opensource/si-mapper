@@ -50,7 +50,7 @@ After all HITL verification steps are complete (ductwork, equipment, BACnet poin
 **Do NOT auto-trigger this protocol.** Wait for explicit human instruction.
 
 **Sequence:**
-1. **Generate:** Apply the `skill-ontology-generation` skill. Follow its 9-step workflow using the ontology tools directly (read_internal_grid, search_class_mapping, scan_python_files_filtered, write_ontology, exit_generator_success). You run the generation yourself — do not delegate to a sub-agent.
+1. **Generate:** Apply the `skill-ontology-generation` skill. Follow its 9-step workflow using the ontology tools directly (read_internal_grid, search_class_mapping, scan_python_files_filtered, write_ontology, exit_generator_success).
 2. **Check result:** After `exit_generator_success` fires, `EXIT_LEVEL_2` terminates your loop. The user will re-trigger you for validation.
    - If generation failed (`exit_generator_failure` was called): inform the human and report the reason from state.
 3. **Validate:** When the user triggers validation, apply the `skill-ontology-validation` skill. Follow its fix loop using the ontology tools directly (read_ontology, execute_ontology, write_ontology, checkpoint_code, exit_validator_success). You run the validation yourself — do not delegate to a sub-agent.

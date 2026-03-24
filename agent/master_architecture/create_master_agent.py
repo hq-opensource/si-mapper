@@ -15,9 +15,9 @@ from tools.internal_grid_tools import (
     delete_components_batch, read_internal_grid
 )
 from tools.metadata_tools import write_metadata, write_metadata_batch
-from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
-from master_architecture.tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
-from master_architecture.tools.ontology_tools import (
+from tools.capture_frontend_state_tool import capture_frontend_state_tool
+from tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
+from tools.ontology_tools import (
     scan_python_files_filtered,
     search_class_mapping,
     write_ontology,
@@ -25,7 +25,7 @@ from master_architecture.tools.ontology_tools import (
     execute_ontology,
     read_prompt,
 )
-from master_architecture.tools.ontology_exit_tools import (
+from tools.ontology_exit_tools import (
     checkpoint_code,
     exit_generator_success,
     exit_generator_failure,

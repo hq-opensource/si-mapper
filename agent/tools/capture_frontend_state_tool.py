@@ -71,7 +71,7 @@ class CaptureFrontendStateTool(BaseTool):
             return {"status": "error", "message": f"Could not capture canvas snapshot: {e}"}
 
         # Save to mapper/uploads/snapshots/
-        snapshots_dir = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "snapshots"
+        snapshots_dir = Path(__file__).resolve().parents[2] / "mapper" / "uploads" / "snapshots"
         snapshots_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         snapshot_filename = f"snapshot_{timestamp}.png"

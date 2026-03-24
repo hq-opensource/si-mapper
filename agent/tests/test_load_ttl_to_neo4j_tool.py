@@ -69,7 +69,7 @@ class TestLoadTtlToNeo4jTool:
     @pytest.mark.asyncio
     async def test_successful_import(self):
         """Driver is reachable, TTL file exists — returns success with triples_loaded."""
-        from master_architecture.tools.load_ttl_to_neo4j_tool import LoadTtlToNeo4jTool
+        from tools.load_ttl_to_neo4j_tool import LoadTtlToNeo4jTool
 
         tool = LoadTtlToNeo4jTool()
         ctx = _make_tool_context()
@@ -99,8 +99,8 @@ class TestLoadTtlToNeo4jTool:
         ]
 
         with (
-            patch("master_architecture.tools.load_ttl_to_neo4j_tool.GraphDatabase") as mock_gdb,
-            patch("master_architecture.tools.load_ttl_to_neo4j_tool.Path") as mock_path_cls,
+            patch("tools.load_ttl_to_neo4j_tool.GraphDatabase") as mock_gdb,
+            patch("tools.load_ttl_to_neo4j_tool.Path") as mock_path_cls,
         ):
             mock_gdb.driver.return_value = mock_driver
             mock_path_cls.return_value = mock_path_root
@@ -115,14 +115,14 @@ class TestLoadTtlToNeo4jTool:
     @pytest.mark.asyncio
     async def test_missing_ttl_file(self):
         """TTL file does not exist — returns error containing 'not found'."""
-        from master_architecture.tools.load_ttl_to_neo4j_tool import LoadTtlToNeo4jTool
+        from tools.load_ttl_to_neo4j_tool import LoadTtlToNeo4jTool
 
         tool = LoadTtlToNeo4jTool()
         ctx = _make_tool_context()
 
         mock_path_root, _ = _make_path_mock(exists=False)
 
-        with patch("master_architecture.tools.load_ttl_to_neo4j_tool.Path") as mock_path_cls:
+        with patch("tools.load_ttl_to_neo4j_tool.Path") as mock_path_cls:
             mock_path_cls.return_value = mock_path_root
 
             result = await tool.run_async(args={}, tool_context=ctx)
@@ -135,7 +135,7 @@ class TestLoadTtlToNeo4jTool:
         """GraphDatabase.driver raises ServiceUnavailable — returns error dict."""
         from neo4j.exceptions import ServiceUnavailable
 
-        from master_architecture.tools.load_ttl_to_neo4j_tool import LoadTtlToNeo4jTool
+        from tools.load_ttl_to_neo4j_tool import LoadTtlToNeo4jTool
 
         tool = LoadTtlToNeo4jTool()
         ctx = _make_tool_context()
@@ -144,8 +144,8 @@ class TestLoadTtlToNeo4jTool:
         mock_path_root, _ = _make_path_mock(exists=True, read_text_value=sample_ttl)
 
         with (
-            patch("master_architecture.tools.load_ttl_to_neo4j_tool.GraphDatabase") as mock_gdb,
-            patch("master_architecture.tools.load_ttl_to_neo4j_tool.Path") as mock_path_cls,
+            patch("tools.load_ttl_to_neo4j_tool.GraphDatabase") as mock_gdb,
+            patch("tools.load_ttl_to_neo4j_tool.Path") as mock_path_cls,
         ):
             mock_gdb.driver.side_effect = ServiceUnavailable("Cannot connect to Neo4j")
             mock_path_cls.return_value = mock_path_root
@@ -157,7 +157,7 @@ class TestLoadTtlToNeo4jTool:
 
     def test_tool_declaration(self):
         """_get_declaration returns FunctionDeclaration with correct name."""
-        from master_architecture.tools.load_ttl_to_neo4j_tool import LoadTtlToNeo4jTool
+        from tools.load_ttl_to_neo4j_tool import LoadTtlToNeo4jTool
 
         tool = LoadTtlToNeo4jTool()
         declaration = tool._get_declaration()

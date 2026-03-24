@@ -16,6 +16,18 @@ class PollingFilter(logging.Filter):
         msg = record.getMessage()
         return not any(x in msg for x in ["/session_state", "/session_info", "/health", "GET / HTTP"])
 
+class IterationReportFilter(logging.Filter):
+    """Filters out the bulky ADK iteration reports from the console."""
+    def filter(self, record: logging.LogRecord) -> bool:
+        msg = record.getMessage()
+        # Suppress the header, the box, and the stats lines
+        return not any(x in msg for x in [
+            "📊 ITERATION REPORT", 
+            "────────────────────────────────────────────────────────────────────",
+            "⏱  Time",
+            "🔢 Tokens"
+        ])
+
 def configure_logging() -> logging.Logger:
     load_dotenv()
     
@@ -33,6 +45,10 @@ def configure_logging() -> logging.Logger:
 
     # Suppress polling logs in uvicorn
     logging.getLogger("uvicorn.access").addFilter(PollingFilter())
+
+    # Suppress bulky ADK iteration reports (on both the specific and root loggers to be safe)
+    logging.getLogger("google.adk").addFilter(IterationReportFilter())
+    logging.getLogger().addFilter(IterationReportFilter())
 
     log_level_str = (os.getenv("DEBUG_LEVEL") or os.getenv("LOG_LEVEL") or "INFO").upper()
     log_level = getattr(logging, log_level_str, logging.INFO)

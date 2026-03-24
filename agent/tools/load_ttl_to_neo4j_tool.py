@@ -35,7 +35,7 @@ class LoadTtlToNeo4jTool(BaseTool):
     @override
     async def run_async(self, *, args: dict[str, Any], tool_context: ToolContext) -> dict[str, Any]:
         # Resolve TTL path: mapper/uploads/ttl/latest_ontology.ttl (canonical source)
-        ttl_path = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "ttl" / "latest_ontology.ttl"
+        ttl_path = Path(__file__).resolve().parents[2] / "mapper" / "uploads" / "ttl" / "latest_ontology.ttl"
         if not ttl_path.exists():
             return {"status": "error", "message": f"latest_ontology.ttl not found at {ttl_path} — run the ontology validator first"}
 

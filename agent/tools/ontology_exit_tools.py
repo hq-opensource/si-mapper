@@ -13,10 +13,10 @@ from google.adk.tools import ToolContext
 logger = logging.getLogger(__name__)
 
 # Project root → mapper/uploads/
-# This file is at agent/master_architecture/tools/ontology_exit_tools.py
-# parents[0] = tools, parents[1] = master_architecture, parents[2] = agent, parents[3] = project_root
-_UPLOADS_PYTHON = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "python"
-_UPLOADS_TTL = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "ttl"
+# This file is at agent/tools/ontology_exit_tools.py
+# parents[0] = tools, parents[1] = agent, parents[2] = project_root
+_UPLOADS_PYTHON = Path(__file__).resolve().parents[2] / "mapper" / "uploads" / "python"
+_UPLOADS_TTL = Path(__file__).resolve().parents[2] / "mapper" / "uploads" / "ttl"
 
 
 def _persist_python(code: str, label: str) -> None:

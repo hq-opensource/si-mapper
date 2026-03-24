@@ -35,11 +35,10 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Path anchors
 # ---------------------------------------------------------------------------
-# This file: agent/master_architecture/tools/ontology_tools.py
-# parents[0] = tools/, parents[1] = master_architecture/, parents[2] = agent/,
-# parents[3] = project_root/
+# This file: agent/tools/ontology_tools.py
+# parents[0] = tools/, parents[1] = agent/, parents[2] = project_root/
 _HERE = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", "..", ".."))
+_PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", ".."))
 
 ONTOLOGY_FILE = os.path.join(_PROJECT_ROOT, "223p", "src", "ontology.py")
 TTL_OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "223p", "ttl")
