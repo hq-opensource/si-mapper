@@ -1,6 +1,5 @@
 from bob.core import bind_model_namespace, dump, Junction, UNIT
 from bob.enum import Fluid, Air
-from bob.connections.air import AirInletConnectionPoint, AirOutletConnectionPoint
 from scratch.assemblage import model_namespace
 
 # Import equipments
@@ -59,10 +58,10 @@ ssp_1 = PressureSensor(label="SSP-1", comment="Static Pressure Sensor", hasUnit=
 
 # --- Supply Path ---
 # Fresh air from dampers (MD-PAF-HAUT and MD-PAF-BAS)
-mixed_air = Junction(label="MixedAir", hasMedium=Fluid.Air, fromHaut=AirInletConnectionPoint, fromBas=AirInletConnectionPoint, fromMelange=AirInletConnectionPoint, airOutlet=AirOutletConnectionPoint)
-md_paf_haut.airOutlet >> mixed_air.fromHaut
-md_paf_bas.airOutlet >> mixed_air.fromBas
-md_melange.airOutlet >> mixed_air.fromMelange
+mixed_air = Junction(label="MixedAir", hasMedium=Fluid.Air)
+md_paf_haut.airOutlet >> mixed_air.airInlet
+md_paf_bas.airOutlet >> mixed_air.airInlet
+md_melange.airOutlet >> mixed_air.airInlet
 
 mixed_air.airOutlet >> flt_1.airInlet
 flt_1.airOutlet >> cc_1.airInlet
@@ -74,12 +73,10 @@ hc_1.airOutlet >> steam_pipe.airInlet
 hum_1.steamOutlet >> steam_pipe.steamInlet
 
 # --- Return Path ---
-return_air = Junction(label="ReturnAir", hasMedium=Fluid.Air, airInlet=AirInletConnectionPoint, toMelange=AirOutletConnectionPoint, toRetour=AirOutletConnectionPoint)
-return_air.toMelange >> md_melange.airInlet
-return_air.toRetour >> md_retour.airInlet
-
-# The return air junction connects to the return fan inlet.
-return_air.airInlet << fan_1_r.airOutlet
+return_air = Junction(label="ReturnAir", hasMedium=Fluid.Air)
+return_air.airOutlet >> fan_1_r.airInlet
+fan_1_r.airOutlet >> md_melange.airInlet
+fan_1_r.airOutlet >> md_retour.airInlet
 
 # --- Exhaust Path ---
 md_retour.airOutlet >> fan_1_e.airInlet
@@ -92,11 +89,8 @@ st_alim % steam_pipe.airOutlet
 ll_1 % steam_pipe.airOutlet
 ssp_1 % steam_pipe.airOutlet
 
-sh_retour % return_air.airInlet
-st_retour % return_air.airInlet
+sh_retour % return_air.airOutlet
+st_retour % return_air.airOutlet
 
 if __name__ == "__main__":
-    import os
-    ttl_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "ttl", "ontology.ttl")
-    dump(filename=ttl_path)
     dump()

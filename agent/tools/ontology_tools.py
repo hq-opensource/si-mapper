@@ -132,19 +132,48 @@ def _load_mapping(library: str) -> list[dict]:
     return _mapping_cache[library]
 
 
+def _find_site_packages() -> str | None:
+    """Locate the site-packages directory where bob and scratch are installed.
+
+    Uses importlib to find the bob package, then derives site-packages from it.
+    Falls back to None if the package is not importable.
+    """
+    import importlib.util
+    spec = importlib.util.find_spec("bob")
+    if spec and spec.origin:
+        # spec.origin = .../site-packages/bob/__init__.py
+        # parent = .../site-packages/bob/
+        # parent.parent = .../site-packages/
+        return str(os.path.dirname(os.path.dirname(spec.origin)))
+    return None
+
+
 def search_class_mapping(keywords: list[str]) -> str:
     """
     Grep-like search across classes_bob.jsonl and classes_scratch.jsonl.
     Returns entries where class_name contains any keyword (case-insensitive).
-    Each result includes a 'library' field ('bob' or 'scratch').
+
+    Each result includes:
+      - 'library': 'bob' or 'scratch'
+      - 'path': relative path within the library (e.g. 'bob/equipment/hvac/fan.py')
+      - 'abs_path': absolute path to the file in the venv site-packages
+      - 'scan_dir': parent directory of the file — pass this directly to
+                    scan_python_files_filtered to read the class source
     """
+    site_packages = _find_site_packages()
+
     lower_keywords = [kw.lower() for kw in keywords]
     results = []
     for library in ("bob", "scratch"):
         for entry in _load_mapping(library):
             name_lower = entry["class_name"].lower()
             if any(kw in name_lower for kw in lower_keywords):
-                results.append({**entry, "library": library})
+                result = {**entry, "library": library}
+                if site_packages:
+                    abs_path = os.path.join(site_packages, entry["path"])
+                    result["abs_path"] = abs_path
+                    result["scan_dir"] = os.path.dirname(abs_path)
+                results.append(result)
     return json.dumps(results, ensure_ascii=False, indent=2)
 
 

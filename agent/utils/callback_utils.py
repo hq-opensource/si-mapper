@@ -526,7 +526,7 @@ async def shared_model_callback(
         for p in llm_response.content.parts
     )
 
-    _print_iteration_report(agent_name, llm_response, elapsed)
+    # _print_iteration_report(agent_name, llm_response, elapsed)
     # ─────────────────────────────────────────────────────────────────────────
 
     return llm_response

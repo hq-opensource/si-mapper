@@ -41,6 +41,8 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
     const [hasNewState, setHasNewState] = useState(false);
     const [hasNewPerformance, setHasNewPerformance] = useState(false);
     const [hasNewArtifacts, setHasNewArtifacts] = useState(false);
+    const [hasNewPython, setHasNewPython] = useState(false);
+    const [hasNewTTL, setHasNewTTL] = useState(false);
     const [lastEventCount, setLastEventCount] = useState(0);
     const [lastDataHash, setLastDataHash] = useState("");
 
@@ -64,13 +66,28 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         }
     }, [events, activeTab, lastEventCount]);
 
-    // Track new state data
+    // Track new state data and code snapshots
     useEffect(() => {
         const currentHash = JSON.stringify(data);
         if (currentHash !== "{}" && currentHash !== lastDataHash) {
             if (activeTab !== 'state') {
                 setHasNewState(true);
             }
+            
+            // Check for new code snapshots
+            const prevData = lastDataHash ? JSON.parse(lastDataHash) : {};
+            const pythonSnapshots = (data as any).python_code_snapshots || [];
+            const prevPythonSnapshots = prevData.python_code_snapshots || [];
+            if (pythonSnapshots.length > prevPythonSnapshots.length && activeTab !== 'python') {
+                setHasNewPython(true);
+            }
+
+            const ttlSnapshots = (data as any).ttl_code_snapshots || [];
+            const prevTtlSnapshots = prevData.ttl_code_snapshots || [];
+            if (ttlSnapshots.length > prevTtlSnapshots.length && activeTab !== 'ttl') {
+                setHasNewTTL(true);
+            }
+
             setLastDataHash(currentHash);
         }
     }, [data, lastDataHash, activeTab]);
@@ -82,6 +99,8 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         if (activeTab === 'state') setHasNewState(false);
         if (activeTab === 'performance') setHasNewPerformance(false);
         if (activeTab === 'artifacts') setHasNewArtifacts(false);
+        if (activeTab === 'python') setHasNewPython(false);
+        if (activeTab === 'ttl') setHasNewTTL(false);
     }, [activeTab]);
 
 
@@ -118,6 +137,8 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
                         (item.id === 'state' && hasNewState) ||
                         (item.id === 'performance' && hasNewPerformance) ||
                         (item.id === 'artifacts' && hasNewArtifacts) ||
+                        (item.id === 'python' && hasNewPython) ||
+                        (item.id === 'ttl' && hasNewTTL) ||
                         (item.id === 'tools' && hasNewTools);
 
                     return (

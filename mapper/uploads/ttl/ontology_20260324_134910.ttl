@@ -716,8 +716,6 @@ ontology:00066 a s223:Connectable,
     s223:cnx ontology:00068,
         ontology:00069,
         ontology:00070,
-        ontology:00071,
-        ontology:00072,
         ontology:00073,
         ontology:00074,
         ontology:00075 ;
@@ -809,7 +807,6 @@ ontology:00073 a p223:BinaryOutput,
         s223:OutletConnectionPoint,
         bob:OnOffSignalConnectionPoint ;
     rdfs:label "VFD-1R.drive_running_dry_contact" ;
-    s223:cnx ontology:00066 ;
     s223:hasMedium p223:Signal-OnOffSignal ;
     s223:isConnectionPointOf ontology:00066 .
 
@@ -818,7 +815,6 @@ ontology:00074 a p223:BinaryOutput,
         s223:OutletConnectionPoint,
         bob:OnOffSignalConnectionPoint ;
     rdfs:label "VFD-1R.alarm_dry_contact" ;
-    s223:cnx ontology:00066 ;
     s223:hasMedium p223:Signal-OnOffSignal ;
     s223:isConnectionPointOf ontology:00066 .
 
@@ -827,7 +823,6 @@ ontology:00075 a p223:AnalogOutput,
         s223:OutletConnectionPoint,
         bob:ModulationSignalConnectionPoint ;
     rdfs:label "VFD-1R.current_feedback" ;
-    s223:cnx ontology:00066 ;
     s223:hasMedium s223:Signal-Modulated ;
     s223:isConnectionPointOf ontology:00066 .
 

@@ -69,7 +69,7 @@ Fail immediately (no text response) if any of the following:
 
 1. **Grid** — Call `read_internal_grid` to get all components and coordinates. Extract equipment class names from the result (e.g. "Fan", "Coil", "Damper").
 2. **Class lookup** — Call `search_class_mapping(keywords=[<class names from step 1>])` to find which library file each class lives in. Note the `path` field for each match.
-3. **Library source** — Call `scan_python_files_filtered` with the parent directory of the path returned by `search_class_mapping` and the class name keywords to read the actual class source. No full catalog dump needed.
+3. **Library source** — Call `scan_python_files_filtered` using the `scan_dir` field from `search_class_mapping` results and the class name keywords to read the actual class source. `scan_dir` is the absolute path to the directory in the venv where the class file lives — use it directly. No full catalog dump needed.
 4. **Samples** — Call `scan_python_files_filtered` on `../223p/ref/code` with the same class name keywords to find relevant reference implementations.
 5. **Plan** — Outline entities, connections, and spatial hierarchy.
 6. **Generate** — Write the Python ontology code.
