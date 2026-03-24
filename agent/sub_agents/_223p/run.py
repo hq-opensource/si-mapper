@@ -69,7 +69,7 @@ from sub_agents._223p.validator.agent import OntologyValidatorAgent
 # Constants
 # ──────────────────────────────────────────────────────────────────────────────
 
-_STANDALONE_DEFAULT_MODEL = "github_copilot/claude-sonnet-4.5"
+_STANDALONE_DEFAULT_MODEL = "github_copilot/gpt-5.1-codex-max"
 
 
 _PIPELINE_DEFAULT_TASK = (

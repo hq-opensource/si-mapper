@@ -28,20 +28,8 @@ BACnet CSV exports follow this column schema:
 
 #### BACnet Object Type Glossary
 
-The suffix in the `bacnet` column identifies the nature of the data point:
-
-| Suffix | Full Name | Description |
-| :--- | :--- | :--- |
-| **.AI** | Analog Input | Measured physical values (Temp, Pressure, Speed) |
-| **.AO** | Analog Output | Control signals (0-100% modulation) |
-| **.AV** | Analog Value | Internal setpoints or calculation buffers |
-| **.BI** | Binary Input | Physical status (Running/Stopped, Fault) |
-| **.BO** | Binary Output | Physical commands (Start/Stop, Open/Close) |
-| **.BV** | Binary Value | Internal software flags or logical triggers |
-| **.CO** | Control Loop | PID loop parameters (modulation logic) |
-| **.PG** | Program | Control sequences and logic blocks |
-| **.SCH** | Schedule | Weekly or daily operation timers |
-| **.TL** | Trend Log | Historical data collection points |
+- The suffix in the `bacnet` column identifies the nature of the data point.
+- Use asset `bacnet-device-types.csv` to map the suffix to the corresponding BACnet object type.
 
 #### French-English Technical Dictionary
 
@@ -80,14 +68,23 @@ The `nom` column uses French abbreviations. Use this mapping for extraction:
 
 ### 3. Build the Metadata Structure
 
-For each equipment piece found in the CSV, build a nested metadata structure. Save the `bacnet` column as `address`, the `nom` column as `name`, and the `unit` column as `unit`.
+For each equipment piece found in the CSV, build a nested metadata structure. 
+
+Save the :
+- `bacnet` column as the key
+- the `nom` column as `name`
+- the `unit` column as `unit`
+- the `device-identifier` needs to be extracted from the `bacnet` column prefix (e.g. `2500.AI11` → `2500`)
+- the `object-type` needs to be mapped to the corresponding BACnet object type (see the glossary above), based on the suffix in the `bacnet` column (e.g. `2500.AI11` → `AI` → `analog-input`)
+- the `object-instance` needs to be extracted from the `bacnet` column suffix (e.g. `2500.AI11` → `11`)
 
 ```json
 {
   "AHU-1": {
     "bacnet": {
-      "2500.AI11": { "name": "VITESSE RET. No.1A", "unit": "Amperes" },
-      "2500.AI13": { "name": "TEMP. ALIM. No.1A", "unit": "Celsius" }
+      "2500.AI11": { "name": "VITESSE RET. No.1A", "unit": "Amperes", "device-identifier": 2500, "object-type": "analog-input", "object-instance": 11 },
+      "2500.AI13": { "name": "TEMP. ALIM. No.1A", "unit": "Celsius", "device-identifier": 2500, "object-type": "analog-input", "object-instance": 13 },
+      "2500.AO14": { "name": "MOD. ALIM. No.1A", "unit": "%", "device-identifier": 2500, "object-type": "analog-output", "object-instance": 14 }
     }
   }
 }

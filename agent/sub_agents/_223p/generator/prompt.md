@@ -54,6 +54,12 @@ Generate Python code that models equipment, connections, and relationships from 
 - **Matching class, missing properties**: subclass it and add needed properties.
 - **Other case**: use a generic class and attach custom properties.
 
+### Metadata
+- **BACnet point**: Attach each point's metadata as a property, providing a label and a unit.
+- **BACnet external reference**: link BACnet metadata as an `BACnetExternalReference` with a URI.
+
+Look into code samples for examples of how to use `BACnetExternalReference`.
+
 ---
 
 ## Code Samples
