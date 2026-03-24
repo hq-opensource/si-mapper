@@ -17,7 +17,7 @@ from tools.internal_grid_tools import (
 from tools.metadata_tools import write_metadata, write_metadata_batch
 from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
 from master_architecture.tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
-from sub_agents._223p.tool import (
+from master_architecture.tools.ontology_tools import (
     scan_python_files_filtered,
     search_class_mapping,
     write_ontology,
@@ -25,8 +25,8 @@ from sub_agents._223p.tool import (
     execute_ontology,
     read_prompt,
 )
-from sub_agents.ontology_validator.exit_tools import checkpoint_code
 from master_architecture.tools.ontology_exit_tools import (
+    checkpoint_code,
     exit_generator_success,
     exit_generator_failure,
     exit_validator_success,

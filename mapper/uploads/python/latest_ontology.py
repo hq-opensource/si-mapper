@@ -1,114 +1,24 @@
-from bob.equipment.hvac.fan import Fan
-from bob.equipment.hvac.coil import HotWaterCoil, ChilledWaterCoil
-from bob.equipment.hvac.damper import Damper
-from bob.equipment.hvac.filter import Filter
-from bob.equipment.hvac.humidifier import Humidifier
-from bob.equipment.electricity.vfd import VFD
-from bob.sensor.temperature import AirTemperatureSensor
-from bob.sensor.humidity import AirHumiditySensor
-from bob.sensor.pressure import AirDifferentialStaticPressureSensor, PressureSensor
-from bob.connections.air import AirConnection
-from bob.core import System, UNIT, dump
-from bob.enum import Air
+# Error-to-Resolution Lessons
 
-# System
-system = System(label="HVAC System")
+## Imports
+- **Error:** Importing components from non-existent or incorrect paths like `bob.equipment.hvac.damper`, `bob.equipment.electricity.vfd`, `bob.equipment.hvac.valve`, `lib223p`. -> **Fix:** Import specific components from `scratch` when not available in `bob` (e.g., `scratch.electricity.vfd import VFD`, `scratch.hvac.damper import Damper`, `scratch.hvac.humidifier import ElectricalHumidifier`, `scratch.hvac.valve import ThreeWayMixingActuatedProportionalValve`).
+- **Error:** Importing units from `scratch.units` (e.g., `PERCENT`, `PASCAL`). -> **Fix:** Import `UNIT` from `bob.core` and use `UNIT.PERCENT`, `UNIT.PA`.
 
-# Equipment
-hc_1 = HotWaterCoil(label="HC-1")
-cc_1 = ChilledWaterCoil(label="CC-1")
-fan_1_e = Fan(label="1-E")
-fan_1_a = Fan(label="1-A")
-fan_1_r = Fan(label="1-R")
-md_paf_bas = Damper(label="MD-PAF-BAS")
-md_paf_haut = Damper(label="MD-PAF-HAUT")
-md_melange = Damper(label="MD-MELANGE")
-md_retour = Damper(label="MD-RETOUR")
-md_evac = Damper(label="MD-EVAC")
-flt_1 = Filter(label="FLT-1")
-hum_1 = Humidifier(label="HUM-1")
-vfd_1r = VFD(label="VFD-1R")
-vfd_1a = VFD(label="VFD-1A")
+## Instantiation pattern
+- **Error:** Passing the name as a positional argument (e.g., `System("HVAC_System_1")`, `Fan("Fan_1")`). -> **Fix:** Pass the name using the `label` keyword argument (e.g., `System(label="HVAC_System_1")`, `Fan(label="Fan_1")`).
+- **Error:** Setting `hasUnit` as an attribute after instantiation (e.g., `prop.hasUnit = UNIT.PERCENT`). -> **Fix:** Pass `hasUnit` as a keyword argument during instantiation (e.g., `RelativeHumidity(label="...", hasUnit=UNIT.PERCENT)`).
 
-# Sensors
-ll_1 = AirTemperatureSensor(label="LL-1", hasUnit=UNIT.DEG_C)
-sh_retour = AirHumiditySensor(label="SH-RETOUR")
-st_alim = AirTemperatureSensor(label="ST-ALIM", hasUnit=UNIT.DEG_C)
-st_retour = AirTemperatureSensor(label="ST-RETOUR", hasUnit=UNIT.DEG_C)
-st_melange = AirTemperatureSensor(label="ST-MELANGE", hasUnit=UNIT.DEG_C)
-sdp_1 = AirDifferentialStaticPressureSensor(label="SDP-1", hasUnit=UNIT.PA)
-ssp_1 = PressureSensor(label="SSP-1", hasUnit=UNIT.PA, ofMedium=Air)
+## Connection wiring
+- **Error:** Connecting VFDs to fans using the simple `>>` operator (`vfd >> fan`) causes a "too many compatible connection points" error because VFDs have multiple compatible electrical connection points. -> **Fix:** Use explicit connection points: `vfd.electricalOutlet >> fan.electricalInlet`. *(Recurring risk across multiple sessions)*
+- **Error:** Including `ElectricalHumidifier` in the main air flow chain (`>> humidifier_1 >>`) causes connection errors because it lacks compatible air-side connection points. -> **Fix:** Instantiate the humidifier but omit it from the air flow chain (`>>`) to avoid connection errors.
 
-# Connections
-hd_4 = AirConnection(label="HD-4")
-hd_2 = AirConnection(label="HD-2")
-hd_1 = AirConnection(label="HD-1")
-return_air = AirConnection(label="ReturnAir")
-exhaust_air = AirConnection(label="ExhaustAir")
-supply_air = AirConnection(label="SupplyAir")
+## Sensor API
+- **Error:** Assigning properties to sensors using `sensor.observedProperty = sensor_prop`. -> **Fix:** Use the `add_property()` method: `sensor.add_property(sensor_prop)`.
+- **Error:** Using the `%` operator to associate a property with a sensor (`sensor % property`). -> **Fix:** Use the `add_property()` method: `sensor.add_property(property)`.
 
-# Add to system
-system > hc_1
-system > cc_1
-system > fan_1_e
-system > fan_1_a
-system > fan_1_r
-system > md_paf_bas
-system > md_paf_haut
-system > md_melange
-system > md_retour
-system > md_evac
-system > flt_1
-system > hum_1
-system > vfd_1r
-system > vfd_1a
-system > ll_1
-system > sh_retour
-system > st_alim
-system > st_retour
-system > st_melange
-system > sdp_1
-system > ssp_1
+## Serialization
+- **Error:** Attempting to serialize the graph using `get_model_graph(model_name)` and `g.serialize(...)` or `DataGraph().serialize(...)` which may fail or be incorrect. -> **Fix:** Use `dump(filename=str(output_file))` imported from `bob.core` to serialize the ontology.
 
-# Airflow Path
-# Fresh Air
-md_paf_bas >> hd_4
-md_paf_haut >> hd_4
-
-# Return Air
-return_air >> fan_1_r
-fan_1_r >> hd_2
-hd_2 >> md_retour
-
-# Recirculation
-hd_2 >> md_melange
-md_melange >> hd_4
-
-# Supply Air
-hd_4 >> flt_1
-flt_1 >> cc_1
-cc_1 >> fan_1_a
-fan_1_a >> hc_1
-hc_1 >> supply_air
-
-# Exhaust Air
-exhaust_air >> fan_1_e
-fan_1_e >> hd_1
-hd_1 >> md_evac
-
-# Sensor relationships
-st_retour % return_air
-sh_retour % return_air
-st_melange % flt_1.airOutlet
-st_alim % supply_air
-ll_1 % supply_air
-ssp_1 % supply_air
-sdp_1 % (flt_1.airInlet, flt_1.airOutlet)
-
-# VFD relationships
-vfd_1r.electricalOutlet >> fan_1_r.electricalInlet
-vfd_1a.electricalOutlet >> fan_1_a.electricalInlet
-
-# Dump the ontology
-if __name__ == "__main__":
-    dump()
+## Structural approach
+- **Error:** Using `System("AHU-1")` and `ahu_system.contains(...)` or `Junction(...)` which might not be supported or correct in the current library version. -> **Fix:** Use a flat structure with `bind_model_namespace` and instantiate components directly without wrapping them in a `System` container (unless explicitly required, in which case use the `>` operator).
+- **Error:** Adding components to a `System` using the `.content()` method. -> **Fix:** Use the `>` operator to add components to a system (e.g., `hvac_system > fan`).

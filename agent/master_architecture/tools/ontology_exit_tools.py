@@ -47,6 +47,24 @@ def _persist_ttl(ttl_content: str) -> None:
         logger.warning("[exit_validator_success] Failed to persist TTL: %s", exc)
 
 
+def checkpoint_code(tool_context: ToolContext, code: str) -> dict:
+    """Appends a Fix N snapshot to python_code_snapshots. Does NOT escalate — validator loop continues."""
+    iteration = tool_context.state.get("ontology_code_iteration_count", 0)
+    snapshots = list(tool_context.state.get("python_code_snapshots", []))
+    snapshots.append(
+        {
+            "label": f"Fix {iteration}",
+            "code": code,
+            "iteration": iteration,
+            "status": "fix",
+        }
+    )
+    tool_context.state["python_code_snapshots"] = snapshots
+    tool_context.state["ontology_code_iteration_count"] = iteration + 1
+    return {"status": "snapshot_saved", "iteration": iteration}
+    # CRITICAL: No tool_context.actions.escalate here — loop must continue
+
+
 def exit_generator_success(
     tool_context: ToolContext,
     code: str,
