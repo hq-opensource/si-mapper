@@ -1,4 +1,129 @@
 \section{Conclusions}
 \label{sec:conclusions}
 
-% Content to be written in Plan 04
+\subsection{Summary of Contributions}
+\label{subsec:contributions}
+
+This report addressed a documented, economically significant problem in the building industry:
+manual BACnet point mapping costs 0.5--1.5\% of construction value per building, blocks software
+interoperability, and is identified in peer-reviewed literature and DOE policy reports as a major
+impediment to building automation innovation.
+The same problem directly prevents the large-scale enrollment of commercial buildings into Virtual
+Power Plant and Non-Wire Alternative programs, because each building requires a custom, per-project
+integration effort estimated at \$5,000--\$15,000 before it can participate in grid services.
+No widely-deployed automated solution for this problem existed prior to this work.
+
+SI-Mapper demonstrates that agentic AI can automate the creation of ASHRAE 223P semantic building
+models from two raw inputs available on any real building project: HVAC engineering drawings and
+BACnet point export CSV files.
+The system combines multimodal drawing recognition --- using foundation models capable of interpreting
+HVAC schematic symbols directly from images --- with automated BACnet point-to-equipment mapping and
+formal ASHRAE 223P ontology generation in a single, end-to-end pipeline.
+The agent validates its own output through iterative self-correction, looping until the generated
+Turtle (TTL) file executes without errors and the resulting graph loads cleanly into the Neo4j
+semantic store.
+This pipeline replaces a workflow that previously required weeks of expert HVAC engineering labor.
+
+The development process itself is a contribution.
+Nine experimental iterations, from simple LangChain function-calling in 2024 to the final
+skills-based architecture on Gemini 3.1 and Claude Sonnet 4.6 in 2026, constitute a systematic
+record of how agentic AI architectures for domain-specific technical tasks evolved as foundation
+model capabilities improved.
+The progression reveals a counterintuitive architectural lesson: simpler architectures became
+more viable, not less, as models improved.
+Multi-agent designs with dedicated Planner, Actor, and Reviewer sub-agents --- initially necessary
+to keep the pipeline on track --- became unnecessary once models reached sufficient instruction-following
+capability.
+The final skills-based single master agent outperformed every multi-agent architecture tried
+while being dramatically simpler to maintain, debug, and extend.
+
+The technology stack assembled for SI-Mapper --- Google ADK, CopilotKit, Neo4j with Neosemantics
+(n10s), and Sigma.js --- provides a reusable reference architecture for agentic AI applications
+requiring real-time operator observability, semantic graph storage, and interactive graph
+visualization.
+The combination of ADK for agent orchestration, CopilotKit for the Agent-to-UI streaming protocol,
+and Neo4j for native RDF graph storage is not an obvious combination; the design decisions that
+led to it are documented in Section~\ref{sec:implementation} as a practical guide for future
+implementors.
+
+\subsection{Limitations}
+\label{subsec:limitations}
+
+\textbf{Model dependency.}
+The system's performance is directly coupled to the capabilities and availability of specific
+foundation models --- Gemini 3.1 and Claude Sonnet 4.6 as of this writing.
+Model API changes, pricing changes, or capability regressions in future model versions could
+affect pipeline reliability without any change to the SI-Mapper codebase.
+The skills architecture mitigates this risk somewhat by encapsulating domain knowledge in
+plain-text instruction sets that can be updated independently of model versions, but the
+underlying dependency on external model providers remains.
+
+\textbf{Limited validation scope.}
+\todo{Update after experiments --- describe how many systems were tested (System 1 and System 3),
+overall accuracy rates, and any cases where the agent failed to produce a valid ASHRAE 223P model
+on the first or second run.}
+The current experimental scope covers a small number of real HVAC systems drawn from a single
+project context.
+Statistical confidence in accuracy and generalizability requires a larger validation corpus.
+
+\textbf{Domain specificity.}
+The current skills and tool set are tailored to HVAC air handling units with BACnet points
+in French-language naming conventions, reflecting the Quebec installation context where this
+work was developed.
+Extending SI-Mapper to other building system types (VAV boxes, chiller plants, boiler plants),
+other control protocols (Modbus, KNX, BACnet/IP vs.\ BACnet MSTP), or BACnet point naming
+conventions from other regions and contractors would require additional skill development and
+validation.
+The architecture supports this extension naturally --- new skills are plain-text instruction
+sets --- but the domain knowledge required to write accurate skills is non-trivial.
+
+\textbf{ASHRAE 223P maturity.}
+The standard is currently in its second advisory public review and is not yet ratified.
+The ontology generation logic in SI-Mapper is calibrated against the current advisory draft.
+Changes to the standard during ratification --- particularly to connection point types, medium
+definitions, or telemetry binding syntax --- could require updates to the ontology generation
+skills and the underlying ASHRAE 223P Python library used to produce the TTL output.
+
+\subsection{Future Work}
+\label{subsec:future-work}
+
+\textbf{Production validation at scale.}
+The most important next step is running SI-Mapper against a larger corpus of real buildings ---
+a target of 10--20 HVAC systems spanning multiple system types, contractors, and naming
+conventions.
+This would establish statistical confidence in accuracy and cost savings, identify edge cases
+not encountered in the current development set, and produce the benchmark data needed for
+peer-reviewed publication.
+
+\textbf{Multi-system support.}
+The current skills cover air handling units.
+A production-viable system would need skills for VAV terminal boxes, chiller plants, boiler
+plants, heat pump systems, and mechanical ventilation units.
+Each system type has its own drawing conventions, point naming patterns, and ASHRAE 223P
+topology rules.
+The skills architecture makes this extension tractable: each system type requires a new
+skill file rather than a new agent or pipeline redesign.
+
+\textbf{VPP integration pilot.}
+The highest-impact near-term application of SI-Mapper output is a demonstration connecting
+the generated ASHRAE 223P model to a VPP enrollment platform.
+Such a pilot would demonstrate the complete value chain --- from raw HVAC drawings to grid
+dispatch-ready semantic model --- and validate the hypothesis that semantic models are the
+interoperability layer that eliminates the per-building custom integration step currently
+blocking VPP scale.
+
+\textbf{Automated quality metrics.}
+The current evaluation of generated ASHRAE 223P models is qualitative.
+A production evaluation framework would include automated comparison tools: graph diffing
+against a human-authored ground-truth model, quantitative scores for completeness (fraction
+of expected equipment nodes present), accuracy (fraction of BACnet references correctly
+assigned), and topology correctness (fraction of directed connections matching the source
+drawing).
+These metrics would make it possible to track regression across model updates and skill
+revisions without manual inspection.
+
+\textbf{Multi-language support.}
+Adapting the BACnet point mapping skills to recognize English, Spanish, and other naming
+conventions beyond French would expand SI-Mapper's applicable geography significantly.
+The mapping skills are the primary location where naming convention knowledge is encoded;
+adding language variants is a skill-writing task rather than an architectural change.
