@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 14
 status: unknown
-last_updated: "2026-03-25T22:46:06.571Z"
+last_updated: "2026-03-25T22:52:16.744Z"
 progress:
   total_phases: 14
   completed_phases: 7
   total_plans: 26
-  completed_plans: 23
+  completed_plans: 25
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 14
-- **Overall Completion:** [█████████░] 88%
-- **Active Plan:** 14-01 (complete)
-- **Last Completed:** 14-01 (created LaTeX skeleton with main.tex + 6 section stubs, rendered 3 Mermaid diagrams to PNG via mmdc v10.6.1; compilation verified via Docker texlive)
+- **Overall Completion:** [█████████░] 92%
+- **Active Plan:** 14-03 (complete)
+- **Last Completed:** 14-03 (wrote Section 4 — Implementation: 9-iteration experiment narrative, architecture/skills/tools tables, 2 diagram includes, 305 lines; and Section 5 — Results placeholder with 5 subsections and 31 visible \\todo{} markers; 0 LaTeX compile errors)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -110,6 +110,7 @@ progress:
 - **2026-03-23:** Completed 13-01-PLAN.md. Created ontology_exit_tools.py (4 functions, EXIT_LEVEL_2). Created skill-ontology-generation/SKILL.md and skill-ontology-validation/SKILL.md — auto-discoverable skills for master agent. Original sub-agent files untouched.
 - **2026-03-23:** Completed 13-02-PLAN.md. Removed OntologyGeneratorAgent and OntologyValidatorAgent sub-agent wrappers. Wired 11 ontology tools directly into MasterLlmAgent task_tools. Raised max_iterations to 100. Updated ASHRAE protocol to reference skills. 8 new architecture tests pass. Phase 13 complete.
 - **2026-03-25:** Completed 14-01-PLAN.md. Created LaTeX skeleton (main.tex + 6 section stubs) with full preamble. Compiled via Docker texlive:latest (0 errors, 2-page PDF). Rendered 3 Mermaid diagrams (pipeline, architecture, experiment-progression) to PNG via mmdc v10.6.1. Decision: LaTeX via Docker (no local texlive/no sudo); mmdc via ~/.npm-global for Node 18 compat.
+- **2026-03-25:** Completed 14-03-PLAN.md. Wrote Section 4 (Implementation, 305 lines): 9-iteration experiment narrative, final architecture with 2 diagram includes, 6-row skills table, 10-category tools table, key technology decisions. Wrote Section 5 (Results placeholder, 120 lines, 31 \\todo{} markers): 5 subsections, 4 booktabs tables, screenshot placeholders. Decision: Tools table uses 10 categories covering all ~25 tools; skill-control-points excluded (placeholder not fully defined). 0 LaTeX compile errors.
 
 ## Roadmap Evolution
 
