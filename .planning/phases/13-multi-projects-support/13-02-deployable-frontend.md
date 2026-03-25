@@ -233,8 +233,8 @@ NEO4J_PASSWORD=neo4j_password
 - [x] The `uploads/` directory is mounted as a bind-mount volume (not copied into the image), and `PROJECTS_FOLDER` in `frontend.env` matches the container-side mount path.
 - [x] The Docker build does not invoke the Python postinstall script (no `uv`/Python required inside the image).
 - [x] The final image size is reasonable (< 500 MB — standalone Next.js + Alpine Node baseline).
-- [ ] Running `docker compose --profile deploy up` starts the frontend and it is accessible at `http://localhost:3000`.
-- [ ] Files in `uploads/` persist across container restarts.
+- [x] Running `docker compose --profile deploy up` starts the frontend and it is accessible at `http://localhost:3000`.
+- [x] Files in `uploads/` persist across container restarts.
 
 ---
 
