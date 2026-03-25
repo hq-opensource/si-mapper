@@ -55,10 +55,5 @@ Here we changed the model to gemini 3.0 flash. This improved the results conside
 
 At this time, we are using gemini 3.0 flash. We also tested gemini 3.0 pro, but it takes considerably longer to produce results. 
 
-## Test of Agentic AI using skills instead of subagents
-
-## Test of Agentic Vision for image recognition
-
-## Test of visual validation for the review agent using the MCP puppeteer 
-
-## Current test: Agentic AI (single agent) using skills + Agentic Vision + MCP puppeteer for visual validation
+## Test of Agentic AI using skills instead of subagents and using Gemini 3.1 and Claude Sonnet 4.6 with visual validation (snapshot)
+This test, we basically converted sub-agents into skills. This was possible thanks to the latest models Gemini 3.1 and Claude Sonnet 4.6. These latest models are very powerful and they need only detailed instructions that you can provide as skills. This greatly simplifies the whole architecture of the product, and then we have an agentic application that behaves the same as having sub-agents, but instead it uses only skills. Additionally, we enabled the agent to be able to create a web browser, visit a website, and take a screenshot. It basically is going to visit the website where he is creating the HVAC system, and he's going to take a screenshot of that. The agent is able to see the screenshot and compare it with the original model, and then he is able to make corrections about the HVAC system that he created. This is the final test that was carried out, and this is the test that we are going to explore more. 
