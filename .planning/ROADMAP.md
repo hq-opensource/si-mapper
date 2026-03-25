@@ -69,6 +69,13 @@
 | P13-05 | Phase 13 | Planned |
 | P13-06 | Phase 13 | Planned |
 | P13-07 | Phase 13 | Planned |
+| R14-01 | Phase 14 | Planned |
+| R14-02 | Phase 14 | Planned |
+| R14-03 | Phase 14 | Planned |
+| R14-04 | Phase 14 | Planned |
+| R14-05 | Phase 14 | Planned |
+| R14-06 | Phase 14 | Planned |
+| R14-07 | Phase 14 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -216,3 +223,16 @@ Plans:
 Plans:
 - [ ] 13-01-PLAN.md — Adapted exit tools (EXIT_LEVEL_2) + two new SKILL.md files
 - [ ] 13-02-PLAN.md — Rewire create_master_agent.py + max_iterations=100 + master_instruction.md update + tests
+
+### Phase 14: Write comprehensive research report on SI-Mapper development
+
+**Goal:** Produce a complete LaTeX research report documenting the SI-Mapper project from theoretical background (building ontologies, ASHRAE 223P) through the BACnet mapping problem, the agentic AI solution, nine experimental iterations, and the final skills-based architecture, with placeholder tables for experiment results comparing AI vs human engineer performance.
+**Requirements**: [R14-01, R14-02, R14-03, R14-04, R14-05, R14-06, R14-07]
+**Depends on:** Phase 13
+**Plans:** 4 plans
+
+Plans:
+- [ ] 14-01-PLAN.md — LaTeX skeleton (main.tex + 6 section stubs) + 3 Mermaid diagrams rendered to PNG
+- [ ] 14-02-PLAN.md — Sections 1 (Introduction), 2 (Problem), 3 (Solution)
+- [ ] 14-03-PLAN.md — Section 4 (Implementation) + Section 5 (Results placeholder)
+- [ ] 14-04-PLAN.md — Section 6 (Conclusions) + final compilation verification
