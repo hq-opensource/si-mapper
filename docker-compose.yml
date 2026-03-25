@@ -98,6 +98,25 @@ services:
 #      - deploy
 #      - tools
 
+  si-mapper-agent:
+    build:
+      # Build context must be the project root so Docker can access 223p/bin/,
+      # which is referenced as a local path dependency in agent/pyproject.toml.
+      context: .
+      dockerfile: agent/Dockerfile
+    image: si-mapper-agent:latest
+    container_name: si-mapper-agent
+    ports:
+      - "8001:8001"
+    env_file:
+      - agent/docker.env
+    volumes:
+      # Shared with si-mapper-frontend so both services read/write the same project files.
+      - ./mapper/uploads:/app/uploads
+    profiles:
+      - deploy
+      - build
+
   si-mapper-frontend:
     build:
       context: ./mapper

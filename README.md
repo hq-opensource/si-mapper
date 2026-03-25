@@ -57,6 +57,7 @@ The full stack can be run as Docker containers using the `deploy` profile. All s
 | Service | Container | Host port | Description |
 | :--- | :--- | :--- | :--- |
 | `si-mapper-frontend` | `si-mapper-frontend` | `3000` | Next.js UI |
+| `si-mapper-agent` | `si-mapper-agent` | `8001` | LLM orchestration agent (FastAPI) |
 | `si-mapper-mcp` | `si-mapper-mcp` | `8080` | MCP server |
 | `portainer` | `portainer` | `9000` | Container management UI |
 
@@ -77,6 +78,15 @@ cp .env.example .env
 ```bash
 cp mapper/docker.env.example mapper/docker.env
 # edit mapper/docker.env — set AGENT_BACKEND_URL, PROJECTS_FOLDER, NEO4J_*, etc.
+```
+
+**`agent/docker.env`** — runtime variables injected into the agent container at startup:
+
+```bash
+cp agent/docker.env.example agent/docker.env
+# edit agent/docker.env — set GOOGLE_API_KEY (or ANTHROPIC_API_KEY / OPENAI_API_KEY),
+#   GITHUB_TOKEN (required by the read-code skill),
+#   SHARED_ADK_MODEL, GRAPHIVAC_* values, and PROJECTS_FOLDER=/app/uploads
 ```
 
 **`mcp_server/server/mcp.env`** — runtime variables for the MCP server:
@@ -110,10 +120,14 @@ docker compose --profile deploy up -d
 
 # View logs for a specific service
 docker compose logs -f si-mapper-frontend
+docker compose logs -f si-mapper-agent
 
 # Rebuild a single service after a code change
 docker compose build si-mapper-frontend
 docker compose --profile deploy up si-mapper-frontend
+
+docker compose build si-mapper-agent
+docker compose --profile deploy up si-mapper-agent
 
 # Stop all services
 docker compose --profile deploy down
