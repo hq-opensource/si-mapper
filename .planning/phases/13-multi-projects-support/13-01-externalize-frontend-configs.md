@@ -185,7 +185,7 @@ This is not overridable without editing source code, making it impossible to:
 - [x] Client-side variables (`NEXT_PUBLIC_*`) fall back to dev-friendly defaults.
 - [x] A missing or empty `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` renders a graceful placeholder instead of a broken iframe.
 - [x] `mapper/README.md` includes a Configuration section explaining how to set up `.env.local`.
-- [ ] All existing functionality works with default values (no regression). _(manual runtime validation required)_
+- [x] All existing functionality works with default values (no regression). _(manual runtime validation required)_
 
 ---
 
