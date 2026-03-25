@@ -4,3 +4,11 @@
 **/node_modules
 **/.next
 **/db_data
+
+# Exclude large runtime artefacts that are bind-mounted at runtime, not needed at build time
+mapper/uploads/
+
+# Exclude secrets
+**/.env
+**/.env.*
+**/docker.env

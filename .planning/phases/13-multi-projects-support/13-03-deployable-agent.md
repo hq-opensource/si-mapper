@@ -1,7 +1,7 @@
 # 13-03 — Deployable Agent
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
+**Status:** Done
 **Updated:** 2026-03-25
 **Depends on:** `13-02` (uploads volume pattern established; agent env file mirrors the frontend pattern)
 
@@ -25,12 +25,18 @@ This task replaces the placeholder with a production-ready Docker image that:
 
 | Aspect | Current Situation |
 |---|---|
-| `agent/Dockerfile` | Exists but is a non-functional placeholder (`COPY requirements.txt .` — that file does not exist; only copies `main.py`) |
-| `docker-compose.yml` — agent service | Absent |
-| Agent run process | Documented in `agent/README.md`: `cd agent && uv sync && uv run main.py` |
-| Local binary packages | `pyproject.toml` references `../223p/bin/bob-0.99.8.tar.gz` and `../223p/bin/scratch-0.2.tar.gz` as local path dependencies |
-| Port | Agent starts on port `8001` (configurable via `PORT` env var, defaulting to `8001` in `main.py`) |
-| `uploads/` dependency | Agent will need `PROJECTS_FOLDER=/app/uploads` to match the container-side volume mount |
+| `agent/Dockerfile` | ✅ Replaced — multi-stage build (builder + runner) using `uv sync --frozen --no-dev` and `playwright install --with-deps chromium` |
+| `agent/.dockerignore` | ✅ Created — excludes `.venv/`, `__pycache__/`, `tests/`, `.env`, `docker.env` |
+| `agent/docker.env.example` | ✅ Created — documents all required env vars including `PROJECTS_FOLDER=/app/uploads` |
+| `agent/pyproject.toml` | ✅ `pytest` and `pytest-asyncio` moved to `[dependency-groups] dev`; `playwright` kept in production; `litellm<=1.82.3` cap added |
+| `agent/uv.lock` | ✅ Regenerated — 253 packages resolved; `litellm` locked at `1.82.3` with `specifier = "<=1.82.3"` |
+| `docker-compose.yml` — agent service | ✅ `si-mapper-agent` service added under `deploy` and `build` profiles |
+| Root `.gitignore` | ✅ `agent/docker.env` added |
+| Root `.dockerignore` | ✅ Updated — `mapper/uploads/` and `**/docker.env` added |
+| Agent run process | `cd agent && uv sync && uv run main.py` (host); `docker compose --profile deploy up si-mapper-agent` (container) |
+| Local binary packages | Handled by setting build context to project root; `COPY 223p/bin/` in Dockerfile |
+| Port | `8001` (configurable via `PORT` env var) |
+| Smoke test | ✅ Milestone 6 complete — `GET /health` → `{"status":"ok"}`, `GET /session_info` → valid session, uploads bind-mount verified, image size **811 MB** |
 
 ---
 
@@ -45,7 +51,7 @@ This task replaces the placeholder with a production-ready Docker image that:
 
 ## Implementation Plan
 
-### Milestone 1 — Fix `agent/Dockerfile`
+### Milestone 1 — Fix `agent/Dockerfile` ✅
 
 **Goal:** A working multi-stage Docker image for the agent service using `uv` and the existing `pyproject.toml`.
 
@@ -76,10 +82,10 @@ This task replaces the placeholder with a production-ready Docker image that:
     └── pyproject.toml
 ```
 
-**`agent/Dockerfile` outline:**
+**`agent/Dockerfile` as implemented:**
 
 ```dockerfile
-# ── Stage 1: Install dependencies ──────────────────────────────────────────
+# ── Stage 1: Install Python dependencies ───────────────────────────────────
 FROM python:3.13-slim AS builder
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -95,7 +101,7 @@ COPY 223p/bin/ ./223p/bin/
 # Copy dependency manifests
 COPY agent/pyproject.toml agent/uv.lock ./agent/
 
-# Install production dependencies via uv
+# Install production dependencies (no dev group, no project package itself)
 WORKDIR /app/agent
 RUN uv sync --frozen --no-dev --no-install-project
 
@@ -108,22 +114,27 @@ ENV PORT=8001
 
 WORKDIR /app
 
-# Copy uv (needed to run the venv's Python cleanly)
+# Copy uv (used to execute the venv's Python cleanly)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-# Copy 223p binary packages (required at install/import time)
+# Copy 223p binary packages (required by the bob / scratch packages at import time)
 COPY 223p/bin/ ./223p/bin/
 
-# Copy the virtual environment from the builder stage
+# Copy the virtual environment produced by the builder stage
 COPY --from=builder /app/agent/.venv ./agent/.venv
+
+# Install Playwright browser binaries + required system libraries.
+# playwright is used in production (capture_frontend_state_tool.py), so Chromium
+# must be present at runtime. --with-deps runs apt-get inside this stage.
+RUN /app/agent/.venv/bin/playwright install --with-deps chromium
 
 # Copy all agent source code
 COPY agent/ ./agent/
 
-# Remove test files from the runtime image
+# Remove test files — they are not needed at runtime
 RUN rm -rf /app/agent/tests/
 
-# Create the uploads mount point
+# Create the uploads mount point (bind-mounted from ./mapper/uploads at runtime)
 RUN mkdir -p /app/uploads
 
 WORKDIR /app/agent
@@ -133,16 +144,16 @@ CMD [".venv/bin/python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--po
 
 > **`docker-compose.yml` note:** The build context must be `.` (project root) and the Dockerfile path must be set explicitly to `agent/Dockerfile`. See Milestone 5.
 
-**Files to create/modify:**
-- `agent/Dockerfile` _(replace placeholder)_
+**Files created/modified:**
+- `agent/Dockerfile` ✅ _(replaced placeholder)_
 
 ---
 
-### Milestone 2 — Create `agent/.dockerignore`
+### Milestone 2 — Create `agent/.dockerignore` ✅
 
 **Goal:** Exclude unnecessary files from the Docker build context to keep the build fast and avoid leaking secrets.
 
-**`agent/.dockerignore` content:**
+**`agent/.dockerignore` as implemented:**
 
 ```
 # Python artifacts
@@ -165,43 +176,36 @@ tests/
 .gitignore
 ```
 
-> **Note on root-level `.dockerignore`:** Since the build context is the project root, a root-level `.dockerignore` should also be created (or updated) to exclude the large frontend artefacts (`mapper/node_modules/`, `mapper/.next/`, `mapper/uploads/`) from the agent build context. Without this, Docker sends the entire repository to the daemon on each build.
+> **Root-level `.dockerignore` also updated:** `mapper/uploads/` and `**/docker.env` were added to the existing root `.dockerignore` to exclude large runtime artefacts and secrets from the project-root build context.
 
-**Files to create:**
-- `agent/.dockerignore` _(new)_
+**Files created/modified:**
+- `agent/.dockerignore` ✅ _(new)_
+- `.dockerignore` ✅ _(updated — `mapper/uploads/` and `**/docker.env` added)_
 
 ---
 
-### Milestone 3 — Handle the `playwright` Dependency
+### Milestone 3 — Handle the `playwright` Dependency ✅
 
 **Goal:** Resolve the Playwright dependency without bloating the image with Chromium or breaking the build.
 
-**Context:** `agent/pyproject.toml` lists `playwright>=1.40.0` as a dependency. Playwright requires browser binaries (`playwright install`) that are typically 200–400 MB. If Playwright is not used in production code paths, it should be moved to a dev dependency group.
+**Decision: Playwright kept in production.**
 
-**Steps:**
-1. Search the agent codebase for `playwright` imports to determine whether it is used in production or only in tests.
-2. **If Playwright is only used in tests** (most likely): move it to a `[dependency-groups]` dev group in `pyproject.toml`:
-   ```toml
-   [dependency-groups]
-   dev = [
-     "playwright>=1.40.0",
-   ]
-   ```
-   `uv sync --frozen --no-dev` will then exclude it from the Docker image.
-3. **If Playwright is required in production:** add a browser installation step to the builder stage:
-   ```dockerfile
-   RUN .venv/bin/playwright install --with-deps chromium
-   ```
-   Then copy the browser cache directory to the runner stage. Document the resulting image size increase.
-4. Run `uv lock` after modifying `pyproject.toml` to update `uv.lock`.
+`capture_frontend_state_tool.py` (`master_architecture/tools/`) imports `playwright.async_api` at runtime — it is not a test-only dependency. Therefore:
+- `playwright>=1.40.0` stays in `[project] dependencies`.
+- `pytest` and `pytest-asyncio` (genuinely test-only) were moved to `[dependency-groups] dev`.
+- The runner stage runs `playwright install --with-deps chromium` to install Chromium and required system libraries via `apt-get`.
+- `uv lock` was re-run (`Resolved 253 packages in 2ms`) to keep `uv.lock` consistent.
 
-**Files to potentially modify:**
-- `agent/pyproject.toml` _(move playwright to dev group if unused in production)_
-- `agent/Dockerfile` _(add playwright install step only if needed in production)_
+**Image size impact:** Chromium + system libraries add ~350 MB; total estimated image size ~900 MB. This exceeds the original "< 500 MB" target, which assumed Playwright would be dev-only.
+
+**Files modified:**
+- `agent/pyproject.toml` ✅ _(pytest/pytest-asyncio moved to dev group)_
+- `agent/uv.lock` ✅ _(regenerated via `uv lock`)_
+- `agent/Dockerfile` ✅ _(playwright install step added to runner stage — see Milestone 1)_
 
 ---
 
-### Milestone 4 — Create `agent/docker.env.example`
+### Milestone 4 — Create `agent/docker.env.example` ✅
 
 **Goal:** A template env file that Docker Compose references as `env_file:`. Mirrors the pattern of `mapper/docker.env.example` (from `13-02`).
 
@@ -242,43 +246,47 @@ NEO4J_PASSWORD=neo4j_password
 PORT=8001
 ```
 
-**Files to create:**
-- `agent/docker.env.example` _(new)_
+**Files created:**
+- `agent/docker.env.example` ✅ _(new)_
 
 ---
 
-### Milestone 5 — Add Agent Service to `docker-compose.yml`
+### Milestone 5 — Add Agent Service to `docker-compose.yml` ✅
 
 **Goal:** Running `docker compose --profile deploy up` starts the agent container alongside the frontend and MCP server.
 
-**Steps:**
-1. Add a `si-mapper-agent` service to `docker-compose.yml`:
-   ```yaml
-   si-mapper-agent:
-     build:
-       context: .
-       dockerfile: agent/Dockerfile
-     image: si-mapper-agent:latest
-     container_name: si-mapper-agent
-     ports:
-       - "8001:8001"
-     env_file:
-       - agent/docker.env
-     volumes:
-       - ./mapper/uploads:/app/uploads
-     profiles:
-       - deploy
-       - build
-   ```
-2. The `uploads/` bind-mount (`./mapper/uploads:/app/uploads`) matches the frontend service, ensuring both containers share the same project files directory.
-3. Add `agent/docker.env` to the root `.gitignore` so the operator-populated secrets file is never committed.
+**`si-mapper-agent` service as implemented:**
 
-**Files to modify:**
-- `docker-compose.yml` _(add `si-mapper-agent` service)_
+```yaml
+si-mapper-agent:
+  build:
+    # Build context must be the project root so Docker can access 223p/bin/,
+    # which is referenced as a local path dependency in agent/pyproject.toml.
+    context: .
+    dockerfile: agent/Dockerfile
+  image: si-mapper-agent:latest
+  container_name: si-mapper-agent
+  ports:
+    - "8001:8001"
+  env_file:
+    - agent/docker.env
+  volumes:
+    # Shared with si-mapper-frontend so both services read/write the same project files.
+    - ./mapper/uploads:/app/uploads
+  profiles:
+    - deploy
+    - build
+```
+
+The `uploads/` bind-mount (`./mapper/uploads:/app/uploads`) matches the frontend service, ensuring both containers share the same project files directory.
+
+**Files modified:**
+- `docker-compose.yml` ✅ _(si-mapper-agent service added)_
+- `.gitignore` ✅ _(`agent/docker.env` added to root `.gitignore`)_
 
 ---
 
-### Milestone 6 — Build & Smoke Test
+### Milestone 6 — Build & Smoke Test ✅
 
 **Goal:** Confirm the image builds successfully and the container serves the agent API.
 
@@ -308,30 +316,42 @@ PORT=8001
      docker exec -it si-mapper-agent ls /app/uploads
      ```
 7. Confirm the frontend container can reach the agent via Docker's internal network by setting `AGENT_BACKEND_URL=http://si-mapper-agent:8001` in `mapper/docker.env` and starting both services together.
+8. Record the actual final image size:
+   ```bash
+   docker image inspect si-mapper-agent:latest --format '{{.Size}}' | awk '{printf "%.0f MB\n", $1/1024/1024}'
+   ```
+
+**Results (2026-03-25):**
+- `GET /health` → `{"status": "ok"}` ✅
+- `GET /session_info` → `{"session_id": "session-a4e91cb0", "app_name": "si_mapper", "user_id": "demo_user"}` ✅
+- Uploads bind-mount: host file `smoke-test.txt` visible at `/app/uploads/` inside the container ✅
+- Final image size: **811 MB** (estimated 900 MB; Chromium + system libs account for ~350 MB of that) ✅
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `agent/Dockerfile` exists and produces a working image when built with `docker compose build si-mapper-agent` from the project root.
-- [ ] `agent/.dockerignore` exists and excludes `.venv/`, `__pycache__/`, `tests/`, `.env`, `docker.env`.
-- [ ] `agent/docker.env.example` documents all required environment variables, including `PROJECTS_FOLDER`.
-- [ ] `docker-compose.yml` includes a `si-mapper-agent` service under the `deploy` profile with `context: .` and `dockerfile: agent/Dockerfile`.
-- [ ] The build context is set to the project root so `223p/bin/` is accessible during the Docker build.
-- [ ] `uv sync --frozen --no-dev` is used for dependency installation (deterministic, no dev deps).
-- [ ] The `playwright` dependency is either excluded from the production image (moved to a dev group) or handled with explicit browser binary installation — and the decision is documented.
-- [ ] The `uploads/` bind-mount (`./mapper/uploads:/app/uploads`) matches the frontend container mount target, and `PROJECTS_FOLDER=/app/uploads` is documented in `docker.env.example`.
-- [ ] `GET /health` returns `{"status": "ok"}` when the container is running.
-- [ ] `agent/docker.env` is listed in the root `.gitignore`.
-- [ ] The final image size is noted in the milestone review (target: < 500 MB without Playwright browsers).
+- [x] `agent/Dockerfile` exists and produces a working image when built with `docker compose build si-mapper-agent` from the project root.
+- [x] `agent/.dockerignore` exists and excludes `.venv/`, `__pycache__/`, `tests/`, `.env`, `docker.env`.
+- [x] `agent/docker.env.example` documents all required environment variables, including `PROJECTS_FOLDER`.
+- [x] `docker-compose.yml` includes a `si-mapper-agent` service under the `deploy` profile with `context: .` and `dockerfile: agent/Dockerfile`.
+- [x] The build context is set to the project root so `223p/bin/` is accessible during the Docker build.
+- [x] `uv sync --frozen --no-dev` is used for dependency installation (deterministic, no dev deps).
+- [x] The `playwright` dependency is either excluded from the production image (moved to a dev group) or handled with explicit browser binary installation — and the decision is documented.
+- [x] The `uploads/` bind-mount (`./mapper/uploads:/app/uploads`) matches the frontend container mount target, and `PROJECTS_FOLDER=/app/uploads` is documented in `docker.env.example`.
+- [x] `GET /health` returns `{"status": "ok"}` when the container is running.
+- [x] `agent/docker.env` is listed in the root `.gitignore`.
+- [x] The final image size is noted in the milestone review (target: < 500 MB without Playwright browsers). _(Actual: **811 MB** — target superseded by Playwright runtime requirement; Chromium + system libs account for ~350 MB)_
 
 ---
 
 ## Notes & Decisions
 
+- **Playwright kept as a production dependency**: `capture_frontend_state_tool.py` (`master_architecture/tools/`) imports and uses `playwright.async_api` at runtime — it is not a test-only dependency and cannot be moved to the dev group. `playwright install --with-deps chromium` runs in the runner stage, installing Chromium and required system libraries. Actual image size: **811 MB** (Chromium + system libs ~350 MB), superseding the original < 500 MB target.
+- **`litellm` capped at `<=1.82.3`**: `litellm` is pulled in transitively by `google-adk[extensions]` with no upper bound. An explicit `litellm<=1.82.3` entry was added to `[project] dependencies` in `pyproject.toml` to prevent silent upgrades. `uv.lock` records `specifier = "<=1.82.3"` for the agent package and resolves `litellm` at `1.82.3`.
+- **`pytest` / `pytest-asyncio` moved to dev group**: These are test-only tools. They now live under `[dependency-groups] dev` in `pyproject.toml` and are excluded from the production image by `uv sync --frozen --no-dev`. `uv lock` was re-run and resolved 253 packages.
 - **Build context at project root**: This is an unusual but necessary choice because `pyproject.toml` references `../223p/bin/` — Docker cannot follow relative paths outside its build context. Setting `context: .` and `dockerfile: agent/Dockerfile` is the correct solution and is already supported by Docker Compose.
 - **Shared `uploads/` volume**: The agent and frontend both need access to project files. Using the same bind-mount (`./mapper/uploads:/app/uploads`) in both services ensures files written by one are immediately visible to the other. `PROJECTS_FOLDER=/app/uploads` must be set consistently in both `mapper/docker.env` and `agent/docker.env`.
-- **No Playwright browsers by default**: Playwright browser binaries add 200–400 MB to the image. If Playwright is only a test dependency, moving it to a `[dependency-groups] dev` group in `pyproject.toml` keeps the production image lean. This matches the pattern already used by the frontend (`pnpm install --ignore-scripts` in `13-02`).
 - **Port 8001**: The agent listens on port `8001` by default (configurable via `PORT` env var). This does not conflict with the MCP server (port `8080`) or the frontend (port `3000`).
 - **`uv sync` vs `pip install`**: `uv sync --frozen` uses the exact versions in `uv.lock` for deterministic builds — the same philosophy as `pnpm install --frozen-lockfile` on the frontend side.
 - **Dual agent URLs in `mapper/docker.env`**: The frontend's `AGENT_BACKEND_URL` (server-to-server, uses Docker service name `si-mapper-agent`) and `NEXT_PUBLIC_AGENT_BACKEND_URL` (browser-to-server, uses the host's exposed port `http://localhost:8001`) must both be set correctly. This mirrors the dual-URL pattern documented in `13-02`.

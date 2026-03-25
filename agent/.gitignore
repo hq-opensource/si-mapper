@@ -3,6 +3,9 @@
 .env.*
 !.example.env
 
+# Docker runtime secrets — copy docker.env.example → docker.env and fill in values
+docker.env
+
 # Python artifacts
 __pycache__/
 *.py[cod]
