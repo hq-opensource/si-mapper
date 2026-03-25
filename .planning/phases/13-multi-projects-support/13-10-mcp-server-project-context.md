@@ -1,10 +1,10 @@
-# 13-09 — MCP Server Project Context
+# 13-10 — MCP Server Project Context
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
 **Updated:** 2026-03-25
 **Depends on:** `13-01` (env vars externalized), `13-06` (Graphivac grid IDs are known per project)
-**See also:** `13-08` (agent project context — handled separately via `ToolContext.state`)
+**See also:** `13-09` (agent project context — handled separately via `ToolContext.state`)
 
 ---
 
@@ -77,7 +77,7 @@ Every tool (`create_duct`, `read_grid`, `create_fan`, etc.) goes through a manag
 
 This is acceptable for Phase 13 because:
 - Single-project deployments (one team, one building) are the primary use case today.
-- The agent's own Graphivac tools (`sync_graphivac_to_agent_tool.py`, `sync_graphivac_tool.py`) are fully dynamic (see `13-08`) — they read the correct grid from `ToolContext.state` per session.
+- The agent's own Graphivac tools (`sync_graphivac_to_agent_tool.py`, `sync_graphivac_tool.py`) are fully dynamic (see `13-09`) — they read the correct grid from `ToolContext.state` per session.
 - The MCP server tools are primarily used for **canvas rendering** (the frontend's View/Edit tabs embed Graphivac directly), which is already dynamically scoped to the project via the Graphivac iframe URL in `13-07`.
 
 ---
@@ -205,7 +205,7 @@ This would require:
 3. The frontend passing `grid_id` with every MCP tool call (not currently supported by the FastMCP/MCP protocol without custom metadata).
 4. Evaluating whether the MCP protocol supports per-call context injection or whether a custom middleware layer is needed.
 
-**Recorded as a deferred item in:** `13-multi-project-support/deferred-items.md`
+**Recorded as a deferred item in:** `deferred-items.md`
 
 ---
 
@@ -256,11 +256,10 @@ This would require:
 ### Milestone 4 — Deferred items file
 
 **Steps:**
-1. Create `.planning/phases/13-multi-project-support/deferred-items.md`.
-2. Document dynamic per-request MCP grid targeting as the primary deferred item with its scope and rationale.
+1. Confirm `deferred-items.md` documents dynamic per-request MCP grid targeting as a primary deferred item with scope and rationale.
 
-**Files to create:**
-- `.planning/phases/13-multi-project-support/deferred-items.md`
+**Files to verify:**
+- `.planning/phases/13-multi-projects-support/deferred-items.md`
 
 ---
 
@@ -282,5 +281,6 @@ This would require:
 - **`/config` is not authenticated**: grid IDs are not sensitive — they appear in Graphivac iframe URLs already. The endpoint is safe to expose without auth.
 - **CORS on `/config`**: the MCP server already includes a blanket CORS middleware (`allow_origins=["*"]`), so the `/config` route inherits this without extra config.
 - **`McpStatusBanner` polling interval**: 30 seconds is sufficient — the user triggers a restart manually and waits a few seconds. There is no value in polling faster.
-- **Relationship to `13-08`**: the agent's own Graphivac sync tools are fully dynamic (per `13-08`). The MCP server tools are used for canvas operations that the agent triggers via the internal grid → Graphivac sync flow. In practice, as long as both the MCP server and the agent target the same grid, everything is consistent. The mismatch warning catches the case where the operator forgot to restart the MCP server after switching projects.
+- **Relationship to `13-09`**: the agent's own Graphivac sync tools are fully dynamic (per `13-09`). The MCP server tools are used for canvas operations that the agent triggers via the internal grid → Graphivac sync flow. In practice, as long as both the MCP server and the agent target the same grid, everything is consistent. The mismatch warning catches the case where the operator forgot to restart the MCP server after switching projects.
+
 

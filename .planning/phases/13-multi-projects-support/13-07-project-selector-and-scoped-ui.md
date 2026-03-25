@@ -4,6 +4,7 @@
 **Status:** Not started
 **Updated:** 2026-03-25
 **Depends on:** `13-04` (data model), `13-05` (project CRUD API)
+**See also:** `13-08` (Project Management UI — edit, file management; NOT covered here)
 
 ---
 
@@ -12,10 +13,12 @@
 This task wires the project data model and CRUD API into the frontend user experience. It covers:
 
 1. A **React context** that tracks the currently active project across the entire app.
-2. A **project selector component** (in the navbar) that lets users switch between projects, create new ones, or delete existing ones.
+2. A **project selector component** (in the navbar) that lets users switch between projects and perform quick create/delete actions.
 3. **Scoping the file manager** so it shows only files from the active project's folder.
 4. **Scoping the Graphivac iframe** so it displays the active project's grid (view and edit tabs).
-5. **Wiring the active project into CopilotKit state** so the agent receives project context (consumed by `13-08`).
+5. **Wiring the active project into CopilotKit state** so the agent receives project context (consumed by `13-09`).
+
+> **Scope boundary:** This task intentionally limits project management actions in the selector to quick create (via `PromptDialog`) and quick delete (via `ConfirmationDialog`). Full management — **editing project settings**, **uploading/listing/deleting project files** — is handled in `13-08 — Project Management UI`. The "Manage projects →" entry point in the selector (see below) links to that dedicated surface.
 
 ---
 
@@ -77,6 +80,9 @@ interface ActiveProjectContextValue {
 - Contains a **"Delete project"** button (with a `ConfirmationDialog` — already exists) on each project entry.
   - On confirm: `DELETE /api/projects/[id]`, then `refreshProjects()`.
   - If the deleted project was active, auto-select the next available project.
+- Contains a **"⚙ Manage projects →"** link at the bottom of the dropdown that navigates to `/projects` (the management page built in `13-08`). This is the discovery point for editing project settings and managing project files.
+
+> **Intentional limitation:** the selector is a quick-access switcher, not a full management panel. The `PromptDialog` used for creation accepts only basic fields (name, model). Editing project metadata, uploading files, and detailed file management are deliberately relegated to the `/projects` management page (`13-08`) to keep the navbar interaction lightweight.
 
 ### UI wireframe (text)
 
@@ -91,6 +97,7 @@ Dropdown open:
 │   Building B — Chiller Plant [🗑]           │
 │ ─────────────────────────────────────────── │
 │ + New project                               │
+│ ⚙ Manage projects →                        │  ← links to /projects (13-08)
 └─────────────────────────────────────────────┘
 ```
 
@@ -184,7 +191,7 @@ The agent needs to know the active project. The mechanism is CopilotKit's `useCo
    ```
 3. When `activeProject` changes, update the agent state so the agent knows it switched projects.
 
-> The agent consuming this state is described in `13-08`.
+> The agent consuming this state is described in `13-09`.
 
 ---
 
@@ -277,11 +284,14 @@ The agent needs to know the active project. The mechanism is CopilotKit's `useCo
 - [ ] `ProjectSelector` in the navbar shows the active project name and allows switching.
 - [ ] Creating a project via the selector calls `POST /api/projects` and immediately activates the new project.
 - [ ] Deleting a project via the selector calls `DELETE /api/projects/[id]` and switches to another project.
+- [ ] The selector dropdown contains a "⚙ Manage projects →" link to `/projects`.
 - [ ] The file manager shows only files under the active project's folder.
 - [ ] The Graphivac View and Edit iframes display the active project's grid.
 - [ ] Switching projects updates the file manager and Graphivac iframes without a full page reload.
 - [ ] The active project is included in the CopilotKit agent state.
 - [ ] A graceful zero-project state is displayed when no projects exist.
+
+> **Out of scope for this task:** editing project metadata, uploading files, listing/deleting project files — these are covered by `13-08 — Project Management UI`.
 
 ---
 
