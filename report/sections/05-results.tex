@@ -1,4 +1,120 @@
 \section{Results}
 \label{sec:results}
 
-% Placeholder content to be written in Plan 03
+\subsection{Experimental Setup}
+
+Two HVAC systems were selected for evaluation: System 1 (Air Handling Unit) and System 3
+(Air Handling Unit). Both systems are drawn from real buildings with existing BACnet point
+exports and engineering drawings available for ingestion. The selection ensures that the
+evaluation reflects production conditions --- actual drawings with all the ambiguity and
+variability of real-world HVAC documentation, not synthetic test cases.
+
+Four metrics are recorded for each AI agent run: total LLM token consumption (sum of input
+and output tokens across all model calls in the session), estimated token cost in USD at
+the applicable model pricing, wall-clock time from session start to validated TTL output,
+and a qualitative assessment of the generated ASHRAE 223P graph based on completeness
+(all equipment and sensors present), accuracy (correct topology and BACnet references),
+and interpretability (graph readable by downstream applications).
+
+\subsection{System 1: Air Handling Unit}
+
+\begin{table}[htbp]
+  \caption{System 1 (AHU) --- AI Agent Performance}
+  \label{tab:system1-ai}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Metric} & \textbf{Value} \\
+    \midrule
+    Total tokens consumed  & \todo{Fill after running experiment} \\
+    Token cost (USD)       & \todo{Fill after running experiment} \\
+    Wall-clock time        & \todo{Fill after running experiment} \\
+    Model used             & \todo{Gemini 3.1 / Claude Sonnet 4.6} \\
+    ASHRAE 223P graph quality & \todo{Describe completeness and accuracy} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\todo{Insert screenshot of System 1 frontend result}
+
+\subsection{System 3: Air Handling Unit}
+
+\begin{table}[htbp]
+  \caption{System 3 (AHU) --- AI Agent Performance}
+  \label{tab:system3-ai}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Metric} & \textbf{Value} \\
+    \midrule
+    Total tokens consumed  & \todo{Fill after running experiment} \\
+    Token cost (USD)       & \todo{Fill after running experiment} \\
+    Wall-clock time        & \todo{Fill after running experiment} \\
+    Model used             & \todo{Gemini 3.1 / Claude Sonnet 4.6} \\
+    ASHRAE 223P graph quality & \todo{Describe completeness and accuracy} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\todo{Insert screenshot of System 3 frontend result}
+
+\subsection{Human Engineer Baseline}
+
+For comparison, an experienced HVAC engineer performed the same task manually: reading the
+same engineering drawings and BACnet point export CSV files, and producing an equivalent
+ASHRAE 223P semantic model by hand using domain knowledge and available ontology tooling.
+The human engineer was given the same inputs as the AI agent --- no additional context ---
+to ensure a fair comparison of effort and output quality.
+
+\begin{table}[htbp]
+  \caption{Human Engineer Baseline}
+  \label{tab:human-baseline}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Metric} & \textbf{System 1} & \textbf{System 3} \\
+    \midrule
+    Time to complete
+      & \todo{Fill after human test}
+      & \todo{Fill after human test} \\
+    Estimated labor cost (USD)
+      & \todo{Fill after human test}
+      & \todo{Fill after human test} \\
+    ASHRAE 223P graph quality
+      & \todo{Describe completeness and accuracy}
+      & \todo{Describe completeness and accuracy} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Comparison: AI Agent vs.\ Human Engineer}
+
+\begin{table}[htbp]
+  \caption{AI Agent vs.\ Human Engineer Comparison}
+  \label{tab:comparison}
+  \centering
+  \begin{tabular}{llll}
+    \toprule
+    & \textbf{AI Agent} & \textbf{Human Engineer} & \textbf{Speedup} \\
+    \midrule
+    System 1 --- Time
+      & \todo{AI time}
+      & \todo{Human time}
+      & \todo{Nx} \\
+    System 1 --- Cost
+      & \todo{AI cost}
+      & \todo{Human cost}
+      & \todo{Nx} \\
+    System 3 --- Time
+      & \todo{AI time}
+      & \todo{Human time}
+      & \todo{Nx} \\
+    System 3 --- Cost
+      & \todo{AI cost}
+      & \todo{Human cost}
+      & \todo{Nx} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\todo{Write analysis comparing AI and human results. Discuss where AI performed well, where it struggled, and implications for production deployment.}
