@@ -1,9 +1,9 @@
-# 13-06 — Project Selector & Scoped UI
+# 13-07 — Project Selector & Scoped UI
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
 **Updated:** 2026-03-25
-**Depends on:** `13-03` (data model), `13-04` (project CRUD API)
+**Depends on:** `13-04` (data model), `13-05` (project CRUD API)
 
 ---
 
@@ -15,7 +15,7 @@ This task wires the project data model and CRUD API into the frontend user exper
 2. A **project selector component** (in the navbar) that lets users switch between projects, create new ones, or delete existing ones.
 3. **Scoping the file manager** so it shows only files from the active project's folder.
 4. **Scoping the Graphivac iframe** so it displays the active project's grid (view and edit tabs).
-5. **Wiring the active project into CopilotKit state** so the agent receives project context (consumed by `13-07`).
+5. **Wiring the active project into CopilotKit state** so the agent receives project context (consumed by `13-08`).
 
 ---
 
@@ -155,7 +155,7 @@ The Graphivac grid URL is derived dynamically from the active project at runtime
 
 | Variable | Description |
 |---|---|
-| `GRAPHIVAC_BASE_URL` | Already added in `13-05` — reuse here |
+| `GRAPHIVAC_BASE_URL` | Already added in `13-06` — reuse here |
 
 No additional `NEXT_PUBLIC_` variables are introduced for the Graphivac URL — the base URL is served via `/api/config` instead.
 
@@ -184,7 +184,7 @@ The agent needs to know the active project. The mechanism is CopilotKit's `useCo
    ```
 3. When `activeProject` changes, update the agent state so the agent knows it switched projects.
 
-> The agent consuming this state is described in `13-07`.
+> The agent consuming this state is described in `13-08`.
 
 ---
 
@@ -290,5 +290,5 @@ The agent needs to know the active project. The mechanism is CopilotKit's `useCo
 - **`/api/config` for runtime config**: this is the standard pattern to serve server-side env vars to the browser without `NEXT_PUBLIC_` inlining. It adds a one-time fetch on mount but avoids the build-time constraint.
 - **`PromptDialog` and `ConfirmationDialog` reuse**: both components already exist in `mapper/src/components/`. The project creation dialog and delete confirmation do not require new modal components.
 - **File manager root change**: scoping the file manager to a project subfolder is implemented entirely in the API route (`?project=` param) rather than in the component, keeping the component stateless regarding path resolution.
-- **CopilotKit state update on project switch**: when the user switches project, `active_project` in the agent state is updated. The agent must be designed (in `13-07`) to re-read this value at the start of each task rather than caching it.
+- **CopilotKit state update on project switch**: when the user switches project, `active_project` in the agent state is updated. The agent must be designed (in `13-08`) to re-read this value at the start of each task rather than caching it.
 

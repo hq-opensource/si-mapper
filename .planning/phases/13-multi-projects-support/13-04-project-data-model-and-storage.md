@@ -1,4 +1,4 @@
-# 13-03 — Project Data Model & Storage
+# 13-04 — Project Data Model & Storage
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
@@ -15,7 +15,7 @@ Before any CRUD API, UI selector, or agent context can be built, the shape of a 
 2. The physical storage layout on the file system under `PROJECTS_FOLDER`.
 3. The read/write utility module used by all API routes (so file I/O is never duplicated).
 
-Everything in tasks `13-04` through `13-07` depends on this foundation.
+Everything in tasks `13-05` through `13-08` depends on this foundation.
 
 ---
 

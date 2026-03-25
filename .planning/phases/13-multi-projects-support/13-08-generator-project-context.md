@@ -1,10 +1,10 @@
-# 13-07 — Agent Project Context Awareness
+# 13-08 — Agent Project Context Awareness
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
 **Updated:** 2026-03-25
-**Depends on:** `13-06` (active project is in CopilotKit state before the agent can read it)
-**See also:** `13-08` (MCP server project context — handled separately)
+**Depends on:** `13-07` (active project is in CopilotKit state before the agent can read it)
+**See also:** `13-09` (MCP server project context — handled separately)
 
 ---
 
@@ -17,12 +17,12 @@ The agentic backend (`agent/`) currently has its Graphivac grid identity and fil
 
 This task makes the **agent** project-context-aware by:
 
-1. Reading the active project record from `ToolContext.state` (injected by the frontend via CopilotKit — see `13-06`).
+1. Reading the active project record from `ToolContext.state` (injected by the frontend via CopilotKit — see `13-07`).
 2. Using the active project's `graphivac_grid_id`, `graphivac_org_id`, `graphivac_project_id`, and `folder_path` instead of the static env vars wherever the agent interacts with Graphivac or the file system.
 3. Scoping the agent's file-system access to the active project's folder on disk.
 4. Using the active project's `ai_model_name` as the model for that session.
 
-> The MCP server has a separate, more constrained treatment of multi-project support due to its architecture — see `13-08`.
+> The MCP server has a separate, more constrained treatment of multi-project support due to its architecture — see `13-09`.
 
 ---
 
@@ -54,7 +54,7 @@ Skills that read from the file system (e.g. `skill-read-code`, the 223P ontology
 
 ## Approach: Project Context via `ToolContext.state`
 
-The frontend injects `active_project` into the CopilotKit agent state (see `13-06`). In the ADK agent, state is accessible via `tool_context.state` inside any tool function. The pattern is:
+The frontend injects `active_project` into the CopilotKit agent state (see `13-07`). In the ADK agent, state is accessible via `tool_context.state` inside any tool function. The pattern is:
 
 ```python
 def sync_graphivac_to_agent(tool_context: ToolContext) -> dict:
@@ -79,7 +79,7 @@ This pattern:
 
 ---
 
-## Active Project State Shape (from `13-06`)
+## Active Project State Shape (from `13-07`)
 
 The frontend injects the following into `tool_context.state`:
 
@@ -244,4 +244,4 @@ Add a section explaining to the master agent:
 - **State-first, env-var fallback**: this pattern is non-breaking and follows the existing convention in the codebase (many tools already check state before falling back to defaults). No env var is removed.
 - **No agent restart on project switch**: the agent session is created once when the frontend connects. If the user switches projects, the new `active_project` is sent to the agent via the CopilotKit state update mechanism. The agent reads the updated state on the next tool call — no restart needed.
 - **`PROJECTS_FOLDER` in the agent**: the agent process runs from `agent/`, not `mapper/`. The `PROJECTS_FOLDER` env var must also be set for the agent process so `get_project_path` resolves correctly. In the dev setup, this is the same host path. In Docker, it would be a shared volume mount.
-- **MCP server is handled separately**: the MCP server has a singleton architecture that requires a different approach. See `13-08`.
+- **MCP server is handled separately**: the MCP server has a singleton architecture that requires a different approach. See `13-09`.

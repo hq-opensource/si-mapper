@@ -1,22 +1,22 @@
-# 13-04 — Project Management API
+# 13-05 — Project Management API
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
 **Updated:** 2026-03-25
-**Depends on:** `13-03` (project storage utilities), `13-05` (Graphivac grid API — for create/delete)
+**Depends on:** `13-04` (project storage utilities), `13-06` (Graphivac grid API — for create/delete)
 
 ---
 
 ## Overview
 
-This task implements the Next.js API routes that expose full CRUD operations on projects. The routes are consumed by the project selector UI (`13-06`) and are the single point of authority for:
+This task implements the Next.js API routes that expose full CRUD operations on projects. The routes are consumed by the project selector UI (`13-07`) and are the single point of authority for:
 
 - Listing and reading projects.
 - Creating a new project (allocates a folder on disk and creates a grid in Graphivac).
 - Updating project metadata (name, model, Graphivac IDs).
 - Deleting a project (removes the disk folder and the Graphivac grid).
 
-All routes run server-side (App Router `route.ts` files). They import from `mapper/src/lib/projects.ts` (data layer, `13-03`) and the Graphivac client (`mapper/src/lib/graphivac-client.ts`, `13-05`).
+All routes run server-side (App Router `route.ts` files). They import from `mapper/src/lib/projects.ts` (data layer, `13-04`) and the Graphivac client (`mapper/src/lib/graphivac-client.ts`, `13-06`).
 
 ---
 
@@ -73,7 +73,7 @@ Creates a new project. The body specifies the human-facing fields; the API gener
 }
 ```
 
-> `graphivac_grid_id` is intentionally **absent** from the request — it is returned by the Graphivac grid creation call (see `13-05`) and stored automatically.
+> `graphivac_grid_id` is intentionally **absent** from the request — it is returned by the Graphivac grid creation call (see `13-06`) and stored automatically.
 
 **Server-side flow:**
 1. Validate required fields (`name`, `graphivac_org_id`, `graphivac_project_id`).
@@ -166,7 +166,7 @@ mapper/src/app/api/projects/
 ### Milestone 2 — Implement read-only routes
 
 **Steps:**
-1. Implement `GET /api/projects` using `listProjects()` from `13-03`.
+1. Implement `GET /api/projects` using `listProjects()` from `13-04`.
 2. Implement `GET /api/projects/[id]` using `getProject(id)`.
 3. Confirm both routes return correct JSON with `pnpm dev` running.
 
@@ -174,7 +174,7 @@ mapper/src/app/api/projects/
 
 ### Milestone 3 — Implement create route
 
-**Prerequisite:** `13-05` Graphivac grid creation client must be implemented first.
+**Prerequisite:** `13-06` Graphivac grid creation client must be implemented first.
 
 **Steps:**
 1. Implement `POST /api/projects`:
@@ -197,7 +197,7 @@ mapper/src/app/api/projects/
 
 ### Milestone 5 — Implement delete route
 
-**Prerequisite:** `13-05` Graphivac grid deletion client.
+**Prerequisite:** `13-06` Graphivac grid deletion client.
 
 **Steps:**
 1. Implement `DELETE /api/projects/[id]`:
@@ -227,7 +227,7 @@ mapper/src/app/api/projects/
 - [ ] `DELETE /api/projects/[id]` removes the project folder and the Graphivac grid.
 - [ ] All routes return structured JSON errors (never raw exceptions).
 - [ ] `zod` is used to validate `POST` and `PATCH` request bodies.
-- [ ] No route duplicates file-system logic from `13-03` — all go through `mapper/src/lib/projects.ts`.
+- [ ] No route duplicates file-system logic from `13-04` — all go through `mapper/src/lib/projects.ts`.
 
 ---
 
