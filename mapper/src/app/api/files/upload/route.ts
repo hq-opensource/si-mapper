@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
-const UPLOADS_DIR = path.join(process.cwd(), 'uploads');
+const PROJECTS_FOLDER = process.env.PROJECTS_FOLDER
+  ? path.resolve(process.env.PROJECTS_FOLDER)
+  : path.join(process.cwd(), 'uploads');
 
 const validatePath = (requestedPath: string | null) => {
-    const targetPath = requestedPath ? path.resolve(UPLOADS_DIR, requestedPath.replace(/^\//, '')) : UPLOADS_DIR;
-    if (!targetPath.startsWith(UPLOADS_DIR)) {
+    const targetPath = requestedPath ? path.resolve(PROJECTS_FOLDER, requestedPath.replace(/^\//, '')) : PROJECTS_FOLDER;
+    if (!targetPath.startsWith(PROJECTS_FOLDER)) {
         throw new Error('Invalid path');
     }
     return targetPath;
