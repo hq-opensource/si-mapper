@@ -2,24 +2,24 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 13
+current_phase: 14
 status: unknown
-last_updated: "2026-03-23T21:45:10.365Z"
+last_updated: "2026-03-25T22:46:06.571Z"
 progress:
-  total_phases: 13
+  total_phases: 14
   completed_phases: 7
-  total_plans: 22
-  completed_plans: 22
+  total_plans: 26
+  completed_plans: 23
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 13
-- **Overall Completion:** [██████████] 100%
-- **Active Plan:** 13-02 (complete)
-- **Last Completed:** 13-02 (rewired master agent to use ontology tools directly, removed sub-agent wrappers, max_iterations=100, updated ASHRAE protocol to reference skills)
+- **Current Phase:** 14
+- **Overall Completion:** [█████████░] 88%
+- **Active Plan:** 14-01 (complete)
+- **Last Completed:** 14-01 (created LaTeX skeleton with main.tex + 6 section stubs, rendered 3 Mermaid diagrams to PNG via mmdc v10.6.1; compilation verified via Docker texlive)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -109,6 +109,7 @@ progress:
 - **2026-03-22:** Completed 11-03-PLAN.md. Swapped old tools to scan_python_files_filtered + search_class_mapping in both ontology_generator and ontology_validator agent.py files. Rewrote both prompt.md files with new targeted workflow. Extended agent tests (4 new tests). Deleted full_bob.jsonl and full_scratch.jsonl. 12 agent tests pass.
 - **2026-03-23:** Completed 13-01-PLAN.md. Created ontology_exit_tools.py (4 functions, EXIT_LEVEL_2). Created skill-ontology-generation/SKILL.md and skill-ontology-validation/SKILL.md — auto-discoverable skills for master agent. Original sub-agent files untouched.
 - **2026-03-23:** Completed 13-02-PLAN.md. Removed OntologyGeneratorAgent and OntologyValidatorAgent sub-agent wrappers. Wired 11 ontology tools directly into MasterLlmAgent task_tools. Raised max_iterations to 100. Updated ASHRAE protocol to reference skills. 8 new architecture tests pass. Phase 13 complete.
+- **2026-03-25:** Completed 14-01-PLAN.md. Created LaTeX skeleton (main.tex + 6 section stubs) with full preamble. Compiled via Docker texlive:latest (0 errors, 2-page PDF). Rendered 3 Mermaid diagrams (pipeline, architecture, experiment-progression) to PNG via mmdc v10.6.1. Decision: LaTeX via Docker (no local texlive/no sudo); mmdc via ~/.npm-global for Node 18 compat.
 
 ## Roadmap Evolution
 
