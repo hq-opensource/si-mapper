@@ -2,12 +2,14 @@ import { NextResponse } from 'next/server';
 import { readdir, stat } from 'fs/promises';
 import path from 'path';
 
-const UPLOADS_DIR = path.join(process.cwd(), 'uploads');
+const PROJECTS_FOLDER = process.env.PROJECTS_FOLDER
+  ? path.resolve(process.env.PROJECTS_FOLDER)
+  : path.join(process.cwd(), 'uploads');
 
 // Helper to validate paths
 const validatePath = (requestedPath: string | null) => {
-    const targetPath = requestedPath ? path.resolve(UPLOADS_DIR, requestedPath.replace(/^\//, '')) : UPLOADS_DIR;
-    if (!targetPath.startsWith(UPLOADS_DIR)) {
+    const targetPath = requestedPath ? path.resolve(PROJECTS_FOLDER, requestedPath.replace(/^\//, '')) : PROJECTS_FOLDER;
+    if (!targetPath.startsWith(PROJECTS_FOLDER)) {
         throw new Error('Invalid path');
     }
     return targetPath;
@@ -19,11 +21,11 @@ const getTree = async (dir: string): Promise<any[]> => {
         const files = await Promise.all(entries.map(async (entry) => {
             const fullPath = path.join(dir, entry.name);
             const stats = await stat(fullPath);
-            const relativePath = path.relative(UPLOADS_DIR, fullPath);
+            const relativePath = path.relative(PROJECTS_FOLDER, fullPath);
             const id = `/${relativePath}`;
             
-            // pId should be "/" if the parent is UPLOADS_DIR
-            const parentRelPath = path.relative(UPLOADS_DIR, dir);
+            // pId should be "/" if the parent is PROJECTS_FOLDER
+            const parentRelPath = path.relative(PROJECTS_FOLDER, dir);
             const pId = parentRelPath === "" ? "/" : `/${parentRelPath}`;
 
             const item: any = {
@@ -58,7 +60,7 @@ export async function GET(request: Request) {
         const tree = searchParams.get('tree') === 'true';
 
         if (tree) {
-            const items = await getTree(UPLOADS_DIR);
+            const items = await getTree(PROJECTS_FOLDER);
             return NextResponse.json(items);
         }
 
@@ -68,9 +70,9 @@ export async function GET(request: Request) {
         const files = await Promise.all(entries.map(async (entry) => {
             const fullPath = path.join(targetPath, entry.name);
             const stats = await stat(fullPath);
-            const relativePath = path.relative(UPLOADS_DIR, fullPath);
+            const relativePath = path.relative(PROJECTS_FOLDER, fullPath);
             
-            const parentRelPath = path.relative(UPLOADS_DIR, targetPath);
+            const parentRelPath = path.relative(PROJECTS_FOLDER, targetPath);
             const pId = parentRelPath === "" ? "/" : `/${parentRelPath}`;
 
             return {

@@ -108,12 +108,12 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
                     );
                     case 'view': return (
                       <SharedPageContainer title="View Mode" subtitle="Real-time Asset Monitoring" icon={Eye} fullWidth fullHeight>
-                        <ExternalPageIframe src="https://graphivac.hvac.io/o/public/p/P-j8QIvTGH7p/g/G-LAiRS3mgp6?iframe=t&init-zoom=t" />
+                        <ExternalPageIframe src={`${process.env.NEXT_PUBLIC_GRAPHIVAC_GRID_URL ?? ""}${process.env.NEXT_PUBLIC_GRAPHIVAC_GRID_URL ? "?iframe=t&init-zoom=t" : ""}`} />
                       </SharedPageContainer>
                     );
                     case 'edit': return (
                       <SharedPageContainer title="Edit Mode" subtitle="Interactive System Configuration" icon={Edit3} fullWidth fullHeight>
-                        <ExternalPageIframe src="https://graphivac.hvac.io/o/public/p/P-j8QIvTGH7p/g/G-LAiRS3mgp6?mode=editor&init-zoom=t" />
+                        <ExternalPageIframe src={`${process.env.NEXT_PUBLIC_GRAPHIVAC_GRID_URL ?? ""}${process.env.NEXT_PUBLIC_GRAPHIVAC_GRID_URL ? "?mode=editor&init-zoom=t" : ""}`} />
                       </SharedPageContainer>
                     );
                     case 'debug': return (

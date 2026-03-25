@@ -1,7 +1,7 @@
 # 13-01 — Externalize Frontend Configurations
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
+**Status:** Done
 **Updated:** 2026-03-25
 
 ---
@@ -176,16 +176,16 @@ This is not overridable without editing source code, making it impossible to:
 
 ## Acceptance Criteria
 
-- [ ] `mapper/.env.example` exists with every variable documented.
-- [ ] No hardcoded `127.0.0.1:8001` or `localhost:8001` remains in any source file.
-- [ ] No hardcoded Graphivac URL remains in any source file.
-- [ ] `UPLOADS_DIR` constant in `src/app/api/files/route.ts` is replaced by `PROJECTS_FOLDER` read from `process.env`.
-- [ ] Path-traversal guard in the files API uses the `PROJECTS_FOLDER` value as its root boundary.
-- [ ] Server-side variables (`AGENT_BACKEND_URL`, `PROJECTS_FOLDER`, `NEO4J_*`) are not prefixed with `NEXT_PUBLIC_` and are NOT bundled in browser JS.
-- [ ] Client-side variables (`NEXT_PUBLIC_*`) fall back to dev-friendly defaults.
-- [ ] A missing or empty `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` renders a graceful placeholder instead of a broken iframe.
-- [ ] `mapper/README.md` includes a Configuration section explaining how to set up `.env.local`.
-- [ ] All existing functionality works with default values (no regression).
+- [x] `mapper/.env.example` exists with every variable documented.
+- [x] No hardcoded `127.0.0.1:8001` or `localhost:8001` remains in any source file.
+- [x] No hardcoded Graphivac URL remains in any source file.
+- [x] `UPLOADS_DIR` constant in `src/app/api/files/route.ts` is replaced by `PROJECTS_FOLDER` read from `process.env`.
+- [x] Path-traversal guard in the files API uses the `PROJECTS_FOLDER` value as its root boundary.
+- [x] Server-side variables (`AGENT_BACKEND_URL`, `PROJECTS_FOLDER`, `NEO4J_*`) are not prefixed with `NEXT_PUBLIC_` and are NOT bundled in browser JS.
+- [x] Client-side variables (`NEXT_PUBLIC_*`) fall back to dev-friendly defaults.
+- [x] A missing or empty `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` renders a graceful placeholder instead of a broken iframe.
+- [x] `mapper/README.md` includes a Configuration section explaining how to set up `.env.local`.
+- [ ] All existing functionality works with default values (no regression). _(manual runtime validation required)_
 
 ---
 

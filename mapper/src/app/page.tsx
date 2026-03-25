@@ -73,9 +73,9 @@ export default function CopilotKitPage() {
   const [isEditMode, setIsEditMode] = useState(false);
 
   // 1. Polling Agent State (Backup/Sub-agent visibility)
-  // We use 8001 as seen in api/copilotkit/route.ts
+  // Configure the agent URL via NEXT_PUBLIC_AGENT_BACKEND_URL env var
   const pollingConfig = useMemo(() => ({
-    baseUrl: "http://localhost:8001",
+    baseUrl: process.env.NEXT_PUBLIC_AGENT_BACKEND_URL ?? "http://localhost:8001",
     interval: 2000
   }), []);
 
