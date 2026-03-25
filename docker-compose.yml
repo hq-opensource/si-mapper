@@ -98,6 +98,28 @@ services:
 #      - deploy
 #      - tools
 
+  si-mapper-frontend:
+    build:
+      context: ./mapper
+      dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* vars must be available at build time (inlined by Next.js compiler).
+        # Define them in the root .env file (copy .env.example → .env) — Docker Compose
+        # reads it automatically and substitutes the values below.
+        NEXT_PUBLIC_AGENT_BACKEND_URL: ${NEXT_PUBLIC_AGENT_BACKEND_URL:-http://localhost:8001}
+        NEXT_PUBLIC_GRAPHIVAC_GRID_URL: ${NEXT_PUBLIC_GRAPHIVAC_GRID_URL:-}
+    image: si-mapper-frontend:latest
+    container_name: si-mapper-frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - mapper/docker.env
+    volumes:
+      - ./mapper/uploads:/app/uploads
+    profiles:
+      - deploy
+      - build
+
 volumes:
   portainer_data:
   neo4j_data:

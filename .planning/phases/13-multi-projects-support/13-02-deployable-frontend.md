@@ -1,7 +1,7 @@
 # 13-02 — Deployable Frontend
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
+**Status:** Completed
 **Updated:** 2026-03-25
 **Depends on:** `13-01` (environment variables must be externalized before the Docker image is useful)
 
@@ -115,12 +115,12 @@ CMD ["node", "server.js"]
 
 ### Milestone 2 — Create Frontend Environment File Template
 
-**Goal:** A `mapper/mapper.env.example` file (or `mapper/frontend.env`) that Docker Compose can reference as `env_file:`. This mirrors the pattern of `mcp_server/server/mcp.env`.
+**Goal:** A `mapper/docker.env.example` file that Docker Compose can reference as `env_file:`. This mirrors the pattern of `mcp_server/server/mcp.env`.
 
 **Steps:**
-1. Create `mapper/frontend.env.example` listing all variables needed at runtime (derived from `13-01`).
-2. Document that operators copy this file to `mapper/frontend.env` and fill in real values before running `docker compose up`.
-3. Add `mapper/frontend.env` to the root `.gitignore`.
+1. Create `mapper/docker.env.example` listing all variables needed at runtime (derived from `13-01`).
+2. Document that operators copy this file to `mapper/docker.env` and fill in real values before running `docker compose up`.
+3. Add `mapper/docker.env` to the root `.gitignore`.
 
 **Variables in `mapper/frontend.env.example`:**
 ```dotenv
@@ -148,7 +148,7 @@ NEO4J_PASSWORD=neo4j_password
 > **Note on `PROJECTS_FOLDER`:** This server-side variable tells the Next.js file-manager API (`/api/files`) where to read and write project files inside the container. It must be kept in sync with the left-hand side of the `volumes:` bind-mount in `docker-compose.yml` — if you change the mount target you must also change this variable.
 
 **Files to create:**
-- `mapper/frontend.env.example` _(new)_
+- `mapper/docker.env.example` _(new)_
 
 ---
 
@@ -168,7 +168,7 @@ NEO4J_PASSWORD=neo4j_password
      ports:
        - "3000:3000"
      env_file:
-       - mapper/frontend.env
+       - mapper/docker.env
      volumes:
        - ./mapper/uploads:/app/uploads
      profiles:
@@ -225,14 +225,14 @@ NEO4J_PASSWORD=neo4j_password
 
 ## Acceptance Criteria
 
-- [ ] `mapper/Dockerfile` exists and produces a working image with `docker build`.
-- [ ] `mapper/.dockerignore` exists and excludes `node_modules/`, `.next/`, `.env.local`, `uploads/`.
-- [ ] `mapper/next.config.ts` enables `output: 'standalone'`.
-- [ ] `mapper/frontend.env.example` documents all required environment variables, including `PROJECTS_FOLDER`.
-- [ ] `docker-compose.yml` includes a `si-mapper-frontend` service under the `deploy` profile.
-- [ ] The `uploads/` directory is mounted as a bind-mount volume (not copied into the image), and `PROJECTS_FOLDER` in `frontend.env` matches the container-side mount path.
-- [ ] The Docker build does not invoke the Python postinstall script (no `uv`/Python required inside the image).
-- [ ] The final image size is reasonable (< 500 MB — standalone Next.js + Alpine Node baseline).
+- [x] `mapper/Dockerfile` exists and produces a working image with `docker build`.
+- [x] `mapper/.dockerignore` exists and excludes `node_modules/`, `.next/`, `.env.local`, `uploads/`.
+- [x] `mapper/next.config.ts` enables `output: 'standalone'`.
+- [x] `mapper/docker.env.example` documents all required environment variables, including `PROJECTS_FOLDER`.
+- [x] `docker-compose.yml` includes a `si-mapper-frontend` service under the `deploy` profile.
+- [x] The `uploads/` directory is mounted as a bind-mount volume (not copied into the image), and `PROJECTS_FOLDER` in `frontend.env` matches the container-side mount path.
+- [x] The Docker build does not invoke the Python postinstall script (no `uv`/Python required inside the image).
+- [x] The final image size is reasonable (< 500 MB — standalone Next.js + Alpine Node baseline).
 - [ ] Running `docker compose --profile deploy up` starts the frontend and it is accessible at `http://localhost:3000`.
 - [ ] Files in `uploads/` persist across container restarts.
 

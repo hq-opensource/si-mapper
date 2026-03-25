@@ -1,16 +1,16 @@
-# 13-05 — Graphivac Grid API Integration
+# 13-06 — Graphivac Grid API Integration
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
 **Updated:** 2026-03-25
 **Depends on:** `13-01` (Graphivac env vars must be externalized)
-**Required by:** `13-04` (project create/delete calls this), `13-07` (agent Graphivac scoping references this pattern)
+**Required by:** `13-05` (project create/delete calls this), `13-08` (agent Graphivac scoping references this pattern)
 
 ---
 
 ## Overview
 
-Creating and deleting projects (`13-04`) requires calling the Graphivac HTTP API to provision and tear down grids. Currently the only Graphivac API client in the project is `mcp_server/graphivac/graphivac_api.py` (Python, server-side, for the MCP server) and the agent's `sync_graphivac_tool.py` (Python, reads env vars at call time).
+Creating and deleting projects (`13-05`) requires calling the Graphivac HTTP API to provision and tear down grids. Currently the only Graphivac API client in the project is `mcp_server/graphivac/graphivac_api.py` (Python, server-side, for the MCP server) and the agent's `sync_graphivac_tool.py` (Python, reads env vars at call time).
 
 Neither of these is available to the Next.js frontend. This task creates a thin TypeScript Graphivac client module (`mapper/src/lib/graphivac-client.ts`) used exclusively by Next.js API routes — it runs server-side only.
 
@@ -148,7 +148,7 @@ GRAPHIVAC_PROJECT_ID=P-j8QIvTGH7p
 **Fallback if DELETE is unsupported by Graphivac API:**
 - Log a warning instead of throwing.
 - Document that deleted SI-MAPPER projects leave orphaned Graphivac grids that must be cleaned up manually.
-- Update `13-04` delete route to reflect this limitation.
+- Update `13-05` delete route to reflect this limitation.
 
 ---
 
