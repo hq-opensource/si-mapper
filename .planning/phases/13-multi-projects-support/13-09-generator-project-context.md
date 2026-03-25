@@ -1,10 +1,10 @@
-# 13-08 — Agent Project Context Awareness
+# 13-09 — Agent Project Context Awareness
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
 **Updated:** 2026-03-25
 **Depends on:** `13-07` (active project is in CopilotKit state before the agent can read it)
-**See also:** `13-09` (MCP server project context — handled separately)
+**See also:** `13-10` (MCP server project context — handled separately)
 
 ---
 
@@ -22,7 +22,7 @@ This task makes the **agent** project-context-aware by:
 3. Scoping the agent's file-system access to the active project's folder on disk.
 4. Using the active project's `ai_model_name` as the model for that session.
 
-> The MCP server has a separate, more constrained treatment of multi-project support due to its architecture — see `13-09`.
+> The MCP server has a separate, more constrained treatment of multi-project support due to its architecture — see `13-10`.
 
 ---
 
@@ -244,4 +244,6 @@ Add a section explaining to the master agent:
 - **State-first, env-var fallback**: this pattern is non-breaking and follows the existing convention in the codebase (many tools already check state before falling back to defaults). No env var is removed.
 - **No agent restart on project switch**: the agent session is created once when the frontend connects. If the user switches projects, the new `active_project` is sent to the agent via the CopilotKit state update mechanism. The agent reads the updated state on the next tool call — no restart needed.
 - **`PROJECTS_FOLDER` in the agent**: the agent process runs from `agent/`, not `mapper/`. The `PROJECTS_FOLDER` env var must also be set for the agent process so `get_project_path` resolves correctly. In the dev setup, this is the same host path. In Docker, it would be a shared volume mount.
-- **MCP server is handled separately**: the MCP server has a singleton architecture that requires a different approach. See `13-09`.
+- **MCP server is handled separately**: the MCP server has a singleton architecture that requires a different approach. See `13-10`.
+
+
