@@ -2,7 +2,7 @@
 const config = {
   testEnvironment: "node",
   transform: {
-    "^.+\\.tsx?$": ["ts-jest", { tsconfig: { jsx: "react" } }],
+    "^.+\\.[jt]sx?$": ["ts-jest", { tsconfig: { jsx: "react" } }],
   },
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
