@@ -54,6 +54,15 @@ pnpm test --testPathPatterns="lib/__tests__/projects"
 
 # Only the file-upload/delete route tests
 pnpm test --testPathPatterns="files-route"
+
+# Only the root files route scoping tests (project/system params)
+pnpm test --testPathPatterns="files-root-route"
+
+# Only the file view route scoping tests (project/system params, content-type)
+pnpm test --testPathPatterns="files-view-route"
+
+# Only the config route tests
+pnpm test --testPathPatterns="config-route"
 ```
 
 ### By test name (substring match on `describe` / `test` titles)
@@ -80,8 +89,11 @@ pnpm test --testNamePattern="409"
 | `src/app/api/projects/__tests__/sysid-route.test.ts` | `GET` + `PATCH` + `DELETE /api/projects/[id]/systems/[sysId]` | `lib/projects` + `lib/graphivac-client` mocked |
 | `src/app/api/projects/__tests__/files-route.test.ts` | `GET` + `POST /files` and `DELETE /files/[filename]` | Real temp directory, only `lib/projects` mocked |
 | `src/app/api/graph/route.test.ts` | `GET /api/graph` — Neo4j graph query route | `neo4j-driver` mocked |
+| `src/app/api/files/__tests__/files-root-route.test.ts` | `GET /api/files` — project/system scoping and path-traversal guards | Real temp directory; env var set before module load |
+| `src/app/api/files/__tests__/files-view-route.test.ts` | `GET /api/files/view` — project/system scoping, path-traversal guards, Content-Type detection | Real temp directory; env var set before module load |
+| `src/app/api/__tests__/config-route.test.ts` | `GET /api/config` — returns `graphivacBaseUrl` and `graphivacOrgId` from env vars | `process.env` set/deleted per test |
 
-**Total: 8 suites, 106 tests.**
+**Total: 11 suites, 137 tests.**
 
 ---
 

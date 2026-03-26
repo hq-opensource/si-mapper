@@ -4,6 +4,7 @@ import { CopilotKit } from "@copilotkit/react-core";
 import "./globals.css";
 import "@copilotkit/react-ui/styles.css";
 import { AppIconsContextProvider } from "@/lib/app-icons-context";
+import { WorkspaceProvider } from "@/context/WorkspaceContext";
 
 export const metadata: Metadata = {
   title: "SI-MAPPER",
@@ -20,7 +21,9 @@ export default function RootLayout({
       <body className={"antialiased"}>
         <CopilotKit runtimeUrl="/api/copilotkit" agent="my_agent">
           <AppIconsContextProvider>
-            {children}
+            <WorkspaceProvider>
+              {children}
+            </WorkspaceProvider>
           </AppIconsContextProvider>
         </CopilotKit>
       </body>

@@ -1,8 +1,8 @@
 # 13-07 — Project & System Selector and Scoped UI
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
-**Updated:** 2026-03-25
+**Status:** ✅ Done
+**Updated:** 2026-03-26
 **Depends on:** `13-04` (data model), `13-05` (project & system CRUD API)
 **See also:** `13-08` (Project Management UI — edit, file management; NOT covered here)
 
@@ -259,16 +259,17 @@ When `activeSystem` changes, update the agent state accordingly.
 
 ## Acceptance Criteria
 
-- [ ] `WorkspaceContext` provides `activeProject`, `activeSystem`, `projects`, `systems`, `setActiveProject`, `setActiveSystem`, `refreshProjects`, `refreshSystems`, `isLoading`.
-- [ ] Active selections persist across page reloads via `localStorage`.
-- [ ] Selecting a different project reloads the system list and resets the active system.
-- [ ] The file manager shows only files under the active system's folder.
-- [ ] The Graphivac iframe displays the active system's grid.
-- [ ] Switching systems updates the file manager and Graphivac iframe without a full page reload.
-- [ ] The agent state includes both `active_project` and `active_system`; neither includes `graphivac_org_id`.
-- [ ] A zero-project state is displayed when no projects exist.
-- [ ] A zero-system state is displayed when a project has no systems.
-- [ ] `SystemSelector` is disabled when no project is active.
+- [x] `WorkspaceContext` provides `activeProject`, `activeSystem`, `projects`, `systems`, `setActiveProject`, `setActiveSystem`, `refreshProjects`, `refreshSystems`, `isLoading`.
+- [x] Active selections persist across page reloads via `localStorage`.
+- [x] Selecting a different project reloads the system list and resets the active system.
+- [x] The file manager shows only files under the active system's folder.
+- [x] The **Python and TTL tabs** show only files under the active system's folder; state resets when the active project or system changes.
+- [x] The Graphivac iframe displays the active system's grid.
+- [x] Switching systems updates the file manager and Graphivac iframe without a full page reload.
+- [x] The agent state includes both `active_project` and `active_system`; neither includes `graphivac_org_id`.
+- [x] A zero-project state is displayed when no projects exist.
+- [x] A zero-system state is displayed when a project has no systems.
+- [x] `SystemSelector` is disabled when no project is active.
 
 ---
 
@@ -278,3 +279,34 @@ When `activeSystem` changes, update the agent state accordingly.
 - **`graphivac_org_id` NOT in CopilotKit state**: the agent reads it from its own `GRAPHIVAC_ORG_ID` env var. Sending it from the frontend would be redundant and inconsistent with the design principle that org ID is a deployment constant.
 - **System selector is disabled, not hidden, when no project is active**: this communicates the dependency clearly without removing the UI affordance.
 - **`/api/config` exposes `graphivacOrgId`**: this is not sensitive (it appears in Graphivac iframe URLs already) and allows the frontend to construct accurate iframe URLs without a `NEXT_PUBLIC_` env var.
+
+---
+
+## Implementation Summary (2026-03-26)
+
+### Files created
+| File | Purpose |
+|---|---|
+| `mapper/src/context/WorkspaceContext.tsx` | React context tracking active project + system; persists to `localStorage`; bootstraps from API on mount |
+| `mapper/src/components/ProjectSelector.tsx` | Navbar dropdown with create/delete; uses `PromptDialog` and `ConfirmationDialog` |
+| `mapper/src/components/SystemSelector.tsx` | Navbar dropdown with create/delete; has inline 2-field `CreateSystemDialog`; disabled when no project |
+| `mapper/src/app/api/config/route.ts` | `GET /api/config` — returns `graphivacBaseUrl` + `graphivacOrgId` from env vars |
+| `mapper/src/app/api/files/__tests__/files-root-route.test.ts` | 9 tests for project/system scoping and path-traversal in `GET /api/files` |
+| `mapper/src/app/api/files/__tests__/files-view-route.test.ts` | 17 tests for project/system scoping, path-traversal guards, and Content-Type detection in `GET /api/files/view` |
+| `mapper/src/app/api/__tests__/config-route.test.ts` | 5 tests for `GET /api/config` — happy path and missing-env-var fallbacks |
+
+### Files modified
+| File | Change |
+|---|---|
+| `mapper/src/types/index.ts` | Added `Project` and `System` interfaces (client-safe, mirror `lib/projects.ts`) |
+| `mapper/src/app/layout.tsx` | Wrapped with `<WorkspaceProvider>` |
+| `mapper/src/app/page/components/AgentNavbar.tsx` | Inserted `<ProjectSelector>` and `<SystemSelector>` before the agent status indicator |
+| `mapper/src/app/api/files/route.ts` | Made `PROJECTS_FOLDER` lazy (per-call); added optional `?project=` + `?system=` scoping with path-traversal validation; `getTree` now takes an explicit `rootDir` |
+| `mapper/src/app/api/files/view/route.ts` | Made `PROJECTS_FOLDER` lazy (per-call); added optional `?project=` + `?system=` scoping with path-traversal validation so file IDs returned by the listing endpoint are resolved in the correct directory |
+| `mapper/src/components/SvarFileManager.tsx` | Reads `activeProject.folder_path` + `activeSystem.folder_path` from context; appends to fetch URL; re-fetches on change |
+| `mapper/src/app/page/components/CodeWindow.tsx` | Reads `activeProject` + `activeSystem` from `WorkspaceContext`; passes `?project=&system=` to both `/api/files` (listing) and `/api/files/view` (content); resets state on project/system switch |
+| `mapper/src/app/page/components/YourMainContent.tsx` | Derives iframe URL from `/api/config` + workspace context; shows `ZeroProjectState` / `ZeroSystemState` overlays when no project or system exists |
+| `mapper/src/app/page.tsx` | Added `WorkspaceSyncer` component that writes `active_project` / `active_system` into CopilotKit agent state; passes `disabled` to `SplitSidebar` when workspace not ready |
+| `mapper/src/components/SplitSidebar.tsx` | Added `disabled` prop; shows `MessageSquareOff` overlay when chat is unavailable |
+| `mapper/README_TESTS.md` | Added 3 new test files to the table; updated count to 11 suites / 137 tests |
+

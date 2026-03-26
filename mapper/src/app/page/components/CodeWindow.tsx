@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Code2, Database } from 'lucide-react';
 import { SharedPageContainer } from './SharedPageContainer';
 import { StatusPlaceholder } from './StatusPlaceholder';
+import { useWorkspace } from '@/context/WorkspaceContext';
 
 interface FileEntry {
     id: string;
@@ -35,9 +36,20 @@ export function CodeWindow({ type }: CodeWindowProps) {
     const [loadingContent, setLoadingContent] = useState(false);
     const fileCountRef = useRef(0);
 
+    const { activeProject, activeSystem } = useWorkspace();
+
+    const buildScopeParams = useCallback(() => {
+        const params = new URLSearchParams();
+        if (activeProject) params.set('project', activeProject.folder_path);
+        if (activeSystem) params.set('system', activeSystem.folder_path);
+        return params;
+    }, [activeProject, activeSystem]);
+
     const fetchFiles = useCallback(async () => {
         try {
-            const res = await fetch(`/api/files?id=${FOLDER[type]}`);
+            const params = buildScopeParams();
+            params.set('id', FOLDER[type]);
+            const res = await fetch(`/api/files?${params}`);
             if (!res.ok) return;
             const items: FileEntry[] = await res.json();
             const versioned = items
@@ -52,7 +64,15 @@ export function CodeWindow({ type }: CodeWindowProps) {
         } catch {
             // silent — folder may not exist yet
         }
-    }, [type]);
+    }, [type, buildScopeParams]);
+
+    // Reset file list when project/system context changes
+    useEffect(() => {
+        setFiles([]);
+        setSelectedId(null);
+        setContent('');
+        fileCountRef.current = 0;
+    }, [activeProject?.id, activeSystem?.id]);
 
     useEffect(() => {
         fetchFiles();
@@ -63,11 +83,13 @@ export function CodeWindow({ type }: CodeWindowProps) {
     useEffect(() => {
         if (!selectedId) return;
         setLoadingContent(true);
-        fetch(`/api/files/view?id=${encodeURIComponent(selectedId)}`)
+        const params = buildScopeParams();
+        params.set('id', selectedId);
+        fetch(`/api/files/view?${params}`)
             .then(r => r.text())
             .then(text => { setContent(text); setLoadingContent(false); })
             .catch(() => setLoadingContent(false));
-    }, [selectedId]);
+    }, [selectedId, buildScopeParams]);
 
     const icon = type === 'python' ? Code2 : Database;
 
