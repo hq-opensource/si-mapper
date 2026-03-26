@@ -1,304 +1,280 @@
-# 13-07 — Project Selector & Scoped UI
+# 13-07 — Project & System Selector and Scoped UI
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
 **Updated:** 2026-03-25
-**Depends on:** `13-04` (data model), `13-05` (project CRUD API)
+**Depends on:** `13-04` (data model), `13-05` (project & system CRUD API)
 **See also:** `13-08` (Project Management UI — edit, file management; NOT covered here)
 
 ---
 
 ## Overview
 
-This task wires the project data model and CRUD API into the frontend user experience. It covers:
+This task wires the project and system data model into the frontend user experience. It covers:
 
-1. A **React context** that tracks the currently active project across the entire app.
-2. A **project selector component** (in the navbar) that lets users switch between projects and perform quick create/delete actions.
-3. **Scoping the file manager** so it shows only files from the active project's folder.
-4. **Scoping the Graphivac iframe** so it displays the active project's grid (view and edit tabs).
-5. **Wiring the active project into CopilotKit state** so the agent receives project context (consumed by `13-09`).
+1. A **React context** that tracks the currently active project and active system across the entire app.
+2. A **two-level selector** in the navbar: one for the active project, one for the active system within that project.
+3. **Scoping the file manager** so it shows only files from the active system's folder.
+4. **Scoping the Graphivac iframe** so it displays the active system's grid (view and edit tabs).
+5. **Wiring the active project and system into CopilotKit state** so the agent receives full context (consumed by `13-09`).
 
-> **Scope boundary:** This task intentionally limits project management actions in the selector to quick create (via `PromptDialog`) and quick delete (via `ConfirmationDialog`). Full management — **editing project settings**, **uploading/listing/deleting project files** — is handled in `13-08 — Project Management UI`. The "Manage projects →" entry point in the selector (see below) links to that dedicated surface.
+> **Scope boundary:** Quick create/delete actions in the selectors use `PromptDialog` / `ConfirmationDialog`. Full management — editing settings, uploading files — is handled in `13-08`.
 
 ---
 
-## Active Project — State Design
+## Active Workspace — State Design
 
 ### Storage: React context + `localStorage`
 
-The active project is UI/session state. It is:
-- **Not stored in `project.json`** (on-disk project config is per-project, not per-user-session).
-- **Stored in a React context** (`ActiveProjectContext`) so any component can read it without prop-drilling.
-- **Persisted to `localStorage`** under the key `active-project-id` so the selection survives page reloads.
+The active project and active system are UI/session state:
+- Stored in a `WorkspaceContext` React context so any component can read them without prop-drilling.
+- Persisted to `localStorage` under the keys `active-project-id` and `active-system-id`.
 
 On mount, the app:
 1. Reads `active-project-id` from `localStorage`.
 2. Fetches the project list from `GET /api/projects`.
-3. If the stored ID is in the list → set it as active.
-4. If the stored ID is not in the list (project was deleted) → set the first project as active, or `null` if none.
+3. Resolves the active project (stored ID → project object, or first in list, or `null`).
+4. Fetches the system list for the active project from `GET /api/projects/[id]/systems`.
+5. Resolves the active system (stored `active-system-id` → system object, or first in list, or `null`).
+
+When the active project changes, the system list is refreshed and `active-system-id` is reset.
 
 ### Context interface
 
 ```ts
-// mapper/src/context/ActiveProjectContext.tsx
-interface ActiveProjectContextValue {
+// mapper/src/context/WorkspaceContext.tsx
+interface WorkspaceContextValue {
   /** The currently active project, or null if none exist. */
   activeProject: Project | null;
+  /** The currently active system within the active project, or null. */
+  activeSystem: System | null;
   /** All available projects. */
   projects: Project[];
-  /** Switch the active project. Persists to localStorage. */
-  setActiveProject: (project: Project) => void;
+  /** All systems within the active project. */
+  systems: System[];
+  /** Switch the active project. Refreshes system list. Persists to localStorage. */
+  setActiveProject: (project: Project) => Promise<void>;
+  /** Switch the active system. Persists to localStorage. */
+  setActiveSystem: (system: System) => void;
   /** Refresh the project list from the API. */
   refreshProjects: () => Promise<void>;
-  /** True while the initial project list is loading. */
+  /** Refresh the system list for the active project from the API. */
+  refreshSystems: () => Promise<void>;
+  /** True while the initial project or system list is loading. */
   isLoading: boolean;
 }
 ```
 
 ---
 
-## Project Selector Component
+## Navbar Selectors
 
 ### Location
 
+Both selectors are rendered inside `AgentNavbar.tsx`.
+
+### Project Selector
+
 `mapper/src/components/ProjectSelector.tsx`
 
-### Behaviour
+- Displays the active project's name.
+- Dropdown lists all projects; clicking one sets it as active and reloads the system list.
+- **"+ New project"** button → `PromptDialog` asking for the project name → `POST /api/projects` → activates the new project → loads its (empty) system list.
+- **"🗑 Delete"** per project → `ConfirmationDialog` → `DELETE /api/projects/[id]` → refreshes everything.
+- **"⚙ Manage →"** link at the bottom navigates to `/projects` (built in `13-08`).
 
-- Rendered inside `AgentNavbar.tsx` (already in the navbar area).
-- Displays the active project's name as the current selection label.
-- Opens a dropdown listing all projects — clicking one sets it as active.
-- Contains a **"New project"** button that opens a `PromptDialog` (the `PromptDialog.tsx` component already exists) asking for:
-  - Project name (required).
-  - AI model name (optional, defaults to env-configured default).
-  - Graphivac org ID (pre-filled from `NEXT_PUBLIC_GRAPHIVAC_ORG_ID` — see env var addition below).
-  - Graphivac project ID (pre-filled from `NEXT_PUBLIC_GRAPHIVAC_PROJECT_ID`).
-- On creation confirm:
-  1. `POST /api/projects` with the form data.
-  2. Call `refreshProjects()`.
-  3. Set the newly created project as active.
-- Contains a **"Delete project"** button (with a `ConfirmationDialog` — already exists) on each project entry.
-  - On confirm: `DELETE /api/projects/[id]`, then `refreshProjects()`.
-  - If the deleted project was active, auto-select the next available project.
-- Contains a **"⚙ Manage projects →"** link at the bottom of the dropdown that navigates to `/projects` (the management page built in `13-08`). This is the discovery point for editing project settings and managing project files.
+### System Selector
 
-> **Intentional limitation:** the selector is a quick-access switcher, not a full management panel. The `PromptDialog` used for creation accepts only basic fields (name, model). Editing project metadata, uploading files, and detailed file management are deliberately relegated to the `/projects` management page (`13-08`) to keep the navbar interaction lightweight.
+`mapper/src/components/SystemSelector.tsx`
+
+- Displayed next to the project selector, scoped to the active project.
+- Displays the active system's name (e.g. "Chilled Water Plant").
+- Dropdown lists all systems in the active project; clicking one sets it as active.
+- **"+ New system"** button → `PromptDialog` asking for system name and optionally AI model → `POST /api/projects/[id]/systems` → activates the new system.
+- **"🗑 Delete"** per system → `ConfirmationDialog` → `DELETE /api/projects/[id]/systems/[sysId]` → refreshes.
+- Disabled (greyed out) when no project is active.
 
 ### UI wireframe (text)
 
 ```
-┌─────────────────────────────────────────────┐
-│ [Building A — HVAC ▼]  [+ New Project]      │  ← navbar area
-└─────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ [Building A ▼]  [Chilled Water Plant ▼]  [+ New System]     │  ← navbar
+└─────────────────────────────────────────────────────────────┘
 
-Dropdown open:
-┌─────────────────────────────────────────────┐
-│ ● Building A — HVAC          [🗑]           │
-│   Building B — Chiller Plant [🗑]           │
-│ ─────────────────────────────────────────── │
-│ + New project                               │
-│ ⚙ Manage projects →                        │  ← links to /projects (13-08)
-└─────────────────────────────────────────────┘
+Project dropdown open:
+┌──────────────────────────────────────┐
+│ ● Building A                [🗑]     │
+│   Building B — Chiller Plant [🗑]   │
+│ ─────────────────────────────────── │
+│ + New project                        │
+│ ⚙ Manage projects →                 │
+└──────────────────────────────────────┘
+
+System dropdown open (for Building A):
+┌──────────────────────────────────────┐
+│ ● Chilled Water Plant       [🗑]     │
+│   AHU Zone 1                [🗑]     │
+│ ─────────────────────────────────── │
+│ + New system                         │
+└──────────────────────────────────────┘
 ```
 
 ---
 
 ## File Manager Scoping
 
-### Current behaviour
+The file manager shows only files from the **active system's folder**.
 
-`SvarFileManager.tsx` fetches `/api/files?tree=true` — which returns everything under `PROJECTS_FOLDER`.
-
-### Required behaviour
-
-The file manager should show only the active project's subfolder. 
-
-**Approach:** Pass a `projectFolder` query parameter to `/api/files`:
+**Approach:** Pass the project folder and system folder as query parameters:
 ```
-/api/files?tree=true&project=proj-abc123
+/api/files?tree=true&project=proj-abc123&system=sys-aaa111
 ```
 
-The `files/route.ts` already has `PROJECTS_FOLDER` as its root (after `13-01`). When `project` is provided, the API resolves the target as `path.join(PROJECTS_FOLDER, project)` and uses that as the tree root — with path-traversal validation.
+The `files/route.ts` resolves the target as `path.join(PROJECTS_FOLDER, project, system)` with path-traversal validation.
 
 **Changes required:**
-1. `mapper/src/app/api/files/route.ts` — accept optional `project` query param, resolve sub-path, validate against traversal.
-2. `mapper/src/components/SvarFileManager.tsx` — read `activeProject.folder_path` from `ActiveProjectContext`, append as `?project=` to the fetch URL.
-3. When `activeProject` changes, `SvarFileManager` re-fetches the tree.
+1. `mapper/src/app/api/files/route.ts` — accept optional `project` and `system` query params, resolve sub-path.
+2. `mapper/src/components/SvarFileManager.tsx` — read `activeProject.folder_path` and `activeSystem.folder_path` from `WorkspaceContext`, append as `?project=&system=` to the fetch URL.
+3. When either changes, re-fetch the tree.
 
 ---
 
 ## Graphivac Iframe Scoping
 
-### Current behaviour (after `13-01`)
+The Graphivac iframe URL is derived from the **active system's `graphivac_grid_id`** and the **active project's `graphivac_project_id`**, combined with the deployment-wide `GRAPHIVAC_ORG_ID` served via `/api/config`.
 
-Both the View and Edit tabs use `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` — a static env var baked in at build time.
-
-### Required behaviour
-
-The Graphivac grid URL is derived dynamically from the active project at runtime, not from a build-time env var. This requires a runtime configuration approach because `NEXT_PUBLIC_` variables are inlined at build time and cannot change per-project.
-
-**Approach:** Replace the static env var usage with the active project's Graphivac fields, delivered via a server-side API endpoint.
-
-1. Add `GET /api/config` — a server-side route that returns the Graphivac base URL and any other runtime config that the browser needs but cannot receive via `NEXT_PUBLIC_`:
+**Approach:**
+1. `GET /api/config` returns:
    ```json
-   {
-     "graphivacBaseUrl": "https://graphivac.hvac.io"
-   }
+   { "graphivacBaseUrl": "https://graphivac.hvac.io", "graphivacOrgId": "public" }
    ```
-2. In `YourMainContent.tsx`, construct the Graphivac iframe URL from:
-   - `activeProject.graphivac_org_id`
+2. In `YourMainContent.tsx`, construct the iframe URL from:
+   - `graphivacBaseUrl` + `graphivacOrgId` from `/api/config`
    - `activeProject.graphivac_project_id`
-   - `activeProject.graphivac_grid_id`
-   - `graphivacBaseUrl` fetched from `/api/config`
-3. The resulting URL follows the pattern already in use:
+   - `activeSystem.graphivac_grid_id`
+3. The resulting URL pattern:
    ```
    https://graphivac.hvac.io/o/{org_id}/p/{project_id}/g/{grid_id}?iframe=t&init-zoom=t
    ```
-   > **Note:** verify this URL pattern against the live Graphivac URL format. The current hardcoded URL uses `/o/public/p/P-.../g/G-...` — adapt accordingly.
+4. Re-render the iframe whenever `activeSystem` changes.
 
-4. `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` (from `13-01`) becomes the **fallback** when no project is active (zero-project state), and can be removed once a project always exists.
-
-**New env vars to add (for `/api/config`):**
-
-| Variable | Description |
-|---|---|
-| `GRAPHIVAC_BASE_URL` | Already added in `13-06` — reuse here |
-
-No additional `NEXT_PUBLIC_` variables are introduced for the Graphivac URL — the base URL is served via `/api/config` instead.
+> `GRAPHIVAC_ORG_ID` is served via `/api/config` (server-side route) rather than a `NEXT_PUBLIC_` env var. This keeps the org ID consistent with the server-side behaviour and avoids build-time baking.
 
 ---
 
-## CopilotKit State — Active Project Wire-up
+## CopilotKit State — Wire-up
 
-The agent needs to know the active project. The mechanism is CopilotKit's `useCoAgent` state, which is already used in `page.tsx`. 
+The agent needs to know both the active project and the active system.
 
-**Steps:**
-1. In `page.tsx`, read `activeProject` from `ActiveProjectContext`.
-2. Add a `useCopilotAction` or set initial state that includes:
-   ```ts
-   initialState: {
-     ...
-     active_project: activeProject ? {
-       id: activeProject.id,
-       name: activeProject.name,
-       folder_path: activeProject.folder_path,
-       graphivac_org_id: activeProject.graphivac_org_id,
-       graphivac_project_id: activeProject.graphivac_project_id,
-       graphivac_grid_id: activeProject.graphivac_grid_id,
-       ai_model_name: activeProject.ai_model_name,
-     } : null,
-   }
-   ```
-3. When `activeProject` changes, update the agent state so the agent knows it switched projects.
+```ts
+initialState: {
+  ...
+  active_project: activeProject ? {
+    id: activeProject.id,
+    name: activeProject.name,
+    folder_path: activeProject.folder_path,
+    graphivac_project_id: activeProject.graphivac_project_id,
+  } : null,
+  active_system: activeSystem ? {
+    id: activeSystem.id,
+    name: activeSystem.name,
+    folder_path: activeSystem.folder_path,
+    graphivac_grid_id: activeSystem.graphivac_grid_id,
+    ai_model_name: activeSystem.ai_model_name,
+  } : null,
+}
+```
 
-> The agent consuming this state is described in `13-09`.
+When `activeSystem` changes, update the agent state accordingly.
+
+> Note: `graphivac_org_id` is NOT included in the agent state passed from the frontend. The agent reads it from its own env var (`GRAPHIVAC_ORG_ID`). This is consistent with the on-disk model.
 
 ---
 
 ## Implementation Plan
 
-### Milestone 1 — `ActiveProjectContext`
+### Milestone 1 — `WorkspaceContext`
 
 **Steps:**
-1. Create `mapper/src/context/ActiveProjectContext.tsx`.
-2. On mount: fetch `/api/projects`, restore selection from `localStorage`, resolve active project.
-3. Wrap `CopilotKitPage` (or the root layout) with `<ActiveProjectProvider>`.
+1. Create `mapper/src/context/WorkspaceContext.tsx`.
+2. On mount: fetch projects, restore selections from `localStorage`, fetch systems for active project.
+3. Wrap root layout with `<WorkspaceProvider>`.
 
 **Files to create:**
-- `mapper/src/context/ActiveProjectContext.tsx`
+- `mapper/src/context/WorkspaceContext.tsx`
 
 **Files to modify:**
-- `mapper/src/app/layout.tsx` or `mapper/src/app/page.tsx` _(wrap with provider)_
+- `mapper/src/app/layout.tsx`
 
 ---
 
-### Milestone 2 — `ProjectSelector` component
+### Milestone 2 — `ProjectSelector` and `SystemSelector` components
 
 **Steps:**
-1. Create `mapper/src/components/ProjectSelector.tsx`.
-2. Integrate into `mapper/src/app/page/components/AgentNavbar.tsx`.
-3. Wire `POST /api/projects` for creation using the existing `PromptDialog`.
-4. Wire `DELETE /api/projects/[id]` for deletion using the existing `ConfirmationDialog`.
+1. Create `mapper/src/components/ProjectSelector.tsx` — project switcher with create/delete.
+2. Create `mapper/src/components/SystemSelector.tsx` — system switcher with create/delete, disabled when no project.
+3. Integrate both into `mapper/src/app/page/components/AgentNavbar.tsx`.
 
 **Files to create:**
 - `mapper/src/components/ProjectSelector.tsx`
+- `mapper/src/components/SystemSelector.tsx`
 
 **Files to modify:**
 - `mapper/src/app/page/components/AgentNavbar.tsx`
 
 ---
 
-### Milestone 3 — Scope the file manager
+### Milestone 3 — Scope the file manager to the active system
 
 **Steps:**
-1. Update `mapper/src/app/api/files/route.ts` — accept `project` query param, validate, resolve sub-path.
-2. Update `mapper/src/components/SvarFileManager.tsx` — read active project from context, append `?project=` to fetch.
-
-**Files to modify:**
-- `mapper/src/app/api/files/route.ts`
-- `mapper/src/components/SvarFileManager.tsx`
+1. Update `mapper/src/app/api/files/route.ts` — accept `project` and `system` query params.
+2. Update `mapper/src/components/SvarFileManager.tsx` — append both to the fetch URL from context.
 
 ---
 
-### Milestone 4 — Dynamic Graphivac iframe
+### Milestone 4 — Dynamic Graphivac iframe (system-scoped)
 
 **Steps:**
-1. Create `mapper/src/app/api/config/route.ts` returning `{ graphivacBaseUrl }`.
-2. Update `mapper/src/app/page/components/YourMainContent.tsx` to:
-   - Fetch `/api/config` once on mount.
-   - Derive the Graphivac iframe URL from `activeProject` fields + `graphivacBaseUrl`.
-   - Re-render the iframe when `activeProject` changes.
-
-**Files to create:**
-- `mapper/src/app/api/config/route.ts`
-
-**Files to modify:**
-- `mapper/src/app/page/components/YourMainContent.tsx`
+1. Create `mapper/src/app/api/config/route.ts` — returns `{ graphivacBaseUrl, graphivacOrgId }`.
+2. Update `YourMainContent.tsx` to derive the iframe URL from `activeProject.graphivac_project_id` + `activeSystem.graphivac_grid_id` + config.
 
 ---
 
 ### Milestone 5 — CopilotKit state wire-up
 
 **Steps:**
-1. In `mapper/src/app/page.tsx`, inject `active_project` into the agent's initial/updated state.
-2. Confirm the agent receives the object by checking the state debug tab in the UI.
-
-**Files to modify:**
-- `mapper/src/app/page.tsx`
+1. In `page.tsx`, inject `active_project` and `active_system` into CopilotKit state.
+2. Update when `activeProject` or `activeSystem` changes.
 
 ---
 
-### Milestone 6 — Zero-project state
+### Milestone 6 — Zero-project and zero-system states
 
 **Steps:**
-1. When `projects.length === 0`, show a prompt encouraging the user to create the first project via the project selector.
-2. Disable the chat interface and file manager until at least one project exists.
-3. Show a placeholder in the View/Edit tabs when no project is active.
+1. When `projects.length === 0`, show a prompt to create the first project.
+2. When a project exists but `systems.length === 0`, show a prompt to create the first system.
+3. Disable the chat interface and file manager until both an active project and active system exist.
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `ActiveProjectContext` exists and wraps the app, providing `activeProject`, `projects`, `setActiveProject`, `refreshProjects`, `isLoading`.
-- [ ] Active project selection persists across page reloads via `localStorage`.
-- [ ] `ProjectSelector` in the navbar shows the active project name and allows switching.
-- [ ] Creating a project via the selector calls `POST /api/projects` and immediately activates the new project.
-- [ ] Deleting a project via the selector calls `DELETE /api/projects/[id]` and switches to another project.
-- [ ] The selector dropdown contains a "⚙ Manage projects →" link to `/projects`.
-- [ ] The file manager shows only files under the active project's folder.
-- [ ] The Graphivac View and Edit iframes display the active project's grid.
-- [ ] Switching projects updates the file manager and Graphivac iframes without a full page reload.
-- [ ] The active project is included in the CopilotKit agent state.
-- [ ] A graceful zero-project state is displayed when no projects exist.
-
-> **Out of scope for this task:** editing project metadata, uploading files, listing/deleting project files — these are covered by `13-08 — Project Management UI`.
+- [ ] `WorkspaceContext` provides `activeProject`, `activeSystem`, `projects`, `systems`, `setActiveProject`, `setActiveSystem`, `refreshProjects`, `refreshSystems`, `isLoading`.
+- [ ] Active selections persist across page reloads via `localStorage`.
+- [ ] Selecting a different project reloads the system list and resets the active system.
+- [ ] The file manager shows only files under the active system's folder.
+- [ ] The Graphivac iframe displays the active system's grid.
+- [ ] Switching systems updates the file manager and Graphivac iframe without a full page reload.
+- [ ] The agent state includes both `active_project` and `active_system`; neither includes `graphivac_org_id`.
+- [ ] A zero-project state is displayed when no projects exist.
+- [ ] A zero-system state is displayed when a project has no systems.
+- [ ] `SystemSelector` is disabled when no project is active.
 
 ---
 
 ## Notes & Decisions
 
-- **`/api/config` for runtime config**: this is the standard pattern to serve server-side env vars to the browser without `NEXT_PUBLIC_` inlining. It adds a one-time fetch on mount but avoids the build-time constraint.
-- **`PromptDialog` and `ConfirmationDialog` reuse**: both components already exist in `mapper/src/components/`. The project creation dialog and delete confirmation do not require new modal components.
-- **File manager root change**: scoping the file manager to a project subfolder is implemented entirely in the API route (`?project=` param) rather than in the component, keeping the component stateless regarding path resolution.
-- **CopilotKit state update on project switch**: when the user switches project, `active_project` in the agent state is updated. The agent must be designed (in `13-08`) to re-read this value at the start of each task rather than caching it.
-
+- **`WorkspaceContext` replaces `ActiveProjectContext`**: the scope has grown to cover both project and system selection. The new name better reflects this dual responsibility.
+- **`graphivac_org_id` NOT in CopilotKit state**: the agent reads it from its own `GRAPHIVAC_ORG_ID` env var. Sending it from the frontend would be redundant and inconsistent with the design principle that org ID is a deployment constant.
+- **System selector is disabled, not hidden, when no project is active**: this communicates the dependency clearly without removing the UI affordance.
+- **`/api/config` exposes `graphivacOrgId`**: this is not sensitive (it appears in Graphivac iframe URLs already) and allows the frontend to construct accurate iframe URLs without a `NEXT_PUBLIC_` env var.

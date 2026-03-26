@@ -1,80 +1,76 @@
-# 13-08 — Project Management UI
+# 13-08 — Project & System Management UI
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
 **Updated:** 2026-03-25
-**Depends on:** `13-05` (project CRUD API + file routes), `13-06` (Graphivac grid API), `13-07` (ActiveProjectContext and selector established)
+**Depends on:** `13-05` (project & system CRUD API + file routes), `13-06` (Graphivac API), `13-07` (WorkspaceContext and selectors established)
 
 ---
 
 ## Overview
 
-Task `13-07` establishes the project selector — a navbar dropdown that lets users switch projects and perform quick create/delete actions. That lightweight switcher is intentionally minimal.
+Task `13-07` establishes the lightweight navbar selectors for switching projects and systems. This task builds the **full management surface**:
 
-This task builds the **full project management surface** that the selector omits:
-
-1. A **dedicated `/projects` management page** listing all projects with their configuration details.
-2. An **Edit Project form** — the only UI for the `PATCH /api/projects/[id]` endpoint. Allows renaming a project, changing its AI model, or relinking it to a different Graphivac grid.
-3. A **File Management panel** — the UI for `GET/POST/DELETE /api/projects/[id]/files`. Allows uploading, listing, and deleting files within a specific project folder.
-4. A **"⚙ Manage projects →" entry point** in the selector dropdown (added in this task, wired to `/projects`) so management is discoverable without knowing a URL.
+1. A **dedicated `/projects` management page** listing all projects and their systems.
+2. An **Edit Project form** — rename a project.
+3. A **System management panel** per project — create, edit, delete systems; manage system files.
+4. A **System Edit form** — rename a system, change its AI model.
+5. A **File Management panel** per system — upload, list, delete files.
+6. A **"⚙ Manage projects →" entry point** in the project selector (wired in `13-07`) that navigates to `/projects`.
 
 ---
 
 ## What 13-07 Covers vs. What This Task Covers
 
-| Action | 13-07 (Selector) | 13-08 (Management UI) |
+| Action | 13-07 (Selectors) | 13-08 (Management UI) |
 |---|---|---|
 | Switch active project | ✅ | — |
-| Create project (quick, via PromptDialog) | ✅ | — |
-| Delete project (quick, via ConfirmationDialog) | ✅ | — |
-| **Edit project metadata** (name, model, Graphivac IDs) | ❌ | ✅ |
-| **Upload files to a project** | ❌ | ✅ |
-| **List files in a project** (management view) | ❌ | ✅ |
-| **Delete a file from a project** | ❌ | ✅ |
-| View project details (grid ID, created date, file count) | ❌ | ✅ |
+| Switch active system | ✅ | — |
+| Create project (quick) | ✅ | — |
+| Create system (quick) | ✅ | — |
+| Delete project (quick) | ✅ | — |
+| Delete system (quick) | ✅ | — |
+| **Edit project name** | ❌ | ✅ |
+| **Edit system name / model** | ❌ | ✅ |
+| **Upload files to a system** | ❌ | ✅ |
+| **List files in a system** | ❌ | ✅ |
+| **Delete a file from a system** | ❌ | ✅ |
+| View system details (grid ID, dates, file count) | ❌ | ✅ |
 
 ---
 
 ## Management Page — `/projects`
 
+**Route:** `mapper/src/app/projects/page.tsx`
+
 ### Access Point
 
-A **"⚙ Manage projects →"** `<Link href="/projects">` is added to the bottom of the `ProjectSelector` dropdown (defined in `13-07`, wired here). This is the sole discovery point — no nav bar top-level link is added to avoid clutter.
-
-```
-Dropdown open:
-┌─────────────────────────────────────────────┐
-│ ● Building A — HVAC          [🗑]           │
-│   Building B — Chiller Plant [🗑]           │
-│ ─────────────────────────────────────────── │
-│ + New project                               │
-│ ⚙ Manage projects →                        │  ← navigates to /projects
-└─────────────────────────────────────────────┘
-```
+**"⚙ Manage projects →"** `<Link href="/projects">` at the bottom of the `ProjectSelector` dropdown.
 
 ### Page Layout
 
 ```
-┌──────────────────────────────────────────────────────┐
-│ ← Back to main view                                  │
-│                                                      │
-│ Projects                              [+ New Project] │
-├──────────────────────────────────────────────────────┤
-│ Building A — HVAC                                    │
-│   Grid: G-LAiRS3mgp6  Model: gemini-3.1-pro          │
-│   Created: 2026-03-25     Files: 3                   │
-│   [✏ Edit]  [📁 Files (3)]  [🗑 Delete]              │
-├──────────────────────────────────────────────────────┤
-│ Building B — Chiller Plant                           │
-│   Grid: G-XXXXXXXX  Model: claude-3-7-sonnet         │
-│   Created: 2026-03-24     Files: 0                   │
-│   [✏ Edit]  [📁 Files (0)]  [🗑 Delete]              │
-└──────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│ ← Back to main view                                      │
+│                                                          │
+│ Projects                            [+ New Project]      │
+├──────────────────────────────────────────────────────────┤
+│ Building A                                               │
+│   Graphivac Project: P-j8QIvTGH7p                        │
+│   Created: 2026-03-25                                    │
+│   [✏ Edit]  [🗑 Delete]                                  │
+│   ┌── Systems ──────────────────────────────────────┐   │
+│   │ Chilled Water Plant  G-LAiRS3mgp6  gemini-3.1   │   │
+│   │   [✏ Edit]  [📁 Files (3)]  [🗑 Delete]         │   │
+│   │ AHU Zone 1           G-XXXXXXXX   claude-3-7    │   │
+│   │   [✏ Edit]  [📁 Files (0)]  [🗑 Delete]         │   │
+│   │ [+ New System]                                   │   │
+│   └──────────────────────────────────────────────────┘  │
+├──────────────────────────────────────────────────────────┤
+│ Building B — Chiller Plant                               │
+│   ...                                                    │
+└──────────────────────────────────────────────────────────┘
 ```
-
-**Route:** `mapper/src/app/projects/page.tsx`
-
-The page is a standard Next.js App Router page. It inherits the root layout (which wraps `ActiveProjectProvider`), so `activeProject` and `refreshProjects()` are available. On any create/update/delete action, it calls `refreshProjects()` so the selector in the navbar reflects the change immediately.
 
 ---
 
@@ -82,34 +78,65 @@ The page is a standard Next.js App Router page. It inherits the root layout (whi
 
 ### Trigger
 
-The **[✏ Edit]** button on a project card opens a modal dialog pre-filled with the project's current values.
+**[✏ Edit]** on a project card opens a modal dialog.
 
 ### Fields
 
-| Field | Input type | Required | Notes |
-|---|---|---|---|
-| `name` | Text | ✅ | The project display name |
-| `ai_model_name` | Text | no | Falls back to global default if empty |
-| `graphivac_org_id` | Text | no | Collapsible "Advanced" section |
-| `graphivac_project_id` | Text | no | Collapsible "Advanced" section |
-| `graphivac_grid_id` | Text | no | Allows relinking to an existing Graphivac grid |
+| Field | Input type | Required |
+|---|---|---|
+| `name` | Text | ✅ |
 
-> The Graphivac fields (org ID, project ID, grid ID) are hidden by default under a collapsible **"Advanced Settings"** section. Most users will never need to change them after project creation. Power users or operators relinking a project to a new grid can expand it.
+> `graphivac_project_id` is immutable after creation and is shown read-only for reference only, not editable.
 
 ### Behaviour
 
-1. User clicks **[✏ Edit]** on a project card.
-2. Dialog opens pre-filled with the current project record.
-3. User edits one or more fields and clicks **Save**.
-4. `PATCH /api/projects/[id]` is called with only the changed fields.
-5. On success: close dialog, call `refreshProjects()`.
-6. On error: show inline error message inside the dialog.
+1. `PATCH /api/projects/[id]` with `{ name }`.
+2. On success: close dialog, call `refreshProjects()`.
 
 ### Component
 
 `mapper/src/components/ProjectEditDialog.tsx`
 
-A custom multi-field dialog — **not** a reuse of `PromptDialog` (which accepts only a single text input). Uses the existing `Dialog`/`Sheet` pattern in the codebase.
+---
+
+## System Management Panel
+
+Each project card has an inline **Systems** section listing all systems. It is always expanded on the management page (unlike the selector dropdown which is compact).
+
+### System row
+
+Each system row shows: name, Graphivac grid ID (read-only), AI model name, file count.
+Actions: **[✏ Edit]**, **[📁 Files (n)]**, **[🗑 Delete]**.
+
+### Create system
+
+**[+ New System]** button at the bottom of the systems section → inline form or `PromptDialog` → `POST /api/projects/[id]/systems` → refreshes the system list.
+
+---
+
+## System Edit Form
+
+### Trigger
+
+**[✏ Edit]** on a system row.
+
+### Fields
+
+| Field | Input type | Required | Notes |
+|---|---|---|---|
+| `name` | Text | ✅ | |
+| `ai_model_name` | Text | no | Model used by the agent for this system |
+
+> `graphivac_grid_id` is immutable and shown read-only for reference.
+
+### Behaviour
+
+1. `PATCH /api/projects/[id]/systems/[sysId]` with changed fields.
+2. On success: close dialog, call `refreshSystems()`.
+
+### Component
+
+`mapper/src/components/SystemEditDialog.tsx`
 
 ---
 
@@ -117,41 +144,35 @@ A custom multi-field dialog — **not** a reuse of `PromptDialog` (which accepts
 
 ### Trigger
 
-The **[📁 Files (n)]** button on a project card expands an inline panel below the card (accordion pattern), or opens a full-width section. The file count shown on the button is fetched from `GET /api/projects/[id]/files` when the management page loads.
+**[📁 Files (n)]** on a system row — toggles an inline accordion panel.
 
 ### Panel Layout
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ Files — Building A — HVAC          [⬆ Upload files]    │
+│ Files — Chilled Water Plant         [⬆ Upload files]    │
 ├──────────────┬──────────┬───────────────┬───────────────┤
 │ Name         │ Size     │ Modified      │ Actions       │
 ├──────────────┼──────────┼───────────────┼───────────────┤
 │ bacnet.csv   │ 20 KB    │ 2026-03-25    │ [🗑 Delete]   │
-│ drawing.pdf  │ 1.2 MB   │ 2026-03-24    │ [🗑 Delete]   │
 └──────────────┴──────────┴───────────────┴───────────────┘
 │ Drag & drop files here, or click "Upload files"         │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### Upload Flow
+### API used
 
-1. User clicks **[⬆ Upload files]** or drops files onto the drop zone.
-2. Files are sent via `POST /api/projects/[id]/files` as `multipart/form-data` with `overwrite: false`.
-3. If a file already exists → `409 Conflict` from the API → show an inline per-file prompt:
-   > "A file named `bacnet.csv` already exists. Replace it?"  [Replace] [Skip]
-4. On success: refresh the file list.
+- `GET /api/projects/[id]/systems/[sysId]/files` — list files.
+- `POST /api/projects/[id]/systems/[sysId]/files` — upload files (multipart/form-data).
+- `DELETE /api/projects/[id]/systems/[sysId]/files/[filename]` — delete a file.
 
-### Delete Flow
+### Conflict handling
 
-1. User clicks **[🗑 Delete]** next to a file.
-2. A small inline confirmation (tooltip or mini-alert) confirms the action.
-3. `DELETE /api/projects/[id]/files/[filename]` is called.
-4. File is removed from the list immediately.
+On `409 Conflict`: show a per-file "Replace / Skip" prompt before retrying with `overwrite=true`.
 
 ### Component
 
-`mapper/src/components/ProjectFilePanel.tsx`
+`mapper/src/components/SystemFilePanel.tsx`
 
 ---
 
@@ -160,118 +181,90 @@ The **[📁 Files (n)]** button on a project card expands an inline panel below 
 | File | Purpose |
 |---|---|
 | `mapper/src/app/projects/page.tsx` | `/projects` management page |
-| `mapper/src/components/ProjectCard.tsx` | Per-project row in the management page |
-| `mapper/src/components/ProjectEditDialog.tsx` | Edit project metadata form/dialog |
-| `mapper/src/components/ProjectFilePanel.tsx` | File listing, upload, delete within a project |
+| `mapper/src/components/ProjectCard.tsx` | Per-project row on the management page |
+| `mapper/src/components/ProjectEditDialog.tsx` | Edit project name dialog |
+| `mapper/src/components/SystemCard.tsx` | Per-system row within a project card |
+| `mapper/src/components/SystemEditDialog.tsx` | Edit system name and model dialog |
+| `mapper/src/components/SystemFilePanel.tsx` | File listing, upload, delete for a system |
 
 ## Files to Modify
 
 | File | Change |
 |---|---|
-| `mapper/src/components/ProjectSelector.tsx` | Add "⚙ Manage projects →" `<Link href="/projects">` at the bottom of the dropdown |
+| `mapper/src/components/ProjectSelector.tsx` | Already has "⚙ Manage →" link (from `13-07`); no change needed |
 
 ---
 
 ## Implementation Plan
 
-### Milestone 1 — `/projects` Management Page & Navigation
+### Milestone 1 — `/projects` page and `ProjectCard`
 
 **Steps:**
-1. Create `mapper/src/app/projects/page.tsx`:
-   - Fetch projects from `GET /api/projects` on load (client component with `useEffect`, or server component with fetch).
-   - Render a `<ProjectCard>` for each project.
-   - Include a **[+ New Project]** button that reuses the same `POST /api/projects` flow as the selector (can share a `createProject` helper from `ActiveProjectContext`).
-   - Include a **[← Back to main view]** link.
-2. Create `mapper/src/components/ProjectCard.tsx`:
-   - Shows: name, Graphivac grid ID, AI model, created date, file count.
-   - Actions: **[✏ Edit]**, **[📁 Files (n)]**, **[🗑 Delete]**.
-   - Delete uses the existing `ConfirmationDialog` component; on confirm calls `DELETE /api/projects/[id]` and refreshes the list.
-   - `ProjectEditDialog` and `ProjectFilePanel` are mounted inside the card (lazy — only rendered when opened).
-3. Add the "⚙ Manage projects →" `<Link href="/projects">` to the bottom of `ProjectSelector.tsx`.
-
-**Files to create:**
-- `mapper/src/app/projects/page.tsx`
-- `mapper/src/components/ProjectCard.tsx`
-
-**Files to modify:**
-- `mapper/src/components/ProjectSelector.tsx`
+1. Create `mapper/src/app/projects/page.tsx` — fetches all projects, renders a `<ProjectCard>` per project, includes **[+ New Project]** and **[← Back]**.
+2. Create `mapper/src/components/ProjectCard.tsx` — shows project metadata, systems list, and action buttons.
 
 ---
 
-### Milestone 2 — Edit Project Dialog
+### Milestone 2 — Project edit and system list
 
 **Steps:**
-1. Create `mapper/src/components/ProjectEditDialog.tsx`:
-   - Multi-field form: `name` (required), `ai_model_name`, and a collapsible "Advanced Settings" section for `graphivac_org_id`, `graphivac_project_id`, `graphivac_grid_id`.
-   - Pre-populated from the `Project` record passed as a prop.
-   - On submit: `PATCH /api/projects/[id]` with a diff of changed fields → close on success.
-   - Error state: show inline error message.
-2. Wire it into `ProjectCard.tsx` — the **[✏ Edit]** button opens the dialog with the project as prop.
-
-**Files to create:**
-- `mapper/src/components/ProjectEditDialog.tsx`
-
-**Files to modify:**
-- `mapper/src/components/ProjectCard.tsx`
+1. Create `mapper/src/components/ProjectEditDialog.tsx` — single-field form for `name`, calls `PATCH /api/projects/[id]`.
+2. Create `mapper/src/components/SystemCard.tsx` — system row with name, grid ID, model, file count, actions.
+3. Wire **[+ New System]** within `ProjectCard` → `POST /api/projects/[id]/systems`.
+4. Wire **[🗑 Delete]** system → `ConfirmationDialog` → `DELETE /api/projects/[id]/systems/[sysId]`.
 
 ---
 
-### Milestone 3 — File Management Panel
+### Milestone 3 — System edit
 
 **Steps:**
-1. Create `mapper/src/components/ProjectFilePanel.tsx`:
-   - On expand: fetch `GET /api/projects/[id]/files` and render the file table.
-   - **Upload**: HTML `<input type="file" multiple>` + drag & drop zone → `POST /api/projects/[id]/files` with `overwrite=false`. Handle `409` with a per-file overwrite prompt (Replace / Skip).
-   - **Delete**: per-row delete button → inline mini-confirm → `DELETE /api/projects/[id]/files/[filename]` → refresh file list.
-   - Show file `name`, `size` (human-readable), `modified_at` in the table.
-2. Wire it into `ProjectCard.tsx` — the **[📁 Files (n)]** button toggles the panel open/closed.
-
-**Files to create:**
-- `mapper/src/components/ProjectFilePanel.tsx`
-
-**Files to modify:**
-- `mapper/src/components/ProjectCard.tsx`
+1. Create `mapper/src/components/SystemEditDialog.tsx` — form for `name` and `ai_model_name`.
+2. On submit: `PATCH /api/projects/[id]/systems/[sysId]`, close dialog, refresh systems.
 
 ---
 
-### Milestone 4 — Integration & State Sync
+### Milestone 4 — File management panel
 
 **Steps:**
-1. Verify that `ActiveProjectContext` (from `13-07`, wrapping the root layout) is available on the `/projects` page without any additional provider.
-2. After any create/update/delete on the management page, call `refreshProjects()` from `ActiveProjectContext` so the navbar selector reflects the change immediately.
-3. After editing the currently active project's name, verify the navbar selector updates in real time.
-4. Verify navigation flow: Main page → open selector → "Manage projects →" → `/projects` page → "[← Back]" → main page.
+1. Create `mapper/src/components/SystemFilePanel.tsx`:
+   - On expand: `GET /api/projects/[id]/systems/[sysId]/files`.
+   - Upload: drag & drop + file picker → `POST .../files` with `overwrite=false`. Handle `409` with Replace/Skip prompt.
+   - Delete: per-row → mini-confirm → `DELETE .../files/[filename]` → refresh.
+2. Wire **[📁 Files (n)]** in `SystemCard` to toggle the panel.
+
+---
+
+### Milestone 5 — Integration & state sync
+
+**Steps:**
+1. After any mutation on the management page, call `refreshProjects()` or `refreshSystems()` from `WorkspaceContext`.
+2. Verify the navbar selectors reflect changes made on the management page immediately.
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `/projects` page is accessible at the `Next.js` route `/projects`.
-- [ ] The "⚙ Manage projects →" link in the `ProjectSelector` dropdown navigates to `/projects`.
-- [ ] `/projects` page lists all projects fetched from `GET /api/projects`.
-- [ ] Each project card shows: name, AI model, Graphivac grid ID, creation date, and file count.
-- [ ] **[+ New Project]** on the management page calls `POST /api/projects` and adds the new project to the list.
-- [ ] **[✏ Edit]** opens a pre-filled dialog; submitting calls `PATCH /api/projects/[id]` and refreshes the list.
-- [ ] The edit dialog supports: `name`, `ai_model_name`, and Graphivac IDs (in a collapsible "Advanced" section).
-- [ ] **[📁 Files (n)]** expands the file panel and loads files from `GET /api/projects/[id]/files`.
-- [ ] File upload via file picker and drag & drop sends files to `POST /api/projects/[id]/files`.
-- [ ] A `409` conflict on upload shows a per-file "Replace / Skip" prompt.
-- [ ] **[🗑 Delete file]** calls `DELETE /api/projects/[id]/files/[filename]` and removes the file from the list.
-- [ ] **[🗑 Delete project]** calls `DELETE /api/projects/[id]` with a confirmation dialog and removes the card.
-- [ ] All create/update/delete actions call `refreshProjects()` so the navbar selector updates immediately.
-- [ ] Editing the name of the currently active project is reflected in the selector's label without a page reload.
-- [ ] A **[← Back to main view]** link is present on the `/projects` page.
+- [ ] `/projects` page lists all projects, each showing its systems.
+- [ ] Each project shows: name, Graphivac Project ID (read-only), creation date.
+- [ ] Each system shows: name, Graphivac Grid ID (read-only), AI model, file count.
+- [ ] **[✏ Edit]** on a project opens a dialog; saving calls `PATCH /api/projects/[id]` and updates the list.
+- [ ] **[✏ Edit]** on a system opens a dialog with `name` and `ai_model_name`; saving calls `PATCH /api/projects/[id]/systems/[sysId]`.
+- [ ] **[+ New System]** calls `POST /api/projects/[id]/systems` and adds the system to the list.
+- [ ] **[🗑 Delete]** on a system calls `DELETE .../systems/[sysId]` with confirmation.
+- [ ] **[🗑 Delete]** on a project calls `DELETE /api/projects/[id]` with confirmation, removes all systems.
+- [ ] **[📁 Files (n)]** expands the file panel; files are fetched from `GET .../systems/[sysId]/files`.
+- [ ] File upload via file picker and drag & drop sends to `POST .../systems/[sysId]/files`.
+- [ ] A `409` conflict shows a per-file "Replace / Skip" prompt.
+- [ ] **[🗑 Delete file]** calls `DELETE .../files/[filename]` and removes the file from the list.
+- [ ] All mutations call `refreshProjects()` / `refreshSystems()` so the navbar selectors update immediately.
+- [ ] The Graphivac `graphivac_org_id` is never displayed or editable in any form.
 
 ---
 
 ## Notes & Decisions
 
-- **Separate page vs. drawer**: A dedicated `/projects` route is chosen over a drawer/sheet. The management surface (project list + file manager + edit forms) has enough content to justify a full page. Drawers are more appropriate for quick, single-action interactions.
-- **`ProjectEditDialog` vs. `PromptDialog` reuse**: `PromptDialog` accepts only a single text input. The edit form has 5+ fields with an advanced section — a custom dialog component is required.
-- **File management here vs. `SvarFileManager`**: `SvarFileManager` (scoped in `13-07`) provides a tree-view sidebar for navigating project files alongside the canvas. `ProjectFilePanel` (this task) provides a flat administrative table for uploading, listing, and deleting files. Both views coexist with different purposes — one is for workflow, the other for administration.
-- **File count on project card**: Fetching file counts requires one `GET /api/projects/[id]/files` call per project on page load. For typical project counts (< 20), this is acceptable. If performance becomes a concern, counts can be lazy-loaded when the card enters the viewport.
-- **Overwrite dialog on upload conflict**: When a `409` is returned, the user is shown per-file options to "Replace" (retry with `overwrite=true`) or "Skip". This prevents silently clobbering existing files.
-- **Advanced Graphivac fields in the edit form**: Hidden under a collapsible "Advanced Settings" section by default. Most users will never touch them post-creation. Power users relinking a project to an externally created grid can expand it.
-- **Delete project from the management page**: Reuses the same `ConfirmationDialog` component already used in `ProjectSelector`. The delete flow is identical — `DELETE /api/projects/[id]` — so no new API logic is needed.
-- **State sync with the selector**: The `/projects` page is wrapped in the same `ActiveProjectProvider` as the main page (root layout). Calling `refreshProjects()` after any mutation is sufficient to keep both views consistent.
-
+- **`graphivac_org_id` is completely absent from the management UI**: it is a deployment constant. There is no field for it in any form, and it is not shown in the project or system detail views.
+- **`graphivac_project_id` and `graphivac_grid_id` are read-only**: they are shown for reference (useful for debugging or manual Graphivac operations) but cannot be edited after creation. They are displayed in a collapsible "Technical details" section to avoid clutter.
+- **Files belong to systems, not projects**: there is no project-level file panel. All file management is on the system row.
+- **`SystemFilePanel` vs `SvarFileManager`**: `SvarFileManager` (in `13-07`) provides a tree-view sidebar for the main working view. `SystemFilePanel` (this task) provides a flat admin table for uploading/deleting. Both coexist with different purposes.
+- **State sync via `WorkspaceContext`**: the `/projects` page is wrapped in the same `WorkspaceProvider` as the main page (root layout). Calling `refreshProjects()` / `refreshSystems()` is sufficient to keep the selector and the management page in sync.
