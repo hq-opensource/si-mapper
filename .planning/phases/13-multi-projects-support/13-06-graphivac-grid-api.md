@@ -1,8 +1,8 @@
 # 13-06 — Graphivac API Integration
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
-**Updated:** 2026-03-25
+**Status:** Done
+**Updated:** 2026-03-26
 **Depends on:** `13-01` (Graphivac env vars must be externalized)
 **Required by:** `13-05` (project & system create/delete calls this)
 
@@ -193,43 +193,43 @@ GRAPHIVAC_ORG_ID=public
 
 ---
 
-### Milestone 2 — Implement Grid operations
+### Milestone 2 — Implement Grid operations ✅ Done
 
 **Steps:**
-1. Implement `listGrids(graphivacProjectId)`.
-2. Implement `createGrid(graphivacProjectId, title)` — returns new grid id.
-3. Implement `deleteGrid(graphivacProjectId, gridId)` — handle 404 as no-op.
+1. ✅ Implement `listGrids(graphivacProjectId)`.
+2. ✅ Implement `createGrid(graphivacProjectId, title)` — returns new grid id.
+3. ✅ Implement `deleteGrid(graphivacProjectId, gridId)` — handle 404 as no-op.
 
 ---
 
-### Milestone 3 — Implement Project operations
+### Milestone 3 — Implement Project operations ✅ Done
 
 **Steps:**
-1. Implement `createGraphivacProject(title)` — POST to `/api/v1/orgs/:org/projects` with body `{ "project-name": title }`, return new project id.
-2. Implement `deleteGraphivacProject(projectId)` — DELETE to `/api/v1/orgs/:org/projects/:proj`, handle 404 as no-op.
+1. ✅ Implement `createGraphivacProject(title)` — POST to `/api/v1/orgs/:org/projects` with body `{ "project-name": title }`, return new project id.
+2. ✅ Implement `deleteGraphivacProject(projectId)` — DELETE to `/api/v1/orgs/:org/projects/:proj`, handle 404 as no-op.
 
 > Both operations are confirmed in `mcp_server/graphivac/api.json` — no fallback needed.
 
 ---
 
-### Milestone 4 — Add env vars to documentation
+### Milestone 4 — Add env vars to documentation ✅ Done
 
 **Steps:**
-1. Add `GRAPHIVAC_BASE_URL` and `GRAPHIVAC_ORG_ID` to `mapper/.env.example`.
-2. Add the same to `mapper/frontend.env.example`.
-3. Remove any reference to a deployment-wide `GRAPHIVAC_PROJECT_ID` env var from documentation.
+1. ✅ `GRAPHIVAC_BASE_URL` and `GRAPHIVAC_ORG_ID` appended to `mapper/.env.example`.
+2. ✅ `GRAPHIVAC_BASE_URL` and `GRAPHIVAC_ORG_ID` appended to `mapper/docker.env.example`.
+3. ✅ No deployment-wide `GRAPHIVAC_PROJECT_ID` env var introduced — project IDs are per-project, stored in `project.json`.
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `mapper/src/lib/graphivac-client.ts` exports `createGraphivacProject`, `deleteGraphivacProject`, `listGrids`, `createGrid`, `deleteGrid`.
-- [ ] All functions read `GRAPHIVAC_BASE_URL` and `GRAPHIVAC_ORG_ID` from `process.env` internally — callers never pass org_id.
-- [ ] `createGrid` takes a `graphivacProjectId` parameter (not org_id — that is internal).
-- [ ] Both delete functions handle `404` from Graphivac without throwing.
-- [ ] The module is never imported from client components.
-- [ ] `GRAPHIVAC_BASE_URL` and `GRAPHIVAC_ORG_ID` are documented in both `.env.example` files.
-- [ ] No deployment-wide `GRAPHIVAC_PROJECT_ID` env var is introduced — project IDs are per-project, stored in `project.json`.
+- [x] `mapper/src/lib/graphivac-client.ts` exports `createGraphivacProject`, `deleteGraphivacProject`, `listGrids`, `createGrid`, `deleteGrid`.
+- [x] All functions read `GRAPHIVAC_BASE_URL` and `GRAPHIVAC_ORG_ID` from `process.env` internally — callers never pass org_id.
+- [x] `createGrid` takes a `graphivacProjectId` parameter (not org_id — that is internal).
+- [x] Both delete functions handle `404` from Graphivac without throwing.
+- [x] The module is never imported from client components.
+- [x] `GRAPHIVAC_BASE_URL` and `GRAPHIVAC_ORG_ID` are documented in both `.env.example` files.
+- [x] No deployment-wide `GRAPHIVAC_PROJECT_ID` env var is introduced — project IDs are per-project, stored in `project.json`.
 
 ---
 
