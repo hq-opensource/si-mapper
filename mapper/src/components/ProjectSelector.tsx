@@ -1,18 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { ChevronDown, Trash2, Plus, Settings } from 'lucide-react';
 import { useWorkspace } from '@/context/WorkspaceContext';
 import { ConfirmationDialog } from './ConfirmationDialog';
-import { PromptDialog } from './PromptDialog';
 import type { Project } from '@/types';
 
 export function ProjectSelector() {
   const { activeProject, projects, setActiveProject, refreshProjects } = useWorkspace();
   const [isOpen, setIsOpen] = useState(false);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [deletingProject, setDeletingProject] = useState<Project | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close on outside click
@@ -26,24 +24,6 @@ export function ProjectSelector() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleCreate = async (name: string) => {
-    setIsCreating(true);
-    try {
-      const res = await fetch('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      });
-      if (res.ok) {
-        const created: Project = await res.json();
-        await refreshProjects();
-        await setActiveProject(created);
-      }
-    } finally {
-      setIsCreating(false);
-    }
-  };
-
   const handleDelete = async (project: Project) => {
     await fetch(`/api/projects/${project.id}`, { method: 'DELETE' });
     setDeletingProject(null);
@@ -55,10 +35,9 @@ export function ProjectSelector() {
       {/* Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        disabled={isCreating}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200
           text-[var(--foreground)] hover:bg-[var(--foreground)]/5 border border-transparent
-          hover:border-[var(--muted-foreground)]/20 disabled:opacity-50"
+          hover:border-[var(--muted-foreground)]/20"
         title="Switch project"
       >
         <span className="max-w-[10rem] truncate">
@@ -110,35 +89,28 @@ export function ProjectSelector() {
 
           {/* Footer actions */}
           <div className="border-t border-[var(--muted-foreground)]/20 p-1.5 space-y-0.5">
-            <button
-              onClick={() => { setShowCreateDialog(true); setIsOpen(false); }}
+            {/* Navigate to /projects with ?create=project to auto-open the creation form */}
+            <Link
+              href="/projects?create=project"
+              onClick={() => setIsOpen(false)}
               className="w-full flex items-center gap-2 px-3 py-2 text-xs text-[var(--foreground)] rounded-xl hover:bg-[var(--foreground)]/5 transition-colors"
             >
               <Plus size={12} className="text-[var(--accent)]" />
               <span>New project</span>
-            </button>
-            <a
+            </Link>
+            <Link
               href="/projects"
               onClick={() => setIsOpen(false)}
               className="w-full flex items-center gap-2 px-3 py-2 text-xs text-[var(--muted-foreground)] rounded-xl hover:bg-[var(--foreground)]/5 transition-colors"
             >
               <Settings size={12} />
               <span>Manage projects →</span>
-            </a>
+            </Link>
           </div>
         </div>
       )}
 
-      {/* Dialogs */}
-      <PromptDialog
-        isOpen={showCreateDialog}
-        onClose={() => setShowCreateDialog(false)}
-        onConfirm={handleCreate}
-        title="New Project"
-        description="Enter a name for the new project."
-        placeholder="e.g. Building A — HVAC"
-        confirmText="Create"
-      />
+      {/* Delete confirmation */}
       <ConfirmationDialog
         isOpen={!!deletingProject}
         onClose={() => setDeletingProject(null)}
@@ -151,4 +123,3 @@ export function ProjectSelector() {
     </div>
   );
 }
-
