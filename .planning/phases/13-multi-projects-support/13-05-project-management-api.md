@@ -1,8 +1,8 @@
 # 13-05 — Project & System Management API
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
-**Updated:** 2026-03-25
+**Status:** Done
+**Updated:** 2026-03-26
 **Depends on:** `13-04` (project & system storage utilities), `13-06` (Graphivac API — for create/delete)
 
 ---
@@ -303,71 +303,71 @@ mapper/src/app/api/projects/
 
 ## Implementation Plan
 
-### Milestone 1 — Scaffold project routes
+### Milestone 1 — Scaffold project routes ✅ Done
 
 **Steps:**
-1. Create stub `GET` and `POST` handlers in `mapper/src/app/api/projects/route.ts`.
-2. Create stub `GET`, `PATCH`, and `DELETE` handlers in `mapper/src/app/api/projects/[id]/route.ts`.
+1. ✅ Create stub `GET` and `POST` handlers in `mapper/src/app/api/projects/route.ts`.
+2. ✅ Create stub `GET`, `PATCH`, and `DELETE` handlers in `mapper/src/app/api/projects/[id]/route.ts`.
 
 ---
 
-### Milestone 2 — Implement project read-only routes
+### Milestone 2 — Implement project read-only routes ✅ Done
 
 **Steps:**
-1. Implement `GET /api/projects` using `listProjects()`.
-2. Implement `GET /api/projects/[id]` using `getProject(id)`.
+1. ✅ Implement `GET /api/projects` using `listProjects()`.
+2. ✅ Implement `GET /api/projects/[id]` using `getProject(id)`.
 
 ---
 
-### Milestone 3 — Implement project create/delete routes
+### Milestone 3 — Implement project create/delete routes ✅ Done
 
-**Prerequisite:** `13-06` Graphivac project + grid client.
+**Prerequisite:** `13-06` Graphivac project + grid client (implemented alongside this task).
 
 **Steps:**
-1. Implement `POST /api/projects` — call `createGraphivacProject`, then `createProjectOnDisk`.
-2. Implement `DELETE /api/projects/[id]` — list systems, delete all grids, delete Graphivac Project, delete folder.
+1. ✅ Implement `POST /api/projects` — call `createGraphivacProject`, then `createProjectOnDisk`.
+2. ✅ Implement `DELETE /api/projects/[id]` — list systems, delete all grids, delete Graphivac Project, delete folder.
 
 ---
 
-### Milestone 4 — Scaffold and implement system routes
+### Milestone 4 — Scaffold and implement system routes ✅ Done
 
 **Steps:**
-1. Create `mapper/src/app/api/projects/[id]/systems/route.ts` — `GET` and `POST`.
-2. Create `mapper/src/app/api/projects/[id]/systems/[sysId]/route.ts` — `GET`, `PATCH`, `DELETE`.
-3. Implement all four system CRUD handlers using storage utilities from `13-04`.
+1. ✅ Create `mapper/src/app/api/projects/[id]/systems/route.ts` — `GET` and `POST`.
+2. ✅ Create `mapper/src/app/api/projects/[id]/systems/[sysId]/route.ts` — `GET`, `PATCH`, `DELETE`.
+3. ✅ Implement all four system CRUD handlers using storage utilities from `13-04`.
 
 ---
 
-### Milestone 5 — File management routes (system-scoped)
+### Milestone 5 — File management routes (system-scoped) ✅ Done
 
 **Steps:**
-1. Create `mapper/src/app/api/projects/[id]/systems/[sysId]/files/route.ts` — `GET` and `POST`.
-2. Create `mapper/src/app/api/projects/[id]/systems/[sysId]/files/[filename]/route.ts` — `DELETE`.
-3. Both handlers verify project + system exist before any file operation.
+1. ✅ Create `mapper/src/app/api/projects/[id]/systems/[sysId]/files/route.ts` — `GET` and `POST`.
+2. ✅ Create `mapper/src/app/api/projects/[id]/systems/[sysId]/files/[filename]/route.ts` — `DELETE`.
+3. ✅ Both handlers verify project + system exist before any file operation.
 
 ---
 
-### Milestone 6 — Validation and error handling
+### Milestone 6 — Validation and error handling ✅ Done
 
 **Steps:**
-1. Add `zod` validation schemas for `POST` and `PATCH` bodies on both project and system routes.
-2. Ensure all routes return structured `{ error: string }` JSON on failure, never raw stack traces.
+1. ✅ Add `zod` validation schemas for `POST` and `PATCH` bodies on both project and system routes.
+2. ✅ Ensure all routes return structured `{ error: string }` JSON on failure, never raw stack traces.
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `GET /api/projects` returns a JSON array of all projects.
-- [ ] `POST /api/projects` accepts only `{ name }`, creates a Graphivac Project, creates the folder, returns `201`.
-- [ ] `POST /api/projects` never accepts `graphivac_org_id` from the client.
-- [ ] `DELETE /api/projects/[id]` deletes all systems' grids, the Graphivac Project, and the entire folder.
-- [ ] `GET /api/projects/[id]/systems` returns all systems for a project.
-- [ ] `POST /api/projects/[id]/systems` creates a Graphivac Grid and a system subfolder, returns `201`.
-- [ ] `DELETE /api/projects/[id]/systems/[sysId]` deletes the Graphivac Grid and the system subfolder.
-- [ ] File routes are scoped to the system's subfolder (`PROJECTS_FOLDER/{proj}/{sys}/`).
-- [ ] `zod` validates `POST` and `PATCH` bodies for both projects and systems.
-- [ ] All routes return structured JSON errors.
-- [ ] No route duplicates file-system logic from `13-04`.
+- [x] `GET /api/projects` returns a JSON array of all projects.
+- [x] `POST /api/projects` accepts only `{ name }`, creates a Graphivac Project, creates the folder, returns `201`.
+- [x] `POST /api/projects` never accepts `graphivac_org_id` from the client.
+- [x] `DELETE /api/projects/[id]` deletes all systems' grids, the Graphivac Project, and the entire folder.
+- [x] `GET /api/projects/[id]/systems` returns all systems for a project.
+- [x] `POST /api/projects/[id]/systems` creates a Graphivac Grid and a system subfolder, returns `201`.
+- [x] `DELETE /api/projects/[id]/systems/[sysId]` deletes the Graphivac Grid and the system subfolder.
+- [x] File routes are scoped to the system's subfolder (`PROJECTS_FOLDER/{proj}/{sys}/`).
+- [x] `zod` validates `POST` and `PATCH` bodies for both projects and systems.
+- [x] All routes return structured JSON errors.
+- [x] No route duplicates file-system logic from `13-04`.
 
 ---
 
