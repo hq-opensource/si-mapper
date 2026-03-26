@@ -1,8 +1,8 @@
 # 13-04 — Project & System Data Model & Storage
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
-**Updated:** 2026-03-25
+**Status:** Done
+**Updated:** 2026-03-26
 **Depends on:** `13-01` (PROJECTS_FOLDER env var must exist before reading/writing configs)
 
 ---
@@ -242,68 +242,71 @@ if (!resolvedPath.startsWith(resolvedProjectDir + path.sep)) {
 
 ## Implementation Plan
 
-### Milestone 1 — Install `nanoid` and define types
+### ✅ Milestone 1 — Install `nanoid` and define types
 
 **Steps:**
-1. Run `pnpm add nanoid` in `mapper/`.
-2. Create `mapper/src/lib/projects.ts` with the `Project` and `System` interfaces and the `PROJECTS_ROOT` constant.
+1. ~~Run `pnpm add nanoid` in `mapper/`.~~ Used `crypto.randomUUID()` (built-in) instead — no package needed.
+2. Created `mapper/src/lib/projects.ts` with the `Project` and `System` interfaces and the `PROJECTS_ROOT` constant.
 
-**Files to create:**
+**Files created:**
 - `mapper/src/lib/projects.ts`
 
 ---
 
-### Milestone 2 — Implement project storage utilities
+### ✅ Milestone 2 — Implement project storage utilities
 
 **Steps:**
-1. Implement `listProjects`, `getProject`, `writeProject`, `createProjectOnDisk`, `deleteProjectFromDisk`.
-2. Add path-traversal guard to every function accepting external input.
+1. Implemented `listProjects`, `getProject`, `writeProject`, `createProjectOnDisk`, `deleteProjectFromDisk`.
+2. Added path-traversal guard to every function accepting external input.
 
-**Files to modify:**
+**Files modified:**
 - `mapper/src/lib/projects.ts`
 
 ---
 
-### Milestone 3 — Implement system storage utilities
+### ✅ Milestone 3 — Implement system storage utilities
 
 **Steps:**
-1. Implement `listSystems`, `getSystem`, `writeSystem`, `createSystemOnDisk`, `deleteSystemFromDisk`.
+1. Implemented `listSystems`, `getSystem`, `writeSystem`, `createSystemOnDisk`, `deleteSystemFromDisk`.
 2. System functions take the project's `folder_path` as their first argument to resolve paths correctly.
-3. Add path-traversal guard scoped to the project directory.
+3. Added path-traversal guard scoped to the project directory.
 
-**Files to modify:**
+**Files modified:**
 - `mapper/src/lib/projects.ts`
 
 ---
 
-### Milestone 4 — Unit tests
+### ✅ Milestone 4 — Unit tests
 
 **Steps:**
-1. Write tests in `mapper/src/lib/__tests__/projects.test.ts` using a temporary directory:
-   - Create a project → folder and `project.json` appear.
-   - Create a system under a project → subfolder and `system.json` appear.
-   - List projects / list systems → returns all created records.
-   - Get project by id / get system by id → returns correct record.
-   - Update project / update system → `updated_at` changes.
-   - Delete system → system subfolder gone, project folder intact.
-   - Delete project → entire project folder gone (including systems).
-   - Path traversal attempts → throw.
-2. Run `pnpm test`.
+1. Wrote 16 tests in `mapper/src/lib/__tests__/projects.test.ts` using a real temporary directory:
+   - Create a project → folder and `project.json` appear. ✓
+   - Create a system under a project → subfolder and `system.json` appear. ✓
+   - List projects / list systems → returns all created records. ✓
+   - Get project by id / get system by id → returns correct record. ✓
+   - Update project / update system → `updated_at` changes, `created_at` unchanged. ✓
+   - Delete system → system subfolder gone, project folder intact. ✓
+   - Delete project → entire project folder gone (including systems). ✓
+   - Three path traversal attempts → throw. ✓
+2. All 16 tests pass (`pnpm test`).
 
-**Files to create:**
+**Files created:**
 - `mapper/src/lib/__tests__/projects.test.ts`
+
+**Files modified:**
+- `mapper/jest.config.js` — extended transform pattern to `[jt]sx?` (no mock mapper needed)
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `Project` interface has: `id`, `name`, `folder_path`, `graphivac_project_id`, `created_at`, `updated_at`. No `graphivac_org_id`, no `graphivac_grid_id`, no `ai_model_name`.
-- [ ] `System` interface has: `id`, `name`, `folder_path`, `graphivac_grid_id`, `ai_model_name`, `created_at`, `updated_at`.
-- [ ] `PROJECTS_ROOT` is resolved from `PROJECTS_FOLDER` env var with a fallback to `./uploads`.
-- [ ] All project CRUD functions are implemented and validated against path traversal.
-- [ ] All system CRUD functions are implemented and validated against path traversal (two-level: inside project folder).
-- [ ] Unit tests pass for all operations on both projects and systems.
-- [ ] No API route or component reads from `fs` directly — all go through `mapper/src/lib/projects.ts`.
+- [x] `Project` interface has: `id`, `name`, `folder_path`, `graphivac_project_id`, `created_at`, `updated_at`. No `graphivac_org_id`, no `graphivac_grid_id`, no `ai_model_name`.
+- [x] `System` interface has: `id`, `name`, `folder_path`, `graphivac_grid_id`, `ai_model_name`, `created_at`, `updated_at`.
+- [x] `PROJECTS_ROOT` is resolved from `PROJECTS_FOLDER` env var with a fallback to `./uploads`.
+- [x] All project CRUD functions are implemented and validated against path traversal.
+- [x] All system CRUD functions are implemented and validated against path traversal (two-level: inside project folder).
+- [x] Unit tests pass for all operations on both projects and systems.
+- [x] No API route or component reads from `fs` directly — all go through `mapper/src/lib/projects.ts`.
 
 ---
 
@@ -313,6 +316,6 @@ if (!resolvedPath.startsWith(resolvedProjectDir + path.sep)) {
 - **`graphivac_project_id` stays on `Project`**: each SI-Mapper project corresponds to one Graphivac Project, so this ID is inherently project-scoped.
 - **`graphivac_grid_id` belongs to `System`**: a grid is the Graphivac canvas for one system, not for an entire project.
 - **`ai_model_name` on `System`**: the agent works on a system, so the model is configured at the system level. This allows two systems in the same project to use different models.
-- **`nanoid` over `uuid`**: shorter, URL-safe IDs. Better for folder names and query params.
+- **`nanoid` over `uuid`**: shorter, URL-safe IDs. Better for folder names and query params. ~~`nanoid` was initially planned but replaced with Node's built-in `crypto.randomUUID()` (strips dashes, takes 21 chars) — identical output, zero extra dependency, no ESM/CJS friction in Jest.~~
 - **No database**: JSON files per entity. A database would be introduced in a later phase if scale demands it.
 - **System folder is a child of the project folder**: the absolute path of a system's files is always `PROJECTS_ROOT/{project.folder_path}/{system.folder_path}/`.
