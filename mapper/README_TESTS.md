@@ -55,6 +55,9 @@ pnpm test --testPathPatterns="lib/__tests__/projects"
 # Only the file-upload/delete route tests
 pnpm test --testPathPatterns="files-route"
 
+# Only the folder CRUD + subfolder-aware file tests
+pnpm test --testPathPatterns="folders-route"
+
 # Only the root files route scoping tests (project/system params)
 pnpm test --testPathPatterns="files-root-route"
 
@@ -73,6 +76,9 @@ pnpm test --testNamePattern="DELETE"
 
 # Only "409" conflict tests
 pnpm test --testNamePattern="409"
+
+# Only hidden metadata file tests
+pnpm test --testNamePattern="hidden metadata"
 ```
 
 ---
@@ -88,12 +94,17 @@ pnpm test --testNamePattern="409"
 | `src/app/api/projects/__tests__/systems-route.test.ts` | `GET` + `POST /api/projects/[id]/systems` | `lib/projects` + `lib/graphivac-client` mocked |
 | `src/app/api/projects/__tests__/sysid-route.test.ts` | `GET` + `PATCH` + `DELETE /api/projects/[id]/systems/[sysId]` | `lib/projects` + `lib/graphivac-client` mocked |
 | `src/app/api/projects/__tests__/files-route.test.ts` | `GET` + `POST /files` and `DELETE /files/[filename]` | Real temp directory, only `lib/projects` mocked |
+| `src/app/api/projects/__tests__/folders-route.test.ts` | `GET` + `POST /folders`, `PATCH` + `DELETE /folders/[folderName]`, subfolder-aware `GET`/`POST`/`DELETE` for files, hidden metadata file filtering (`system.json`, `project.json`) | Real temp directory, only `lib/projects` mocked |
 | `src/app/api/graph/route.test.ts` | `GET /api/graph` — Neo4j graph query route | `neo4j-driver` mocked |
 | `src/app/api/files/__tests__/files-root-route.test.ts` | `GET /api/files` — project/system scoping and path-traversal guards | Real temp directory; env var set before module load |
 | `src/app/api/files/__tests__/files-view-route.test.ts` | `GET /api/files/view` — project/system scoping, path-traversal guards, Content-Type detection | Real temp directory; env var set before module load |
 | `src/app/api/__tests__/config-route.test.ts` | `GET /api/config` — returns `graphivacBaseUrl` and `graphivacOrgId` from env vars | `process.env` set/deleted per test |
 
-**Total: 11 suites, 137 tests.**
+**Total: 12 suites, 170 tests.**
+
+> **13-08 (Project & System Management UI):** No new test files were added. All new code introduced in this task (`ProjectCard`, `ProjectEditDialog`, `SystemCard`, `SystemEditDialog`, `SystemFilePanel`, `/projects/page.tsx`) is pure React UI. The underlying API routes and storage layer that these components call were already fully covered in previous tasks (`13-05`).
+
+> **Folder management (added to 13-08):** The folder CRUD routes (`GET/POST /folders`, `PATCH/DELETE /folders/[folderName]`) and subfolder-aware file routes (`?subfolder=` param on GET, POST, DELETE) are covered by `folders-route.test.ts` (33 tests). This suite also verifies that internal metadata files (`system.json`, `project.json`) are excluded from every file listing — both at the root level and inside subfolders. The `SystemFilePanel` UI changes carry no new unit tests.
 
 ---
 

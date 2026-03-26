@@ -118,3 +118,39 @@ The agent works on one system at a time. Cross-system tasks must be performed by
 - Extend the agent state to support a list of active systems.
 - Add a multi-system path resolver (`get_project_path` at the project level).
 - Allow the agent to call Graphivac tools parameterised with different grid IDs within the same session.
+
+---
+
+## D-05 — Dark / Light Mode Support for the Project Management UI
+
+**Deferred from:** `13-UI` (Project Management page redesign, Phase 13)
+**Category:** Frontend / UX
+
+### What was deferred
+
+Full dark-mode support for the `/projects` page and its sub-components (`SystemFilePanel`, `ProjectCard`, `SystemCard`, `ProjectEditDialog`, `SystemEditDialog`), consistent with the rest of the application's theme system.
+
+### Why deferred
+
+The project management UI was redesigned late in Phase 13 to adopt a two-panel layout (left sidebar for projects, system tabs at the top, `SystemFilePanel` as the main content area). During that redesign the file/folder cards were styled with hardcoded `bg-white`, `text-slate-*`, and `border-slate-*` classes that do not respond to the application's CSS-variable theme system.
+
+A secondary issue was discovered: Tailwind v4 (`@import "tailwindcss"`) defaults to the **media** dark-mode strategy (OS preference), not the **class** strategy. This caused `dark:` utility variants to apply based on the user's operating-system dark-mode preference rather than the application's own `className="light"` toggle on `<html>`, producing black card backgrounds on systems with OS dark mode enabled regardless of the in-app theme. The short-term fix was to **remove all `dark:` variants** and use CSS variables exclusively, which hardcodes the panel to light-mode appearance only.
+
+### Phase 13 mitigation
+
+- All `dark:` variants were removed from `SystemFilePanel`, `ProjectCard`, `SystemCard`, and related components.
+- Every colour now uses the app's CSS custom properties (`--background`, `--foreground`, `--muted-foreground`, `--accent`) so the file/folder panel is theme-neutral — it adapts to the current CSS variable values.
+- The Tailwind dark-mode strategy has **not** been switched to `class`; this would be a project-wide change that could break existing `dark:` usages in other components that correctly rely on the media strategy.
+- The application currently ships with a hardcoded `className="light"` on `<html>` (`app/layout.tsx`), so end-users are not exposed to a broken dark mode.
+
+### What a future phase would require
+
+1. **Decide on a dark-mode strategy**: switch Tailwind's `darkMode` config to `'class'` (in `tailwind.config.ts` or via the `@custom-variant dark` directive in `globals.css`) so that `dark:` variants are controlled by the application toggle, not the OS preference.
+2. **Audit all components** for `dark:` usage to confirm they behave correctly after the strategy change.
+3. **Restore dark-mode card styles** in `SystemFilePanel`:
+   - Folder / file cards: `bg-[var(--background)] → dark variant` or keep using CSS variables if `--background` is correctly set for dark mode.
+   - Card borders: use `border-[var(--muted-foreground)]/15` (already done — no change needed).
+   - Dropdown menus and conflict modals: use `bg-[var(--background)]` (already done).
+4. **Verify the folder SVG icon** (`FolderSvg`) — the fill colour `#1e293b` (slate-800) is readable on a light background but nearly invisible on a dark background. It should switch to a lighter value (e.g. `#94a3b8` or `#cbd5e1`) in dark mode.
+5. **Test** the full `/projects` page in both light and dark mode across the major browser / OS combinations.
+

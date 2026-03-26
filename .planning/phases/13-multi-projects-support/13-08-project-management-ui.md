@@ -1,8 +1,8 @@
 # 13-08 — Project & System Management UI
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
-**Updated:** 2026-03-25
+**Status:** Done
+**Updated:** 2026-03-26
 **Depends on:** `13-05` (project & system CRUD API + file routes), `13-06` (Graphivac API), `13-07` (WorkspaceContext and selectors established)
 
 ---
@@ -11,11 +11,11 @@
 
 Task `13-07` establishes the lightweight navbar selectors for switching projects and systems. This task builds the **full management surface**:
 
-1. A **dedicated `/projects` management page** listing all projects and their systems.
-2. An **Edit Project form** — rename a project.
-3. A **System management panel** per project — create, edit, delete systems; manage system files.
-4. A **System Edit form** — rename a system, change its AI model.
-5. A **File Management panel** per system — upload, list, delete files.
+1. A **dedicated `/projects` management page** with a two-panel layout: a left sidebar listing projects and a right panel showing system tabs + file manager.
+2. A **Project Edit dialog** — rename a project.
+3. A **System tab strip** per selected project — create, edit, delete systems.
+4. A **System Edit dialog** — rename a system, change its AI model.
+5. A **File & Folder Management panel** per system — upload files, create/rename/delete folders, navigate subfolders, delete files.
 6. A **"⚙ Manage projects →" entry point** in the project selector (wired in `13-07`) that navigates to `/projects`.
 
 ---
@@ -33,7 +33,8 @@ Task `13-07` establishes the lightweight navbar selectors for switching projects
 | **Edit project name** | ❌ | ✅ |
 | **Edit system name / model** | ❌ | ✅ |
 | **Upload files to a system** | ❌ | ✅ |
-| **List files in a system** | ❌ | ✅ |
+| **Create / rename / delete folders** | ❌ | ✅ |
+| **List files and folders in a system** | ❌ | ✅ |
 | **Delete a file from a system** | ❌ | ✅ |
 | View system details (grid ID, dates, file count) | ❌ | ✅ |
 
@@ -47,30 +48,40 @@ Task `13-07` establishes the lightweight navbar selectors for switching projects
 
 **"⚙ Manage projects →"** `<Link href="/projects">` at the bottom of the `ProjectSelector` dropdown.
 
+### URL Params (processed once on mount)
+
+| Param | Value | Effect |
+|---|---|---|
+| `?create=project` | — | Opens the New Project prompt immediately |
+| `?create=system&project=ID` | project ID | Selects that project and opens the New System prompt |
+
 ### Page Layout
 
+The page uses a **two-panel layout** (full-height, no scroll at top level):
+
 ```
-┌──────────────────────────────────────────────────────────┐
-│ ← Back to main view                                      │
-│                                                          │
-│ Projects                            [+ New Project]      │
-├──────────────────────────────────────────────────────────┤
-│ Building A                                               │
-│   Graphivac Project: P-j8QIvTGH7p                        │
-│   Created: 2026-03-25                                    │
-│   [✏ Edit]  [🗑 Delete]                                  │
-│   ┌── Systems ──────────────────────────────────────┐   │
-│   │ Chilled Water Plant  G-LAiRS3mgp6  gemini-3.1   │   │
-│   │   [✏ Edit]  [📁 Files (3)]  [🗑 Delete]         │   │
-│   │ AHU Zone 1           G-XXXXXXXX   claude-3-7    │   │
-│   │   [✏ Edit]  [📁 Files (0)]  [🗑 Delete]         │   │
-│   │ [+ New System]                                   │   │
-│   └──────────────────────────────────────────────────┘  │
-├──────────────────────────────────────────────────────────┤
-│ Building B — Chiller Plant                               │
-│   ...                                                    │
-└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│ ← Back  │  Project Management                                │  ← header
+├──────────┼───────────────────────────────────────────────────┤
+│          │  Systems ─────────────────────────────  [+ New]   │
+│ Projects │  [Chilled Water Plant ✏ 🗑] [AHU Zone 1 ✏ 🗑] … │  ← tab strip
+│  [+]     ├───────────────────────────────────────────────────┤
+│          │                                                    │
+│ 📁 Bldg A│  SystemFilePanel (selected system)                │
+│ 📁 Bldg B│    Folders + Files card grid                      │
+│ ...      │    [New Folder]  [Upload]                         │
+│          │                                                    │
+└──────────┴───────────────────────────────────────────────────┘
 ```
+
+- **Left sidebar (w-60):** scrollable list of projects; each row has a color-coded folder icon (7-color palette), project name, and hover-revealed edit/delete icon buttons.
+- **Right panel:** system tabs strip at the top (horizontal scroll), `SystemFilePanel` fills the remaining height for the selected system.
+- Edit (✏) and delete (🗑) buttons for the **active** system tab are shown inline next to that tab; they are hidden for inactive tabs.
+- Selecting a different project auto-selects the first system in that project.
+
+### Color Palette
+
+Projects cycle through 7 color variants for their folder icons (indigo → violet → blue → teal → emerald → amber → rose), using the project's list index.
 
 ---
 
@@ -78,7 +89,7 @@ Task `13-07` establishes the lightweight navbar selectors for switching projects
 
 ### Trigger
 
-**[✏ Edit]** on a project card opens a modal dialog.
+**[✏]** on a project sidebar row (hover-revealed) opens a modal dialog.
 
 ### Fields
 
@@ -86,7 +97,7 @@ Task `13-07` establishes the lightweight navbar selectors for switching projects
 |---|---|---|
 | `name` | Text | ✅ |
 
-> `graphivac_project_id` is immutable after creation and is shown read-only for reference only, not editable.
+> `graphivac_project_id` is immutable after creation and is not shown or editable in this dialog.
 
 ### Behaviour
 
@@ -99,26 +110,26 @@ Task `13-07` establishes the lightweight navbar selectors for switching projects
 
 ---
 
-## System Management Panel
+## System Management
 
-Each project card has an inline **Systems** section listing all systems. It is always expanded on the management page (unlike the selector dropdown which is compact).
+Each selected project shows a **horizontal tab strip** at the top of the right panel listing all its systems. Actions live inline in the active tab.
 
-### System row
+### System tab (active)
 
-Each system row shows: name, Graphivac grid ID (read-only), AI model name, file count.
-Actions: **[✏ Edit]**, **[📁 Files (n)]**, **[🗑 Delete]**.
+Shows: system name, and — revealed next to the tab — **[✏]** (edit) and **[🗑]** (delete) icon buttons.  
+The Graphivac grid ID and AI model name are shown in the `SystemEditDialog` when editing.
 
 ### Create system
 
-**[+ New System]** button at the bottom of the systems section → inline form or `PromptDialog` → `POST /api/projects/[id]/systems` → refreshes the system list.
+**[+ New system]** button at the end of the tab strip → `PromptDialog` (name only; model defaults to `gemini-2.0-flash`) → `POST /api/projects/[id]/systems` → refreshes system list → auto-selects created system.
 
 ---
 
-## System Edit Form
+## System Edit Dialog
 
 ### Trigger
 
-**[✏ Edit]** on a system row.
+**[✏]** on an active system tab.
 
 ### Fields
 
@@ -127,12 +138,12 @@ Actions: **[✏ Edit]**, **[📁 Files (n)]**, **[🗑 Delete]**.
 | `name` | Text | ✅ | |
 | `ai_model_name` | Text | no | Model used by the agent for this system |
 
-> `graphivac_grid_id` is immutable and shown read-only for reference.
+> `graphivac_grid_id` is immutable and shown read-only for reference in the `SystemEditDialog`.
 
 ### Behaviour
 
 1. `PATCH /api/projects/[id]/systems/[sysId]` with changed fields.
-2. On success: close dialog, call `refreshSystems()`.
+2. On success: close dialog, call `refreshSystems()` / `fetchSystems()`.
 
 ### Component
 
@@ -140,35 +151,50 @@ Actions: **[✏ Edit]**, **[📁 Files (n)]**, **[🗑 Delete]**.
 
 ---
 
-## File Management Panel
+## File & Folder Management Panel
 
 ### Trigger
 
-**[📁 Files (n)]** on a system row — toggles an inline accordion panel.
+Selecting a system tab automatically displays `SystemFilePanel` in the right panel (always open on the management page).
 
-### Panel Layout
+### Panel Layout (card-grid, not a table)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│ Files — Chilled Water Plant         [⬆ Upload files]    │
-├──────────────┬──────────┬───────────────┬───────────────┤
-│ Name         │ Size     │ Modified      │ Actions       │
-├──────────────┼──────────┼───────────────┼───────────────┤
-│ bacnet.csv   │ 20 KB    │ 2026-03-25    │ [🗑 Delete]   │
-└──────────────┴──────────┴───────────────┴───────────────┘
-│ Drag & drop files here, or click "Upload files"         │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ SystemName  ›  FolderName        [New Folder]  [Upload]     │  ← header / breadcrumb
+├─────────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
+│  │ 📁 dark  │  │ 📁 dark  │  │ + Add    │  │ 📄 CSV   │    │
+│  │ Data     │  │ Plans    │  │ folder   │  │ bacnet   │    │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘    │
+│  (click folder to navigate in; three-dot menu: Rename/Del)  │
+│                                                              │
+│ ┌──────────────────────────────────────────────────────────┐│
+│ │ Drag & drop files here or click Upload                   ││
+│ └──────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
 ```
+
+- **Folder cards:** uniform dark-navy SVG folder icon; click to navigate into subfolder; three-dot (⋮) menu → Rename / Delete.
+- **File cards:** coloured document SVG icon keyed by extension (PDF=red, CSV=green, TTL=purple, etc.) with the extension label overlaid; three-dot menu → Delete.
+- **Breadcrumb:** `SystemName › FolderName`; clicking the system name returns to the root level.
+- **"← Back to parent folder"** link appears when inside a subfolder.
+- **Drag & drop overlay:** full-panel overlay with animated `CloudUpload` icon while dragging.
+- **New Folder button** is only shown at the root level.
 
 ### API used
 
-- `GET /api/projects/[id]/systems/[sysId]/files` — list files.
-- `POST /api/projects/[id]/systems/[sysId]/files` — upload files (multipart/form-data).
-- `DELETE /api/projects/[id]/systems/[sysId]/files/[filename]` — delete a file.
+- `GET /api/projects/[id]/systems/[sysId]/files` — list files (supports `?subfolder=` param).
+- `POST /api/projects/[id]/systems/[sysId]/files` — upload files (multipart/form-data; supports `overwrite=true` and `subfolder=` fields).
+- `DELETE /api/projects/[id]/systems/[sysId]/files/[filename]` — delete a file (supports `?subfolder=` param).
+- `GET /api/projects/[id]/systems/[sysId]/folders` — list folders (root only).
+- `POST /api/projects/[id]/systems/[sysId]/folders` — create a folder `{ name }`.
+- `PATCH /api/projects/[id]/systems/[sysId]/folders/[name]` — rename a folder `{ name }`.
+- `DELETE /api/projects/[id]/systems/[sysId]/folders/[name]` — delete a folder and all its contents.
 
 ### Conflict handling
 
-On `409 Conflict`: show a per-file "Replace / Skip" prompt before retrying with `overwrite=true`.
+On `409 Conflict`: a modal prompt asks **Replace / Skip** per file before retrying with `overwrite=true`.
 
 ### Component
 
@@ -176,95 +202,75 @@ On `409 Conflict`: show a per-file "Replace / Skip" prompt before retrying with 
 
 ---
 
-## New Files to Create
+## New Files Created
 
 | File | Purpose |
 |---|---|
-| `mapper/src/app/projects/page.tsx` | `/projects` management page |
-| `mapper/src/components/ProjectCard.tsx` | Per-project row on the management page |
+| `mapper/src/app/projects/page.tsx` | `/projects` management page (two-panel layout) |
 | `mapper/src/components/ProjectEditDialog.tsx` | Edit project name dialog |
-| `mapper/src/components/SystemCard.tsx` | Per-system row within a project card |
 | `mapper/src/components/SystemEditDialog.tsx` | Edit system name and model dialog |
-| `mapper/src/components/SystemFilePanel.tsx` | File listing, upload, delete for a system |
+| `mapper/src/components/SystemFilePanel.tsx` | File & folder manager (card-grid view, subfolder navigation, drag & drop) |
 
-## Files to Modify
+> `ProjectCard.tsx` and `SystemCard.tsx` were created during development but were never consumed by the live `/projects` page. They were removed as dead code.
+
+## Files Modified
 
 | File | Change |
 |---|---|
-| `mapper/src/components/ProjectSelector.tsx` | Already has "⚙ Manage →" link (from `13-07`); no change needed |
+| `mapper/src/components/ProjectSelector.tsx` | Already has "⚙ Manage projects →" link (from `13-07`); no change needed |
 
 ---
 
-## Implementation Plan
+## Implementation Notes
 
-### Milestone 1 — `/projects` page and `ProjectCard`
+### Layout divergence from original plan
 
-**Steps:**
-1. Create `mapper/src/app/projects/page.tsx` — fetches all projects, renders a `<ProjectCard>` per project, includes **[+ New Project]** and **[← Back]**.
-2. Create `mapper/src/components/ProjectCard.tsx` — shows project metadata, systems list, and action buttons.
+The original plan described a **scrollable card list** where each `ProjectCard` expanded inline to show its systems and `SystemFilePanel`. The final implementation uses a **two-panel SPA-style layout** instead:
+- Left sidebar = project list (selection, edit, delete)
+- Right panel = system tabs + full-height `SystemFilePanel`
 
----
+`ProjectCard` and `SystemCard` were created during development but were never imported by the `/projects` page or any other live route. They were **removed as dead code**.
 
-### Milestone 2 — Project edit and system list
+### SystemFilePanel — folder management (beyond original scope)
 
-**Steps:**
-1. Create `mapper/src/components/ProjectEditDialog.tsx` — single-field form for `name`, calls `PATCH /api/projects/[id]`.
-2. Create `mapper/src/components/SystemCard.tsx` — system row with name, grid ID, model, file count, actions.
-3. Wire **[+ New System]** within `ProjectCard` → `POST /api/projects/[id]/systems`.
-4. Wire **[🗑 Delete]** system → `ConfirmationDialog` → `DELETE /api/projects/[id]/systems/[sysId]`.
-
----
-
-### Milestone 3 — System edit
-
-**Steps:**
-1. Create `mapper/src/components/SystemEditDialog.tsx` — form for `name` and `ai_model_name`.
-2. On submit: `PATCH /api/projects/[id]/systems/[sysId]`, close dialog, refresh systems.
-
----
-
-### Milestone 4 — File management panel
-
-**Steps:**
-1. Create `mapper/src/components/SystemFilePanel.tsx`:
-   - On expand: `GET /api/projects/[id]/systems/[sysId]/files`.
-   - Upload: drag & drop + file picker → `POST .../files` with `overwrite=false`. Handle `409` with Replace/Skip prompt.
-   - Delete: per-row → mini-confirm → `DELETE .../files/[filename]` → refresh.
-2. Wire **[📁 Files (n)]** in `SystemCard` to toggle the panel.
-
----
-
-### Milestone 5 — Integration & state sync
-
-**Steps:**
-1. After any mutation on the management page, call `refreshProjects()` or `refreshSystems()` from `WorkspaceContext`.
-2. Verify the navbar selectors reflect changes made on the management page immediately.
+`SystemFilePanel` was extended beyond the flat file-list described in the plan to include:
+- **Subfolder creation**, **rename**, and **delete** via a `/folders` API.
+- **Card-grid layout** (styled after SVAR Willow "Files" tab) instead of a table.
+- **Breadcrumb navigation** for entering and leaving subfolders.
+- Per-extension **coloured SVG file icons** and a uniform dark-navy **folder SVG icon**.
+- **Three-dot (⋮) dropdown menu** per card for Rename (folders) / Delete actions.
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `/projects` page lists all projects, each showing its systems.
-- [ ] Each project shows: name, Graphivac Project ID (read-only), creation date.
-- [ ] Each system shows: name, Graphivac Grid ID (read-only), AI model, file count.
-- [ ] **[✏ Edit]** on a project opens a dialog; saving calls `PATCH /api/projects/[id]` and updates the list.
-- [ ] **[✏ Edit]** on a system opens a dialog with `name` and `ai_model_name`; saving calls `PATCH /api/projects/[id]/systems/[sysId]`.
-- [ ] **[+ New System]** calls `POST /api/projects/[id]/systems` and adds the system to the list.
-- [ ] **[🗑 Delete]** on a system calls `DELETE .../systems/[sysId]` with confirmation.
-- [ ] **[🗑 Delete]** on a project calls `DELETE /api/projects/[id]` with confirmation, removes all systems.
-- [ ] **[📁 Files (n)]** expands the file panel; files are fetched from `GET .../systems/[sysId]/files`.
-- [ ] File upload via file picker and drag & drop sends to `POST .../systems/[sysId]/files`.
-- [ ] A `409` conflict shows a per-file "Replace / Skip" prompt.
-- [ ] **[🗑 Delete file]** calls `DELETE .../files/[filename]` and removes the file from the list.
-- [ ] All mutations call `refreshProjects()` / `refreshSystems()` so the navbar selectors update immediately.
-- [ ] The Graphivac `graphivac_org_id` is never displayed or editable in any form.
+- [x] `/projects` page lists all projects; selecting a project shows its systems in a tab strip.
+- [x] Each project in the sidebar shows its name and a colour-coded folder icon.
+- [x] `graphivac_project_id` is not shown by default in any form or panel (immutable, hidden).
+- [x] Each system tab shows its name; the active tab reveals edit and delete icon buttons inline.
+- [x] **[✏]** on a project opens a dialog; saving calls `PATCH /api/projects/[id]` and updates the list.
+- [x] **[✏]** on a system opens a dialog with `name` and `ai_model_name`; saving calls `PATCH /api/projects/[id]/systems/[sysId]`.
+- [x] **[+ New system]** calls `POST /api/projects/[id]/systems` and adds the system tab.
+- [x] **[🗑]** on a system calls `DELETE .../systems/[sysId]` with `ConfirmationDialog`.
+- [x] **[🗑]** on a project calls `DELETE /api/projects/[id]` with `ConfirmationDialog`, removes all systems.
+- [x] `SystemFilePanel` is always open on the management page for the selected system.
+- [x] Files are fetched from `GET .../systems/[sysId]/files` (with subfolder param support).
+- [x] File upload via file picker and drag & drop sends to `POST .../systems/[sysId]/files`.
+- [x] A `409` conflict shows a per-file "Replace / Skip" prompt.
+- [x] **[🗑]** on a file (three-dot menu) calls `DELETE .../files/[filename]` and removes the card.
+- [x] Folders can be created (`POST .../folders`), renamed (`PATCH .../folders/[name]`), and deleted (`DELETE .../folders/[name]`).
+- [x] Clicking a folder card navigates into it (subfolder view); breadcrumb and "← Back" link return to root.
+- [x] All mutations call `refreshProjects()` / `fetchSystems()` so the navbar selectors update immediately.
+- [x] URL params `?create=project` and `?create=system&project=ID` open the relevant creation prompt on page load.
+- [x] The Graphivac `graphivac_org_id` is never displayed or editable in any form.
 
 ---
 
 ## Notes & Decisions
 
 - **`graphivac_org_id` is completely absent from the management UI**: it is a deployment constant. There is no field for it in any form, and it is not shown in the project or system detail views.
-- **`graphivac_project_id` and `graphivac_grid_id` are read-only**: they are shown for reference (useful for debugging or manual Graphivac operations) but cannot be edited after creation. They are displayed in a collapsible "Technical details" section to avoid clutter.
-- **Files belong to systems, not projects**: there is no project-level file panel. All file management is on the system row.
-- **`SystemFilePanel` vs `SvarFileManager`**: `SvarFileManager` (in `13-07`) provides a tree-view sidebar for the main working view. `SystemFilePanel` (this task) provides a flat admin table for uploading/deleting. Both coexist with different purposes.
-- **State sync via `WorkspaceContext`**: the `/projects` page is wrapped in the same `WorkspaceProvider` as the main page (root layout). Calling `refreshProjects()` / `refreshSystems()` is sufficient to keep the selector and the management page in sync.
+- **`graphivac_project_id` and `graphivac_grid_id` are read-only**: shown for reference only in the `SystemEditDialog`; neither can be edited after creation.
+- **Files belong to systems, not projects**: there is no project-level file panel.
+- **`SystemFilePanel` vs `SvarFileManager`**: `SvarFileManager` (in `13-07`) provides a tree-view sidebar for the main working view. `SystemFilePanel` (this task) provides a card-grid admin panel for uploading/organising files. Both coexist with different purposes.
+- **State sync via `WorkspaceContext`**: the `/projects` page is wrapped in the same `WorkspaceProvider` as the main page (root layout). Calling `refreshProjects()` / `fetchSystems()` is sufficient to keep the selector and the management page in sync.
+- **`Suspense` wrapper required**: `useSearchParams` in Next.js App Router requires the component to be wrapped in `<Suspense>`. `ProjectsPageInner` contains the logic; `ProjectsPage` (the default export) wraps it.

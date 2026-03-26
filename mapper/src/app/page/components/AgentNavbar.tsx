@@ -98,14 +98,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
             "
                 style={{ backgroundColor: 'var(--background)' }}>
 
-                {/* Workspace selectors */}
-                <div className="flex items-center gap-1 px-3 py-1 border-r border-[var(--muted-foreground)]/20 mr-1">
-                    <ProjectSelector />
-                    <span className="text-[var(--muted-foreground)]/40 text-xs select-none px-0.5">/</span>
-                    <SystemSelector />
-                </div>
-
-                {/* Status indicator (Left side of nav) */}
+                {/* Status indicator */}
                 <div className="flex items-center gap-3 px-4 py-1.5 border-r border-[var(--muted-foreground)]/20 mr-1">
                     <div className="relative flex h-2 w-2">
                         {agentState?.status && agentState.status !== 'idle' && (
@@ -118,6 +111,13 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
                             {agentState.active_agent ? formatAgentName(agentState.active_agent) : 'SI-MAPPER'}
                         </span>
                     </div>
+                </div>
+
+                {/* Workspace selectors */}
+                <div className="flex items-center gap-1 px-3 py-1 border-r border-[var(--muted-foreground)]/20 mr-1">
+                    <ProjectSelector />
+                    <span className="text-[var(--muted-foreground)]/40 text-xs select-none px-0.5">/</span>
+                    <SystemSelector />
                 </div>
 
                 {/* Navigation Items */}
