@@ -5,6 +5,8 @@ import { AgentState } from "./AgentStateOverlay";
 import { useState, useEffect } from "react";
 import { useThoughts } from "@/context/ThoughtsContext";
 import { formatAgentName } from "@/lib/utils";
+import { ProjectSelector } from "@/components/ProjectSelector";
+import { SystemSelector } from "@/components/SystemSelector";
 
 interface AgentNavbarProps {
     agentState: AgentState;
@@ -95,6 +97,13 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
                 shadow-[0_8px_30px_rgb(0,0,0,0.04)]
             "
                 style={{ backgroundColor: 'var(--background)' }}>
+
+                {/* Workspace selectors */}
+                <div className="flex items-center gap-1 px-3 py-1 border-r border-[var(--muted-foreground)]/20 mr-1">
+                    <ProjectSelector />
+                    <span className="text-[var(--muted-foreground)]/40 text-xs select-none px-0.5">/</span>
+                    <SystemSelector />
+                </div>
 
                 {/* Status indicator (Left side of nav) */}
                 <div className="flex items-center gap-3 px-4 py-1.5 border-r border-[var(--muted-foreground)]/20 mr-1">

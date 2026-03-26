@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Filemanager, Willow, WillowDark } from "@svar-ui/react-filemanager";
 import "@svar-ui/react-filemanager/style.css";
+import { useWorkspace } from '@/context/WorkspaceContext';
 
 // Interface for my API objects
 interface FileItem {
@@ -19,10 +20,14 @@ export function SvarFileManager() {
     const [data, setData] = useState<FileItem[]>([]);
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const apiRef = useRef<any>(null);
+    const { activeProject, activeSystem } = useWorkspace();
 
     const fetchTree = useCallback(async () => {
         try {
-            const response = await fetch(`/api/files?tree=true`);
+            const params = new URLSearchParams({ tree: 'true' });
+            if (activeProject) params.set('project', activeProject.folder_path);
+            if (activeSystem) params.set('system', activeSystem.folder_path);
+            const response = await fetch(`/api/files?${params}`);
             if (!response.ok) throw new Error('Failed to fetch tree');
             const result = await response.json();
             
@@ -36,7 +41,7 @@ export function SvarFileManager() {
         } catch (error) {
             console.error('Error fetching tree:', error);
         }
-    }, []);
+    }, [activeProject, activeSystem]);
 
     useEffect(() => {
         const checkTheme = () => {

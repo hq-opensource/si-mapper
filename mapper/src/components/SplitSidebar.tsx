@@ -1,13 +1,15 @@
 import { CopilotChat } from "@copilotkit/react-ui";
 import { ThinkingMessage } from "./ThinkingMessage";
-// import { FilesWindow } from "./FilesWindow";
+import { MessageSquareOff } from "lucide-react";
 
 interface SplitSidebarProps {
     isEditMode?: boolean;
     toggleEditMode?: () => void;
+    /** When true, overlays the chat with a message asking the user to set up a workspace first. */
+    disabled?: boolean;
 }
 
-export function SplitSidebar({ }: SplitSidebarProps) {
+export function SplitSidebar({ disabled = false }: SplitSidebarProps) {
     return (
         <div className="my-split-sidebar h-full w-[28rem] flex-shrink-0 flex flex-col bg-[var(--background)] border-r border-[var(--muted-foreground)]/20 shadow-xl z-40 transition-colors duration-500">
             <div className="flex-1 relative bg-[var(--background)] overflow-hidden px-6 pb-6 pt-24">
@@ -28,9 +30,21 @@ export function SplitSidebar({ }: SplitSidebarProps) {
                         AssistantMessage={ThinkingMessage}
                     />
 
-                    {/* Subtle Interactive Glow - Matching Main Content Area */}
+                    {/* Subtle Interactive Glow */}
                     <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/[0.02] to-transparent pointer-events-none z-20" />
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--accent)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-20 pointer-events-none" />
+
+                    {/* Disabled overlay */}
+                    {disabled && (
+                        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-[var(--background)]/90 backdrop-blur-sm rounded-3xl">
+                            <div className="w-14 h-14 rounded-full bg-[var(--muted-foreground)]/10 flex items-center justify-center">
+                                <MessageSquareOff size={24} className="text-[var(--muted-foreground)]" />
+                            </div>
+                            <p className="text-xs text-[var(--muted-foreground)] text-center max-w-[14rem] leading-relaxed">
+                                Select or create a project and system to start chatting with the agent.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

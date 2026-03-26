@@ -2,26 +2,51 @@ import { NextResponse } from 'next/server';
 import { readFile, stat } from 'fs/promises';
 import path from 'path';
 
-const PROJECTS_FOLDER = process.env.PROJECTS_FOLDER
-  ? path.resolve(process.env.PROJECTS_FOLDER)
-  : path.join(process.cwd(), 'uploads');
+function getProjectsFolder(): string {
+  return process.env.PROJECTS_FOLDER
+    ? path.resolve(process.env.PROJECTS_FOLDER)
+    : path.join(process.cwd(), 'uploads');
+}
 
-const validatePath = (requestedPath: string | null) => {
-    const targetPath = requestedPath ? path.resolve(PROJECTS_FOLDER, requestedPath.replace(/^\//, '')) : PROJECTS_FOLDER;
-    if (!targetPath.startsWith(PROJECTS_FOLDER)) {
-        throw new Error('Invalid path');
-    }
-    return targetPath;
-};
+function isUnder(parent: string, child: string): boolean {
+  return child === parent || child.startsWith(parent + path.sep);
+}
 
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
+        const projectParam = searchParams.get('project');
+        const systemParam = searchParams.get('system');
 
         if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
-        const targetPath = validatePath(id);
+        const PROJECTS_FOLDER = getProjectsFolder();
+
+        // Resolve effective root (same scoping logic as /api/files GET)
+        let effectiveRoot = PROJECTS_FOLDER;
+
+        if (projectParam) {
+            const projectPath = path.resolve(PROJECTS_FOLDER, projectParam);
+            if (!isUnder(PROJECTS_FOLDER, projectPath)) {
+                return NextResponse.json({ error: 'Invalid project path' }, { status: 400 });
+            }
+            effectiveRoot = projectPath;
+        }
+
+        if (systemParam) {
+            const systemPath = path.resolve(effectiveRoot, systemParam);
+            if (!isUnder(effectiveRoot, systemPath)) {
+                return NextResponse.json({ error: 'Invalid system path' }, { status: 400 });
+            }
+            effectiveRoot = systemPath;
+        }
+
+        const targetPath = path.resolve(effectiveRoot, id.replace(/^\//, ''));
+        if (!isUnder(PROJECTS_FOLDER, targetPath)) {
+            return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
+        }
+
         const stats = await stat(targetPath);
 
         if (stats.isDirectory()) {
@@ -53,3 +78,4 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Failed to read file' }, { status: 500 });
     }
 }
+

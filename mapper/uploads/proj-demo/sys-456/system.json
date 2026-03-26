@@ -1,0 +1,9 @@
+{
+  "id": "sys-456",
+  "name": "Demo HVAC System - MBR",
+  "folder_path": "sys-456",
+  "graphivac_grid_id": "G-BGv1x7dJXX",
+  "ai_model_name": "gemini-3.1-pro-preview-customtools",
+  "created_at": "2026-03-25T10:00:00.000Z",
+  "updated_at": "2026-03-25T10:00:00.000Z"
+}
