@@ -6,7 +6,7 @@ Items that were explicitly considered during Phase 13 planning but are out of sc
 
 ## D-01 — Dynamic Per-Request Grid Targeting in the MCP Server
 
-**Deferred from:** `13-10`
+**Deferred from:** `13-99`
 **Category:** Architecture
 
 ### What was deferred
@@ -28,7 +28,7 @@ Implementing dynamic targeting would require:
 
 - The MCP server targets one system's grid per deployment, configured via `GRAPHIVAC_GRID_ID` in `mcp.env`.
 - Switching systems requires updating `GRAPHIVAC_GRID_ID` (and `GRAPHIVAC_PROJECT_ID` if the project also changed) and restarting the MCP container.
-- A `/config` health endpoint and a frontend mismatch warning banner (see `13-10`) make the manual process safe and observable.
+- A `/config` health endpoint and a frontend mismatch warning banner (see `13-99`) make the manual process safe and observable.
 - `GRAPHIVAC_ORG_ID` **never** needs to change — it is a deployment-wide constant.
 
 ### What a future phase would require
