@@ -3,8 +3,17 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Returns public deployment configuration consumed by client components.
  *
- * - graphivacBaseUrl  — base URL of the Graphivac service (e.g. "https://graphivac.hvac.io")
+ * - graphivacBaseUrl  — browser-reachable base URL of the Graphivac service.
+ *                       Reads GRAPHIVAC_PUBLIC_BASE_URL first; falls back to
+ *                       GRAPHIVAC_BASE_URL so single-var cloud deployments work
+ *                       without any config change.
  * - graphivacOrgId   — the organisation ID for this deployment (e.g. "public")
+ *
+ * Why two Graphivac URL vars?
+ * In Docker the server-to-server call uses the container DNS name
+ * (GRAPHIVAC_BASE_URL=http://graphivac:8888) while the browser must use the
+ * host-exposed address (GRAPHIVAC_PUBLIC_BASE_URL=http://localhost:8888).
+ * For cloud deployments both are the same, so only GRAPHIVAC_BASE_URL is needed.
  *
  * These values are exposed here (rather than NEXT_PUBLIC_ env vars) so that:
  * 1. They remain consistent with the server-side graphivac-client.ts.
@@ -17,8 +26,12 @@ import { NextResponse } from 'next/server';
 
 export async function GET(): Promise<NextResponse> {
   return NextResponse.json({
-    graphivacBaseUrl: process.env.GRAPHIVAC_BASE_URL ?? '',
+    graphivacBaseUrl: process.env.GRAPHIVAC_PUBLIC_BASE_URL
+      ?? process.env.GRAPHIVAC_BASE_URL
+      ?? '',
     graphivacOrgId: process.env.GRAPHIVAC_ORG_ID ?? '',
   });
 }
+
+
 

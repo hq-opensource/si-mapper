@@ -95,12 +95,13 @@ pnpm test --testNamePattern="hidden metadata"
 | `src/app/api/projects/__tests__/sysid-route.test.ts` | `GET` + `PATCH` + `DELETE /api/projects/[id]/systems/[sysId]` | `lib/projects` + `lib/graphivac-client` mocked |
 | `src/app/api/projects/__tests__/files-route.test.ts` | `GET` + `POST /files` and `DELETE /files/[filename]` | Real temp directory, only `lib/projects` mocked |
 | `src/app/api/projects/__tests__/folders-route.test.ts` | `GET` + `POST /folders`, `PATCH` + `DELETE /folders/[folderName]`, subfolder-aware `GET`/`POST`/`DELETE` for files, hidden metadata file filtering (`system.json`, `project.json`) | Real temp directory, only `lib/projects` mocked |
-| `src/app/api/graph/route.test.ts` | `GET /api/graph` — Neo4j graph query route | `neo4j-driver` mocked |
+| `src/app/api/graph/route.test.ts` | `GET /api/graph` — Neo4j graph query route; happy-path nodes+edges response and 500 when unreachable | `neo4j-driver` mocked |
 | `src/app/api/files/__tests__/files-root-route.test.ts` | `GET /api/files` — project/system scoping and path-traversal guards | Real temp directory; env var set before module load |
 | `src/app/api/files/__tests__/files-view-route.test.ts` | `GET /api/files/view` — project/system scoping, path-traversal guards, Content-Type detection | Real temp directory; env var set before module load |
-| `src/app/api/__tests__/config-route.test.ts` | `GET /api/config` — returns `graphivacBaseUrl` and `graphivacOrgId` from env vars | `process.env` set/deleted per test |
+| `src/app/api/__tests__/config-route.test.ts` | `GET /api/config` — returns `graphivacBaseUrl` (with `GRAPHIVAC_PUBLIC_BASE_URL` taking precedence over `GRAPHIVAC_BASE_URL`) and `graphivacOrgId` from env vars; fallback and precedence coverage | `process.env` set/deleted per test |
 
-**Total: 12 suites, 170 tests.**
+**Total: 12 suites, 177 tests.**  
+_Last run: 2026-03-27 — 177 passed, 0 failed (4.251 s)_
 
 > **13-08 (Project & System Management UI):** No new test files were added. All new code introduced in this task (`ProjectCard`, `ProjectEditDialog`, `SystemCard`, `SystemEditDialog`, `SystemFilePanel`, `/projects/page.tsx`) is pure React UI. The underlying API routes and storage layer that these components call were already fully covered in previous tasks (`13-05`).
 

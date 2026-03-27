@@ -30,7 +30,7 @@ def _graphivac_url(tool_context=None) -> str:
     active_system  = tool_context.state.get("active_system")  or {} if tool_context else {}
     project_id = active_project.get("graphivac_project_id") or os.getenv("GRAPHIVAC_PROJECT_ID", "")
     grid_id    = active_system.get("graphivac_grid_id")     or os.getenv("GRAPHIVAC_GRID_ID", "")
-    return f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
+    return f"{base_url}/api/v1/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
 
 
 def _get_grid_edn(tool_context=None) -> dict:

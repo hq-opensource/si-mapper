@@ -98,6 +98,23 @@ services:
 #      - deploy
 #      - tools
 
+  graphivac:
+    build:
+      context: ./graphivac
+      dockerfile: Dockerfile
+      args:
+        GRAPHIVAC_VERSION: "1.1.6"
+    image: si-mapper-graphivac:latest
+    container_name: si-mapper-graphivac
+    working_dir: /data
+    ports:
+      - "8888:8888"
+    volumes:
+      - graphivac_data:/data
+    profiles:
+      - deploy
+      - build
+
   si-mapper-agent:
     build:
       # Build context must be the project root so Docker can access 223p/bin/,
@@ -126,7 +143,6 @@ services:
         # Define them in the root .env file (copy .env.example → .env) — Docker Compose
         # reads it automatically and substitutes the values below.
         NEXT_PUBLIC_AGENT_BACKEND_URL: ${NEXT_PUBLIC_AGENT_BACKEND_URL:-http://localhost:8001}
-        NEXT_PUBLIC_GRAPHIVAC_GRID_URL: ${NEXT_PUBLIC_GRAPHIVAC_GRID_URL:-}
     image: si-mapper-frontend:latest
     container_name: si-mapper-frontend
     ports:
@@ -142,3 +158,4 @@ services:
 volumes:
   portainer_data:
   neo4j_data:
+  graphivac_data:

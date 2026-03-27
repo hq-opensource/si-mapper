@@ -19,7 +19,7 @@ export function ExternalPageIframe({ src, width = "100%", height = "100%", class
         </svg>
         <p className="text-sm font-medium opacity-60">No grid URL configured</p>
         <p className="text-xs opacity-40 max-w-xs text-center">
-          Set <code className="font-mono bg-[var(--muted)]/30 px-1 rounded">NEXT_PUBLIC_GRAPHIVAC_GRID_URL</code> in your <code className="font-mono bg-[var(--muted)]/30 px-1 rounded">.env.local</code> to display the Graphivac grid here.
+          Select a project and system to display the Graphivac grid here.
         </p>
       </div>
     );

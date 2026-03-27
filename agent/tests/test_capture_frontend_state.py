@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import os
 
 # Set env vars BEFORE importing the tool
-os.environ.setdefault("GRAPHIVAC_BASE_URL", "https://graphivac.hvac.io/api/v1")
+os.environ.setdefault("GRAPHIVAC_BASE_URL", "https://graphivac.hvac.io")
 os.environ.setdefault("GRAPHIVAC_ORG_ID", "test-org")
 os.environ.setdefault("GRAPHIVAC_PROJECT_ID", "test-project")
 os.environ.setdefault("GRAPHIVAC_GRID_ID", "test-grid")

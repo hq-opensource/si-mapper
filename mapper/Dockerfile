@@ -19,9 +19,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # They must be declared as ARGs and promoted to ENVs before `pnpm build` runs.
 # Pass them via `docker compose build --build-arg` or the `args:` block in docker-compose.yml.
 ARG NEXT_PUBLIC_AGENT_BACKEND_URL
-ARG NEXT_PUBLIC_GRAPHIVAC_GRID_URL
 ENV NEXT_PUBLIC_AGENT_BACKEND_URL=$NEXT_PUBLIC_AGENT_BACKEND_URL
-ENV NEXT_PUBLIC_GRAPHIVAC_GRID_URL=$NEXT_PUBLIC_GRAPHIVAC_GRID_URL
 
 RUN pnpm build
 
