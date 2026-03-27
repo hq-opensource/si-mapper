@@ -54,6 +54,7 @@ def add_component(
     start_coord: List[int] = None,
     end_coord: List[int] = None,
     rotation: int = 0,
+    custom_fields_json: Optional[str] = None,
 ) -> str:
     """
     Adds a single component to the internal grid state.
@@ -65,6 +66,8 @@ def add_component(
         start_coord: [x, y] start coordinate for line types (duct/pipe).
         end_coord: [x, y] end coordinate for line types (duct/pipe).
         rotation: Rotation angle (only used for fan and damper types, default 0).
+        custom_fields_json: Optional JSON-encoded dict of custom metadata fields
+            (e.g. '{"bacnet": "...", "control": "..."}').
     """
     if component_type not in ALL_TYPES:
         return (
@@ -110,6 +113,14 @@ def add_component(
         if component_type in ROTATION_TYPES:
             component["rotation"] = rotation
 
+    if custom_fields_json:
+        try:
+            cf = json.loads(custom_fields_json)
+            if isinstance(cf, dict):
+                component["custom_fields"] = cf
+        except json.JSONDecodeError:
+            pass  # Invalid JSON — skip silently
+
     components.append(component)
     tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
     tool_context.state["_updated_grid"] = True
@@ -137,8 +148,9 @@ def add_components_batch(
             - For line types (duct/pipe): 'start_coord' and 'end_coord'
             - For equipment/sensor types: 'coord'
             - Optionally 'rotation' for fan/damper
+            - Optionally 'custom_fields': dict of custom metadata (e.g. {"bacnet": "..."})
 
-    Example: '[{"type":"fan","name":"SF-1","coord":[5,5]},{"type":"duct","name":"D-1","start_coord":[0,0],"end_coord":[10,0]}]'
+    Example: '[{"type":"fan","name":"SF-1","coord":[5,5],"custom_fields":{"bacnet":"..."}},{"type":"duct","name":"D-1","start_coord":[0,0],"end_coord":[10,0]}]'
     """
     try:
         components = json.loads(components_json)
@@ -207,6 +219,10 @@ def add_components_batch(
             }
             if component_type in ROTATION_TYPES:
                 component["rotation"] = item.get("rotation", 0)
+
+        custom_fields = item.get("custom_fields")
+        if custom_fields and isinstance(custom_fields, dict):
+            component["custom_fields"] = custom_fields
 
         existing_components.append(component)
         existing_names.add(name)

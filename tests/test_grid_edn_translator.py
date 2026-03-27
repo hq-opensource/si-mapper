@@ -108,7 +108,7 @@ def _make_line_edn(key_word: str, name: str, pos1, pos2) -> dict:
     }
 
 
-def _make_obj_edn(name: str, symbol: str, pos, rotation=None) -> dict:
+def _make_obj_edn(name: str, symbol: str, pos, rotation=None, custom_fields=None) -> dict:
     value = {
         Keyword("symbol"): symbol,
         Keyword("name"): name,
@@ -116,6 +116,8 @@ def _make_obj_edn(name: str, symbol: str, pos, rotation=None) -> dict:
     }
     if rotation is not None:
         value[Keyword("rot")] = rotation
+    if custom_fields is not None:
+        value[Keyword("custom-fields")] = custom_fields
     return {(Keyword("obj"), name): value}
 
 
@@ -465,3 +467,93 @@ class TestMappingTableCompleteness:
         assert not missing, (
             f"These COORD_TYPES have no AGENT_TO_SYMBOL entry: {missing}"
         )
+
+
+class TestCustomFieldsRoundtrip:
+    """Test 12: custom_fields must survive the full EDN → internal → EDN roundtrip."""
+
+    def test_single_field_preserved_on_read(self):
+        """Reading a component with :custom-fields populates custom_fields on the component."""
+        edn = _make_obj_edn(
+            "FAN-CF", "duct.fan", [5, 5],
+            custom_fields={"bacnet": '{"2500.AO1": {"name": "FAN"}}'},
+        )
+        result = edn_comps_to_internal_grid(edn)
+        comp = result["components"][0]
+        assert "custom_fields" in comp
+        assert comp["custom_fields"]["bacnet"] == '{"2500.AO1": {"name": "FAN"}}'
+
+    def test_multiple_fields_preserved_on_read(self):
+        """All custom field keys are preserved, not just 'bacnet'."""
+        edn = _make_obj_edn(
+            "SENSOR-CF", "duct.sensor.temperature", [3, 3],
+            custom_fields={"bacnet": "bacnet-data", "control": "ctrl-ref"},
+        )
+        result = edn_comps_to_internal_grid(edn)
+        comp = result["components"][0]
+        assert comp["custom_fields"] == {"bacnet": "bacnet-data", "control": "ctrl-ref"}
+
+    def test_edn_keyword_keys_normalised_to_strings(self):
+        """EDN Keyword keys inside :custom-fields are normalised to plain strings."""
+        edn = _make_obj_edn(
+            "DAMP-CF", "duct.damper", [2, 2],
+            custom_fields={Keyword("bacnet"): "some-value"},
+        )
+        result = edn_comps_to_internal_grid(edn)
+        comp = result["components"][0]
+        assert "bacnet" in comp["custom_fields"]
+        assert Keyword("bacnet") not in comp["custom_fields"]
+
+    def test_no_custom_fields_key_absent(self):
+        """Components without :custom-fields must NOT have custom_fields in internal repr."""
+        edn = _make_obj_edn("DAMP-PLAIN", "duct.damper", [1, 1])
+        result = edn_comps_to_internal_grid(edn)
+        comp = result["components"][0]
+        assert "custom_fields" not in comp
+
+    def test_custom_fields_written_to_edn(self):
+        """custom_fields in internal grid are written as Keyword('custom-fields') in EDN."""
+        internal_grid = {
+            "components": [
+                {
+                    "type": "fan",
+                    "name": "FAN-WRITE",
+                    "coord": [7, 7],
+                    "rotation": 0,
+                    "custom_fields": {"bacnet": "data", "control": "ref"},
+                }
+            ]
+        }
+        rebuilt = internal_grid_to_edn_comps(internal_grid)
+        key = list(rebuilt.keys())[0]
+        value = rebuilt[key]
+        assert Keyword("custom-fields") in value
+        cf = value[Keyword("custom-fields")]
+        assert cf["bacnet"] == "data"
+        assert cf["control"] == "ref"
+
+    def test_empty_custom_fields_omitted_from_edn(self):
+        """An empty custom_fields dict must NOT produce :custom-fields in EDN output."""
+        internal_grid = {
+            "components": [
+                {"type": "fan", "name": "FAN-EMPTY", "coord": [1, 1], "custom_fields": {}}
+            ]
+        }
+        rebuilt = internal_grid_to_edn_comps(internal_grid)
+        key = list(rebuilt.keys())[0]
+        value = rebuilt[key]
+        assert Keyword("custom-fields") not in value
+
+    def test_full_roundtrip_with_custom_fields(self):
+        """Full EDN → internal → EDN roundtrip preserves custom_fields exactly."""
+        original_cf = {"bacnet": '{"2500.AI14": {"name": "TEMP"}}', "control": "ctrl-1"}
+        edn = _make_obj_edn("HUMI-RT", "duct.humidifier", [10, 10], custom_fields=original_cf)
+
+        internal = edn_comps_to_internal_grid(edn)
+        rebuilt = internal_grid_to_edn_comps(internal)
+
+        key = list(rebuilt.keys())[0]
+        cf_out = rebuilt[key][Keyword("custom-fields")]
+        assert cf_out == original_cf
+
+
