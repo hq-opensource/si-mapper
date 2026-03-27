@@ -21,15 +21,21 @@ from utils.grid_edn_translator import edn_comps_to_internal_grid
 logger = logging.getLogger(__name__)
 
 
-def _fetch_and_parse_grid() -> tuple:
+def _fetch_and_parse_grid(project_id: str = "", grid_id: str = "") -> tuple:
     """
     Synchronous helper: fetches the current grid from Graphivac via REST.
     Returns (internal_grid, edn_text) on success or ({"components": []}, "") on error.
+
+    project_id / grid_id are resolved by the caller from state (state-first) and
+    passed in here so this pure-sync helper stays stateless.
     """
     base_url = os.getenv("GRAPHIVAC_BASE_URL", "")
     org_id = os.getenv("GRAPHIVAC_ORG_ID", "")
-    project_id = os.getenv("GRAPHIVAC_PROJECT_ID", "")
-    grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
+    # Fall back to env vars when caller did not supply values
+    if not project_id:
+        project_id = os.getenv("GRAPHIVAC_PROJECT_ID", "")
+    if not grid_id:
+        grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
 
     if not all([base_url, org_id, project_id, grid_id]):
         raise ValueError("Graphivac env vars not fully set (GRAPHIVAC_BASE_URL, GRAPHIVAC_ORG_ID, GRAPHIVAC_PROJECT_ID, GRAPHIVAC_GRID_ID).")
@@ -58,8 +64,17 @@ async def sync_graphivac_to_agent(tool_context: ToolContext) -> dict:
 
     Returns a plain string confirming success or describing the failure.
     """
+    # State-first: prefer IDs injected by the frontend (13-09).
+    # Fall back to env vars so dev/test environments continue to work unchanged.
+    active_project = tool_context.state.get("active_project") or {}
+    active_system  = tool_context.state.get("active_system") or {}
+    project_id = active_project.get("graphivac_project_id") or os.getenv("GRAPHIVAC_PROJECT_ID", "")
+    grid_id    = active_system.get("graphivac_grid_id")     or os.getenv("GRAPHIVAC_GRID_ID", "")
+
     try:
-        internal_grid, raw_edn_text = await asyncio.to_thread(_fetch_and_parse_grid)
+        internal_grid, raw_edn_text = await asyncio.to_thread(
+            _fetch_and_parse_grid, project_id, grid_id
+        )
     except Exception as e:
         logger.error(f"[SYNC-IN] Failed to fetch grid from Graphivac: {e}")
         if "internal_grid" not in tool_context.state:

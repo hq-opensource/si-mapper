@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import importlib
 import inspect
+import logging
 import json
 import os
 import pkgutil
@@ -33,6 +34,10 @@ import textwrap
 from typing import Any, Optional
 from google.adk.skills import load_skill_from_dir
 from google.adk.tools import skill_toolset, ToolContext
+
+from utils.project_utils import get_system_path
+
+logger = logging.getLogger(__name__)
 
 __all__ = [
     # Library introspection
@@ -553,6 +558,34 @@ TTL_OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "223p", "ttl")
 _EMPTY_PARAMS: dict[str, Any] = {"type": "object", "properties": {}, "required": []}
 
 
+# ---------------------------------------------------------------------------
+# Per-call path resolvers (13-09 multi-project support)
+# ---------------------------------------------------------------------------
+
+def _resolve_ontology_file(tool_context) -> str:
+    """Return the absolute path to ontology.py for the active system.
+
+    When tool_context carries active_project / active_system and PROJECTS_FOLDER
+    is set, the returned path points to the system-scoped file.  Otherwise falls
+    back to the legacy module-level constant so standalone / dev usage continues
+    to work unchanged.
+    """
+    if tool_context is not None:
+        resolved = get_system_path(tool_context, os.path.join("src", "ontology.py"))
+        if os.path.isabs(resolved):
+            return resolved
+    return ONTOLOGY_FILE
+
+
+def _resolve_ttl_dir(tool_context) -> str:
+    """Return the absolute path to the TTL output directory for the active system."""
+    if tool_context is not None:
+        resolved = get_system_path(tool_context, "ttl")
+        if os.path.isabs(resolved):
+            return resolved
+    return TTL_OUTPUT_DIR
+
+
 def _read_text_file(path: str) -> str:
     """Read *path* and return a ``{"path", "content"}`` JSON response.
 
@@ -587,19 +620,20 @@ def _backup_file(path: str) -> tuple[str | None, str | None]:
         return None, f"Backup failed: {exc}"
 
 
-def read_ontology() -> str:
-    """Read the current content of ``223p/src/ontology.py``.
+def read_ontology(tool_context: Optional[ToolContext] = None) -> str:
+    """Read the current content of ``223p/src/ontology.py`` (or the active system's
+    equivalent when multi-project state is available).
 
     Returns a JSON object::
 
         {"path": "<absolute path>", "content": "<source code>"}
         {"path": "...", "content": "", "error": "<message>"}  // on failure
     """
-    return _read_text_file(ONTOLOGY_FILE)
+    return _read_text_file(_resolve_ontology_file(tool_context))
 
 
 def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> str:
-    """Overwrite ``223p/src/ontology.py`` with *content*.
+    """Overwrite ``223p/src/ontology.py`` (or the active system's equivalent) with *content*.
 
     A numbered backup is created before writing
     (e.g. ``ontology_1.py``, ``ontology_2.py``, …).
@@ -609,6 +643,8 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
         {"path": "...", "success": true, "backup": "<backup path>"}
         {"path": "...", "success": false, "error": "<message>"}  // on failure
     """
+    ontology_file = _resolve_ontology_file(tool_context)
+
     if tool_context:
         # Update session state for the frontend (Python snapshots)
         snapshots = list(tool_context.state.get("python_code_snapshots", []))
@@ -620,21 +656,22 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
             "status": "generated"
         })
         tool_context.state["python_code_snapshots"] = snapshots
-    os.makedirs(os.path.dirname(ONTOLOGY_FILE), exist_ok=True)
 
-    backup_path, backup_err = _backup_file(ONTOLOGY_FILE)
+    os.makedirs(os.path.dirname(ontology_file), exist_ok=True)
+
+    backup_path, backup_err = _backup_file(ontology_file)
     if backup_err:
-        return json.dumps({"path": ONTOLOGY_FILE, "success": False, "error": backup_err})
+        return json.dumps({"path": ontology_file, "success": False, "error": backup_err})
 
     try:
-        with open(ONTOLOGY_FILE, "w", encoding="utf-8") as fh:
+        with open(ontology_file, "w", encoding="utf-8") as fh:
             fh.write(content)
-        result: dict[str, Any] = {"path": ONTOLOGY_FILE, "success": True}
+        result: dict[str, Any] = {"path": ontology_file, "success": True}
         if backup_path is not None:
             result["backup"] = backup_path
         return json.dumps(result)
     except OSError as exc:
-        return json.dumps({"path": ONTOLOGY_FILE, "success": False, "error": str(exc)})
+        return json.dumps({"path": ontology_file, "success": False, "error": str(exc)})
 
 
 def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
@@ -656,12 +693,21 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
     if not os.path.exists(venv_python):
         venv_python = sys.executable
 
-    run_cwd = os.path.join(_PROJECT_ROOT, "223p")
-    os.makedirs(TTL_OUTPUT_DIR, exist_ok=True)
+    ontology_file  = _resolve_ontology_file(tool_context)
+    ttl_output_dir = _resolve_ttl_dir(tool_context)
+
+    # run_cwd: the parent of the "src/" folder (i.e. the system root or legacy "223p/")
+    if os.path.isabs(ontology_file):
+        # Resolved path: parent of "src/" is two levels up from ontology.py
+        run_cwd = str(os.path.dirname(os.path.dirname(ontology_file)))
+    else:
+        run_cwd = os.path.join(_PROJECT_ROOT, "223p")
+
+    os.makedirs(ttl_output_dir, exist_ok=True)
 
     try:
         proc = subprocess.run(
-            [venv_python, ONTOLOGY_FILE],
+            [venv_python, ontology_file],
             capture_output=True,
             text=True,
             cwd=run_cwd,
@@ -677,16 +723,16 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
     success = proc.returncode == 0
     ttl_file: str | None = None
     if success:
-        candidate = os.path.join(TTL_OUTPUT_DIR, "ontology.ttl")
+        candidate = os.path.join(ttl_output_dir, "ontology.ttl")
         if os.path.exists(candidate):
             ttl_file = candidate
-            
+
             # Update session state for the frontend (TTL snapshots)
             if tool_context:
                 try:
                     with open(ttl_file, "r", encoding="utf-8") as f:
                         ttl_content = f.read()
-                    
+
                     snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
                     label = f"Version {len(snapshots) + 1}"
                     snapshots.append({

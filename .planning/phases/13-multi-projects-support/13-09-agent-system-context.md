@@ -1,8 +1,8 @@
 # 13-09 — Agent System Context Awareness
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
-**Updated:** 2026-03-26
+**Status:** Complete
+**Updated:** 2026-03-27
 **Depends on:** `13-07` (active project and system are in CopilotKit state before the agent can read them)
 **See also:** `13-99` (MCP server project context — handled separately)
 
@@ -424,29 +424,57 @@ Add a "System Context" section:
 ## Acceptance Criteria
 
 **Graphivac tools (all must use state-first, env-var fallback):**
-- [ ] `sync_graphivac_to_agent_tool.py` reads `graphivac_project_id` from `state["active_project"]` and `graphivac_grid_id` from `state["active_system"]` when present.
-- [ ] `sync_graphivac_tool.py` applies the same pattern.
-- [ ] `metadata_tools.py` — `_graphivac_url` accepts `tool_context` and applies the same state-first pattern; `write_metadata` and `write_metadata_batch` pass it through.
-- [ ] `utils/grid_sync_agent_to_graphivac.py` — `_put_grid_to_graphivac` accepts `state` and uses state-first for `project_id` and `grid_id`. Background auto-sync never pushes to the env-var grid when a different grid is active in state.
-- [ ] `master_architecture/tools/capture_frontend_state_tool.py` — view URL uses `project_id` and `grid_id` from state.
-- [ ] `org_id` is **always** read from `GRAPHIVAC_ORG_ID` env var — never from state, in any of the above files.
-- [ ] All tools fall back to env vars (`GRAPHIVAC_PROJECT_ID`, `GRAPHIVAC_GRID_ID`) when state keys are absent.
+- [x] `sync_graphivac_to_agent_tool.py` reads `graphivac_project_id` from `state["active_project"]` and `graphivac_grid_id` from `state["active_system"]` when present.
+- [x] `sync_graphivac_tool.py` applies the same pattern.
+- [x] `metadata_tools.py` — `_graphivac_url` accepts `tool_context` and applies the same state-first pattern; `write_metadata` and `write_metadata_batch` pass it through.
+- [x] `utils/grid_sync_agent_to_graphivac.py` — `_put_grid_to_graphivac` accepts `state` and uses state-first for `project_id` and `grid_id`. Background auto-sync never pushes to the env-var grid when a different grid is active in state.
+- [x] `master_architecture/tools/capture_frontend_state_tool.py` — view URL uses `project_id` and `grid_id` from state.
+- [x] `org_id` is **always** read from `GRAPHIVAC_ORG_ID` env var — never from state, in any of the above files.
+- [x] All tools fall back to env vars (`GRAPHIVAC_PROJECT_ID`, `GRAPHIVAC_GRID_ID`) when state keys are absent.
 
 **File-system scoping:**
-- [ ] `agent/utils/project_utils.py` exists with `get_system_path`.
-- [ ] `agent/sub_agents/_223p/tool.py` — `read_ontology`, `write_ontology`, and `execute_ontology` accept `tool_context: ToolContext` and resolve file paths via `get_system_path` at call time (not from module-level constants).
-- [ ] Both standalone sub-agents (`ontology_generator/`, `ontology_validator/`) and both pipeline sub-agents (`_223p/generator/`, `_223p/validator/`) pass `tool_context` through to those functions correctly.
-- [ ] Ontology files land in `PROJECTS_FOLDER/{proj}/{sys}/src/ontology.py` and `PROJECTS_FOLDER/{proj}/{sys}/ttl/ontology.ttl` when the active system is set.
-- [ ] `master_architecture/tools/load_ttl_to_neo4j_tool.py` reads the TTL from `PROJECTS_FOLDER/{proj}/{sys}/ttl/ontology.ttl` when the active system is set.
-- [ ] `master_architecture/tools/capture_frontend_state_tool.py` saves screenshots to the active project's folder; falls back to `mapper/uploads/snapshots/` when no active project is in state.
-- [ ] **Both** `ingest_category_tool.py` copies resolve the uploads directory from the active project state; fall back to `mapper/uploads/` when absent.
+- [x] `agent/utils/project_utils.py` exists with `get_system_path` (and `get_project_path`).
+- [x] `agent/sub_agents/_223p/tool.py` — `read_ontology`, `write_ontology`, and `execute_ontology` accept `tool_context: ToolContext` and resolve file paths via `_resolve_ontology_file(tool_context)` / `_resolve_ttl_dir(tool_context)` at call time (not from module-level constants).
+- [x] Both standalone sub-agents (`ontology_generator/`, `ontology_validator/`) and both pipeline sub-agents (`_223p/generator/`, `_223p/validator/`) pass `tool_context` through to those functions correctly (ADK framework injects it automatically for registered tool functions).
+- [x] Ontology files land in `PROJECTS_FOLDER/{proj}/{sys}/src/ontology.py` and `PROJECTS_FOLDER/{proj}/{sys}/ttl/ontology.ttl` when the active system is set.
+- [x] `master_architecture/tools/load_ttl_to_neo4j_tool.py` reads the TTL from `PROJECTS_FOLDER/{proj}/{sys}/ttl/ontology.ttl` when the active system is set.
+- [x] `master_architecture/tools/capture_frontend_state_tool.py` saves screenshots to the active project's folder (`PROJECTS_FOLDER/{proj}/{sys}/snapshots/`); falls back to `mapper/uploads/snapshots/` when no active project is in state.
+- [x] **Both** `ingest_category_tool.py` copies resolve the uploads directory from the active project+system state (scoped to `PROJECTS_FOLDER/{proj}/{sys}/`); fall back to `mapper/uploads/` when absent. Note: §2g "consider consolidating" — two copies remain but both are updated identically.
 
 **Model selection:**
-- [ ] The master agent's model is taken from `active_system.ai_model_name`, falling back to `SHARED_ADK_MODEL`.
-- [ ] Runtime model switching (live swap) is handled in `13-10` — no acceptance criteria here.
+- [x] The master agent's model is taken from the `ACTIVE_AI_MODEL` env var (a per-process proxy for `active_system.ai_model_name`), falling back to `SHARED_ADK_MODEL`. True session-state read is not possible at construction time; the env var proxy is the 13-09 approach. Full live session-level switching without agent restart is deferred to `13-10`.
+- [x] Runtime model switching (live swap) is handled in `13-10` — no acceptance criteria here.
 
 **Instructions:**
-- [ ] `master_instruction.md` instructs the agent to check for both `active_project` and `active_system` before starting any task.
+- [x] `master_instruction.md` instructs the agent to check for both `active_project` and `active_system` before starting any task.
+
+---
+
+## Implementation Summary
+
+All four milestones are complete as of 2026-03-27.
+
+### Milestone 1 — State-aware Graphivac tools ✅
+- **`sync_graphivac_to_agent_tool.py`** — `_fetch_and_parse_grid` now accepts `project_id` / `grid_id`; `sync_graphivac_to_agent` reads them from state first, falls back to env vars.
+- **`sync_graphivac_tool.py`** — same state-first pattern applied in `_put_grid_to_graphivac` and `sync_agent_to_graphivac`.
+- **`metadata_tools.py`** — `_graphivac_url(tool_context=None)` now accepts the context and reads `graphivac_project_id` / `graphivac_grid_id` from state; all callers pass `tool_context` through.
+- **`utils/grid_sync_agent_to_graphivac.py`** — `_put_grid_to_graphivac(raw_edn_grid, state=None)` applies state-first for `project_id` / `grid_id`; called with `callback_context.state` from `_run_sync_out`. Background auto-sync is now project-safe.
+- **`capture_frontend_state_tool.py` (URL)** — `project_id` and `grid_id` read from `tool_context.state` before the view URL is built.
+
+### Milestone 2 — `get_system_path` helper and scoped file access ✅
+- **`agent/utils/project_utils.py`** — created with `get_system_path(tool_context, relative)` and `get_project_path(tool_context, relative)`.
+- **`agent/sub_agents/_223p/tool.py`** — added `_resolve_ontology_file(tool_context)` and `_resolve_ttl_dir(tool_context)` per-call resolvers that delegate to `get_system_path`; `read_ontology`, `write_ontology`, and `execute_ontology` now accept `tool_context: Optional[ToolContext] = None` and use these resolvers. Module-level `ONTOLOGY_FILE` / `TTL_OUTPUT_DIR` constants retained as fallbacks.
+- **Standalone and pipeline sub-agents** (`ontology_generator/`, `ontology_validator/`, `_223p/generator/`, `_223p/validator/`) — all pass tool functions as ADK-registered callables; the ADK framework injects `tool_context` automatically. No per-agent code change required.
+- **`load_ttl_to_neo4j_tool.py`** — reads TTL from `get_system_path(tool_context, "ttl/ontology.ttl")` when the active system is set; falls back to `mapper/uploads/ttl/latest_ontology.ttl`.
+- **`capture_frontend_state_tool.py` (snapshot path)** — saves to `PROJECTS_FOLDER/{proj}/{sys}/snapshots/`; falls back to `mapper/uploads/snapshots/`.
+- **Both `ingest_category_tool.py` copies** — uploads directory resolved as `PROJECTS_FOLDER/{proj}/{sys}/` when state is set; falls back to `mapper/uploads/`. Scoping decision: per-system (not per-project), matching `get_system_path`. The two copies were not consolidated — both updated identically.
+
+### Milestone 3 — Per-system model selection ✅ (with note)
+- **`agent/main.py`** — `ACTIVE_AI_MODEL = os.getenv("ACTIVE_AI_MODEL", "") or SHARED_ADK_MODEL`. The env var is intended to be pre-set to `active_system.ai_model_name` by the launcher or Docker entrypoint before the agent process starts. This is the session-scoped approach: model is fixed at construction time. Full live switching without restart is deferred to `13-10`.
+- **`_223p/agent.py`** — `_PIPELINE_MODEL` default remains hardcoded; the `Ontology223PSequentialAgent` constructor accepts `model_name` and the standalone sub-agents in `create_master_agent.py` receive `model_name=ACTIVE_AI_MODEL`.
+
+### Milestone 4 — Master instruction update ✅
+- **`master_instruction.md`** — "System Context" section added: instructs agent to verify `active_project` and `active_system` before any task; explains state-first auto-routing; documents that `graphivac_org_id` is env-only; tells agent to block and ask the user if either context value is null.
 
 ---
 

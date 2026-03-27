@@ -22,20 +22,39 @@ from pathlib import Path
 
 from google.adk.tools import ToolContext
 
+from utils.project_utils import get_system_path
+
 logger = logging.getLogger(__name__)
 
-# Project root → mapper/uploads/
-_UPLOADS_PYTHON = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "python"
-_UPLOADS_TTL = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "ttl"
+# Legacy fallback paths (used when no active system is in state)
+_LEGACY_UPLOADS_PYTHON = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "python"
+_LEGACY_UPLOADS_TTL    = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "ttl"
 
 
-def _persist_python(code: str) -> None:
-    """Write versioned + latest Python file to mapper/uploads/python/."""
+def _resolve_uploads_python(tool_context: ToolContext) -> Path:
+    """Return the python dir scoped to the active system; fall back to legacy path."""
+    resolved = get_system_path(tool_context, "python")
+    if os.path.isabs(resolved):
+        return Path(resolved)
+    return _LEGACY_UPLOADS_PYTHON
+
+
+def _resolve_uploads_ttl(tool_context: ToolContext) -> Path:
+    """Return the ttl dir scoped to the active system; fall back to legacy path."""
+    resolved = get_system_path(tool_context, "ttl")
+    if os.path.isabs(resolved):
+        return Path(resolved)
+    return _LEGACY_UPLOADS_TTL
+
+
+def _persist_python(code: str, tool_context: ToolContext) -> None:
+    """Write versioned + latest Python file to the active system's uploads/python/."""
     try:
-        _UPLOADS_PYTHON.mkdir(parents=True, exist_ok=True)
+        dest = _resolve_uploads_python(tool_context)
+        dest.mkdir(parents=True, exist_ok=True)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        versioned = _UPLOADS_PYTHON / f"ontology_{ts}.py"
-        latest = _UPLOADS_PYTHON / "latest_ontology.py"
+        versioned = dest / f"ontology_{ts}.py"
+        latest    = dest / "latest_ontology.py"
         versioned.write_text(code, encoding="utf-8")
         latest.write_text(code, encoding="utf-8")
         logger.info("[exit_validator_success] Python written → %s + latest_ontology.py", versioned.name)
@@ -43,13 +62,14 @@ def _persist_python(code: str) -> None:
         logger.warning("[exit_validator_success] Failed to persist Python: %s", exc)
 
 
-def _persist_ttl(ttl_content: str) -> None:
-    """Write versioned + latest TTL file to mapper/uploads/ttl/."""
+def _persist_ttl(ttl_content: str, tool_context: ToolContext) -> None:
+    """Write versioned + latest TTL file to the active system's uploads/ttl/."""
     try:
-        _UPLOADS_TTL.mkdir(parents=True, exist_ok=True)
+        dest = _resolve_uploads_ttl(tool_context)
+        dest.mkdir(parents=True, exist_ok=True)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        versioned = _UPLOADS_TTL / f"ontology_{ts}.ttl"
-        latest = _UPLOADS_TTL / "latest_ontology.ttl"
+        versioned = dest / f"ontology_{ts}.ttl"
+        latest    = dest / "latest_ontology.ttl"
         versioned.write_text(ttl_content, encoding="utf-8")
         latest.write_text(ttl_content, encoding="utf-8")
         logger.info("[exit_validator_success] TTL written → %s + latest_ontology.ttl", versioned.name)
@@ -60,7 +80,6 @@ def _persist_ttl(ttl_content: str) -> None:
 def checkpoint_code(tool_context: ToolContext, code: str) -> dict:
     """Appends a Fix N snapshot. Does NOT escalate — validator loop continues."""
     iteration = tool_context.state.get("ontology_code_iteration_count", 0)
-    # Read-copy-write pattern — never mutate the state list directly
     snapshots = list(tool_context.state.get("python_code_snapshots", []))
     snapshots.append(
         {
@@ -87,7 +106,6 @@ def exit_validator_success(
         "[exit_validator_success] called by %s",
         getattr(tool_context, "agent_name", "unknown"),
     )
-    # Save the final Python code version via checkpoint_code
     checkpoint_code(tool_context, code)
     # Patch last Python snapshot to Final/validated
     snapshots = list(tool_context.state.get("python_code_snapshots", []))
@@ -102,8 +120,8 @@ def exit_validator_success(
             {"label": "TTL", "code": ttl_content, "iteration": 0, "status": "validated"}
         )
         tool_context.state["ttl_code_snapshots"] = ttl_snapshots
-        _persist_ttl(ttl_content)
-    _persist_python(code)
+        _persist_ttl(ttl_content, tool_context)
+    _persist_python(code, tool_context)
     tool_context.state["ONTOLOGY_VALIDATION_SUCCESS"] = True
     tool_context.state["EXIT_LEVEL_4"] = True
     tool_context.actions.escalate = True

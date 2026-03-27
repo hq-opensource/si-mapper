@@ -22,18 +22,21 @@ from utils.edn_to_mutable import edn_to_mutable
 
 # ── HTTP helpers ───────────────────────────────────────────────────────────────
 
-def _graphivac_url() -> str:
+def _graphivac_url(tool_context=None) -> str:
     base_url   = os.getenv("GRAPHIVAC_BASE_URL", "")
     org_id     = os.getenv("GRAPHIVAC_ORG_ID", "")
-    project_id = os.getenv("GRAPHIVAC_PROJECT_ID", "")
-    grid_id    = os.getenv("GRAPHIVAC_GRID_ID", "")
+    # State-first (13-09): prefer IDs injected by the frontend; fall back to env vars
+    active_project = tool_context.state.get("active_project") or {} if tool_context else {}
+    active_system  = tool_context.state.get("active_system")  or {} if tool_context else {}
+    project_id = active_project.get("graphivac_project_id") or os.getenv("GRAPHIVAC_PROJECT_ID", "")
+    grid_id    = active_system.get("graphivac_grid_id")     or os.getenv("GRAPHIVAC_GRID_ID", "")
     return f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
 
 
-def _get_grid_edn() -> dict:
+def _get_grid_edn(tool_context=None) -> dict:
     """Fetch the full grid from GraphyVAC and return as a mutable Python dict."""
     response = requests.get(
-        _graphivac_url(),
+        _graphivac_url(tool_context),
         headers={"Accept": "application/edn"},
         timeout=10,
     )
@@ -41,10 +44,10 @@ def _get_grid_edn() -> dict:
     return edn_to_mutable(edn_format.loads(response.text))
 
 
-def _put_grid_edn(mutable_grid: dict) -> int:
+def _put_grid_edn(mutable_grid: dict, tool_context=None) -> int:
     """PUT the full grid back to GraphyVAC. Returns HTTP status code."""
     response = requests.put(
-        _graphivac_url(),
+        _graphivac_url(tool_context),
         headers={"Content-Type": "application/edn"},
         data=edn_format.dumps(mutable_grid),
         timeout=60,
@@ -122,7 +125,7 @@ async def write_metadata(
     k_cf    = Keyword("custom-fields")
 
     def action():
-        mutable_grid = _get_grid_edn()
+        mutable_grid = _get_grid_edn(tool_context)
         comps = mutable_grid.get(k_comps, {})
         for key, value in comps.items():
             grid_name = _extract_grid_name(key, value, k_obj, k_name)
@@ -130,7 +133,7 @@ async def write_metadata(
                 if not isinstance(value, dict):
                     raise ValueError(f"Component '{grid_name}' value is not a dict.")
                 _apply_metadata(value, metadata, k_cf)
-                _put_grid_edn(mutable_grid)
+                _put_grid_edn(mutable_grid, tool_context)
                 return str(grid_name)
         raise ValueError(f"Equipment '{equipment_name}' not found on the grid.")
 
@@ -168,7 +171,7 @@ async def write_metadata_batch(
     k_cf    = Keyword("custom-fields")
 
     def action():
-        mutable_grid = _get_grid_edn()
+        mutable_grid = _get_grid_edn(tool_context)
         comps = mutable_grid.get(k_comps, {})
 
         slug_map = {_slug(k): k for k in updates}
@@ -198,7 +201,7 @@ async def write_metadata_batch(
                 _apply_metadata(value, updates[found_key], k_cf)
                 processed += 1
 
-        _put_grid_edn(mutable_grid)
+        _put_grid_edn(mutable_grid, tool_context)
         return processed
 
     try:

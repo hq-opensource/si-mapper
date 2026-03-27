@@ -55,12 +55,20 @@ class IngestCategoryFilesTool(BaseTool):
         if not category:
             return {'error': 'Category is required.'}
 
-        # Resolve the 'mapper/uploads' directory relative to this file
-        # This file: agent/tools/ingest_category_tool.py
-        # Root: agent/tools/../../
-        current_file = Path(__file__).resolve()
-        project_root = current_file.parent.parent.parent.parent
-        uploads_dir = project_root / 'mapper' / 'uploads'
+        # Resolve uploads dir — scoped by project + system when both are in state (13-09)
+        projects_root = os.getenv("PROJECTS_FOLDER", "")
+        active_project = tool_context.state.get("active_project") or {}
+        active_system  = tool_context.state.get("active_system") or {}
+        proj_folder = active_project.get("folder_path", "")
+        sys_folder  = active_system.get("folder_path", "")
+
+        if projects_root and proj_folder and sys_folder:
+            uploads_dir = Path(projects_root) / proj_folder / sys_folder
+        else:
+            # Legacy fallback: repo_root/mapper/uploads
+            current_file = Path(__file__).resolve()
+            project_root = current_file.parent.parent.parent.parent
+            uploads_dir = project_root / 'mapper' / 'uploads'
         # Try to find the category directory, handling case insensitivity
         found_category_dir = None
         actual_category_name = category
