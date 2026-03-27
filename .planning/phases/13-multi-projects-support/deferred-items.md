@@ -154,3 +154,34 @@ A secondary issue was discovered: Tailwind v4 (`@import "tailwindcss"`) defaults
 4. **Verify the folder SVG icon** (`FolderSvg`) — the fill colour `#1e293b` (slate-800) is readable on a light background but nearly invisible on a dark background. It should switch to a lighter value (e.g. `#94a3b8` or `#cbd5e1`) in dark mode.
 5. **Test** the full `/projects` page in both light and dark mode across the major browser / OS combinations.
 
+---
+
+## D-06 — "In Progress" Agent Status Indicator in the Performance Tab
+
+**Deferred from:** `13-UI` (Performance tab, Phase 13)
+**Category:** Frontend / UX
+
+### What was deferred
+
+Displaying a **live "in progress" status** in the Performance tab that indicates whether an agent is currently executing a task. The tab currently only surfaces **past** events (completed tool calls, finished agent runs, historical timings). There is no real-time signal telling the user that work is actively happening right now.
+
+### Why deferred
+
+Surfacing a live agent status requires a reliable, low-latency signal that crosses the boundary between the agent back-end and the frontend:
+
+- The ADK/CopilotKit streaming pipeline emits events when a task starts and ends, but no dedicated "currently running" flag is stored in persistent state — the information only lives transiently in the SSE stream.
+- Adding a persistent `agent_running` flag to the CopilotKit shared state raises consistency concerns: if the agent crashes mid-task the flag would remain `true` indefinitely, requiring a timeout or heartbeat mechanism to self-heal.
+- The Performance tab is currently a read-only log view; making it reactive to live state requires either polling, a WebSocket/SSE subscription, or integration with the existing CopilotKit state subscription — none of which were designed into the tab during Phase 13.
+
+### Phase 13 mitigation
+
+- The Performance tab shows historical events only; users can infer that the agent is active by observing the chat stream or the spinner in the chat input area.
+- No misleading "idle" label is shown — the tab simply omits any live-status section.
+
+### What a future phase would require
+
+1. **Define an `agent_status` state field** (e.g. `"idle" | "running" | "error"`) in the CopilotKit shared state, written by the agent at task start/end and guarded by a TTL/heartbeat to avoid stale `"running"` states after crashes.
+2. **Emit status transitions** from the agent entry point (`main.py` / master loop) at the earliest possible moment — before the first LLM call — and reset to `"idle"` in a `finally` block.
+3. **Subscribe to the state field** in the Performance tab component and render a prominent live badge (e.g. a pulsing dot labelled "Agent working…") when `agent_status === "running"`, replacing it with an "Idle" badge otherwise.
+4. **Handle the error state** visually (e.g. an amber badge "Agent encountered an error — see logs") so the tab becomes the single source of truth for agent health.
+5. **Test** status transitions under normal operation, mid-task page refresh, and agent crash scenarios to confirm the badge never gets stuck.
