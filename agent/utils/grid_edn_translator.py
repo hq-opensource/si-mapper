@@ -136,6 +136,15 @@ def edn_comps_to_internal_grid(comps_map: dict) -> dict:
                 rot = value.get(Keyword("rot"), 0)
                 component["rotation"] = int(rot) if rot else 0
 
+            # Custom fields: preserve any :custom-fields map (e.g. {"bacnet": "..."})
+            raw_cf = value.get(Keyword("custom-fields"))
+            if raw_cf:
+                # Keys may be EDN Keywords — normalise to plain strings
+                component["custom_fields"] = {
+                    (k.name if isinstance(k, Keyword) else str(k)): v
+                    for k, v in raw_cf.items()
+                }
+
             components.append(component)
 
         else:
@@ -191,6 +200,11 @@ def internal_grid_to_edn_comps(internal_grid: dict) -> dict:
             # Rotation: write Keyword("rot") only if non-zero
             if comp_type in ROTATION_TYPES and comp.get("rotation", 0) != 0:
                 value[Keyword("rot")] = comp["rotation"]
+
+            # Custom fields: write :custom-fields map when present
+            custom_fields = comp.get("custom_fields")
+            if custom_fields:
+                value[Keyword("custom-fields")] = custom_fields
 
             comps[key] = value
 
