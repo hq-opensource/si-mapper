@@ -35,7 +35,7 @@ def _put_grid_to_graphivac(raw_edn_grid: dict, project_id: str = "", grid_id: st
     if not grid_id:
         grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
 
-    url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
+    url = f"{base_url}/api/v1/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
     data = edn_format.dumps(raw_edn_grid)
     response = requests.put(url, headers={"Content-Type": "application/edn"}, data=data, timeout=15)
     response.raise_for_status()

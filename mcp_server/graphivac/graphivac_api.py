@@ -23,7 +23,7 @@ class GraphivacAPI:
         Returns:
             dict: The text response from the API if successful, otherwise raises an exception.
         """
-        endpoint = f"/orgs/{self.org_id}/projects/{self.project_id}/grids/{self.grid_id}"
+        endpoint = f"/api/v1/orgs/{self.org_id}/projects/{self.project_id}/grids/{self.grid_id}"
         url = f"{self.base_url}{endpoint}"
         headers = {"Accept": "application/edn"}
         try:
@@ -46,7 +46,7 @@ class GraphivacAPI:
         Returns:
             dict: The text response from the API if successful, otherwise raises an exception.
         """
-        endpoint = f"/orgs/{self.org_id}/projects/{self.project_id}/grids/{self.grid_id}"
+        endpoint = f"/api/v1/orgs/{self.org_id}/projects/{self.project_id}/grids/{self.grid_id}"
         url = f"{self.base_url}{endpoint}"
 
         headers = {"Content-Type": "application/edn"}
@@ -66,7 +66,7 @@ class GraphivacAPI:
         Returns:
             dict: The JSON response from the API if successful, otherwise raises an exception.
         """
-        endpoint = f"/orgs/{self.org_id}/projects/{self.project_id}/grids"
+        endpoint = f"/api/v1/orgs/{self.org_id}/projects/{self.project_id}/grids"
         url = f"{self.base_url}{endpoint}"
         headers = {"Content-Type": "application/json"}
         try:

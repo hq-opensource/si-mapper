@@ -40,7 +40,7 @@ def _fetch_and_parse_grid(project_id: str = "", grid_id: str = "") -> tuple:
     if not all([base_url, org_id, project_id, grid_id]):
         raise ValueError("Graphivac env vars not fully set (GRAPHIVAC_BASE_URL, GRAPHIVAC_ORG_ID, GRAPHIVAC_PROJECT_ID, GRAPHIVAC_GRID_ID).")
 
-    url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
+    url = f"{base_url}/api/v1/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
     response = requests.get(url, headers={"Accept": "application/edn"}, timeout=10)
     response.raise_for_status()
 

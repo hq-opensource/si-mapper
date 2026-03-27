@@ -1,7 +1,7 @@
 # Local environment variables
 .env
 .env.*
-!.example.env
+!.env.example
 
 # Docker runtime secrets — copy docker.env.example → docker.env and fill in values
 docker.env
