@@ -47,11 +47,13 @@ class CaptureFrontendStateTool(BaseTool):
     async def run_async(
         self, *, args: dict[str, Any], tool_context: ToolContext
     ) -> dict[str, Any]:
-        # Build view URL from env vars
+        # Build view URL — state-first for project_id and grid_id (13-09)
         base_url = os.getenv("GRAPHIVAC_BASE_URL", "")
-        org_id = os.getenv("GRAPHIVAC_ORG_ID", "")
-        project_id = os.getenv("GRAPHIVAC_PROJECT_ID", "")
-        grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
+        org_id   = os.getenv("GRAPHIVAC_ORG_ID", "")
+        active_project = tool_context.state.get("active_project") or {}
+        active_system  = tool_context.state.get("active_system") or {}
+        project_id = active_project.get("graphivac_project_id") or os.getenv("GRAPHIVAC_PROJECT_ID", "")
+        grid_id    = active_system.get("graphivac_grid_id")     or os.getenv("GRAPHIVAC_GRID_ID", "")
 
         site_url = base_url.replace("/api/v1", "")
         view_url = f"{site_url}/o/{org_id}/p/{project_id}/g/{grid_id}?iframe=t&init-zoom=t"
@@ -70,8 +72,14 @@ class CaptureFrontendStateTool(BaseTool):
         except Exception as e:
             return {"status": "error", "message": f"Could not capture canvas snapshot: {e}"}
 
-        # Save to mapper/uploads/snapshots/
-        snapshots_dir = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "snapshots"
+        # Save to project+system-scoped snapshots dir; fall back to mapper/uploads/snapshots/
+        projects_root = os.getenv("PROJECTS_FOLDER", "")
+        proj_folder   = active_project.get("folder_path", "")
+        sys_folder    = active_system.get("folder_path", "")
+        if projects_root and proj_folder and sys_folder:
+            snapshots_dir = Path(projects_root) / proj_folder / sys_folder / "snapshots"
+        else:
+            snapshots_dir = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "snapshots"
         snapshots_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         snapshot_filename = f"snapshot_{timestamp}.png"

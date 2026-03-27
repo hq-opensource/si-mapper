@@ -30,12 +30,20 @@ except Exception:
     logger = logging.getLogger(__name__)
 
 
-def _put_grid_to_graphivac(raw_edn_grid: dict) -> int:
-    """Synchronous helper: PUTs the full grid EDN to Graphivac. Returns status code."""
+def _put_grid_to_graphivac(raw_edn_grid: dict, state=None) -> int:
+    """Synchronous helper: PUTs the full grid EDN to Graphivac. Returns status code.
+
+    state is forwarded from the callback context so this helper can apply the
+    state-first pattern for project_id and grid_id (13-09).  Accepts any
+    mapping (dict, ADK State, etc.); pass None to fall back to env vars only.
+    """
     base_url = os.getenv("GRAPHIVAC_BASE_URL", "")
-    org_id = os.getenv("GRAPHIVAC_ORG_ID", "")
-    project_id = os.getenv("GRAPHIVAC_PROJECT_ID", "")
-    grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
+    org_id   = os.getenv("GRAPHIVAC_ORG_ID", "")
+    # State-first: prefer IDs injected by the frontend; fall back to env vars
+    active_project = (state or {}).get("active_project") or {}
+    active_system  = (state or {}).get("active_system") or {}
+    project_id = active_project.get("graphivac_project_id") or os.getenv("GRAPHIVAC_PROJECT_ID", "")
+    grid_id    = active_system.get("graphivac_grid_id")     or os.getenv("GRAPHIVAC_GRID_ID", "")
 
     url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
     data = edn_format.dumps(raw_edn_grid)
@@ -73,7 +81,9 @@ async def _run_sync_out(callback_context: CallbackContext) -> Optional[types.Con
     last_error = None
     for attempt in range(2):
         try:
-            status = await asyncio.to_thread(_put_grid_to_graphivac, raw_edn_grid)
+            status = await asyncio.to_thread(
+                _put_grid_to_graphivac, raw_edn_grid, callback_context.state
+            )
             callback_context.state["_updated_grid"] = False
             print(f"[SYNC-OUT] PUT {n} component(s) → HTTP {status}", flush=True)
             return None

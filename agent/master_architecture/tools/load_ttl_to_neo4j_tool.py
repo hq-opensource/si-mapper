@@ -10,6 +10,8 @@ from google.adk.tools import BaseTool, ToolContext
 from google.genai import types
 from neo4j import GraphDatabase
 
+from utils.project_utils import get_system_path
+
 logger = logging.getLogger(__name__)
 
 
@@ -34,10 +36,22 @@ class LoadTtlToNeo4jTool(BaseTool):
 
     @override
     async def run_async(self, *, args: dict[str, Any], tool_context: ToolContext) -> dict[str, Any]:
-        # Resolve TTL path: mapper/uploads/ttl/latest_ontology.ttl (canonical source)
-        ttl_path = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "ttl" / "latest_ontology.ttl"
+        # Preferred: system-scoped TTL written by the ontology validator (13-09)
+        legacy_ttl = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "ttl" / "latest_ontology.ttl"
+        system_ttl_str = get_system_path(tool_context, os.path.join("ttl", "ontology.ttl"))
+        if os.path.isabs(system_ttl_str) and Path(system_ttl_str).exists():
+            ttl_path = Path(system_ttl_str)
+        else:
+            ttl_path = legacy_ttl
+
         if not ttl_path.exists():
-            return {"status": "error", "message": f"latest_ontology.ttl not found at {ttl_path} — run the ontology validator first"}
+            return {
+                "status": "error",
+                "message": (
+                    f"ontology.ttl not found at {ttl_path} — "
+                    "run the ontology validator first"
+                ),
+            }
 
         ttl_content = ttl_path.read_text(encoding="utf-8")
         logger.info(f"Read {len(ttl_content)} chars from {ttl_path}")

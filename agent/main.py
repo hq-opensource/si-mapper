@@ -24,7 +24,14 @@ load_dotenv()
 logger = configure_logging()
 
 SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
+# Per-system model override (13-09): ACTIVE_AI_MODEL can be set to the value of
+# active_system.ai_model_name before the agent process starts (e.g. injected by
+# the launcher or Docker entrypoint).  Falls back to SHARED_ADK_MODEL so existing
+# deployments without this env var continue to work unchanged.
+# Full live session-level switching (without restart) is handled in 13-10.
+ACTIVE_AI_MODEL = os.getenv("ACTIVE_AI_MODEL", "") or SHARED_ADK_MODEL
 logger.info(f"Using SHARED_ADK_MODEL: {SHARED_ADK_MODEL}")
+logger.info(f"Effective model: {ACTIVE_AI_MODEL}")
 APP_TITLE = "SI-MAPPER Agent"
 AGENT_NAME = "si_mapper_agent"
 
@@ -51,7 +58,7 @@ def create_app() -> FastAPI:
     # inside create_master_agent — no external subagents needed here.
     master_agent = create_master_agent(
         session_id=session_id,
-        model_name=SHARED_ADK_MODEL,
+        model_name=ACTIVE_AI_MODEL,
     )
 
     # 3. Wrap with ADK

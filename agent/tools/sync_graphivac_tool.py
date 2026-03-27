@@ -21,12 +21,19 @@ from utils.grid_edn_translator import internal_grid_to_edn_comps
 logger = logging.getLogger(__name__)
 
 
-def _put_grid_to_graphivac(raw_edn_grid: dict) -> int:
-    """Synchronous helper: PUTs the full grid EDN to Graphivac. Returns status code."""
+def _put_grid_to_graphivac(raw_edn_grid: dict, project_id: str = "", grid_id: str = "") -> int:
+    """Synchronous helper: PUTs the full grid EDN to Graphivac. Returns status code.
+
+    project_id / grid_id are resolved by the caller from state (state-first) and
+    passed in here so this pure-sync helper stays stateless.
+    """
     base_url = os.getenv("GRAPHIVAC_BASE_URL", "")
-    org_id = os.getenv("GRAPHIVAC_ORG_ID", "")
-    project_id = os.getenv("GRAPHIVAC_PROJECT_ID", "")
-    grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
+    org_id   = os.getenv("GRAPHIVAC_ORG_ID", "")
+    # Fall back to env vars when caller did not supply values
+    if not project_id:
+        project_id = os.getenv("GRAPHIVAC_PROJECT_ID", "")
+    if not grid_id:
+        grid_id = os.getenv("GRAPHIVAC_GRID_ID", "")
 
     url = f"{base_url}/orgs/{org_id}/projects/{project_id}/grids/{grid_id}"
     data = edn_format.dumps(raw_edn_grid)
@@ -50,6 +57,12 @@ async def sync_agent_to_graphivac(tool_context: ToolContext) -> dict:
     if not state.get("_updated_grid"):
         return "No pending grid changes to sync. Internal grid state of the agent is already up to date."
 
+    # State-first: prefer IDs injected by the frontend (13-09).
+    active_project = state.get("active_project") or {}
+    active_system  = state.get("active_system") or {}
+    project_id = active_project.get("graphivac_project_id") or os.getenv("GRAPHIVAC_PROJECT_ID", "")
+    grid_id    = active_system.get("graphivac_grid_id")     or os.getenv("GRAPHIVAC_GRID_ID", "")
+
     internal_grid = state.get("internal_grid", {"components": []})
     raw_edn_str = state.get("_raw_edn_grid", "")
     n = len(internal_grid.get("components", []))
@@ -71,7 +84,9 @@ async def sync_agent_to_graphivac(tool_context: ToolContext) -> dict:
     last_error = None
     for attempt in range(2):
         try:
-            http_status = await asyncio.to_thread(_put_grid_to_graphivac, raw_edn_grid)
+            http_status = await asyncio.to_thread(
+                _put_grid_to_graphivac, raw_edn_grid, project_id, grid_id
+            )
             state["_updated_grid"] = False
             logger.info(f"[SYNC-OUT] PUT {n} component(s) → HTTP {http_status}")
             return f"Grid synchronized to Graphivac. {n} component(s) saved successfully."

@@ -13,24 +13,36 @@ Exit tools for the ontology generator sub-agent.
 from __future__ import annotations
 
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 
 from google.adk.tools import ToolContext
 
+from utils.project_utils import get_system_path
+
 logger = logging.getLogger(__name__)
 
-# Project root → mapper/uploads/python/
-_UPLOADS_PYTHON = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "python"
+# Legacy fallback path (used when no active system is in state)
+_LEGACY_UPLOADS_PYTHON = Path(__file__).resolve().parents[3] / "mapper" / "uploads" / "python"
 
 
-def _persist_python(code: str, label: str) -> None:
-    """Write versioned + latest Python file to mapper/uploads/python/."""
+def _resolve_uploads_python(tool_context: ToolContext) -> Path:
+    """Return the python dir scoped to the active system; fall back to legacy path."""
+    resolved = get_system_path(tool_context, "python")
+    if os.path.isabs(resolved):
+        return Path(resolved)
+    return _LEGACY_UPLOADS_PYTHON
+
+
+def _persist_python(code: str, label: str, tool_context: ToolContext) -> None:
+    """Write versioned + latest Python file to the active system's uploads/python/."""
     try:
-        _UPLOADS_PYTHON.mkdir(parents=True, exist_ok=True)
+        dest = _resolve_uploads_python(tool_context)
+        dest.mkdir(parents=True, exist_ok=True)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        versioned = _UPLOADS_PYTHON / f"ontology_{ts}.py"
-        latest = _UPLOADS_PYTHON / "latest_ontology.py"
+        versioned = dest / f"ontology_{ts}.py"
+        latest = dest / "latest_ontology.py"
         versioned.write_text(code, encoding="utf-8")
         latest.write_text(code, encoding="utf-8")
         logger.info("[%s] Python written → %s + latest_ontology.py", label, versioned.name)
@@ -55,7 +67,7 @@ def exit_generator_success(
     )
     tool_context.state["python_code_snapshots"] = snapshots
     tool_context.state["ontology_code_iteration_count"] = 0
-    _persist_python(code, "exit_generator_success")
+    _persist_python(code, "exit_generator_success", tool_context)
     tool_context.state["ONTOLOGY_GENERATION_SUCCESS"] = True
     tool_context.state["EXIT_LEVEL_4"] = True
     tool_context.actions.escalate = True
