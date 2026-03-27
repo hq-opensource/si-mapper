@@ -1,4 +1,4 @@
-# 13-10 — MCP Server System Context
+# 13-99 — MCP Server System Context
 
 **Phase:** 13 — Multi-Project Support
 **Status:** Not started
@@ -60,7 +60,7 @@ mcp_server/server/main.py
 
 **Full dynamic per-request grid targeting is deferred.** The Phase 13 constraint is:
 
-> The MCP server targets one Graphivac grid (= one SI-Mapper **system**) per deployment. Switching to a different system requires updating `GRAPHIVAC_GRID_ID` (and possibly `GRAPHIVAC_PROJECT_ID`) in `mcp.env` and restarting the MCP server container.
+> The MCP server targets one Graphivac grid (= one SI-Mapper **system**) per deployment. Switching to a different system requires updating `GRAPHIVAC_GRID_ID` (and possibly `GRAPHIVAC_PROJECT_ID`) in `mcp.env` and restarting the MCP server.
 
 `GRAPHIVAC_ORG_ID` never needs to change — it is deployment-wide and constant.
 
