@@ -1,8 +1,8 @@
 # 13-10 — Runtime Model Switching
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
-**Updated:** 2026-03-26
+**Status:** Done
+**Updated:** 2026-03-27
 **Depends on:** `13-09` (session-scoped model selection must be in place first)
 **See also:** `13-99` (MCP server project context)
 
@@ -142,13 +142,17 @@ The lock ensures that if two requests race to change the model, the second waits
 
 ## Acceptance Criteria
 
-- [ ] `POST /model` endpoint exists and accepts a model name string; returns `{"status": "ok", "model": ..., "session_id": ...}`.
-- [ ] After `POST /model`, the next agent interaction uses the new model across the entire active tree: `MasterLlmAgent`, `OntologyGeneratorAgent`, and `OntologyValidatorAgent`.
-- [ ] `AgentHolder` indirection is in place — FastAPI routes never reference a stale `ADKAgent` after a swap.
-- [ ] An `asyncio.Lock` guards the rebuild so concurrent `POST /model` calls are serialised, not dropped.
-- [ ] `/session_info` returns the new `session_id` after a swap.
-- [ ] Startup behaviour is unchanged — the initial `rebuild_agent` call is equivalent to the current inline construction.
-- [ ] In-flight requests against the old agent complete normally; new requests use the new agent.
+- [x] `POST /model` endpoint exists and accepts a model name string; returns `{"status": "ok", "model": ..., "session_id": ...}`.
+- [x] After `POST /model`, the next agent interaction uses the new model across the entire active tree: `MasterLlmAgent`, `OntologyGeneratorAgent`, and `OntologyValidatorAgent`.
+- [x] `AgentHolder` indirection is in place — FastAPI routes never reference a stale `ADKAgent` after a swap.
+- [x] An `asyncio.Lock` guards the rebuild so concurrent `POST /model` calls are serialised, not dropped.
+- [x] `/session_info` returns the new `session_id` after a swap.
+- [x] Startup behaviour is unchanged — the initial `rebuild_agent` call is equivalent to the current inline construction.
+- [x] In-flight requests against the old agent complete normally; new requests use the new agent.
+- [x] Switching the active system in the UI triggers `POST /model` on the agent with the new system's `ai_model_name`.
+- [x] Switching the active project in the UI triggers `POST /model` for the auto-selected first system of the new project.
+- [x] On page load / bootstrap, the agent is synced to the persisted active system's `ai_model_name`.
+- [x] Editing `ai_model_name` via the System Edit dialog triggers `POST /model` when the edited system is the currently active one.
 
 ---
 
@@ -157,4 +161,121 @@ The lock ensures that if two requests race to change the model, the second waits
 - **This step depends on `13-09` Milestone 3**: session-scoped model selection (`active_system.ai_model_name`) must be in place. The `POST /model` endpoint is the operator-level override on top of that.
 - **Domain agent Python classes**: `sub_agents/bacnet/agent.py`, `sub_agents/equipment/agent.py`, etc. are currently orphaned (not wired in as `AgentTool`s). They are unaffected by this change. If they are ever promoted, they will need to be added to `rebuild_agent`.
 - **Frontend integration**: the frontend should call `GET /session_info` after a system switch to pick up the new `session_id` if a model swap was triggered server-side.
+
+---
+
+## Implementation (2026-03-27)
+
+Initial implementation was in **`agent/main.py`**. The agent-side code was then immediately refactored into a dedicated **`agent/api/`** package (same session) to keep `main.py` as a thin bootstrap entry point.
+
+### Agent-side file layout after refactor
+
+| File | Purpose |
+|---|---|
+| `agent/main.py` | Bootstrap only: `apply_adk_patches()` → `load_dotenv()` → `from api import create_app` → `app = create_app()` |
+| `agent/api/__init__.py` | Re-exports `create_app` |
+| `agent/api/lifecycle.py` | `ModelConfig`, `AgentHolder`, `model_config`, `holder`, `_rebuild_lock`, `current_session_id`, `rebuild_agent()`, `bootstrap_session()` |
+| `agent/api/app.py` | `create_app()` factory — FastAPI app, CORS, router registration, `add_adk_fastapi_endpoint` |
+| `agent/api/routers/health.py` | `GET /`, `HEAD /`, `GET /health` |
+| `agent/api/routers/model.py` | `POST /model` — runtime swap |
+| `agent/api/routers/session.py` | `GET /session_info`, `GET /session_state` |
+
+All intra-package imports use relative paths (`from .lifecycle import …`, `from ..lifecycle import …`) to avoid IDE source-root false positives.
+
+### Key symbols
+
+| Symbol | File | Kind | Purpose |
+|---|---|---|---|
+| `ModelConfig` | `api/lifecycle.py` | class | Mutable holder for `current` model name string |
+| `AgentHolder` | `api/lifecycle.py` | class | Indirection wrapper; `holder.adk_agent` always points to the live `ADKAgent` instance |
+| `model_config` | `api/lifecycle.py` | module-level instance | Singleton `ModelConfig` |
+| `holder` | `api/lifecycle.py` | module-level instance | Singleton `AgentHolder` |
+| `_rebuild_lock` | `api/lifecycle.py` | `asyncio.Lock` | Serialises concurrent `POST /model` requests |
+| `current_session_id` | `api/lifecycle.py` | `str` (module-level) | Tracks the session that belongs to the current `holder.adk_agent`; updated by `rebuild_agent()` |
+| `bootstrap_session()` | `api/lifecycle.py` | function | Allocates a new session entry in `GLOBAL_SESSION_STORE`; used at startup and on every swap |
+| `rebuild_agent(model_name, session_id)` | `api/lifecycle.py` | function | Constructs `create_master_agent` + `ADKAgent`, stores in `holder.adk_agent`, updates `current_session_id` and `model_config.current` |
+| `create_app()` | `api/app.py` | function | FastAPI factory; bootstraps initial session via `rebuild_agent`, registers routers, mounts ADK endpoint |
+| `POST /model` | `api/routers/model.py` | FastAPI endpoint | Acquires `_rebuild_lock`, calls `bootstrap_session()` + `rebuild_agent()`, returns new session info |
+| `GET /session_info` | `api/routers/session.py` | FastAPI endpoint | Returns `current_session_id` (module-level, always current after a swap) |
+| `GET /session_state` | `api/routers/session.py` | FastAPI endpoint | Reads `holder.adk_agent._session_manager` (always the live instance) |
+
+### Startup path (unchanged behaviour)
+
+```
+create_app()
+  └─► rebuild_agent(model_config.current, session_id)
+        └─► create_master_agent(...)  →  holder.adk_agent  ✓
+```
+
+### Swap path (new)
+
+```
+POST /model?model_name=<new>
+  └─► async with _rebuild_lock:
+        └─► rebuild_agent(<new>, new_session_id)
+              └─► create_master_agent(...)  →  holder.adk_agent  ✓
+```
+
+---
+
+## Implementation — Frontend integration (2026-03-27)
+
+Closes the missing link: UI interactions that change the active system or its model now automatically propagate to the agent backend via `POST /model`.
+
+### New files
+
+| File | Purpose |
+|---|---|
+| `mapper/src/app/api/agent/model/route.ts` | Server-side proxy `POST /api/agent/model` → `AGENT_BACKEND_URL/model?model_name=...`. The browser cannot reach the agent directly (internal Docker network / container DNS). |
+| `mapper/src/lib/agent-client.ts` | `notifyAgentModel(modelName)` — fire-and-notify helper. Calls the proxy route; errors are logged but never thrown so a backend hiccup never crashes the UI. |
+
+### Modified files
+
+| File | Change |
+|---|---|
+| `mapper/src/context/WorkspaceContext.tsx` | Import `notifyAgentModel`; call it in **three** places (see table below). |
+| `mapper/src/components/SystemEditDialog.tsx` | Import `useWorkspace` + `notifyAgentModel`; call after a successful PATCH when the edited system is the active one and `ai_model_name` changed. |
+
+### Trigger points wired in `WorkspaceContext`
+
+| Location | Condition | Action |
+|---|---|---|
+| `bootstrap` (`useEffect`) | Active system resolved on page load | `notifyAgentModel(system.ai_model_name)` — syncs the agent to whatever system was persisted in `localStorage` |
+| `setActiveProject` | First system of the new project fetched | Calls `setActiveSystem(list[0])` — no direct `notifyAgentModel`; the notification flows through `setActiveSystem` (see below) |
+| `setActiveSystem` | User picks a different system, **or** called by `setActiveProject` | `notifyAgentModel(system.ai_model_name)` — single notification path for all system changes |
+
+> **Design note:** `setActiveProject` was initially wired to call `notifyAgentModel` directly on the first system of the new project, which would have caused a double-fire (project change → system change, each triggering the agent). It was corrected to delegate entirely to `setActiveSystem`, keeping the notification in one place.
+
+### `SystemEditDialog` trigger
+
+```
+handleSubmit → PATCH /api/projects/[id]/systems/[sysId]
+  └─► if res.ok
+        └─► if activeSystem?.id === system.id && newModel !== system.ai_model_name
+              └─► notifyAgentModel(newModel)
+```
+
+### Data flow diagram
+
+```
+UI event (system switch / project switch / edit dialog)
+  │
+  ▼
+notifyAgentModel(modelName)              [mapper/src/lib/agent-client.ts]
+  │  POST /api/agent/model  { model_name }
+  ▼
+Next.js proxy route                      [mapper/src/app/api/agent/model/route.ts]
+  │  POST AGENT_BACKEND_URL/model?model_name=...
+  ▼
+FastAPI POST /model                      [agent/api/routers/model.py]
+  │  async with _rebuild_lock
+  ▼
+rebuild_agent(model_name, new_session)   [agent/api/lifecycle.py]
+  └─► create_master_agent(model_name)
+        ├─► MasterLlmAgent(model_name)
+        ├─► OntologyGeneratorAgent(model_name)
+        └─► OntologyValidatorAgent(model_name)
+```
+
+
 

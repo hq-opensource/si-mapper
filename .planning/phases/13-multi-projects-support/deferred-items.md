@@ -185,3 +185,48 @@ Surfacing a live agent status requires a reliable, low-latency signal that cross
 3. **Subscribe to the state field** in the Performance tab component and render a prominent live badge (e.g. a pulsing dot labelled "Agent working…") when `agent_status === "running"`, replacing it with an "Idle" badge otherwise.
 4. **Handle the error state** visually (e.g. an amber badge "Agent encountered an error — see logs") so the tab becomes the single source of truth for agent health.
 5. **Test** status transitions under normal operation, mid-task page refresh, and agent crash scenarios to confirm the badge never gets stuck.
+
+---
+
+## D-07 — Model Picker: Dynamic Dropdown Instead of Free-Form Field
+
+**Deferred from:** `13-10` (runtime model switching)
+**Category:** Frontend / UX
+
+### What was deferred
+
+Replacing the free-form `ai_model_name` text input in `SystemEditDialog` with a grouped dropdown populated from a live list of available models, scoped to three providers: **Google (Gemini)**, **Anthropic (Claude)**, and **GitHub Copilot / GitHub Models**.
+
+### Why deferred
+
+The free-form field is functional and unblocks `13-10`. Building a live model list requires integrating with three separate provider APIs and adds a non-trivial amount of backend and frontend surface. It was set aside to keep `13-10` focused.
+
+### What a future phase would require
+
+**Agent backend — `GET /models`** (new router, e.g. `agent/api/routers/models.py`)
+- Query each provider whose API key is present in the environment; fall back to a hardcoded curated list if the key is absent or the call fails.
+- **Google**: `client.models.list()` from `google-genai` (already a dependency), filtered to `generateContent`-capable models only (to exclude embedding models and deprecated variants — the raw list is noisy).
+- **Anthropic**: `client.models.list()` via the `anthropic` SDK; requires `ANTHROPIC_API_KEY`.
+- **GitHub Models**: `GET https://models.inference.ai.azure.com/models` with `GITHUB_TOKEN`; LiteLLM uses the `github/` prefix for these.
+
+**Next.js proxy — `GET /api/agent/models`**
+Mirrors the pattern of `POST /api/agent/model` (browser → Next.js proxy → `AGENT_BACKEND_URL`).
+
+**Response shape**
+```json
+[
+  { "provider": "google",    "model": "gemini-2.0-flash",           "label": "Gemini 2.0 Flash" },
+  { "provider": "anthropic", "model": "claude-3-5-sonnet-20241022", "label": "Claude 3.5 Sonnet" },
+  { "provider": "github",    "model": "github/gpt-4o",              "label": "GPT-4o (GitHub)" }
+]
+```
+
+**Frontend — `SystemEditDialog`**
+- Fetch `GET /api/agent/models` when the dialog opens.
+- Render a `<select>` grouped by provider (`<optgroup>`), pre-selected on the system's current `ai_model_name`.
+- If the fetch fails or returns an empty list, fall back to the existing free-form input so editing is never blocked.
+
+### Notes
+- The `model` string in each entry is the LiteLLM-compatible name, sent to `POST /model` unchanged — no mapping needed.
+- Providers with no API key configured return nothing; the dropdown shows only what is reachable from the current deployment.
+- The Google list requires server-side filtering for `generateContent` support; Anthropic and GitHub lists are smaller and generally clean.

@@ -10,6 +10,8 @@ import { useState, useEffect, useRef } from 'react';
 import { X, Settings2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { System } from '@/types';
+import { useWorkspace } from '@/context/WorkspaceContext';
+import { notifyAgentModel } from '@/lib/agent-client';
 
 interface SystemEditDialogProps {
   isOpen: boolean;
@@ -27,6 +29,7 @@ export function SystemEditDialog({
   system,
   onSuccess,
 }: SystemEditDialogProps) {
+  const { activeSystem } = useWorkspace();
   const [name, setName] = useState('');
   const [aiModel, setAiModel] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -67,6 +70,11 @@ export function SystemEditDialog({
         const data = await res.json().catch(() => ({}));
         setError((data as { error?: string }).error ?? 'Failed to update system.');
         return;
+      }
+      // If this is the currently active system and its model changed, tell the agent.
+      const newModel = aiModel.trim();
+      if (activeSystem?.id === system.id && newModel && newModel !== system.ai_model_name) {
+        notifyAgentModel(newModel);
       }
       onSuccess();
       onClose();

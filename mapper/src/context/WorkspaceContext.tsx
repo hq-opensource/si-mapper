@@ -25,6 +25,7 @@ import React, {
   ReactNode,
 } from 'react';
 import type { Project, System } from '@/types';
+import { notifyAgentModel } from '@/lib/agent-client';
 
 // ── Context interface ─────────────────────────────────────────────────────────
 
@@ -173,8 +174,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       const list: System[] = await res.json();
       setSystems(list);
       if (list.length > 0) {
-        setActiveSystemState(list[0]);
-        localStorage.setItem('active-system-id', list[0].id);
+        setActiveSystem(list[0]); // state + localStorage + notifyAgentModel — one place
       }
     } catch (err) {
       console.error('[WorkspaceContext] setActiveProject fetch systems:', err);
@@ -186,6 +186,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const setActiveSystem = useCallback((system: System) => {
     setActiveSystemState(system);
     localStorage.setItem('active-system-id', system.id);
+    notifyAgentModel(system.ai_model_name);
   }, []);
 
   // ── Bootstrap on mount ──────────────────────────────────────────────────────
@@ -216,6 +217,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
           const system = sysList.find(s => s.id === savedSystemId) ?? sysList[0];
           setActiveSystemState(system);
           localStorage.setItem('active-system-id', system.id);
+          // Ensure the agent uses this system's model on every page load.
+          notifyAgentModel(system.ai_model_name);
         }
       } catch (err) {
         console.error('[WorkspaceContext] bootstrap error:', err);
