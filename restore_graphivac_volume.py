@@ -323,15 +323,15 @@ def push_to_volume(staging: Path, volume: str) -> None:
     print(f"  temporary container: {cid[:12]}")
 
     try:
-        # docker cp copies the *contents* of staging into /data
-        for rel in FILES:
-            src = staging / rel
-            dst_dir = f"{cid}:/data/{Path(rel).parent.as_posix()}"
-            subprocess.run(
-                ["docker", "cp", str(src), dst_dir],
-                check=True,
-            )
-            print(f"  copied {rel}")
+        # Copy the entire staging tree into /data in one shot.
+        # The trailing "/." tells docker cp to copy the *contents* of staging
+        # rather than the directory itself, so files land at /data/orgs/…
+        src = str(staging) + "/."
+        subprocess.run(
+            ["docker", "cp", src, f"{cid}:/data/"],
+            check=True,
+        )
+        print(f"  copied all files into volume")
     finally:
         subprocess.run(["docker", "rm", "-f", cid], check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -405,5 +405,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
