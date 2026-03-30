@@ -13,7 +13,7 @@ import { GET } from '../config/route';
 // ── Setup ─────────────────────────────────────────────────────────────────────
 
 const BASE_URL = 'https://graphivac.hvac.io';
-const PUBLIC_BASE_URL = 'http://localhost:8888';
+const PUBLIC_BASE_URL = 'http://localhost:3000';
 const ORG_ID = 'test-org-id';
 
 beforeEach(() => {

@@ -1,0 +1,22 @@
+{
+  "id": "sys-d012c0d68bab4b96908bb",
+  "folder_path": "sys-d012c0d68bab4b96908bb",
+  "created_at": "2026-03-30T18:57:21.832Z",
+  "updated_at": "2026-03-30T19:13:19.007Z",
+  "sessions": [
+    {
+      "session_id": "session-e29936d1",
+      "session_name": "Bacnet",
+      "created_at": "2026-03-30T19:06:56.877Z"
+    },
+    {
+      "session_id": "session-aedbc837",
+      "session_name": "Hvac",
+      "created_at": "2026-03-30T18:57:53.209Z"
+    }
+  ],
+  "name": "System A",
+  "graphivac_grid_id": "G-KrQikAPDsL",
+  "ai_model_name": "github_copilot/claude-sonnet-4.5",
+  "active_session_id": "session-e29936d1"
+}

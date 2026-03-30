@@ -99,18 +99,12 @@ services:
 #      - tools
 
   graphivac:
-    build:
-      context: ./graphivac
-      dockerfile: Dockerfile
-      args:
-        GRAPHIVAC_VERSION: "1.1.6"
-    image: si-mapper-graphivac:latest
+    image: ghcr.io/frozenlock/graphivac:latest
     container_name: si-mapper-graphivac
-    working_dir: /data
     ports:
-      - "8888:8888"
+      - "3000:3000"
     volumes:
-      - graphivac_data:/data
+      - graphivac_data:/app/data
     profiles:
       - deploy
       - build
@@ -149,7 +143,7 @@ services:
     image: si-mapper-frontend:latest
     container_name: si-mapper-frontend
     ports:
-      - "3000:3000"
+      - "3001:3000"
     env_file:
       - mapper/docker.env
     volumes:

@@ -15,15 +15,15 @@ RUN curl -fSL "https://hvac.io/graphivac/graphivac-${GRAPHIVAC_VERSION}-standalo
 # Mount a named volume at /data so data survives container restarts and image upgrades.
 RUN mkdir -p /data
 
-EXPOSE 8888
+EXPOSE 3000
 
 # Health check: the default "public" org is created automatically on first start.
 HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:8888/api/v1/orgs/public || exit 1
+    CMD curl -f http://localhost:3000/api/v1/orgs/public || exit 1
 
 # Graphivac writes its working files relative to the current directory.
 # Set WORKDIR to /data so all persistent state lands in the mounted volume.
 WORKDIR /data
 
-CMD ["java", "-jar", "/app/graphivac-server.jar", "-p", "8888"]
+CMD ["java", "-jar", "/app/graphivac-server.jar", "-p", "3000"]
 

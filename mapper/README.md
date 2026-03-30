@@ -85,13 +85,13 @@ docker compose --profile deploy up si-mapper-frontend
 docker compose --profile deploy up
 ```
 
-The frontend is available at **http://localhost:3000**.
+The frontend is available at **http://localhost:3001**.
 
 ### Ports & volumes
 
 | Resource | Host | Container |
 |---|---|---|
-| HTTP | `3000` | `3000` |
+| HTTP | `3001` | `3000` |
 | Project files | `./mapper/uploads/` | `/app/uploads/` |
 
 The `uploads/` bind-mount is shared with the agent container (`si-mapper-agent`). Both services read and write project files through the same directory on the host. `PROJECTS_FOLDER=/app/uploads` in `docker.env` must match this mount target.

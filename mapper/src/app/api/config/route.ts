@@ -11,8 +11,8 @@
  *
  * Why two Graphivac URL vars?
  * In Docker the server-to-server call uses the container DNS name
- * (GRAPHIVAC_BASE_URL=http://graphivac:8888) while the browser must use the
- * host-exposed address (GRAPHIVAC_PUBLIC_BASE_URL=http://localhost:8888).
+ * (GRAPHIVAC_BASE_URL=http://graphivac:3000) while the browser must use the
+ * host-exposed address (GRAPHIVAC_PUBLIC_BASE_URL=http://localhost:3000).
  * For cloud deployments both are the same, so only GRAPHIVAC_BASE_URL is needed.
  *
  * These values are exposed here (rather than NEXT_PUBLIC_ env vars) so that:

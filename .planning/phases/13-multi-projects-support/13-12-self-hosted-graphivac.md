@@ -57,11 +57,11 @@ Reference sources:
 **After 13-12**, all services use a normalized host-only `GRAPHIVAC_BASE_URL` (no `/api/v1` suffix). The `/api/v1` prefix is now appended internally at the point of URL construction in each service.
 
 | Service | Env file | `GRAPHIVAC_BASE_URL` value | Format |
-|---|---|---|---|
-| **MCP server** | `mcp_server/server/mcp.env` | `http://graphivac:8888` | Host only |
-| **Agent** | `agent/docker.env` | `http://graphivac:8888` | Host only |
-| **Mapper** (server-side) | `mapper/docker.env` | `http://graphivac:8888` | Host only |
-| **Mapper** (browser iframe) | `GRAPHIVAC_PUBLIC_BASE_URL` in `mapper/docker.env` | `http://localhost:8888` | Host only |
+|---|---|----------------------------|---|
+| **MCP server** | `mcp_server/server/mcp.env` | `http://graphivac:3000`    | Host only |
+| **Agent** | `agent/docker.env` | `http://graphivac:3000`    | Host only |
+| **Mapper** (server-side) | `mapper/docker.env` | `http://graphivac:3000`    | Host only |
+| **Mapper** (browser iframe) | `GRAPHIVAC_PUBLIC_BASE_URL` in `mapper/docker.env` | `http://localhost:3000`    | Host only |
 
 `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` has been fully removed. The iframe URL is now constructed dynamically at runtime from `activeProject.graphivac_project_id`, `activeSystem.graphivac_grid_id`, and `/api/config`.
 
@@ -73,12 +73,12 @@ All services share: `GRAPHIVAC_ORG_ID=public`.
 
 When Graphivac runs in Docker, two distinct URL bases are required:
 
-| Use | Network path | Example value |
-|---|---|---|
-| **Server-to-Graphivac** — API calls from mapper API routes, MCP server, and agent | Container DNS (internal) | `http://graphivac:8888` |
-| **Browser-to-Graphivac** — iframe `src`, must be reachable from the end-user's browser | Public hostname | `http://localhost:8888` or `https://graphivac.example.com` |
+| Use | Network path | Example value                                              |
+|---|---|------------------------------------------------------------|
+| **Server-to-Graphivac** — API calls from mapper API routes, MCP server, and agent | Container DNS (internal) | `http://graphivac:3000`                                    |
+| **Browser-to-Graphivac** — iframe `src`, must be reachable from the end-user's browser | Public hostname | `http://localhost:3000` or `https://graphivac.example.com` |
 
-Using the container-internal URL (`http://graphivac:8888`) as the iframe `src` fails silently — the browser cannot resolve container DNS.
+Using the container-internal URL (`http://graphivac:3000`) as the iframe `src` fails silently — the browser cannot resolve container DNS.
 
 ### Solution: two env vars
 
@@ -89,8 +89,8 @@ Using the container-internal URL (`http://graphivac:8888`) as the iframe `src` f
 
 For the **cloud deployment**, both values are identical (`https://graphivac.hvac.io`).  
 For a **self-hosted Docker deployment**:
-- `GRAPHIVAC_BASE_URL=http://graphivac:8888` (server-to-server)
-- `GRAPHIVAC_PUBLIC_BASE_URL=http://localhost:8888` (or `https://graphivac.acme.com`)
+- `GRAPHIVAC_BASE_URL=http://graphivac:3000` (server-to-server)
+- `GRAPHIVAC_PUBLIC_BASE_URL=http://localhost:3000` (or `https://graphivac.acme.com`)
 
 The existing `/api/config` route already delivers `graphivacBaseUrl` and `graphivacOrgId` to client components without `NEXT_PUBLIC_` build-time embedding. It must be updated to return `GRAPHIVAC_PUBLIC_BASE_URL` instead of `GRAPHIVAC_BASE_URL`:
 
@@ -140,15 +140,15 @@ RUN curl -fSL "https://hvac.io/graphivac/graphivac-${GRAPHIVAC_VERSION}-standalo
 # Data directory — license, org config, and grid data are written here
 RUN mkdir -p /data
 
-EXPOSE 8888
+EXPOSE 3000
 
 HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:8888/api/v1/orgs/public || exit 1
+    CMD curl -f http://localhost:3000/api/v1/orgs/public || exit 1
 
 # Switch to /data so Graphivac writes all persistent state into the mounted volume
 WORKDIR /data
 
-CMD ["java", "-jar", "/app/graphivac-server.jar", "-p", "8888"]
+CMD ["java", "-jar", "/app/graphivac-server.jar", "-p", "3000"]
 ```
 
 > **Deviation from plan:** `WORKDIR` is switched to `/data` before `CMD` (not `/app`) so Graphivac's working-directory writes land in the named volume. The JAR is referenced by absolute path `/app/graphivac-server.jar`.
@@ -166,7 +166,7 @@ CMD ["java", "-jar", "/app/graphivac-server.jar", "-p", "8888"]
     container_name: si-mapper-graphivac
     working_dir: /data
     ports:
-      - "8888:8888"
+      - "3000:3000"
     volumes:
       - graphivac_data:/data
     profiles:
@@ -184,9 +184,9 @@ The service is placed before the MCP server and agent so the dependency order is
 
 ```dotenv
 # Base URL of the Graphivac server (no /api/v1 suffix — appended internally).
-# Self-hosted Docker: http://graphivac:8888
+# Self-hosted Docker: http://graphivac:3000
 # Cloud: https://graphivac.hvac.io
-GRAPHIVAC_BASE_URL=http://graphivac:8888
+GRAPHIVAC_BASE_URL=http://graphivac:3000
 ```
 
 `mcp_server/graphivac/graphivac_api.py` — update all endpoint strings:
@@ -207,9 +207,9 @@ This one-line change in `graphivac_api.py` covers all six methods (`get_grid_inf
 
 ```dotenv
 # Internal (server-to-server) URL of the Graphivac service (no trailing slash, no /api/v1).
-#   Self-hosted Docker (same compose stack): http://graphivac:8888
+#   Self-hosted Docker (same compose stack): http://graphivac:3000
 #   Cloud / local dev:                       https://graphivac.hvac.io
-GRAPHIVAC_BASE_URL=http://graphivac:8888
+GRAPHIVAC_BASE_URL=http://graphivac:3000
 GRAPHIVAC_ORG_ID=public
 GRAPHIVAC_PROJECT_ID=P-XXXXXXXX
 GRAPHIVAC_GRID_ID=G-XXXXXXXX
@@ -223,14 +223,14 @@ GRAPHIVAC_GRID_ID=G-XXXXXXXX
 
 ```dotenv
 # Internal (server-to-server) URL of Graphivac.
-# Self-hosted Docker: http://graphivac:8888
+# Self-hosted Docker: http://graphivac:3000
 # Cloud: https://graphivac.hvac.io
-GRAPHIVAC_BASE_URL=http://graphivac:8888
+GRAPHIVAC_BASE_URL=http://graphivac:3000
 
 # Public (browser-reachable) URL of Graphivac.
-# Self-hosted Docker: http://localhost:8888  (or https://graphivac.acme.com)
+# Self-hosted Docker: http://localhost:3000  (or https://graphivac.acme.com)
 # Cloud: https://graphivac.hvac.io
-GRAPHIVAC_PUBLIC_BASE_URL=http://localhost:8888
+GRAPHIVAC_PUBLIC_BASE_URL=http://localhost:3000
 
 # Remove NEXT_PUBLIC_GRAPHIVAC_GRID_URL — replaced by dynamic URL construction.
 ```
@@ -301,8 +301,8 @@ For operators who prefer to keep using the cloud-hosted `graphivac.hvac.io`, the
 1. ✅ Create `graphivac/` directory and `graphivac/Dockerfile`.
 2. ✅ Build the image: `docker compose --profile build build graphivac`.
 3. ✅ Start it: `docker compose --profile deploy up graphivac`.
-4. ✅ Verify health check: `curl http://localhost:8888/api/v1/orgs/public`.
-5. ✅ Verify the UI is reachable in a browser: `http://localhost:8888/o/public`.
+4. ✅ Verify health check: `curl http://localhost:3000/api/v1/orgs/public`.
+5. ✅ Verify the UI is reachable in a browser: `http://localhost:3000/o/public`.
 6. ✅ Add `graphivac_data` named volume and confirm data persists across a container restart.
 
 > Steps 2–5 are runtime validation, not code changes.
@@ -359,7 +359,7 @@ For operators who prefer to keep using the cloud-hosted `graphivac.hvac.io`, the
 **Container (Milestone 1):**
 - [ ] `docker compose --profile deploy up graphivac` starts successfully.
 - [ ] The health check passes: `GET /api/v1/orgs/public` returns 200.
-- [ ] The Graphivac UI is accessible at `http://localhost:8888` from a browser.
+- [ ] The Graphivac UI is accessible at `http://localhost:3000` from a browser.
 - [ ] Data survives container restart (`docker compose restart graphivac`).
 - [ ] Data survives an image upgrade (rebuild + recreate) — no grid data lost.
 

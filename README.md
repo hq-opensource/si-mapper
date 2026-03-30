@@ -56,9 +56,10 @@ The full stack can be run as Docker containers using the `deploy` profile. All s
 
 | Service | Container | Host port | Description |
 | :--- | :--- | :--- | :--- |
-| `si-mapper-frontend` | `si-mapper-frontend` | `3000` | Next.js UI |
+| `si-mapper-frontend` | `si-mapper-frontend` | `3001` | Next.js UI |
 | `si-mapper-agent` | `si-mapper-agent` | `8001` | LLM orchestration agent (FastAPI) |
 | `si-mapper-mcp` | `si-mapper-mcp` | `8080` | MCP server |
+| `graphivac` | `si-mapper-graphivac` | `3000` | HVAC grid editor |
 | `portainer` | `portainer` | `9000` | Container management UI |
 
 ### Prerequisites
@@ -110,7 +111,7 @@ docker compose build
 docker compose --profile deploy up
 ```
 
-The frontend is available at **http://localhost:3000**.
+The frontend is available at **http://localhost:3001**.
 
 ### Useful commands
 
