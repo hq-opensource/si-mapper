@@ -23,7 +23,7 @@ def create_app() -> FastAPI:
     """
     # Bootstrap initial session & agent tree
     session_id = bootstrap_session()
-    logger.info(f"[create_app] Starting global session: {session_id}")
+    logger.info(f"[create_app] Starting global session: {session_id}, using model: {model_config.current}")
     rebuild_agent(model_config.current, session_id)
 
     app = FastAPI(title=APP_TITLE)

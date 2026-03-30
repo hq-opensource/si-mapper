@@ -5,6 +5,7 @@ import logging
 from fastapi import APIRouter
 
 from .. import lifecycle
+from ..lifecycle import model_config
 from utils.callback_utils import GLOBAL_SESSION_STORE
 
 logger = logging.getLogger(__name__)
@@ -60,6 +61,20 @@ async def get_session_state(
         f"[/session_state] Returning {len(base_state)} keys for session {target_session_id}"
     )
     logger.debug(f"[/session_state] Available keys: {list(base_state.keys())}")
+
+    # Inject the runtime model name read directly from the live ADK agent tree —
+    # NOT from model_config, which is only what we told the ADK, not what it runs.
+    try:
+        # MasterMainLoopAgent (LoopAgent) → sub_agents[0] → MasterLlmAgent (LlmAgent)
+        master_llm = lifecycle.holder.adk_agent.adk_agent.sub_agents[0]
+        raw_model = master_llm.model  # str for Gemini, LiteLlm object otherwise
+        # LiteLlm exposes the model string via .model
+        active_model = raw_model.model if hasattr(raw_model, "model") else str(raw_model)
+    except Exception:
+        # Fallback to config holder if the agent tree isn't available yet
+        active_model = model_config.current
+    base_state["active_model"] = active_model
+    base_state["active_session_id"] = lifecycle.current_session_id
 
     equipment_keys = [
         k for k in base_state if k in ["detailed_equipment", "boilers", "fans", "pumps"]

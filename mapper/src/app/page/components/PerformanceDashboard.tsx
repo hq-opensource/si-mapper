@@ -1,15 +1,16 @@
-"use client";
-
+﻿"use client";
 import React, { useMemo } from 'react';
-import { useThoughts } from '../../../context/ThoughtsContext';
+import { useThoughts } from '@/context/ThoughtsContext';
 import { SharedPageContainer } from './SharedPageContainer';
-import { Activity, Zap, Cpu, Clock, Layers, Hash } from 'lucide-react';
+import { Activity, Zap, Cpu, Clock, Layers, Hash, Bot, KeyRound } from 'lucide-react';
 import { StatusPlaceholder } from './StatusPlaceholder';
 
 export function PerformanceDashboard() {
-    const { events } = useThoughts();
+    const { events, data } = useThoughts();
 
-    // Aggregate metrics from all events
+    const activeModel = (data.active_model as string) || '—';
+    const sessionId   = (data.active_session_id as string) || '—';
+
     const metricsHistory = useMemo(() => {
         return events
             .filter(e => e.metadata?.latency_s !== undefined && e.metadata?.latency_s !== null)
@@ -47,13 +48,35 @@ export function PerformanceDashboard() {
         { label: 'Output Velocity', value: totals.avgLatency > 0 ? `${(totals.totalCompletion / totals.avgLatency).toFixed(1)} t/s` : '0 t/s', icon: Cpu, color: 'text-purple-500' },
     ];
 
+    const iterationHeader = (
+        <div className="flex items-center justify-between">
+            <h4 className="text-sm font-black text-[var(--foreground)] uppercase tracking-widest flex items-center gap-2">
+                <span className="h-1 w-6 bg-[var(--accent)] rounded-full" />
+                Current Iteration
+            </h4>
+            <div className="flex items-center gap-2">
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-sky-500/20 bg-sky-500/5 text-[10px] font-bold text-sky-500 uppercase tracking-widest">
+                    <Bot size={11} />
+                    {activeModel}
+                </span>
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-[10px] font-bold text-emerald-500 font-mono tracking-widest">
+                    <KeyRound size={11} />
+                    {sessionId}
+                </span>
+            </div>
+        </div>
+    );
+
     if (metricsHistory.length === 0) {
         return (
             <SharedPageContainer title="Performance Dashboard" subtitle="Real-time Agent Telemetry & Resource Usage" icon={Activity}>
-                <StatusPlaceholder 
-                    icon={Activity} 
-                    title="No performance data available" 
-                    subtitle="Metrics will appear once the agent starts interacting with the system." 
+                <div className="px-8 pt-8 space-y-4">
+                    {iterationHeader}
+                </div>
+                <StatusPlaceholder
+                    icon={Activity}
+                    title="No performance data available"
+                    subtitle="Metrics will appear once the agent starts interacting with the system."
                 />
             </SharedPageContainer>
         );
@@ -68,24 +91,27 @@ export function PerformanceDashboard() {
             fullHeight
         >
             <div className="p-8 space-y-12">
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-                    {stats.map((stat, i) => (
-                        <div key={i} className="bg-[var(--background)] border border-[var(--muted-foreground)]/10 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
-                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-                                <stat.icon size={48} />
+                {/* Stats */}
+                <div className="space-y-6">
+                    {iterationHeader}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+                        {stats.map((stat, i) => (
+                            <div key={i} className="bg-[var(--background)] border border-[var(--muted-foreground)]/10 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+                                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
+                                    <stat.icon size={48} />
+                                </div>
+                                <div className={`p-2 rounded-lg bg-current/10 ${stat.color} w-fit mb-4`}>
+                                    <stat.icon size={20} />
+                                </div>
+                                <div className="text-2xl font-black text-[var(--foreground)] mb-1">
+                                    {stat.value}
+                                </div>
+                                <div className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-widest">
+                                    {stat.label}
+                                </div>
                             </div>
-                            <div className={`p-2 rounded-lg bg-current/10 ${stat.color} w-fit mb-4`}>
-                                <stat.icon size={20} />
-                            </div>
-                            <div className="text-2xl font-black text-[var(--foreground)] mb-1">
-                                {stat.value}
-                            </div>
-                            <div className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-widest">
-                                {stat.label}
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
                 {/* History Table */}
@@ -99,7 +125,6 @@ export function PerformanceDashboard() {
                             Session Events: {metricsHistory.length}
                         </div>
                     </div>
-
                     <div className="overflow-hidden rounded-2xl border border-[var(--muted-foreground)]/10 bg-[var(--background)] shadow-sm">
                         <table className="w-full text-left border-collapse">
                             <thead>
@@ -114,7 +139,7 @@ export function PerformanceDashboard() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {metricsHistory.slice().reverse().map((m, i) => (
+                                {metricsHistory.slice().reverse().map((m) => (
                                     <tr key={m.id} className="hover:bg-[var(--foreground)]/5 transition-colors border-b border-[var(--muted-foreground)]/5 last:border-0 group">
                                         <td className="px-6 py-4 font-mono text-[11px] text-[var(--muted-foreground)]">
                                             {new Date(m.timestamp).toLocaleTimeString()}

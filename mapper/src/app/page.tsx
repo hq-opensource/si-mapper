@@ -71,6 +71,11 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
     if (data && Object.keys(data).length > 0) customData.data = data;
     if (adkData && Object.keys(adkData).length > 0) customData.adkData = adkData;
 
+    // Forward status and active agent explicitly — they are stripped from
+    // agentRest/pooledRest by excludedKeys but the Performance tab needs them.
+    customData.agentStatus = pooledState?.status || agentState.status || 'idle';
+    customData.activeAgent = pooledState?.active_agent || agentState.active_agent || null;
+
     if (Object.keys(customData).length > 0) {
       syncData(customData);
     }
