@@ -134,6 +134,27 @@ docker compose --profile deploy up si-mapper-agent
 docker compose --profile deploy down
 ```
 
+### Restore the Graphivac data volume
+
+The `graphivac` service persists its projects and grids in the Docker volume `si-mapper_graphivac_data`.  
+A snapshot of the demo data (org `public`, project **Demo** with grids **System A** and **System B**) is embedded in the script `restore_graphivac_volume.py` at the project root.
+
+```bash
+# Preview – write restored files to ./graphivac-data/ without touching Docker:
+python restore_graphivac_volume.py
+
+# Restore directly into the live Docker volume (creates it if it does not exist):
+python restore_graphivac_volume.py --to-volume
+
+# Restore into a differently-named volume:
+python restore_graphivac_volume.py --to-volume --volume my_volume
+
+# Restore without keeping a local copy (uses a temp dir that is auto-deleted):
+python restore_graphivac_volume.py --to-volume --no-local
+```
+
+The script requires only the Python 3 standard library and a running Docker daemon (only when `--to-volume` is used). It works on Windows, macOS and Linux.
+
 ---
 
 # Tech Stack

@@ -1,3 +1,5 @@
+# NOT USED ANYMORE.  USING PROVIDED DOCKERFROM IMAGE INSTEAD (hcr.io/frozenlock/graphivac:latest)
+
 FROM eclipse-temurin:21-jre-alpine
 
 # Install curl for the health check
