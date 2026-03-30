@@ -103,7 +103,7 @@ function ZeroSystemState() {
     if (res.ok) {
       const created: System = await res.json();
       await refreshSystems();
-      setActiveSystem(created);
+      await setActiveSystem(created);
     }
   };
 

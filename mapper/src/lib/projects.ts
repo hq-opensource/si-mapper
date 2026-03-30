@@ -49,22 +49,31 @@ export interface System {
   id: string;
   /** Human-readable display name (e.g. "Chilled Water Plant"). */
   name: string;
-  /**
-   * Relative path of the system's subfolder inside the project's folder.
-   * Convention: same as `id` (e.g. "sys-xyz789").
-   * Absolute path: path.join(PROJECTS_ROOT, project.folder_path, folder_path)
-   */
   folder_path: string;
-  /**
-   * ID of the Graphivac Grid that represents this system's canvas.
-   * Created in the project's Graphivac Project when this system is created.
-   */
   graphivac_grid_id: string;
   /** AI model used by the agent when working on this system. */
   ai_model_name: string;
   /** ISO 8601 timestamps managed by the storage layer. */
   created_at: string;
   updated_at: string;
+  /** Ordered list of agent sessions associated with this system. Latest first. */
+  sessions: SessionRef[];
+  /**
+   * session_id of the session that was last actively selected.
+   * Used on page load / F5 to restore the correct session without localStorage.
+   * Falls back to the latest session by created_at when absent.
+   */
+  active_session_id?: string;
+}
+
+/** Lightweight reference to an ADK session stored in the agent's SQLite DB. */
+export interface SessionRef {
+  /** ADK session ID — matches Session.id in SqliteSessionService. */
+  session_id: string;
+  /** User-facing name, e.g. "Session 2026-03-30 14:05". */
+  session_name: string;
+  /** ISO 8601. Set once at creation. */
+  created_at: string;
 }
 
 // ── Internal guards ───────────────────────────────────────────────────────────
@@ -210,7 +219,10 @@ export async function listSystems(projectFolderPath: string): Promise<System[]> 
     const configPath = path.join(projDir, entry, 'system.json');
     try {
       const raw = await fs.readFile(configPath, 'utf-8');
-      systems.push(JSON.parse(raw) as System);
+      const parsed = JSON.parse(raw) as System;
+      // Backward compat: sessions field may be absent in legacy system.json
+      if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
+      systems.push(parsed);
     } catch {
       // Skip directories without a valid system.json.
     }
@@ -247,7 +259,7 @@ export async function writeSystem(projectFolderPath: string, system: System): Pr
  */
 export async function createSystemOnDisk(
   projectFolderPath: string,
-  partial: Omit<System, 'id' | 'folder_path' | 'created_at' | 'updated_at'>
+  partial: Omit<System, 'id' | 'folder_path' | 'created_at' | 'updated_at' | 'sessions'>
 ): Promise<System> {
   const id = `sys-${newId()}`;
   const now = new Date().toISOString();
@@ -256,6 +268,7 @@ export async function createSystemOnDisk(
     folder_path: id,
     created_at: now,
     updated_at: now,
+    sessions: [],
     ...partial,
   };
   const dir = systemDir(projectFolderPath, system.folder_path);
@@ -273,9 +286,25 @@ export async function createSystemOnDisk(
  */
 export async function deleteSystemFromDisk(
   projectFolderPath: string,
-  systemFolderPath: string
+  systemFolderPath: string,
 ): Promise<void> {
   const dir = systemDir(projectFolderPath, systemFolderPath);
   await fs.rm(dir, { recursive: true, force: true });
+}
+
+/**
+ * Persist the chosen session as `active_session_id` on the system and write system.json.
+ * Returns the updated System, or null if not found.
+ */
+export async function setActiveSessionInSystem(
+  projectFolderPath: string,
+  systemId: string,
+  sessionId: string,
+): Promise<System | null> {
+  const system = await getSystem(projectFolderPath, systemId);
+  if (!system) return null;
+  const updated: System = { ...system, active_session_id: sessionId };
+  await writeSystem(projectFolderPath, updated);
+  return updated;
 }
 

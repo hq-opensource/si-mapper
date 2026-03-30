@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronDown, Trash2, Plus, Settings } from 'lucide-react';
+import { ChevronDown, Trash2, Plus, Settings, Layers } from 'lucide-react';
 import { useWorkspace } from '@/context/WorkspaceContext';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import type { Project } from '@/types';
@@ -40,6 +40,7 @@ export function ProjectSelector() {
           hover:border-[var(--muted-foreground)]/20"
         title="Switch project"
       >
+        <Layers size={11} className="flex-shrink-0 text-[var(--muted-foreground)]" />
         <span className="max-w-[10rem] truncate">
           {activeProject?.name ?? 'No project'}
         </span>

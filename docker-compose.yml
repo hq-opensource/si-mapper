@@ -130,6 +130,9 @@ services:
     volumes:
       # Shared with si-mapper-frontend so both services read/write the same project files.
       - ./mapper/uploads:/app/uploads
+      # Named volume for SQLite session persistence (13-11).
+      # survives container restarts and image rebuilds.
+      - agent_sessions:/app/data
     profiles:
       - deploy
       - build
@@ -159,3 +162,5 @@ volumes:
   portainer_data:
   neo4j_data:
   graphivac_data:
+  # SQLite sessions DB — persists ADK session history across container restarts (13-11).
+  agent_sessions:

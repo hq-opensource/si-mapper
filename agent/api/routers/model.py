@@ -21,7 +21,7 @@ async def set_model(model_name: str):
     The asyncio.Lock serialises concurrent swap requests.
     """
     async with _rebuild_lock:
-        new_session_id = bootstrap_session()
+        new_session_id = await bootstrap_session()
         rebuild_agent(model_name, new_session_id)
 
     logger.info(f"[POST /model] Model swapped to {model_name!r}, new session: {new_session_id!r}")

@@ -1,10 +1,26 @@
 # 13-11 — Session Persistence (Auto-Save & Restore)
 
 **Phase:** 13 — Multi-Project Support
-**Status:** Not started
-**Updated:** 2026-03-26
+**Status:** ✅ Completed
+**Updated:** 2026-03-30
 **Depends on:** `13-07` (system context in CopilotKit state), `13-09` (agent system context awareness)
 **Affects:** `agent/` and `mapper/`
+
+---
+
+## Additional Requirements (2026-03-30)
+
+The following requirements were added before implementation began:
+
+1. **Use the preexisting Google ADK `SqliteSessionService`** (located at `google.adk.sessions.sqlite_session_service`). The class is not re-exported from `google.adk.sessions` but is directly importable from its module path. No new dependencies are required.
+
+2. **Auto-create default session for a system with no sessions** — when a system is selected and its `sessions` array is empty, the frontend automatically calls `POST /api/projects/{proj}/systems/{sys}/sessions` to create a default session with a generated name (`"Session YYYY-MM-DD HH:MM"`). The resulting `SessionRef` is written to `system.json`. This also runs during the agent startup (if the current system has no sessions in `system.json`).
+
+3. **Performance dashboard must show session name alongside session ID** — The `PerformanceDashboard` reads `active_session_id` and `active_session_name` from the polled agent state (`data` in `ThoughtsContext`). Both are injected by the `/session_state` route. The badge displays `{session_name} ({session_id})` or falls back to `{session_id}` if no name is set.
+
+4. **CopilotKit chat window must update in real-time when changing active session** — The `SplitSidebar` (which contains `CopilotChat`) receives a `key` prop tied to `activeSession?.session_id`. When the session changes, React re-mounts `SplitSidebar`, clearing the chat history so the user sees a fresh conversation aligned with the restored session. The agent side already has the restored conversation in its SQLite context.
+
+5. **All other UI tabs must update in real-time when changing the current session** — The `ThoughtsContext` exposes a new `clearAll()` method. In `page.tsx`, a `useEffect` watches `activeSession` and calls `clearAll()` on change so thoughts, tool calls, events, and state panels reset. The polling hook switches `session_id` automatically (it reads from `activeSession` in context), so fresh data from the restored session populates all tabs within the next polling interval.
 
 ---
 
@@ -576,4 +592,46 @@ Process restart
 - **Compression is deferred to Milestone 4** — the 3.4% ratio is compelling but the implementation complexity is non-trivial. Milestones 1–3 deliver all user-visible value without it.
 - **`active-session-id` in localStorage** — consistent with `active-project-id` and `active-system-id` already used by `WorkspaceContext`.
 - **Session restore does not restart the agent** — it only changes the active `session_id` pointer. The agent tree stays intact; the ADK runner uses the restored session's event history as conversation context for the next turn.
+
+---
+
+## Implementation Record (2026-03-30)
+
+All milestones (1–3) implemented in a single pass.
+
+### Files changed — Agent (`agent/`)
+
+| File | Change |
+|---|---|
+| `api/lifecycle.py` | Imports `SqliteSessionService`; creates a global `session_service` instance at `SESSIONS_DB_PATH`; `bootstrap_session()` is now `async` and creates the session in SQLite; `rebuild_agent()` passes `session_service` to `ADKAgent`; exposes `current_session_name` module variable. |
+| `api/app.py` | Uses `asyncio.run(bootstrap_session())` since `bootstrap_session` is now async. |
+| `api/routers/model.py` | Awaits `bootstrap_session()`. |
+| `api/routers/session.py` | Full rewrite: adds `GET /sessions`, `POST /sessions`, `POST /sessions/{id}/restore`, `DELETE /sessions/{id}`, `PATCH /sessions/{id}`; `GET /session_info` now also returns `session_name`; `GET /session_state` now also injects `active_session_name`. |
+
+### Files changed — Mapper (`mapper/`)
+
+| File | Change |
+|---|---|
+| `src/lib/projects.ts` | Added `SessionRef` interface; added `sessions: SessionRef[]` to `System`; updated `createSystemOnDisk` signature; `listSystems` defaults missing `sessions` to `[]` for backward compat. |
+| `src/types/index.ts` | Mirrored `SessionRef` and updated `System` to include `sessions: SessionRef[]`. |
+| `src/lib/agent-client.ts` | Added `createAgentSession()` and `restoreAgentSession()` helpers. |
+| `src/context/WorkspaceContext.tsx` | Added `activeSession`, `setActiveSession`, and internal `resolveSession()` (auto-creates session if none). `setActiveSystem` is now async. |
+| `src/context/ThoughtsContext.tsx` | Added `clearAll()` method and exposed it in context. |
+| `src/hooks/useAgentPolling.ts` | Uses `activeSession` from `WorkspaceContext` instead of fetching `/session_info`; polling restarts when `activeSession.session_id` changes. |
+| `src/components/SessionSelector.tsx` | New dropdown component (mirrors `SystemSelector`): list, select, new, rename, delete. |
+| `src/app/page/components/AgentNavbar.tsx` | Added `SessionSelector` after `SystemSelector` in the workspace selector bar. |
+| `src/app/page/components/PerformanceDashboard.tsx` | Shows `{session_name} ({session_id})` in the session badge; falls back to session_id only if no name. |
+| `src/app/page.tsx` | Passes `key={activeSession?.session_id}` to `SplitSidebar` (remounts chat on session change); `StateSyncer` calls `clearAll()` on session change to reset all UI tabs. |
+| `src/app/api/projects/[id]/systems/[sysId]/sessions/route.ts` | New: `GET` (returns `system.sessions`) and `POST` (create session → agent + system.json). |
+| `src/app/api/projects/[id]/systems/[sysId]/sessions/[sessionId]/route.ts` | New: `DELETE` and `PATCH` (rename). |
+| `src/app/api/projects/[id]/systems/[sysId]/sessions/[sessionId]/restore/route.ts` | New: `POST` (calls agent restore endpoint). |
+| `src/app/api/projects/[id]/systems/[sysId]/route.ts` | Extended `DELETE` to cascade-delete all sessions from SQLite before `rm -rf`. |
+| `src/app/api/projects/__tests__/*.test.ts` | Added `sessions: []` to all `System` mock objects. |
+
+### Runtime verification
+
+- `SqliteSessionService` creates/reads/deletes sessions correctly (verified with `tests/test_sqlite_session.py`)
+- All 7 session router routes registered correctly
+- `npx tsc --noEmit` passes with zero errors on the mapper project
+
 

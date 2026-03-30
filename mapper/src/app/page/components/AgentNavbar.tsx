@@ -7,6 +7,7 @@ import { useThoughts } from "@/context/ThoughtsContext";
 import { formatAgentName } from "@/lib/utils";
 import { ProjectSelector } from "@/components/ProjectSelector";
 import { SystemSelector } from "@/components/SystemSelector";
+import { SessionSelector } from "@/components/SessionSelector";
 
 interface AgentNavbarProps {
     agentState: AgentState;
@@ -118,6 +119,8 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
                     <ProjectSelector />
                     <span className="text-[var(--muted-foreground)]/40 text-xs select-none px-0.5">/</span>
                     <SystemSelector />
+                    <span className="text-[var(--muted-foreground)]/40 text-xs select-none px-0.5">/</span>
+                    <SessionSelector />
                 </div>
 
                 {/* Navigation Items */}

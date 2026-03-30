@@ -37,6 +37,8 @@ interface ThoughtsContextType {
     syncEvents: (newEvents: AgentEvent[]) => void;
     data: Record<string, unknown>;
     syncData: (newData: Record<string, unknown>) => void;
+    /** Clear all accumulated state (thoughts, tool calls, events, data). Call on session switch. */
+    clearAll: () => void;
 }
 
 const ThoughtsContext = createContext<ThoughtsContextType | undefined>(undefined);
@@ -196,12 +198,20 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
         });
     }, []);
 
+    const clearAll = useCallback(() => {
+        setThoughts([]);
+        setToolCalls([]);
+        setEvents([]);
+        setData({});
+    }, []);
+
     return (
         <ThoughtsContext.Provider value={{
             thoughts, addThought, syncThoughts,
             toolCalls, addToolCall, syncToolCalls,
             events, syncEvents,
-            data, syncData
+            data, syncData,
+            clearAll,
         }}>
             {children}
         </ThoughtsContext.Provider>

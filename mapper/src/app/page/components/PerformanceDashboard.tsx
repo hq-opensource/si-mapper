@@ -1,19 +1,29 @@
 ﻿"use client";
 import React, { useMemo } from 'react';
 import { useThoughts } from '@/context/ThoughtsContext';
+import { useWorkspace } from '@/context/WorkspaceContext';
 import { SharedPageContainer } from './SharedPageContainer';
 import { Activity, Zap, Cpu, Clock, Layers, Hash, Bot, KeyRound } from 'lucide-react';
 import { StatusPlaceholder } from './StatusPlaceholder';
 
 export function PerformanceDashboard() {
     const { events, data } = useThoughts();
+    const { activeSession } = useWorkspace();
 
-    const activeModel = (data.active_model as string) || '—';
-    const sessionId   = (data.active_session_id as string) || '—';
+    const activeModel   = (data.active_model as string) || '—';
+    const sessionId     = activeSession?.session_id || (data.active_session_id as string) || '—';
+    const sessionName   = activeSession?.session_name || (data.active_session_name as string) || '';
+    const sessionLabel  = sessionName ? `${sessionName} (${sessionId})` : sessionId;
 
     const metricsHistory = useMemo(() => {
         return events
-            .filter(e => e.metadata?.latency_s !== undefined && e.metadata?.latency_s !== null)
+            .filter(e =>
+                e.metadata?.latency_s !== undefined &&
+                e.metadata?.latency_s !== null &&
+                // Scope to the active session; fall back to no filter if session_id
+                // is not yet on older events (backward compat).
+                (!e.metadata?.session_id || e.metadata.session_id === sessionId)
+            )
             .map(e => ({
                 id: e.id,
                 agent: e.agent_name,
@@ -23,9 +33,9 @@ export function PerformanceDashboard() {
                 completionTokens: (e.metadata.completion_tokens as number) || 0,
                 totalTokens: (e.metadata.total_tokens as number) || 0,
                 cachedTokens: (e.metadata.cached_tokens as number) || 0,
-                provider: (e.metadata.provider as string) || 'unknown'
+                provider: (e.metadata.provider as string) || 'unknown',
             }));
-    }, [events]);
+    }, [events, sessionId]);
 
     const totals = useMemo(() => {
         return metricsHistory.reduce((acc, curr) => ({
@@ -48,20 +58,20 @@ export function PerformanceDashboard() {
         { label: 'Output Velocity', value: totals.avgLatency > 0 ? `${(totals.totalCompletion / totals.avgLatency).toFixed(1)} t/s` : '0 t/s', icon: Cpu, color: 'text-purple-500' },
     ];
 
-    const iterationHeader = (
+    const sessionHeader = (
         <div className="flex items-center justify-between">
             <h4 className="text-sm font-black text-[var(--foreground)] uppercase tracking-widest flex items-center gap-2">
                 <span className="h-1 w-6 bg-[var(--accent)] rounded-full" />
-                Current Iteration
+                Active Session
             </h4>
             <div className="flex items-center gap-2">
                 <span className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-sky-500/20 bg-sky-500/5 text-[10px] font-bold text-sky-500 uppercase tracking-widest">
                     <Bot size={11} />
                     {activeModel}
                 </span>
-                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-[10px] font-bold text-emerald-500 font-mono tracking-widest">
-                    <KeyRound size={11} />
-                    {sessionId}
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-[10px] font-bold text-emerald-500 font-mono tracking-widest max-w-[20rem] truncate" title={sessionLabel}>
+                    <KeyRound size={11} className="flex-shrink-0" />
+                    {sessionLabel}
                 </span>
             </div>
         </div>
@@ -71,7 +81,7 @@ export function PerformanceDashboard() {
         return (
             <SharedPageContainer title="Performance Dashboard" subtitle="Real-time Agent Telemetry & Resource Usage" icon={Activity}>
                 <div className="px-8 pt-8 space-y-4">
-                    {iterationHeader}
+                    {sessionHeader}
                 </div>
                 <StatusPlaceholder
                     icon={Activity}
@@ -93,7 +103,7 @@ export function PerformanceDashboard() {
             <div className="p-8 space-y-12">
                 {/* Stats */}
                 <div className="space-y-6">
-                    {iterationHeader}
+                    {sessionHeader}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
                         {stats.map((stat, i) => (
                             <div key={i} className="bg-[var(--background)] border border-[var(--muted-foreground)]/10 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">

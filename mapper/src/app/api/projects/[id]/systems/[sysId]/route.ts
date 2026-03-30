@@ -19,6 +19,8 @@ import { deleteGrid } from '@/lib/graphivac-client';
 const PatchSystemSchema = z.object({
   name: z.string().min(1).optional(),
   ai_model_name: z.string().min(1).optional(),
+  /** Persists the currently-selected session ID so F5 restores the right session. */
+  active_session_id: z.string().optional(),
 });
 
 // ── Shared helper ─────────────────────────────────────────────────────────────
@@ -78,6 +80,7 @@ export async function PATCH(req: NextRequest, { params }: Params): Promise<NextR
     ...system,
     ...(parsed.data.name !== undefined ? { name: parsed.data.name } : {}),
     ...(parsed.data.ai_model_name !== undefined ? { ai_model_name: parsed.data.ai_model_name } : {}),
+    ...(parsed.data.active_session_id !== undefined ? { active_session_id: parsed.data.active_session_id } : {}),
   };
 
   try {
@@ -105,7 +108,18 @@ export async function DELETE(_req: NextRequest, { params }: Params): Promise<Nex
     return NextResponse.json({ error: 'System not found.' }, { status: 404 });
   }
 
-  // 1. Delete the Graphivac Grid (best-effort).
+  const AGENT_BASE_URL = (process.env.AGENT_BACKEND_URL ?? 'http://127.0.0.1:8001').replace(/\/$/, '');
+
+  // 1. Cascade-delete all agent sessions from SQLite (best-effort).
+  for (const ref of (system.sessions ?? [])) {
+    try {
+      await fetch(`${AGENT_BASE_URL}/sessions/${ref.session_id}`, { method: 'DELETE' });
+    } catch (err) {
+      console.warn(`[DELETE /api/projects/${id}/systems/${sysId}] Could not delete agent session ${ref.session_id}:`, err);
+    }
+  }
+
+  // 2. Delete the Graphivac Grid (best-effort).
   try {
     await deleteGrid(project.graphivac_project_id, system.graphivac_grid_id);
   } catch (err) {
@@ -115,7 +129,7 @@ export async function DELETE(_req: NextRequest, { params }: Params): Promise<Nex
     );
   }
 
-  // 2. Remove the system subfolder from disk.
+  // 3. Remove the system subfolder from disk.
   try {
     await deleteSystemFromDisk(project.folder_path, system.folder_path);
   } catch (err) {

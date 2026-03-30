@@ -310,6 +310,9 @@ async def shared_model_callback(
         session_id = callback_context.session.id
     except:
         session_id = "default-session"
+
+    # Extract session name from state (stored there by bootstrap_session)
+    session_name = state.get("session_name", "")
     
     # Process all agents that have this callback registered
     pass
@@ -329,6 +332,8 @@ async def shared_model_callback(
         "total_tokens": getattr(usage, "total_token_count", 0),
         "cached_tokens": getattr(usage, "cached_content_token_count", 0),
         "provider": "google",
+        "session_id": session_id,
+        "session_name": session_name,
     }
 
     # --- DEBUG: Print parts types ---

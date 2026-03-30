@@ -11,6 +11,7 @@ interface PromptDialogProps {
     title: string;
     description: string;
     placeholder?: string;
+    defaultValue?: string;
     confirmText?: string;
     cancelText?: string;
 }
@@ -22,6 +23,7 @@ export function PromptDialog({
     title,
     description,
     placeholder = 'Enter value...',
+    defaultValue = '',
     confirmText = 'Create',
     cancelText = 'Cancel'
 }: PromptDialogProps) {
@@ -32,14 +34,17 @@ export function PromptDialog({
     useEffect(() => {
         if (isOpen) {
             setIsVisible(true);
-            setInputValue('');
+            setInputValue(defaultValue);
             // Focus input after animation
-            setTimeout(() => inputRef.current?.focus(), 100);
+            setTimeout(() => {
+                inputRef.current?.focus();
+                inputRef.current?.select();
+            }, 100);
         } else {
             const timer = setTimeout(() => setIsVisible(false), 300);
             return () => clearTimeout(timer);
         }
-    }, [isOpen]);
+    }, [isOpen, defaultValue]);
 
     if (!isVisible && !isOpen) return null;
 

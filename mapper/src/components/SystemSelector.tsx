@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronDown, Trash2, Plus } from 'lucide-react';
+import { ChevronDown, Trash2, Plus, Cpu } from 'lucide-react';
 import { useWorkspace } from '@/context/WorkspaceContext';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import type { System } from '@/types';
@@ -55,6 +55,7 @@ export function SystemSelector() {
           }`}
         title={disabled ? 'Select a project first' : 'Switch system'}
       >
+        <Cpu size={11} className="flex-shrink-0 text-[var(--muted-foreground)]" />
         <span className="max-w-[12rem] truncate">
           {activeSystem?.name ?? 'No system'}
         </span>

@@ -34,7 +34,18 @@ type AgentState = {
 
 // Internal component to handle syncing to context
 function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | null, agentState: AgentState }) {
-  const { syncThoughts, syncToolCalls, syncEvents, syncData } = useThoughts();
+  const { syncThoughts, syncToolCalls, syncEvents, syncData, clearAll } = useThoughts();
+  const { activeSession } = useWorkspace();
+
+  // Clear all accumulated UI state whenever the active session changes
+  const prevSessionIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    const currentId = activeSession?.session_id ?? null;
+    if (prevSessionIdRef.current !== null && prevSessionIdRef.current !== currentId) {
+      clearAll();
+    }
+    prevSessionIdRef.current = currentId;
+  }, [activeSession?.session_id, clearAll]);
 
   useEffect(() => {
     const combinedEvents = [
@@ -88,7 +99,7 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
 export default function CopilotKitPage() {
   const [themeColor, setThemeColor] = useState("#6366f1");
   const [isEditMode, setIsEditMode] = useState(false);
-  const { activeProject, activeSystem } = useWorkspace();
+  const { activeProject, activeSystem, activeSession } = useWorkspace();
 
   const pollingConfig = useMemo(() => ({
     baseUrl: process.env.NEXT_PUBLIC_AGENT_BACKEND_URL ?? "http://localhost:8001",

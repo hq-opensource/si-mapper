@@ -38,6 +38,7 @@ const SYSTEM: System = {
   ai_model_name: 'gemini-pro',
   created_at: '2026-01-01T00:00:00.000Z',
   updated_at: '2026-01-01T00:00:00.000Z',
+  sessions: [],
 };
 
 function params(id: string) {
