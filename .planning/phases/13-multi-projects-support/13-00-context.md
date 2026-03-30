@@ -1,6 +1,6 @@
 # Phase 13 — Multi-Project Support
 
-**Updated:** 2026-03-27
+**Updated:** 2026-03-30
 
 ---
 
@@ -39,7 +39,7 @@ Fixed per deployment. Configured via `GRAPHIVAC_ORG_ID` env var only — never p
 | 13-08 | Project Management UI              | ✅ Done        |
 | 13-09 | Agent System Context Awareness     | ✅ Done        |
 | 13-10 | Runtime Model Switching            | ✅ Done        |
-| 13-11 | Session Persistence                | 🔲 Not started |
+| 13-11 | Session Persistence                | ✅ Done        |
 | 13-12 | Self-Hosted Graphivac              | ✅ Done        |
 | 13-99 | MCP Server System Context          | 🔲 Not started |
 
@@ -57,8 +57,8 @@ Fixed per deployment. Configured via `GRAPHIVAC_ORG_ID` env var only — never p
 - **13-09**: The agent reads `active_project` and `active_system` from `ToolContext.state` (injected by the frontend via CopilotKit). All Graphivac calls use the system's `graphivac_grid_id` and `graphivac_project_id`; file access is scoped to the system folder; the AI model is selected from `active_system.ai_model_name` at session creation. `GRAPHIVAC_ORG_ID` is always read from the agent's own env var.
 - **13-12**: Graphivac runs as a containerized service (`graphivac` in `docker-compose.yml`). All services use a normalised host-only `GRAPHIVAC_BASE_URL` (no `/api/v1` suffix). A separate `GRAPHIVAC_PUBLIC_BASE_URL` handles browser-to-container routing. `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` has been removed; the iframe URL is now built dynamically from the active project/system state. The default org ID is `public`.
 - **13-10**: The agent supports runtime model switching without a service restart. `POST /model` on the agent backend rebuilds the full agent tree (`MasterLlmAgent`, `OntologyGeneratorAgent`, `OntologyValidatorAgent`) and opens a fresh session. The agent-side code was extracted into a dedicated `agent/api/` package (`lifecycle.py`, `app.py`, `routers/`). On the frontend, `WorkspaceContext` calls `notifyAgentModel()` on bootstrap, system switch, and project switch (via `setActiveSystem`); `SystemEditDialog` calls it when the active system's `ai_model_name` is edited. All calls go through a Next.js proxy route (`POST /api/agent/model`) so the browser never needs direct access to `AGENT_BACKEND_URL`.
+- **13-11**: ADK sessions are now persisted transparently using `google.adk.sessions.sqlite_session_service.SqliteSessionService` (backed by `data/sessions.db`). A `sessions` array on each `System` record (`system.json`) stores `SessionRef` objects (id + name). The agent API exposes full session CRUD under `/api/projects/{proj}/systems/{sys}/sessions` and a `/session` endpoint to switch the active session. When a system with no sessions is selected, a default session is auto-created on both the frontend and the agent startup path. The frontend's `SplitSidebar` receives a `key` prop tied to `activeSession.session_id` so the CopilotKit chat window re-mounts (clearing stale history) on session change. `ThoughtsContext.clearAll()` is called on session change so all dashboard tabs (thoughts, tool calls, events, state) reset immediately. The `PerformanceDashboard` displays `{session_name} ({session_id})` from the polled `/session_state` route.
 
 ## What Remains
 
-- **13-11**: CopilotKit conversation state is auto-saved per system and restored on next visit.
 - **13-99**: MCP server reads the active system's grid ID from env/context so its tools always target the correct Graphivac grid.
