@@ -9,8 +9,8 @@
  *   - "active-system-id"
  *
  * Active session is NOT stored in localStorage — system.json is the source of
- * truth. On mount / F5, resolveSession reads the `is_active: true` flag from
- * system.sessions. If none is marked, the latest-created session is used and
+ * truth. On mount / F5, resolveSession reads the `active_session_id` flag from
+ * system.json. If none is marked, the latest-created session is used and
  * immediately persisted. If no sessions exist at all, one is auto-created.
  *
  * On mount the context:
@@ -19,6 +19,10 @@
  *   3. Fetches GET /api/projects/[id]/systems for the active project
  *   4. Resolves the active system (stored ID → object, or first, or null)
  *   5. Resolves the active session via resolveSession (see above)
+ *   6. Calls updateAgentWorkspaceState with the full triple
+ *
+ * Every subsequent project / system / session change follows the same pattern:
+ * resolve the complete triple, then call updateAgentWorkspaceState once.
  */
 
 import React, {
@@ -31,7 +35,11 @@ import React, {
   ReactNode,
 } from 'react';
 import type { Project, System, SessionRef } from '@/types';
-import { notifyAgentModel, createAgentSession, restoreAgentSession, markSessionActive } from '@/lib/agent-client';
+import {
+  updateAgentWorkspaceState,
+  createAgentSession,
+  markSessionActive,
+} from '@/lib/agent-client';
 
 // ── Context interface ─────────────────────────────────────────────────────────
 
@@ -48,7 +56,7 @@ interface WorkspaceContextValue {
   setActiveProject: (project: Project) => Promise<void>;
   /** Switch the active system. Persists to localStorage. */
   setActiveSystem: (system: System) => Promise<void>;
-  /** Switch to a different session. Calls restore on the agent and updates state. */
+  /** Switch to a different session. Updates agent state with full context. */
   setActiveSession: (session: SessionRef) => Promise<void>;
   /** Refresh the project list from the API. Auto-switches if active was deleted. */
   refreshProjects: () => Promise<void>;
@@ -91,6 +99,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
    *   1. system.active_session_id  (top-level field in system.json — survives F5)
    *   2. The latest session by `created_at` (and persist it as active_session_id)
    *   3. Auto-create a new session if the system has none at all
+   *
+   * Does NOT call the agent — callers are responsible for calling
+   * updateAgentWorkspaceState once they have the full (project, system, session)
+   * triple.
    */
   const resolveSession = useCallback(async (system: System, project: Project): Promise<SessionRef | null> => {
     const sessions = system.sessions ?? [];
@@ -109,8 +121,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         markSessionActive(project.id, system.id, chosen.session_id);
       }
 
-      // Restore the session in the agent (best-effort)
-      restoreAgentSession(project.id, system.id, chosen.session_id).catch(() => {});
       return chosen;
     }
 
@@ -163,7 +173,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
             setActiveSystemState(sys);
             localStorage.setItem('active-system-id', sys.id);
             const session = await resolveSession(sys, next);
-            if (session) setActiveSessionState(session);
+            if (session) {
+              setActiveSessionState(session);
+              updateAgentWorkspaceState(next, sys, session).catch(() => {});
+            }
           }
         }
       } else {
@@ -208,20 +221,30 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
           const stillExists = (fresh.sessions ?? []).find(s => s.session_id === currentSession.session_id);
           if (stillExists) {
             setActiveSessionState(stillExists);
-          } else if (fresh.sessions?.length > 0) {
+            updateAgentWorkspaceState(proj, fresh, stillExists).catch(() => {});
+          } else if ((fresh.sessions?.length ?? 0) > 0) {
             const session = await resolveSession(fresh, proj);
-            if (session) setActiveSessionState(session);
+            if (session) {
+              setActiveSessionState(session);
+              updateAgentWorkspaceState(proj, fresh, session).catch(() => {});
+            }
           }
         } else {
           const session = await resolveSession(fresh, proj);
-          if (session) setActiveSessionState(session);
+          if (session) {
+            setActiveSessionState(session);
+            updateAgentWorkspaceState(proj, fresh, session).catch(() => {});
+          }
         }
       } else {
         if (list.length > 0) {
           setActiveSystemState(list[0]);
           localStorage.setItem('active-system-id', list[0].id);
           const session = await resolveSession(list[0], proj);
-          if (session) setActiveSessionState(session);
+          if (session) {
+            setActiveSessionState(session);
+            updateAgentWorkspaceState(proj, list[0], session).catch(() => {});
+          }
         } else {
           setActiveSystemState(null);
           setActiveSessionState(null);
@@ -236,8 +259,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   // ── setActiveProject ───────────────────────────────────────────────────────
 
   const setActiveProject = useCallback(async (project: Project) => {
-    // Read saved system ID before we clear it, so we can restore it if the
-    // system happens to belong to the newly selected project.
     const savedSystemId = localStorage.getItem('active-system-id');
 
     setActiveProjectState(project);
@@ -252,14 +273,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       const list: System[] = await res.json();
       setSystems(list);
       if (list.length > 0) {
-        // Prefer the previously active system if it exists in this project;
-        // otherwise fall back to the first system.
         const sys = list.find(s => s.id === savedSystemId) ?? list[0];
         setActiveSystemState(sys);
         localStorage.setItem('active-system-id', sys.id);
-        notifyAgentModel(sys.ai_model_name);
         const session = await resolveSession(sys, project);
-        if (session) setActiveSessionState(session);
+        if (session) {
+          setActiveSessionState(session);
+          updateAgentWorkspaceState(project, sys, session).catch(() => {});
+        }
       }
     } catch (err) {
       console.error('[WorkspaceContext] setActiveProject fetch systems:', err);
@@ -271,13 +292,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const setActiveSystem = useCallback(async (system: System) => {
     setActiveSystemState(system); // optimistic — update UI immediately
     localStorage.setItem('active-system-id', system.id);
-    notifyAgentModel(system.ai_model_name);
     const proj = activeProjectRef.current;
     if (!proj) return;
 
     // Fetch fresh system from disk to guarantee we use the latest active_session_id.
-    // The in-memory object may be stale if setActiveSession was called after the
-    // systems list was last loaded.
     let freshSystem = system;
     try {
       const res = await fetch(`/api/projects/${proj.id}/systems/${system.id}`);
@@ -289,7 +307,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     } catch { /* fall back to in-memory system */ }
 
     const session = await resolveSession(freshSystem, proj);
-    if (session) setActiveSessionState(session);
+    if (session) {
+      setActiveSessionState(session);
+      updateAgentWorkspaceState(proj, freshSystem, session).catch(() => {});
+    }
   }, [resolveSession]);
 
   // ── setActiveSession ───────────────────────────────────────────────────────
@@ -300,18 +321,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     const sys = activeSystemRef.current;
     if (!proj || !sys) return;
 
-    // Keep in-memory systems state in sync so that switching systems and
-    // coming back restores the correct session (avoids stale active_session_id).
+    // Keep in-memory systems state in sync
     setSystems(prev => prev.map(s =>
       s.id === sys.id ? { ...s, active_session_id: session.session_id } : s
     ));
 
-    // Persist is_active in system.json — this survives F5
+    // Persist active_session_id in system.json — survives F5
     markSessionActive(proj.id, sys.id, session.session_id);
 
-    // Restore the session context in the agent
-    restoreAgentSession(proj.id, sys.id, session.session_id).catch(err =>
-      console.warn('[WorkspaceContext] restoreAgentSession failed:', err)
+    // Push the full workspace context to the agent
+    updateAgentWorkspaceState(proj, sys, session).catch(err =>
+      console.warn('[WorkspaceContext] updateAgentWorkspaceState failed:', err)
     );
   }, []);
 
@@ -342,10 +362,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         const system = sysList.find(s => s.id === savedSystemId) ?? sysList[0];
         setActiveSystemState(system);
         localStorage.setItem('active-system-id', system.id);
-        notifyAgentModel(system.ai_model_name);
 
         const session = await resolveSession(system, project);
-        if (session) setActiveSessionState(session);
+        if (session) {
+          setActiveSessionState(session);
+          updateAgentWorkspaceState(project, system, session).catch(() => {});
+        }
       } catch (err) {
         console.error('[WorkspaceContext] bootstrap error:', err);
       } finally {
@@ -357,7 +379,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Render ��────────────────────────────────────────────────────────────────
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <WorkspaceContext.Provider
@@ -379,4 +401,3 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     </WorkspaceContext.Provider>
   );
 }
-

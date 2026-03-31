@@ -7,7 +7,6 @@ model swap (POST /model, 13-10) touches exactly one place.
 import asyncio
 import os
 import pathlib
-import uuid
 from datetime import datetime, timezone
 
 from dotenv import load_dotenv  # idempotent — safe to call here as a guard
@@ -19,7 +18,6 @@ from ag_ui_adk import ADKAgent  # noqa: E402  (after patch is applied in main.py
 from google.adk.sessions.sqlite_session_service import SqliteSessionService
 
 from master_architecture.create_master_agent import create_master_agent
-from utils.callback_utils import GLOBAL_SESSION_STORE
 from utils.logging_config import configure_logging
 
 logger = configure_logging()
@@ -83,58 +81,6 @@ def _default_session_name() -> str:
     return f"Session {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')}"
 
 
-async def bootstrap_session(
-    system_id: str = "",
-    project_id: str = "",
-    session_name: str = "",
-    session_id: str | None = None,
-) -> str:
-    """Create a new ADK session in SqliteSessionService and GLOBAL_SESSION_STORE.
-
-    Returns the new session_id.
-    """
-    global current_session_name
-    if not session_id:
-        session_id = f"session-{uuid.uuid4().hex[:8]}"
-    if not session_name:
-        session_name = _default_session_name()
-
-    # Persist initial state in SQLite.
-    # _ag_ui_thread_id must equal session_id so that when CopilotKit sends
-    # threadId=session_id, SessionManager._find_session_by_thread_id locates
-    # this session and uses its event history instead of creating a fresh one.
-    initial_state = {
-        "_ag_ui_thread_id": session_id,
-        "session_name": session_name,
-        "system_id": system_id,
-        "project_id": project_id,
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "detailed_equipment_dict": {},
-        "completed_sub_agents": [],
-        "python_code_snapshots": [],
-        "ttl_code_snapshots": [],
-    }
-    session = await session_service.create_session(
-        app_name="si_mapper",
-        user_id="demo_user",
-        state=initial_state,
-        session_id=session_id,
-    )
-    actual_id = session.id
-
-    # Mirror in GLOBAL_SESSION_STORE for real-time polling
-    GLOBAL_SESSION_STORE[actual_id] = {
-        "detailed_equipment_dict": {},
-        "completed_sub_agents": [],
-        "python_code_snapshots": [],
-        "ttl_code_snapshots": [],
-        "session_name": session_name,
-        "system_id": system_id,
-        "project_id": project_id,
-    }
-    GLOBAL_SESSION_STORE["latest"] = GLOBAL_SESSION_STORE[actual_id]
-    current_session_name = session_name
-    return actual_id
 
 
 def rebuild_agent(model_name: str, session_id: str) -> None:

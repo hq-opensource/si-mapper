@@ -19,6 +19,32 @@ _call_start_times: Dict[str, float] = {}
 GLOBAL_SESSION_STORE = {}
 
 
+def inject_workspace_state(callback_context: CallbackContext) -> None:
+    """Before-agent callback: inject the latest workspace context into session state.
+
+    Reads active_project, active_system, and active_session from
+    GLOBAL_SESSION_STORE and writes them to callback_context.state using the
+    ADK-recommended mechanism.
+
+    callback_context.state.__setitem__ writes into both the in-memory value
+    dict AND the event_actions.state_delta dict (they share the same reference).
+    The ADK framework therefore automatically tracks these changes and flushes
+    them to SQLite via append_event at the end of the invocation — no manual
+    append_event call needed from outside the agent.
+    """
+    session_id = callback_context.state.get("_ag_ui_thread_id", "")
+    workspace = (
+        GLOBAL_SESSION_STORE.get(session_id)
+        or GLOBAL_SESSION_STORE.get("latest")
+        or {}
+    )
+
+    for key in ("active_project", "active_system", "active_session", "session_name"):
+        value = workspace.get(key)
+        if value:
+            callback_context.state[key] = value
+
+
 def _log_artifact_visibility(callback_context: CallbackContext, llm_request: Any) -> None:
     """
     Scans llm_request.contents for artifact data (inline_data blobs in tool

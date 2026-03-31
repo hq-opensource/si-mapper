@@ -67,7 +67,7 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
     const { data } = pooledState || {};
     const adkData = agentState.data;
 
-    const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'thoughts', 'tool_calls', 'events', 'data', 'active_project', 'active_system'];
+    const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'thoughts', 'tool_calls', 'events', 'data'];
 
     const pooledRest = pooledState ? Object.fromEntries(
       Object.entries(pooledState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))

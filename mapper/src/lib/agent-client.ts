@@ -5,28 +5,53 @@
  * Next.js proxy routes (browser → /api/agent/... → AGENT_BACKEND_URL).
  */
 
+import type { Project, System, SessionRef } from '@/types';
+
 /**
- * Notify the agent backend to switch its active LLM model.
+ * Push the complete workspace context to the agent backend.
  *
- * Fire-and-notify: errors are logged but never thrown — a model-swap failure
- * must not crash the UI or block navigation.
+ * This is the **single** function the UI calls whenever the active project,
+ * system, or session changes.  The agent always receives the full state —
+ * never a partial update.
  *
- * @param modelName  LiteLLM-compatible model string, e.g. "gemini-2.0-flash"
+ * Fire-and-notify: errors are logged but never thrown so a transient backend
+ * failure never blocks UI navigation.
  */
-export async function notifyAgentModel(modelName: string): Promise<void> {
-  if (!modelName?.trim()) return;
+export async function updateAgentWorkspaceState(
+  project: Project,
+  system: System,
+  session: SessionRef,
+): Promise<void> {
   try {
-    const res = await fetch('/api/agent/model', {
+    const res = await fetch('/api/agent/state', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model_name: modelName.trim() }),
+      body: JSON.stringify({
+        active_project: {
+          id: project.id,
+          folder_path: project.folder_path,
+          name: project.name,
+          graphivac_project_id: project.graphivac_project_id,
+        },
+        active_system: {
+          id: system.id,
+          folder_path: system.folder_path,
+          name: system.name,
+          graphivac_grid_id: system.graphivac_grid_id,
+          ai_model_name: system.ai_model_name,
+        },
+        active_session: {
+          id: session.session_id,
+          name: session.session_name,
+        },
+      }),
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      console.warn('[notifyAgentModel] Agent responded with error:', data);
+      console.warn('[updateAgentWorkspaceState] Agent responded with error:', data);
     }
   } catch (err) {
-    console.warn('[notifyAgentModel] Could not reach agent backend:', err);
+    console.warn('[updateAgentWorkspaceState] Could not reach agent backend:', err);
   }
 }
 
@@ -76,31 +101,3 @@ export async function createAgentSession(
     return null;
   }
 }
-
-/**
- * Restore a saved agent session (make it the active session on the agent).
- * Returns { session_id, session_name } or null on failure.
- */
-export async function restoreAgentSession(
-  projectId: string,
-  systemId: string,
-  sessionId: string,
-): Promise<{ session_id: string; session_name: string } | null> {
-  try {
-    const res = await fetch(
-      `/api/projects/${projectId}/systems/${systemId}/sessions/${sessionId}/restore`,
-      { method: 'POST' },
-    );
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      console.warn('[restoreAgentSession] Error:', data);
-      return null;
-    }
-    return await res.json();
-  } catch (err) {
-    console.warn('[restoreAgentSession] Could not reach backend:', err);
-    return null;
-  }
-}
-
-

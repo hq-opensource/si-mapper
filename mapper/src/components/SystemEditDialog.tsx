@@ -11,7 +11,7 @@ import { X, Settings2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { System } from '@/types';
 import { useWorkspace } from '@/context/WorkspaceContext';
-import { notifyAgentModel } from '@/lib/agent-client';
+import { updateAgentWorkspaceState } from '@/lib/agent-client';
 
 interface SystemEditDialogProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ export function SystemEditDialog({
   system,
   onSuccess,
 }: SystemEditDialogProps) {
-  const { activeSystem } = useWorkspace();
+  const { activeProject, activeSystem, activeSession } = useWorkspace();
   const [name, setName] = useState('');
   const [aiModel, setAiModel] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -71,10 +71,11 @@ export function SystemEditDialog({
         setError((data as { error?: string }).error ?? 'Failed to update system.');
         return;
       }
-      // If this is the currently active system and its model changed, tell the agent.
-      const newModel = aiModel.trim();
-      if (activeSystem?.id === system.id && newModel && newModel !== system.ai_model_name) {
-        notifyAgentModel(newModel);
+      // If this is the currently active system, push the full workspace context
+      // to the agent so it picks up the updated name / model.
+      if (activeSystem?.id === system.id && activeProject && activeSession) {
+        const updatedSystem = { ...system, name: trimmedName, ai_model_name: aiModel.trim() || system.ai_model_name };
+        updateAgentWorkspaceState(activeProject, updatedSystem, activeSession).catch(() => {});
       }
       onSuccess();
       onClose();

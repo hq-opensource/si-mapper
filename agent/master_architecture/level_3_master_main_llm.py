@@ -10,7 +10,11 @@ from master_architecture.tools.ingest_category_tool import ingest_category_files
 from tools.progress_tool import update_step, update_status
 from tools.sync_graphivac_tool import sync_agent_to_graphivac
 from tools.sync_graphivac_to_agent_tool import sync_graphivac_to_agent
-from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
+from utils.callback_utils import (
+    shared_model_callback as model_callback,
+    shared_before_model_callback as before_model_callback,
+    inject_workspace_state,
+)
 from utils.prompt_utils import load_prompt_instruction
 from utils.models import get_adk_model
 from typing import Any
@@ -49,6 +53,7 @@ class MasterLlmAgent(LlmAgent):
             model=get_adk_model(model_name),
             instruction=instruction,
             tools=final_tools,
+            before_agent_callback=inject_workspace_state,
             before_model_callback=before_model_callback,
             after_model_callback=model_callback,
             planner=planner,

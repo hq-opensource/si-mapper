@@ -2,7 +2,9 @@
  * GET  /api/projects/[id]/systems/[sysId]/sessions  — list sessions for a system
  * POST /api/projects/[id]/systems/[sysId]/sessions  — create a new session
  *
- * Coordinates the agent backend (SQLite) and system.json atomically.
+ * Session creation calls POST /workspace/state with no session ID.
+ * The agent generates the ID, creates the session with full context, and
+ * returns the new ID.  This route then saves the SessionRef to system.json.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -18,28 +20,24 @@ const CreateSessionSchema = z.object({
 
 type Params = { params: Promise<{ id: string; sysId: string }> };
 
-// ── GET /api/projects/[id]/systems/[sysId]/sessions ───────────────────────────
+// ── GET ───────────────────────────────────────────────────────────────────────
 
 export async function GET(_req: NextRequest, { params }: Params): Promise<NextResponse> {
   const { id, sysId } = await params;
-
   const project = await getProject(id);
   if (!project) return NextResponse.json({ error: 'Project not found.' }, { status: 404 });
-
   const system = await getSystem(project.folder_path, sysId);
   if (!system) return NextResponse.json({ error: 'System not found.' }, { status: 404 });
-
   return NextResponse.json(system.sessions ?? [], { status: 200 });
 }
 
-// ── POST /api/projects/[id]/systems/[sysId]/sessions ──────────────────────────
+// ── POST ──────────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest, { params }: Params): Promise<NextResponse> {
   const { id, sysId } = await params;
 
   const project = await getProject(id);
   if (!project) return NextResponse.json({ error: 'Project not found.' }, { status: 404 });
-
   const system = await getSystem(project.folder_path, sysId);
   if (!system) return NextResponse.json({ error: 'System not found.' }, { status: 404 });
 
@@ -53,17 +51,31 @@ export async function POST(req: NextRequest, { params }: Params): Promise<NextRe
     ? parsed.data.session_name.trim()
     : defaultName;
 
-  // 1. Call agent to create a new session in SQLite
+  // Send full context to the agent with an empty session ID.
+  // The agent creates the session, assigns the ID, and returns it.
   let sessionId: string;
-  let actualName: string;
   try {
-    const agentRes = await fetch(`${AGENT_BASE_URL}/sessions`, {
+    const agentRes = await fetch(`${AGENT_BASE_URL}/workspace/state`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        session_name: sessionName,
-        system_id: system.id,
-        project_id: project.id,
+        active_project: {
+          id:                   project.id,
+          folder_path:          project.folder_path,
+          name:                 project.name,
+          graphivac_project_id: project.graphivac_project_id,
+        },
+        active_system: {
+          id:               system.id,
+          folder_path:      system.folder_path,
+          name:             system.name,
+          graphivac_grid_id: system.graphivac_grid_id,
+          ai_model_name:    system.ai_model_name,
+        },
+        active_session: {
+          id:   '',          // empty → agent creates and returns the new ID
+          name: sessionName,
+        },
       }),
     });
     if (!agentRes.ok) {
@@ -73,27 +85,22 @@ export async function POST(req: NextRequest, { params }: Params): Promise<NextRe
     }
     const data = await agentRes.json();
     sessionId = data.session_id;
-    actualName = data.session_name || sessionName;
   } catch (err) {
     console.error('[POST /api/.../sessions] Agent unreachable:', err);
     return NextResponse.json({ error: 'Agent backend unreachable.' }, { status: 502 });
   }
 
-  // 2. Prepend SessionRef to system.json; mark it as the active session.
+  // Persist the new SessionRef into system.json.
   const ref: SessionRef = {
-    session_id: sessionId,
-    session_name: actualName,
-    created_at: now.toISOString(),
+    session_id:   sessionId,
+    session_name: sessionName,
+    created_at:   now.toISOString(),
   };
-  const updatedSystem = {
+  await writeSystem(project.folder_path, {
     ...system,
-    active_session_id: sessionId,           // newly created session becomes active
+    active_session_id: sessionId,
     sessions: [ref, ...(system.sessions ?? [])],
-  };
-  await writeSystem(project.folder_path, updatedSystem);
+  });
 
   return NextResponse.json(ref, { status: 201 });
 }
-
-
-
