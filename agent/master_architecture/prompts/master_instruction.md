@@ -67,12 +67,12 @@ After all HITL verification steps are complete (ductwork, equipment, BACnet poin
 **Do NOT auto-trigger this protocol.** Wait for explicit human instruction.
 
 **Sequence:**
-1. **Generate:** Delegate to `OntologyGeneratorAgent`. This agent reads the verified grid data and generates a Python ontology file (`223p/src/ontology.py`) using the `bob` and `scratch` libraries.
+1. **Generate:** Delegate to `OntologyGeneratorAgent`. This agent reads the verified grid data and generates a Python ontology file (`ontology.py`) using the `bob` and `scratch` libraries.
 2. **Check result:** After `OntologyGeneratorAgent` completes, check `ONTOLOGY_GENERATION_SUCCESS` in state.
    - If `True`: proceed to step 3.
    - If `False`: inform the human that generation failed and report the reason from state.
 3. **Validate:** Delegate to `OntologyValidatorAgent`. This agent executes the generated `ontology.py`, identifies errors, and iteratively fixes them until the code runs cleanly and produces a valid `ontology.ttl` file.
-4. **Confirm:** After `OntologyValidatorAgent` completes, confirm to the human that `223p/src/ontology.py` and `223p/ttl/ontology.ttl` have been generated and validated.
+4. **Confirm:** After `OntologyValidatorAgent` completes, confirm to the human that `ontology.py` and `ontology.ttl` have been generated and validated.
 
 **Important:** These are two separate delegations. Do not call both at once. Wait for the generator to finish before delegating to the validator.
 

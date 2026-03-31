@@ -8,7 +8,7 @@ supply ``model_name``.
 
 Tools
 -----
-- All helpers from ``sub_agents/_223p/tool.py`` (library introspection,
+- All helpers from ``tools/ontology_tools.py`` (library introspection,
   ontology read/write, prompt reader).
 - Any common MCP/shared tools forwarded via the ``tools`` parameter.
 - ``exit_generator_success`` — signals successful generation **and**
@@ -39,7 +39,7 @@ os.environ["SSL_CERT_FILE"] = ""
 from google.adk.agents import LlmAgent
 from google.genai import types
 
-from sub_agents._223p.tool import (
+from sub_agents.tools.ontology_tools import (
     scan_python_files_filtered,
     search_class_mapping,
     write_ontology,

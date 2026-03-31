@@ -6,16 +6,16 @@ Uses a LoopWrapper (max 100 iterations) around an LlmAgent.
 Role
 ----
 This agent does **not** generate the ontology from scratch. It reads the
-already-generated ``223p/src/ontology.py``, executes it, analyses errors,
+already-generated ``[project]/[system]/python/ontology.py``, executes it, analyzes errors,
 and iteratively applies targeted fixes until the file runs without errors
-and produces a valid ``ttl/ontology.ttl`` output.
+and produces a valid ``[project]/[system]/ttl/ontology.ttl`` output.
 
 The model is injected by the parent agent at construction time; callers must
 supply ``model_name``.
 
 Tools
 -----
-- All helpers from ``sub_agents/_223p/tool.py`` (library introspection,
+- All helpers from ``tools/ontology_tools.py`` (library introspection,
   ontology read/write/execute, prompt reader).
 - Any common MCP/shared tools forwarded via the ``tools`` parameter.
 - ``checkpoint_code`` — saves a version snapshot after each fix iteration
@@ -46,7 +46,7 @@ os.environ["SSL_CERT_FILE"] = ""
 from google.adk.agents import LlmAgent
 from google.genai import types
 
-from sub_agents._223p.tool import (
+from sub_agents.tools.ontology_tools import (
     execute_ontology,
     read_ontology,
     read_prompt,
@@ -84,7 +84,7 @@ class OntologyValidatorAgent(LoopWrapper):
     Loop-wrapped 223P Ontology Validator & Fixer Agent.
 
     Unlike the generator, this agent does **not** create the ontology from
-    scratch.  It reads the already-generated ``223p/src/ontology.py``,
+    scratch.  It reads the already-generated ``[project]/[system]/python/ontology.py``,
     executes it, and applies targeted fixes until execution succeeds.
 
     The *model_name* parameter is required and is forwarded to the inner
