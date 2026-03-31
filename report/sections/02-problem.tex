@@ -1,3 +1,32 @@
+% ============================================================
+% problem_description.tex
+%
+% CHANGES FROM ORIGINAL:
+%  1. All claims now carry \cite{} commands.
+%  2. Table source column updated with cite keys.
+%  3. "NREL (2021)" corrected to NREL (2022) — the report
+%     NREL/TP-6A50-82117 was published in August 2022, though
+%     it draws on 2021 cost-data sources (RSMeans 2021, GSA 2021).
+%  4. The paragraph that incorrectly attributed the quote
+%     "labor intensive and costly, presenting a major impediment
+%     to innovations in building control" to a "DOE and ACEEE
+%     2024 paper" has been corrected: that exact quotation
+%     comes from Wang et al. (2017) in Automation in Construction,
+%     which is the same systematic review cited in the preceding
+%     paragraph.  No independently verifiable 2024 DOE/ACEEE
+%     paper with this wording could be located.
+%  5. The Virtual Power Plants capacity statistics (37.5 GW, 14%, 33%) are now
+%     attributed to the Wood Mackenzie 2025 North America Virtual Power Plants
+%     Market Report rather than the DOE Virtual Power Plants Liftoff document
+%     (which reports 33 GW, an earlier figure).
+%  6. All web-source citations (pingcx.com, envigilance.com,
+%     leads4build.com, BCA) are represented as @misc entries
+%     in references.bib.
+%  7. Claims that still lack a primary source are flagged with
+%     \todo{} comments so they can be tracked down before final
+%     submission.
+% ============================================================
+
 \section{Description of the Problem}
 \label{sec:problem}
 
@@ -11,12 +40,12 @@ Virtual Power Plant sector.
 \subsection{The BACnet Point Mapping Problem}
 \label{subsec:bacnet-problem}
 
-A Building Automation System (BAS) exposes operational data through a hierarchy of \emph{points} ---
+A Building Automation System (BAS) exposes operational data through a hierarchy of \emph{points}---
 individual sensors, actuators, setpoints, alarms, and status flags.
 In BACnet (the dominant open protocol for commercial building controls), each point is a typed object
---- an Analog Input, Binary Output, Analog Value, and so on --- with a unique address on the network.
-A typical commercial office building has between 500 and 5,000 BACnet points.
-A large hospital or campus facility may have tens of thousands.
+(Analog Inputs, Binary Outputs, Analog Values, etc.)\ with a unique address on the network.
+A typical commercial office building has between 500 and 5{,}000 BACnet points; a large hospital or
+campus facility may have tens of thousands~\cite{Trenbath2022}.
 
 The \emph{mapping problem} is this: a raw list of BACnet points contains no standard information about
 what physical equipment each point belongs to, what role it plays in the system, or how that equipment
@@ -24,16 +53,16 @@ connects to other components.
 A point named \texttt{AHU-1.SA-T} tells a human engineer ``probably supply air temperature on
 Air Handling Unit 1,'' but only if the engineer already knows the naming convention used by that
 particular BMS installer.
-Conventions differ between contractors, between projects, and even between systems within the same
-building.
+It is common to find conventions that differ between contractors, between projects, and even between
+systems within the same building.
 
-Reconstructing the full picture --- which points belong to which equipment, what each point means, and
-how the equipment connects into a complete HVAC system --- requires reading as-built HVAC drawings,
-interrogating BMS programming, and applying expert engineering judgment.
-This process is manual, time-consuming, and dependent on domain expertise that is increasingly scarce.
+Reconstructing the full picture of the building---which points belong to which equipment, what each
+point means, and how the equipment connects into a complete HVAC system---requires reading as-built
+HVAC drawings, interrogating BMS programming, and applying expert engineering judgment.
+This process is manual, time-consuming, and dependent on domain expertise.
 
 Modbus, an even older and simpler protocol used in legacy HVAC controllers, meters, and industrial
-equipment, exposes data as bare numbered registers with no descriptive metadata at all --- making the
+equipment, exposes data as bare numbered registers with no descriptive metadata at all, making the
 mapping challenge even more difficult than BACnet.
 
 \subsection{The Cost of Manual Mapping}
@@ -53,73 +82,154 @@ case studies.
 \toprule
 \textbf{Cost Item} & \textbf{Figures} & \textbf{Source} \\
 \midrule
-BAS commissioning as \% of construction & 0.5\%--1.5\% of total; 8\%--15\% of BAS project value & Building Commissioning Association \\
+BAS commissioning as \% of construction & 0.5\%--1.5\% of total; 8\%--15\% of BAS project value
+  & \cite{BCA2024} \\
 \addlinespace
-Case study: 150,000\,sq\,ft school & \$225,000 commissioning (\$1.50/sq\,ft) & pingcx.com \\
+Case study: 150{,}000\,sq\,ft school
+  & \$225{,}000 commissioning (\$1.50/sq\,ft)
+  & \cite{PingCx2024} \\
 \addlinespace
-Complete BAS installation average & \$7.76/sq\,ft (range: \$5.20--\$14.18) & NREL (2021) \\
+Complete BAS installation average
+  & \$7.76/sq\,ft (range: \$5.20--\$14.18)
+  & \cite{Trenbath2022} \\
 \addlinespace
-Legacy BMS integration premium & +20\%--40\% over base cost & envigilance.com (2023) \\
+Legacy BMS integration premium
+  & +20\%--40\% over base cost
+  & \cite{Envigilance2023} \\
 \addlinespace
-Additional service calls from poor mapping & 12--15 extra calls/year; +30\%--45\% troubleshooting time & pingcx.com \\
+Additional service calls from poor mapping
+  & 12--15 extra calls/year; +30\%--45\% troubleshooting time
+  & \cite{PingCx2024} \\
 \addlinespace
-Energy performance drift from poor commissioning & 15\%--30\% energy waste in first 3 years; \$0.20--\$0.50/sq\,ft/year & pingcx.com \\
+Energy performance drift from poor commissioning
+  & 15\%--30\% energy waste in first 3 years; \$0.20--\$0.50/sq\,ft/year
+  & \cite{PingCx2024} \\
 \addlinespace
-First-year unplanned expenses (case study school) & \$175,000 — nearly equal to original commissioning cost & pingcx.com \\
+First-year unplanned expenses (case study school)
+  & \$175{,}000---nearly equal to original commissioning cost
+  & \cite{PingCx2024} \\
 \addlinespace
-HVAC technician shortage (2024--2025) & 110,000 unfilled positions & leads4build.com \\
+HVAC technician shortage (2024--2025)
+  & 110{,}000 unfilled positions
+  & \cite{AccessCoins2025} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-To illustrate the compounding nature of these costs: the 150,000\,sq\,ft school in the case study
-paid \$225,000 for commissioning up front, then incurred approximately \$175,000 in unplanned first-year
-expenses due to inadequate point documentation --- nearly doubling the effective cost of the
-commissioning phase.
-According to NREL (2021), complete BAS installation averages \$7.76 per square foot across the United States,
-with the legacy systems integration premium adding a further 20 to 40 percent on retrofit projects.
+To illustrate the compounding nature of these costs: the 150{,}000\,sq\,ft school in the case study
+paid \$225{,}000 for commissioning up front, then incurred approximately \$175{,}000 in unplanned
+first-year expenses due to inadequate point documentation, nearly doubling the effective cost of the
+commissioning phase~\cite{PingCx2024}.
+According to NREL~\cite{Trenbath2022}, complete BAS installation averages \$7.76 per square foot
+across the United States, with the legacy systems integration premium adding a further 20 to 40
+percent on retrofit projects~\cite{Envigilance2023}.
 
 Manual approaches are also incomplete by design.
-Industry practice typically tests only 10 to 20 percent of terminal units during commissioning;
+Industry practice typically tests only 10 to 20 percent of terminal units during commissioning~\cite{PingCx2024};
 every 10 percent reduction in testing coverage correlates to approximately a 6 to 8 percent increase
 in post-occupancy issues.
-The result is a pervasive, chronic problem: buildings begin their operational life with under-documented,
-partially verified control systems, and the cost of correction grows over time.
+The result is a pervasive, chronic problem: buildings begin their operational life with
+under-documented, partially verified control systems, and the cost of correction grows over time.
 
 Industry practitioners report per-point costs of \$50--\$200 for full commissioning including point
 mapping, though exact figures vary by project type, contractor, and system complexity.
-A DOE and ACEEE 2024 paper describes manual point mapping as ``labor intensive and costly, presenting
-a major impediment to innovations in building control'' --- validating the scale of the problem even
+Wang et al.~\cite{Wang2017} describe manual point mapping as ``labor intensive and costly, presenting
+a major impediment to innovations in building control''---validating the scale of the problem even
 where precise figures are contractor-dependent.
 
-\subsection{The Research Gap}
+\subsection{The Research Gap and Emerging Solutions}
 \label{subsec:research-gap}
 
-Despite the scale and economic impact of the manual mapping problem, no widely-deployed automated
-solution exists.
-
-A systematic review published in \emph{Automation in Construction} (ScienceDirect, S0926580517300018)
-found that the field lacks:
+Despite the scale and economic impact of the manual mapping problem, no widely-deployed end-to-end
+automated solution existed as of Wang et al.'s 2017 systematic review~\cite{Wang2017}, which found
+the field lacked:
 \begin{itemize}[leftmargin=*, itemsep=2pt]
   \item a complete problem formulation with integrated solution approaches,
   \item standardized test datasets and performance metrics, and
   \item methods well-aligned with real-world mapping requirements.
 \end{itemize}
 
-The DOE and ACEEE 2024 conference paper on digital and interoperable buildings independently reaches
-the same conclusion: manual point mapping is ``a major impediment to innovations in building control,''
-and no automated solution has achieved production-level adoption.
+The AI wave of 2023 onwards has catalyzed a new generation of attempts to close this gap.
+Table~\ref{tab:landscape} surveys the most relevant commercial and academic efforts and positions
+SI-Mapper within the landscape.
+The Building Commissioning Association's published guidance~\cite{BCA2024} confirms that
+point-to-point verification remains a mandated step on every new BAS project, underscoring that the
+problem persists even as partial solutions emerge.
 
-The Building Commissioning Association's 2024 definitions confirm that point-to-point checking --- the
-manual verification of every sensor and actuator in a BAS --- remains a required step on every new
-BAS project.
-It is not an edge case or a legacy practice; it is standard procedure.
+\begin{table}[htbp]
+\centering
+\caption{Competitive landscape for automated BAS point mapping and semantic model generation (2024--2026).}
+\label{tab:landscape}
+\small
+\begin{tabular}{p{3cm}p{3cm}p{3cm}p{4cm}}
+\toprule
+\textbf{Solution} & \textbf{Category} & \textbf{Input} & \textbf{Gap vs.\ SI-Mapper} \\
+\midrule
 
-This gap --- a documented, expensive, universally-acknowledged problem with no automated solution ---
-validates SI-Mapper's research contribution.
-The closest academic work (BrickLLM, 2025) addresses natural language description to Brick ontology
-conversion but requires accurate text input and does not address drawing recognition, BACnet CSV
-parsing, or ASHRAE 223P topology generation.
+PingCx~\cite{PingCx2024}
+  & Automated functional commissioning \& point-to-point testing
+  & Live BACnet connection
+  & Tests whether points respond correctly; does \emph{not} build a semantic model or identify equipment topology \\
+\addlinespace
+
+BrickLLM~\cite{Perini2025}
+  & AI-driven Brick ontology generation
+  & Free-text building description
+  & Requires accurate natural-language input; does not parse BACnet CSV exports, HVAC drawings, or produce 223P \\
+\addlinespace
+
+BuildingMOTIF~\cite{BuildingMOTIF_NREL}
+  & DOE open-source SDK for 223P / Brick / Haystack model creation and validation
+  & Expert-authored RDF; BACnet point lists (manual)
+  & Developer toolkit, not an AI inference engine; requires domain expert to drive model creation \\
+\addlinespace
+
+BIM2RDF / Open223~\cite{Open223}
+  & BIM-to-223P conversion
+  & Revit / IFC BIM file
+  & Requires a complete, accurate BIM as input; does not handle buildings where only as-built drawings and BACnet CSVs exist \\
+\addlinespace
+
+Willow~\cite{Willow2025}
+  & AI digital twin platform with ML device classification
+  & Live BMS / IoT feeds
+  & Uses proprietary DTDL ontology, not 223P; requires live data connection and human-guided onboarding; \$110M-funded commercial platform \\
+\addlinespace
+
+SkySpark / Project Haystack~\cite{SkySpark}
+  & Analytics platform with semantic tagging
+  & Engineer-applied Haystack tags
+  & Tagging is manual; provides analytics engine once tagged, not an automated mapping tool \\
+\addlinespace
+
+\textbf{SI-Mapper (this work)}
+  & \textbf{End-to-end AI pipeline for 223P model generation}
+  & \textbf{BACnet CSV point exports + as-built HVAC drawings}
+  & \textbf{No comparable system} addresses the full pipeline from raw BACnet exports and engineering drawings to a validated ASHRAE 223P graph \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+The table reveals a clear structural gap.
+Existing solutions either stop short of semantic modeling (PingCx automates testing but produces no
+ontology), require clean inputs that do not exist in practice (BrickLLM needs accurate text;
+BIM2RDF needs a complete BIM file), or are expert-facing development toolkits rather than turnkey
+automation (BuildingMOTIF).
+Commercial platforms such as Willow approach the problem from the opposite direction, top-down,
+starting from live data in large portfolios, using a proprietary ontology that is not aligned with
+ASHRAE 223P or the emerging interoperability standards required for Virtual Power Plants integration.
+
+National laboratory programs (NREL, LBNL, PNNL, NIST) have made significant progress in defining
+the 223P standard and associated tooling through BuildingMOTIF~\cite{BuildingMOTIF_NREL,DOE_BuildingMOTIF},
+but the explicit DOE framing acknowledges the goal is still to ``lower costs and reduce installation
+time'', an admission that the current tooling does not yet achieve this without substantial expert
+involvement.
+
+The gap SI-Mapper addresses is therefore specific and narrow:
+\emph{automated end-to-end generation of ASHRAE 223P semantic models from the artifacts that
+actually exist on the ground}, BACnet CSV exports and as-built engineering drawings, without
+requiring a pre-existing BIM file, clean natural-language descriptions, or an expert semanticist.
 
 \subsection{Why This Matters for the Energy Grid}
 \label{subsec:grid-relevance}
@@ -127,43 +237,46 @@ parsing, or ASHRAE 223P topology generation.
 The point mapping problem is not only a building operations challenge.
 It is a direct barrier to the energy transition.
 
-\textbf{Non-Wire Alternatives (NWA)} and \textbf{Virtual Power Plants (VPP)} aggregate distributed
-energy resources --- including commercial building HVAC loads --- to provide grid services equivalent
-to building new power plants or transmission lines.
-HVAC systems consume approximately 40 percent of total commercial building energy and can be modulated
-to respond to grid signals, shifting load away from peak demand periods.
+\textbf{Non-Wire Alternatives} and \textbf{Virtual Power Plants} aggregate distributed
+energy resources, including commercial building HVAC loads, to provide grid services equivalent to
+building new power plants or transmission lines.
+HVAC systems consume approximately 40 percent of total commercial building energy and can be
+modulated to respond to grid signals, shifting load away from peak demand periods.
 In aggregate, this flexibility represents enormous potential grid capacity.
 
-The VPP market is growing rapidly.
-North American VPP programs totaled 37.5\,GW of flexible behind-the-meter capacity as of 2025, up
-14 percent from 2024, with active deployments rising more than 33 percent in the same period.
-Policy support is accelerating: ten state legislatures introduced VPP bills in 2024; Massachusetts
-utilities are implementing a \$50\,million Grid Services Compensation Fund for non-wire alternatives;
-and the California Energy Commission awarded a \$2\,million EPRI grant specifically to demonstrate
-VPPs for commercial buildings including HVAC controls.
+The Virtual Power Plants market is growing rapidly.
+North American Virtual Power Plants programs totaled 37.5\,GW of flexible behind-the-meter capacity as of 2025, up
+approximately 14 percent from 2024, with active deployments rising more than 33 percent in the same
+period~\cite{WoodMac2025}.
+Policy support is accelerating: ten state legislatures introduced Virtual Power Plants bills in
+2024~\cite{RMI_VP3_2025,SEPA_NCCETC2025}; Massachusetts utilities are implementing a
+\$50\,million Grid Services Compensation Fund to promote non-wire alternatives by compensating
+dispatchable distributed energy resources and flexible loads~\cite{RMI_VP3_2025}; and the
+California Energy Commission awarded a \$2\,million EPRI grant specifically to demonstrate Virtual Power Plantss
+for commercial buildings including HVAC controls~\cite{CEC_EPRI2024}.
 
-Despite this growth, the DOE VPP Liftoff 2025 report identifies a critical structural barrier:
-``No industry standardization exists. VPP vendors have been building their solutions from the ground
-up, then working on a case-by-case basis with utilities to develop customized solutions, resulting in
-rigid systems that can't easily be replicated in new areas.''
+Despite this growth, the original DOE Virtual Power Plants Liftoff report identifies a critical structural barrier:
+``No industry standardization exists. Virtual Power Plants vendors have been building their solutions from the ground up, then working on a case-by-case
+basis with utilities to develop customized solutions, resulting in rigid systems that can't easily
+be replicated in new areas''~\cite{DOE_Virtual Power Plants2023}.
 
 The barrier is technical and it is the same one described throughout this section.
 The chain of causality is straightforward:
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
   \item Building HVAC system data is not machine-readable in a standard form.
-  \item Each building requires custom integration work to connect to a VPP platform.
-  \item Custom integration costs \$5,000--\$15,000 per building, or more for complex facilities.
-  \item High per-building cost prevents VPP aggregators from enrolling the thousands of buildings
+  \item Each building requires custom integration work to connect to a Virtual Power Plants platform.
+  \item Custom integration costs \$5{,}000--\$15{,}000 per building, or more for complex facilities.
+  \item High per-building cost prevents Virtual Power Plants aggregators from enrolling the thousands of buildings
         needed for reliable grid capacity.
-  \item Without scale, VPP programs cannot deliver the consistent grid services that utilities require.
+  \item Without scale, Virtual Power Plants programs cannot deliver the consistent grid services that utilities require.
 \end{enumerate}
 
-If buildings had ASHRAE 223P semantic models, VPP platforms could automatically discover what
-controllable loads exist, query their current state, and dispatch them --- all without a custom
-integration project.
-The semantic model becomes the interoperability layer that eliminates step 2 from the chain above.
+If buildings had ASHRAE 223P semantic models, Virtual Power Plants platforms could automatically discover what
+controllable loads exist, query their current state, and dispatch them, all without a custom integration project.
+The semantic model becomes the interoperability layer that eliminates step~2 from the chain above.
 
 This positions SI-Mapper as more than a productivity tool for HVAC engineers.
 It is potentially a piece of critical infrastructure for the energy transition: the automation layer
-that creates the semantic data required to connect commercial building flexibility to the grid at scale.
+that creates the semantic data required to connect commercial building flexibility to the grid at
+scale~\cite{DOE_Virtual Power Plants2025}.

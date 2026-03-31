@@ -3,9 +3,8 @@
 
 The previous section established that manual BACnet point mapping is costly, labor-intensive, and
 resistant to automation with existing tools.
-This section explains why agentic AI is the right approach to solving it, situates SI-Mapper within
-the landscape of prior work, and introduces the high-level pipeline that the implementation chapters
-will describe in detail.
+This section explains why agentic AI has a good chance of solving the problem, situates SI-Mapper within
+the landscape of prior work, and introduces the high-level pipeline of operation.
 
 \subsection{Existing Approaches and Their Limitations}
 \label{subsec:existing-approaches}
@@ -23,7 +22,7 @@ Table~\ref{tab:existing-approaches} summarizes the state of the art.
 \toprule
 \textbf{Approach} & \textbf{What It Does} & \textbf{Why It Falls Short} \\
 \midrule
-Manual expert mapping & Engineer maps all points by hand using drawings and BMS documentation & \$50--\$200 per point; weeks per building; requires scarce HVAC expertise; error-prone \\
+Manual expert mapping & Engineer maps all points by hand using drawings and BMS documentation & \$100--\$500 per point (software costs alone)\cite{mathew2015eis}; weeks per building; requires scarce HVAC expertise; error-prone \\
 \addlinespace
 Vendor proprietary tools & BMS vendors (e.g., Siemens, Johnson Controls) provide semi-automated configuration within their ecosystem & Vendor lock-in; does not produce semantic models; tied to new installations only; no interoperability \\
 \addlinespace
@@ -31,7 +30,7 @@ Tag-based normalization & Rule-based scripts parse point names using regex or ke
 \addlinespace
 Building Information Modeling (BIM) & Architectural models capture equipment geometry and spatial layout & Created during design; diverges from as-built reality; no BACnet operational data; requires BIM expertise \\
 \addlinespace
-BrickLLM (2025) & Large language model converts natural language building descriptions to Brick RDF & Requires accurate natural language input; no visual drawing analysis; no BACnet integration; produces Brick, not ASHRAE 223P \\
+BrickLLM (2025) & Large language model converts natural language building descriptions to Brick RDF\cite{perini2025brickllm} & Requires accurate natural language input; no visual drawing analysis; no BACnet integration; produces Brick, not ASHRAE 223P \\
 \addlinespace
 LLM point classification & LLMs classify individual BACnet point names into ontology tags & Classifies individual points only; does not reconstruct topology; not end-to-end \\
 \bottomrule
@@ -41,48 +40,18 @@ LLM point classification & LLMs classify individual BACnet point names into onto
 The gap is clear: no prior system combines visual HVAC drawing analysis, automated BACnet CSV
 point-to-equipment mapping, full ASHRAE 223P topology generation, and iterative self-correction in
 a single pipeline.
-The closest academic work --- BrickLLM (2025, ScienceDirect S2352711025000883) --- addresses only
+The closest academic work, BrickLLM~\cite{perini2025brickllm}, addresses only
 natural language input to Brick RDF conversion and does not address the drawing recognition problem,
 BACnet CSV parsing, or ASHRAE 223P topology generation.
-
-\subsection{What is Agentic AI?}
-\label{subsec:agentic-ai}
-
-To understand why SI-Mapper represents a genuine advance, it helps to understand what distinguishes
-agentic AI from earlier approaches.
-
-Traditional AI systems answer single, isolated questions: classify this image, summarize this document,
-answer this query.
-\emph{Agentic AI} systems go further: they can autonomously plan, execute, and verify multi-step tasks
-without human intervention at each step.
-They use external tools, maintain state across multiple turns, and can loop --- retrying, correcting
-errors, and adapting --- until a goal is achieved.
-The distinction matters because building semantic model generation is not a single-step question; it
-is a multi-stage workflow that requires reasoning about drawings, structured data, domain rules, and
-the validity of a generated output.
-
-The industry recognizes three generations of AI deployment:
-\textbf{V1} (function calling) treated AI as a smart query interface with human-coded business logic.
-\textbf{V2} (workflows) embedded AI into predefined sequences, with humans designing the flow.
-\textbf{V3} (agentic) allows AI to autonomously plan the steps, execute them, and evaluate the results
---- with humans setting goals and reviewing outcomes rather than scripting every action.
-SI-Mapper operates at the V3 level.
-
-Industry adoption of agentic architectures is accelerating.
-Gartner reported a 1,445\% surge in multi-agent system inquiries between Q1~2024 and Q2~2025.
-The Model Context Protocol (MCP), developed by Anthropic and now supported by OpenAI, Microsoft, and
-Replit, has emerged as the de-facto standard for connecting AI agents to external tools and data
-sources --- providing the interoperability layer that makes agentic systems practical across
-heterogeneous environments.
 
 \subsection{SI-Mapper: An Agentic Approach}
 \label{subsec:si-mapper-overview}
 
-SI-Mapper takes two raw building data inputs --- HVAC engineering drawings (PNG or PDF) and BACnet
-point exports (CSV files) --- and produces two outputs: an ASHRAE 223P semantic model in Turtle (TTL)
+SI-Mapper takes two raw building data inputs, HVAC engineering drawings (PNG or PDF) and BACnet
+point exports (CSV files), and produces two outputs: an ASHRAE 223P semantic model in Turtle (TTL)
 format, and an interactive graph visualization of that model in a web interface.
 
-The entire pipeline is orchestrated by a single AI agent guided by domain-specific skill instructions.
+The entire pipeline is orchestrated by an AI agent application guided by domain-specific skill instructions.
 Figure~\ref{fig:pipeline} illustrates the data flow.
 
 \begin{figure}[htbp]
@@ -93,13 +62,13 @@ Figure~\ref{fig:pipeline} illustrates the data flow.
 \end{figure}
 
 The key enabler is multimodal AI.
-Recent large language models --- including Gemini 2.5 and Claude Sonnet --- can analyze engineering
+Recent large language models like Gemini 3.1 and Claude Sonnet 4.6 can analyze engineering
 drawings directly, identifying equipment symbols, ductwork connections, and spatial relationships from
 visual inputs.
 HVAC schematic diagrams, with their regular symbol vocabulary and consistent layout conventions, are
 more tractable for AI recognition than general architectural floor plans.
 The insight from SI-Mapper's development is that standard models underperform on domain-specific
-drawing recognition until guided by detailed, domain-specific instructions --- the \emph{skills}
+drawing recognition until guided by detailed, domain-specific instructions the \emph{skills}
 architecture described in Section~\ref{sec:implementation}.
 
 SI-Mapper's novelty lies in combining four capabilities that no prior system integrates:

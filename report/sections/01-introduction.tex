@@ -1,45 +1,34 @@
 \section{Introduction and Context}
 \label{sec:introduction}
 
-This section establishes the conceptual foundation for understanding SI-Mapper.
-It explains what building ontologies are, why a standardized vocabulary for building systems matters,
-and why the ASHRAE 223P standard was chosen as the target output format.
-Readers do not need a technical background to follow this discussion.
-
-\subsection{The Semantic Metadata Gap in Buildings}
-\label{subsec:metadata-gap}
-
 Every commercial building contains hundreds of sensors, actuators, and control points.
 A modern office block may have thousands of temperature sensors, pressure transducers, damper position
-indicators, and setpoint registers --- each one a source of valuable operational data.
+indicators, and setpoint registers, each one a source of valuable operational data.
 Yet despite this wealth of instrumentation, the data is largely inaccessible to software that was
-not purpose-built for the specific building it operates in.
+not purpose-built for the specific building it operates in, i.e., software cannot be easily ported from one building to another.
 
 The reason is a fundamental naming problem.
-Each Building Management System (BMS) vendor uses its own proprietary conventions for labelling control
-points.
+Each Building Management System (BMS) vendor uses its own proprietary conventions for labelling control points.
 A temperature sensor named \texttt{2500.AI11} in one system becomes \texttt{RTU-3/SA-T} in another.
 Neither label carries enough information for software to determine automatically what physical equipment
 the point belongs to, what role the measurement plays, or how that equipment connects to other components.
-Without that context, building software cannot be deployed without a building-specific customization step.
+Without that context, building software cannot be deployed without a building-specific customization step. 
+This means that ``building software is not `plug and play', technicians must manually map sensors and actuators 
+to software inputs through tedious point mapping processes that vary building-by-building.''
+Moreover, this manual mapping, a building-by-building effort, is error-prone and expensive, 
+often requiring weeks of expert labor for a single building.
 
-As the United States Department of Energy states directly, ``building software is not `plug and play' ---
-technicians must manually map sensors and actuators to software inputs through tedious point mapping
-processes that vary building-by-building.''
-This manual, building-by-building effort is the central barrier this report addresses.
-
-The solution is a \emph{standardized metadata layer} --- a machine-readable description of what every
-sensor and actuator means, which equipment it belongs to, and how that equipment connects to the rest of
-the system.
-This is what building ontologies provide.
+A promising solution for this problem is a \emph{standardized metadata layer}, a machine-readable description of what every
+sensor and actuator means, which equipment it belongs to, and how that equipment connects to the rest of the system.
+This is exactly what building ontologies provide.
 
 \subsection{Building Ontologies: A Standardized Language for Buildings}
 \label{subsec:ontologies}
 
 A building ontology is a shared, machine-readable vocabulary that describes building systems, their
-components, and how they connect.
+components, and how they connect between each other.
 Think of it as a dictionary that any software application can consult: if a sensor is declared to be a
-supply air temperature measurement on the outlet of a fan coil unit, any compliant application
+supply air temperature measurement on the outlet of a fan coil unit, any compliant application (that understands the chosen ontology)
 can understand that without manual configuration.
 
 Four major building ontologies have emerged over the past decade.
@@ -71,8 +60,8 @@ It uses the RDF/OWL knowledge representation standard, making it more consistent
 than Haystack.
 Brick is production-ready and in active deployment across research institutions and building operators.
 
-\textbf{RealEstateCore} focuses on the property management perspective --- occupancy, asset management,
-and energy performance --- with significant overlap into technical building systems.
+\textbf{RealEstateCore} focuses on the property management perspective, occupancy, asset management,
+and energy performance, with significant overlap into technical building systems.
 It is used mainly in the European commercial real estate sector.
 
 \textbf{ASHRAE 223P} is the most rigorous of the four.
@@ -81,11 +70,9 @@ components, and how those connections link to live sensor data.
 ASHRAE's BACnet committee, Project Haystack, and Brick Schema are actively collaborating to integrate
 their vocabularies into ASHRAE 223P as the unifying standard.
 
-A 2025 systematic comparison of these four ontologies found that no single standard covers all needs
-in practice.
+Nevertheless, no single standard covers all needs that can arise in practice when modeling complex building systems.
 A complete building model is expected to be ``a mix of ASHRAE 223P, Brick, QUDT, RealEstateCore, and
-possibly additional standards.''
-ASHRAE 223P is designed as the semantic backbone that ties the others together.
+possibly additional standards.'' ASHRAE 223P is designed as the semantic backbone that ties the others together.
 
 \subsection{ASHRAE Standard 223P}
 \label{subsec:ashrae-223p}
@@ -95,9 +82,8 @@ framework for building systems.
 Its goal is to enable software applications to determine the meaning and context of building data
 without manual, building-specific configuration.
 
-\textbf{Current status:} The standard is in its second advisory public review as of 2025--2026.
-It is not yet ratified.
-The project receives \$1.3 million in Department of Energy funding and is led by the National Renewable
+\textbf{Current status:} The standard is in its second advisory public review as of 2025-2026.
+The project receives funding from the Department of Energy and is led by the National Renewable
 Energy Laboratory (NREL), with participation from Lawrence Berkeley National Lab, Pacific Northwest
 National Lab, NIST, Colorado School of Mines, and Cornell University.
 
@@ -133,21 +119,15 @@ the fan outlet through a duct segment into the coil inlet, conveying Supply Air 
 \textbf{Telemetry and external references} allow live BACnet sensor data to be explicitly linked to
 semantic properties in the model.
 A supply air temperature sensor in the model can declare that its value comes from
-\texttt{BACnet object 2500.AI11} --- closing the loop between the abstract ontology and the live
+\texttt{BACnet object 2500.AI11}, closing the loop between the abstract ontology and the live
 building management system.
-
-\textbf{Why SI-Mapper chose ASHRAE 223P:} It is the only standard that simultaneously captures full
-HVAC topology, links BACnet points to semantic equipment properties, and is explicitly designed for
-advanced building controls and grid services.
-Its backing by DOE, NREL, and ASHRAE's standardization process makes it the most credible long-term
-choice for interoperability.
 
 \subsection{Advantages and Barriers of Semantic Building Models}
 \label{subsec:advantages-barriers}
 
 Creating a semantic building model is not a trivial investment.
-Understanding why organizations would make that investment --- and why they currently do not ---
-frames the business case for automation tools like SI-Mapper.
+Understanding why organizations would make that investment, and why they currently do not, 
+frames the business case for automation tools to build the ontology representation of a building.
 
 \textbf{Advantages of semantic building models:}
 
@@ -157,9 +137,8 @@ frames the business case for automation tools like SI-Mapper.
   \item \textbf{Advanced analytics:} fault detection, automated commissioning, and predictive
         maintenance all require knowing not just sensor values but what those values mean and how
         equipment relates to each other.
-  \item \textbf{Grid services enablement:} Virtual Power Plant (VPP) and Non-Wire Alternative (NWA)
-        programs require machine-readable building load data; semantic models provide this in a
-        standardized form.
+  \item \textbf{Grid services enablement:} Maximizing the contribution of the buildings to the grid services, it is required a deep understanding of the building composition, building mechanics, and owner preferences. 
+  A way to facilitate the extraction of that information for Virtual Power Plants or demand aggregators is by using standard ontologies at the building level.
   \item \textbf{Reduced integration costs:} once a semantic model exists, any compliant application
         can consume it without a custom integration project.
   \item \textbf{Digital twin support:} the semantic layer is the connective tissue between physical
@@ -170,7 +149,7 @@ frames the business case for automation tools like SI-Mapper.
 
 \begin{itemize}[leftmargin=*, itemsep=2pt]
   \item \textbf{High creation cost:} building a semantic model today requires specialized domain
-        expertise and significant labor --- often weeks of work by a qualified HVAC engineer.
+        expertise and significant labor, often weeks of work by a qualified HVAC engineer.
   \item \textbf{No automated tooling for existing buildings:} most available approaches are manual
         or semi-manual, requiring expert knowledge of both HVAC systems and ontology standards.
   \item \textbf{Fragmented standards landscape:} organizations must choose between partially
@@ -181,8 +160,25 @@ frames the business case for automation tools like SI-Mapper.
         to adopt formal ontologies, creating a chicken-and-egg problem for software vendors.
 \end{itemize}
 
-The high cost of \emph{creating} semantic models --- not deploying them --- is the central barrier.
+The high cost of \emph{creating} semantic models is the central barrier for adoption.
 A semantic model that would take a qualified engineer several weeks to create manually could enable
-years of automated analytics and grid integration.
+years of automated analytics and facilitate control films to enable grid integration for the building.
 The investment is worthwhile; the bottleneck is the creation step.
-This is the problem SI-Mapper is designed to solve.
+The creation step is, therefore, the central bottleneck blocking wider adoption of semantic building
+models and the benefits they enable.
+
+This work explores whether recent advances in artificial intelligence can meaningfully reduce that
+bottleneck.
+Modern large language models have demonstrated the ability to process heterogeneous, multi-modal
+data, including equipment schedules, control diagrams, point lists, and floor plans, and to reason
+over structured knowledge.
+\textbf{SI-Mapper} is a prototype tool that investigates this possibility: given the multi-modal
+data typically available in a real building project, can an AI-assisted pipeline generate an
+ASHRAE~223P-compliant ontology with sufficient accuracy and completeness to be practically useful?
+
+ASHRAE~223P is the target standard because it is the only building ontology that simultaneously
+captures full HVAC topology, links live BACnet telemetry to semantic equipment properties, and is
+explicitly designed for advanced building controls and grid-services applications.
+Its formal structure and institutional backing by DOE, NREL, and ASHRAE make it the most credible
+long-term foundation for interoperability, and its richness makes it the most demanding and
+informative test bed for evaluating AI-generated building models.
