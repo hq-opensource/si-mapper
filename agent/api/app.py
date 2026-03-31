@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from ag_ui_adk import add_adk_fastapi_endpoint
 
 from . import lifecycle
-from .lifecycle import model_config, rebuild_agent, session_service, _default_session_name
+from .lifecycle import model_config, rebuild_agent, session_service, _default_session_name, agent_proxy
 from .routers import health, session, workspace
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ async def _lifespan(app: FastAPI):
     logger.info(f"[lifespan] Startup session: {session_id}, model: {model_config.current}")
     rebuild_agent(model_config.current, session_id)
 
-    add_adk_fastapi_endpoint(app, lifecycle.holder.adk_agent, path="/")
+    add_adk_fastapi_endpoint(app, agent_proxy, path="/")
     logger.info("[lifespan] Master Agent Service ready.")
     yield
 

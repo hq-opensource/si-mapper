@@ -66,6 +66,29 @@ model_config = ModelConfig()
 holder = AgentHolder()
 _rebuild_lock = asyncio.Lock()
 
+
+class _AgentProxy:
+    """Transparent proxy that always delegates to the *current* ``holder.adk_agent``.
+
+    ``add_adk_fastapi_endpoint`` captures its ``agent`` argument by closure, so
+    passing an ``ADKAgent`` instance directly means the FastAPI endpoint at ``/``
+    is permanently bound to the *initial* instance.  Any subsequent call to
+    ``rebuild_agent()`` replaces ``holder.adk_agent`` but the closure never sees
+    the new object.
+
+    By passing this proxy instead, every attribute lookup is forwarded to
+    ``holder.adk_agent`` at call-time, so the endpoint automatically uses the
+    freshly built agent after every model swap — no endpoint re-registration
+    required.
+    """
+
+    def __getattr__(self, name: str):  # noqa: ANN204
+        return getattr(holder.adk_agent, name)
+
+
+# Singleton proxy — safe to import and pass to add_adk_fastapi_endpoint.
+agent_proxy = _AgentProxy()
+
 # Session ID that belongs to the current holder.adk_agent instance.
 # Updated by rebuild_agent() on every build (startup + POST /model).
 current_session_id: str = ""
@@ -90,12 +113,11 @@ def rebuild_agent(model_name: str, session_id: str) -> None:
     requests against the previous ``holder.adk_agent`` complete normally —
     Python keeps the old object alive until all references are released.
 
-    NOTE: ``add_adk_fastapi_endpoint`` is registered once at startup with the
-    initial ADKAgent.  After a swap the SSE/WebSocket endpoint at ``/`` still
-    uses the original instance.  The session introspection endpoints
-    (``/session_info``, ``/session_state``) and all downstream tool calls DO
-    use the new instance via ``holder.adk_agent``.  A full hot-swap of the
-    ADK endpoint is tracked as a future improvement.
+    The FastAPI endpoint at ``/`` is registered once at startup but uses
+    ``agent_proxy``, which forwards every attribute access to the current
+    ``holder.adk_agent`` at call-time.  This means the live SSE endpoint
+    transparently picks up the new agent instance on every subsequent request
+    after a model swap — no endpoint re-registration required.
     """
     global current_session_id
 
