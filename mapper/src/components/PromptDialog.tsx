@@ -14,6 +14,7 @@ interface PromptDialogProps {
     defaultValue?: string;
     confirmText?: string;
     cancelText?: string;
+    disableCancel?: boolean;
 }
 
 export function PromptDialog({
@@ -25,7 +26,8 @@ export function PromptDialog({
     placeholder = 'Enter value...',
     defaultValue = '',
     confirmText = 'Create',
-    cancelText = 'Cancel'
+    cancelText = 'Cancel',
+    disableCancel = false,
 }: PromptDialogProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -64,7 +66,7 @@ export function PromptDialog({
                     "absolute inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 ease-out",
                     isOpen ? "opacity-100" : "opacity-0"
                 )}
-                onClick={onClose}
+                onClick={disableCancel ? undefined : onClose}
             />
 
             {/* Modal Content */}
@@ -110,6 +112,7 @@ export function PromptDialog({
                             type="button"
                             onClick={onClose}
                             className="w-full px-6 py-4 rounded-2xl text-sm font-bold text-[var(--foreground)] hover:bg-[var(--muted-foreground)]/10 transition-colors"
+                            hidden={disableCancel}
                         >
                             {cancelText}
                         </button>

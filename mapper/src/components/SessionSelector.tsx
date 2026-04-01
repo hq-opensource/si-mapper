@@ -37,6 +37,7 @@ export function SessionSelector() {
   const [isCreating, setIsCreating] = useState(false);
   const [newSessionDialogOpen, setNewSessionDialogOpen] = useState(false);
   const [newSessionDefaultName, setNewSessionDefaultName] = useState('');
+  const [newSessionForced, setNewSessionForced] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const sessions = activeSystem?.sessions ?? [];
@@ -64,6 +65,7 @@ export function SessionSelector() {
     const now = new Date();
     const suggested = `Session ${now.toISOString().slice(0, 16).replace('T', ' ')}`;
     setNewSessionDefaultName(suggested);
+    setNewSessionForced(false);
     setIsOpen(false);
     setNewSessionDialogOpen(true);
   };
@@ -89,12 +91,20 @@ export function SessionSelector() {
 
   const handleDelete = async (session: SessionRef) => {
     if (!activeProject || !activeSystem) return;
+    const isLast = sessions.length === 1;
     await fetch(
       `/api/projects/${activeProject.id}/systems/${activeSystem.id}/sessions/${session.session_id}`,
       { method: 'DELETE' },
     );
     setDeletingSession(null);
     await refreshSystems();
+    if (isLast) {
+      const now = new Date();
+      const suggested = `Session ${now.toISOString().slice(0, 16).replace('T', ' ')}`;
+      setNewSessionDefaultName(suggested);
+      setNewSessionForced(true);
+      setNewSessionDialogOpen(true);
+    }
   };
 
   const handleRename = async (newName: string) => {
@@ -223,6 +233,7 @@ export function SessionSelector() {
         defaultValue={newSessionDefaultName}
         placeholder="Session name"
         confirmText="Create"
+        disableCancel={newSessionForced}
       />
 
       {/* Delete confirmation */}
