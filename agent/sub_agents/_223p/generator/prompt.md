@@ -18,8 +18,8 @@ Generate Python code that models equipment, connections, and relationships from 
 
 ## Data Source
 - **Primary**: `read_grid` — equipment, ducts, pipes, coordinates.
-- **Secondary**: other read-only MCP tools only when `read_grid` is insufficient.
-- ⚠️ **Never call MCP write tools.**
+- **Secondary**: other read-only grid/shared tools only when `read_grid` is insufficient.
+- ⚠️ **Never call write tools.**
 
 ---
 

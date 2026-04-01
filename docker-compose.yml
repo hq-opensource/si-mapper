@@ -1,37 +1,4 @@
 services:
-  si-mapper-mcp:
-    build:
-      context: .
-      dockerfile: mcp_server/server/Dockerfile
-    image: si-mapper-mcp:latest
-    container_name: si-mapper-mcp
-    # network_mode: host removes the need for port mapping
-#    network_mode: host
-    ports:
-      - "8080:8080"
-    env_file:
-      - mcp_server/server/mcp.env
-    profiles:
-      - deploy
-      - build
-
-  mcp-inspector:
-    image: ghcr.io/modelcontextprotocol/inspector:latest
-    container_name: mcp-inspector
-    # Inspector listens on 5173 (UI) and 3000 (Proxy) inside container. 
-    # Current docs say it might use different ports, but host networking exposes them all.
-    # We will access it typically on http://localhost:5173
-#    network_mode: host
-    ports:
-        - "6274:6274"
-        - "6277:6277"
-    environment:
-      - DANGEROUSLY_OMIT_AUTH=true
-    profiles:
-      - deploy
-      - tools
-    depends_on:
-      - si-mapper-mcp
 
   portainer:
     image: portainer/portainer-ce:latest

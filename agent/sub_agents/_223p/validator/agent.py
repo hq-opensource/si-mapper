@@ -17,7 +17,7 @@ Tools
 -----
 - All helpers from ``sub_agents/_223p/tool.py`` (library introspection,
   ontology read/write/execute, prompt reader).
-- Any common MCP/shared tools forwarded via the ``tools`` parameter.
+- Any additional tools forwarded via the ``tools`` parameter.
 - ``exit_loop_level_4`` so the agent can signal clean completion.
 
 Usage (standalone)
@@ -28,7 +28,7 @@ Use the unified runner::
     python -m sub_agents._223p.run validator
 
 See :mod:`sub_agents._223p.run` for all options (``--model``, ``--github-token``,
-``--mcp-server-url``, custom task, etc.).
+custom task, etc.).
 """
 from __future__ import annotations
 
@@ -149,7 +149,7 @@ class OntologyValidatorAgentInternal(LlmAgent):
             exit_loop_level_4,
         ]
 
-        # Merge with any common/MCP tools forwarded by the caller
+        # Merge with any shared/additional tools forwarded by the caller
         all_tools = local_tools + (tools or [])
 
         # Deduplicate by name (keeps first occurrence, which is the local tool)

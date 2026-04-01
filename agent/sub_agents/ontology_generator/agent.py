@@ -10,7 +10,7 @@ Tools
 -----
 - All helpers from ``tools/ontology_tools.py`` (library introspection,
   ontology read/write, prompt reader).
-- Any common MCP/shared tools forwarded via the ``tools`` parameter.
+- Any shared/additional tools forwarded via the ``tools`` parameter.
 - ``exit_generator_success`` — signals successful generation **and**
   persists the ``ONTOLOGY_GENERATION_SUCCESS`` state flag so the sequential
   agent can conditionally run the validator.
@@ -127,7 +127,7 @@ class OntologyGeneratorInternal(LlmAgent):
             exit_generator_failure,
         ]
 
-        # Merge with any common/MCP tools forwarded by the caller
+        # Merge with any shared/additional tools forwarded by the caller
         all_tools = local_tools + (tools or [])
 
         # Deduplicate by name (keeps first occurrence, which is the local tool)

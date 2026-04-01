@@ -28,7 +28,7 @@ Use the unified runner::
     python -m sub_agents._223p.run pipeline
 
 See :mod:`sub_agents._223p.run` for all options (``--model``, ``--github-token``,
-``--mcp-server-url``, custom task, etc.).
+custom task, etc.).
 
 Backward compatibility
 ----------------------
@@ -90,7 +90,7 @@ class Ontology223PSequentialAgent(SequentialAgent):
         Model forwarded to both sub-agents. Defaults to ``_PIPELINE_MODEL``
         (hardcoded in this module).
     tools:
-        Optional list of additional tools (e.g. an MCP toolset) forwarded to
+        Optional list of additional tools (e.g. shared grid tools) forwarded to
         both sub-agents.
     session_id:
         Optional session identifier (passed through for logging purposes).

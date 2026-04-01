@@ -1,3 +1,6 @@
+> [!CAUTION]
+> **Deprecated** — This MCP server is deprecated and will no longer be actively maintained. It may be removed in a future release. Please migrate to the updated solution and avoid starting new integrations against this server.
+
 # MCP Server
 
 This directory contains the Model Context Protocol (MCP) server implementation for the Graphivac HVAC Agent.

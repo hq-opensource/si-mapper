@@ -1,7 +1,7 @@
 """
 Local copy of the edn_to_mutable utility.
 
-This is a standalone copy that does NOT import from mcp_server.
+This is a standalone copy that does NOT import from the server package.
 It recursively converts ImmutableDict/Mapping to standard Python dicts
 and tuples/lists to standard Python lists.
 """

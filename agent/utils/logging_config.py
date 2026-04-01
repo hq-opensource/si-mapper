@@ -25,8 +25,8 @@ def configure_logging() -> logging.Logger:
     warnings.filterwarnings("ignore", category=UserWarning, module="google.adk")
     warnings.filterwarnings("ignore", category=FutureWarning, module="google.api_core")
     warnings.filterwarnings("ignore", category=FutureWarning, module="google.cloud")
-    # warnings.filterwarnings("ignore", message=".*Toolset McpToolset cleanup cancelled.*")
-    # warnings.filterwarnings("ignore", message=".*Error during MCP session cleanup.*")
+    # warnings.filterwarnings("ignore", message=".*Toolset cleanup cancelled.*")
+    # warnings.filterwarnings("ignore", message=".*Error during session cleanup.*")
     
     # Suppress google_genai.types warnings via logging filter
     logging.getLogger("google_genai.types").addFilter(NoFunctionCallWarningFilter())

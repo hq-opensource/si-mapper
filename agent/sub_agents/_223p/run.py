@@ -24,11 +24,10 @@ Usage
 
     # override task, model, credentials
     python -m sub_agents._223p.run generator --model github_copilot/gpt-4o "Generate the ontology"
-    python -m sub_agents._223p.run pipeline --github-token TOKEN --mcp-server-url http://host/mcp/
+    python -m sub_agents._223p.run pipeline --github-token TOKEN
 
 Environment variables (used when the matching CLI flag is omitted)
 ------------------------------------------------------------------
-``MCP_SERVER_URL``   URL of the MCP server (default: http://localhost:8080/mcp/).
 ``GOOGLE_API_KEY``   Google ADK / Gemini API key.
 ``GITHUB_TOKEN``     GitHub Copilot token forwarded to LiteLLM.
 """
@@ -138,9 +137,6 @@ class Ontology223PRunner:
 
     Parameters
     ----------
-    mcp_server_url:
-        URL of the MCP server.  Falls back to ``MCP_SERVER_URL`` env var, then
-        ``http://localhost:8080/mcp/``.
     google_api_key:
         Google ADK / Gemini API key.  Falls back to ``GOOGLE_API_KEY`` env var.
     github_token:
@@ -155,14 +151,10 @@ class Ontology223PRunner:
 
     def __init__(
         self,
-        mcp_server_url: str | None = None,
         google_api_key: str | None = None,
         github_token: str | None = None,
         model_name: str = _STANDALONE_DEFAULT_MODEL,
     ) -> None:
-        self.mcp_server_url = mcp_server_url or os.getenv(
-            "MCP_SERVER_URL", "http://localhost:8080/mcp/"
-        )
         self.google_api_key = google_api_key or os.getenv("GOOGLE_API_KEY")
         self.github_token = github_token or os.getenv("GITHUB_TOKEN")
         self.model_name = model_name
@@ -211,12 +203,7 @@ class Ontology223PRunner:
 
         self._inject_credentials()
 
-        from utils.mcp_utils import create_mcp_toolset
-
-        print(f"[{label}Runner] Connecting to MCP server at {self.mcp_server_url} …")
-        mcp_toolset = create_mcp_toolset(self.mcp_server_url)
-
-        agent = config["factory"](self.model_name, [mcp_toolset])
+        agent = config["factory"](self.model_name, [])
 
         session_service = InMemorySessionService()
         artifact_service = InMemoryArtifactService()
@@ -292,7 +279,6 @@ if __name__ == "__main__":
             "Credentials can also be supplied via environment variables:\n"
             "  GOOGLE_API_KEY  – Google ADK / Gemini API key\n"
             "  GITHUB_TOKEN    – GitHub Copilot token (used by LiteLLM)\n"
-            "  MCP_SERVER_URL  – MCP server URL\n"
         ),
     )
     parser.add_argument(
@@ -316,7 +302,6 @@ if __name__ == "__main__":
     )
     parser.add_argument("--google-api-key", metavar="KEY", default=None)
     parser.add_argument("--github-token", metavar="TOKEN", default=None)
-    parser.add_argument("--mcp-server-url", metavar="URL", default=None)
 
     args = parser.parse_args()
     task_arg = " ".join(args.task) if args.task else None
@@ -326,7 +311,6 @@ if __name__ == "__main__":
 
     asyncio.run(
         Ontology223PRunner(
-            mcp_server_url=args.mcp_server_url,
             google_api_key=args.google_api_key,
             github_token=args.github_token,
             model_name=args.model,
