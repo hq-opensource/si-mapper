@@ -272,14 +272,14 @@ operator is legally responsible for occupant comfort.
 None of them will willingly allow an external party to write arbitrary setpoints to their system
 without a formal agreement and a clear technical boundary.
 The result is that every commercial building enrollment today requires a custom, building-by-building
-negotiation and integration project, estimated at \$5{,}000--\$15{,}000 per building~\cite{DOE_VPP2023}.
-The DOE Virtual Power Plants Liftoff report identifies this directly: ``No industry standardization
+negotiation and integration project \cite{DOE_VPP2025}.
+The DOE Virtual Power Plants Liftoff report identifies that no industry standardization
 exists. Virtual Power Plants vendors have been building their solutions from the ground up, then
 working on a case-by-case basis with utilities to develop customized solutions, resulting in rigid
-systems that can't easily be replicated in new areas''~\cite{DOE_VPP2023}.
+systems that can't easily be replicated in new areas~\cite{DOE_VPP2025}.
 
 \textbf{How an ASHRAE 223P ontology changes the logistics.}
-An ASHRAE 223P semantic model of a building is not a control system replacement --- it is a
+An ASHRAE 223P semantic model of a building is not a control system replacement, it is a
 machine-readable contract that describes what is controllable, how to reach it, and under what
 conditions.
 Consider the operational chain it enables:
@@ -295,7 +295,7 @@ Consider the operational chain it enables:
         point that reports its value.
         The aggregator reads live sensor data by following those references, with no custom
         integration code per building.
-  \item \textbf{Flexibility estimation.} With topology and live telemetry available, an AI
+  \item \textbf{Flexibility estimation.} With topology and live telemetry available, an 
         algorithm can compute how much load the building can shed, for how long, and with what
         thermal lag, before comfort constraints are violated.
         This estimate feeds directly into the aggregator's dispatch optimization.
@@ -303,22 +303,17 @@ Consider the operational chain it enables:
         controllable setpoints (supply air temperature setpoint, fan speed command, cooling
         setpoint).
         When the grid operator sends an OpenADR curtailment signal, the aggregator translates it
-        into targeted BACnet writes at precisely the addresses the ontology specifies --- within
+        into targeted BACnet writes at precisely the addresses the ontology specifies, within
         the boundaries agreed contractually with the building owner.
         The BMS continues to run its reliability logic; the aggregator adjusts only the setpoints
         that were explicitly licensed under the agreement.
 \end{enumerate}
 
-\textbf{The new business model.}
-The ASHRAE 223P model is also the foundation of a scalable commercial agreement.
-An aggregator can offer building owners the following value proposition: ``We will create and
+\textbf{The new business modes.}
+The ASHRAE 223P model can unlock new business modes for aggregators and building owners. For example,
+an aggregator can offer building owners the following value proposition: ``We will create and
 maintain your building's semantic model, provide you with monitoring dashboards and fault detection
 analytics powered by that model, and in exchange, we receive the right to adjust specific setpoints
-within agreed comfort and reliability bounds during grid events.''
-The building owner receives a service (the ontology, the analytics); the aggregator receives
+within agreed comfort and reliability bounds during grid events.'' In this example, 
+the building owner receives a service (the ontology, the analytics); the aggregator receives
 dispatchable capacity; the grid receives a standardized, scalable enrollment path.
-
-This positions SI-Mapper as more than a productivity tool for HVAC engineers.
-It is potentially the foundational automation step in this business model: the tool that creates the
-semantic model at acceptable cost and speed, making the above value exchange economically viable for
-buildings of all sizes rather than only the largest, most resource-rich facilities~\cite{DOE_VPP2025}.

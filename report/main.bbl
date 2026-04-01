@@ -1,0 +1,154 @@
+\begin{thebibliography}{18}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Trenbath et~al.(2022)Trenbath, Meyer, Woldekidan, Maisha, and
+  Harris]{Trenbath2022}
+Kim Trenbath, Ryan Meyer, Korbaga Woldekidan, Kristi Maisha, and Morgan Harris.
+\newblock Commercial building sensors and controls systems: {Barriers, Drivers,
+  and Costs}.
+\newblock Technical Report NREL/TP-6A50-82117, National Renewable Energy
+  Laboratory, Golden, CO, August 2022.
+\newblock URL \url{https://docs.nrel.gov/docs/fy22osti/82117.pdf}.
+\newblock Prepared for the U.S. Department of Energy Building Technologies
+  Office.
+
+\bibitem[{Building Commissioning Association}(2024)]{BCA2024}
+{Building Commissioning Association}.
+\newblock Building commissioning: {Costs and Benefits} (industry guidance).
+\newblock Industry guidance document, 2024.
+\newblock URL \url{https://www.bcxa.org}.
+
+\bibitem[{PingCx}(2024)]{PingCx2024}
+{PingCx}.
+\newblock The hidden costs of manual commissioning in today's complex
+  buildings.
+\newblock Blog post, 2024.
+\newblock URL
+  \url{https://www.pingcx.com/blog/the-hidden-costs-of-manual-commissioning-in-todays-complex-buildings}.
+
+\bibitem[{Envigilance}(2023)]{Envigilance2023}
+{Envigilance}.
+\newblock Building energy monitoring cost.
+\newblock Blog post, 2023.
+\newblock URL
+  \url{https://envigilance.com/blog/building-energy-monitoring-cost/}.
+
+\bibitem[{Access Coins}(2025)]{AccessCoins2025}
+{Access Coins}.
+\newblock Beat the {HVAC} technician shortage.
+\newblock Industry article, republished by {SMACNA}, 2025.
+\newblock URL
+  \url{https://www.smacna.org/news/products-and-services-updates/article/2025/10/09/beat-the-hvac-technician-shortage}.
+
+\bibitem[Wang et~al.(2017)Wang, Brambley, Kim, Somasundaram, and
+  Stevens]{Wang2017}
+Weimin Wang, Michael~R. Brambley, Woohyun Kim, Sriram Somasundaram, and
+  Andrew~J. Stevens.
+\newblock Automated point mapping for building control systems: {Recent}
+  advances and future research needs.
+\newblock \emph{Automation in Construction}, 84:\penalty0 107--124, 2017.
+\newblock \doi{10.1016/j.autcon.2017.09.013}.
+\newblock Available via OSTI ID 1495345.
+
+\bibitem[Perini et~al.(2025)Perini, Antonucci, and Giudice]{Perini2025}
+Marco Perini, Daniele Antonucci, and Rocco Giudice.
+\newblock {BrickLLM}: A {Python} library for generating {Brick}-compliant {RDF}
+  graphs using {LLMs}.
+\newblock \emph{SoftwareX}, 2025.
+\newblock \doi{10.1016/j.softx.2025.102083}.
+\newblock URL
+  \url{https://www.sciencedirect.com/science/article/pii/S2352711025000883}.
+
+\bibitem[{National Renewable Energy Laboratory (NREL)} et~al.(2023){National
+  Renewable Energy Laboratory (NREL)}, {NIST}, {LBNL}, and
+  {PNNL}]{BuildingMOTIF_NREL}
+{National Renewable Energy Laboratory (NREL)}, {NIST}, {LBNL}, and {PNNL}.
+\newblock {BuildingMOTIF}: Building metadata {OnTology} interoperability
+  framework.
+\newblock Open-source software (GitHub), 2023.
+\newblock URL \url{https://github.com/NREL/BuildingMOTIF}.
+
+\bibitem[{Open223 Project Contributors}(2025)]{Open223}
+{Open223 Project Contributors}.
+\newblock {Open223} {ASHRAE} 223p reference models.
+\newblock Open-source model repository, 2025.
+\newblock URL \url{https://models.open223.info/}.
+
+\bibitem[{Willow Technology Corporation}(2025)]{Willow2025}
+{Willow Technology Corporation}.
+\newblock Willow {AI}-driven digital twin platform.
+\newblock Company website and press release (AI Breakthrough Awards, June
+  2025), 2025.
+\newblock URL
+  \url{https://willowinc.com/willow-named-ai-startup-of-the-year-in-8th-annual-ai-breakthrough-awards-program/2548}.
+
+\bibitem[{SkyFoundry}(2024)]{SkySpark}
+{SkyFoundry}.
+\newblock {SkySpark} analytics platform.
+\newblock Product website, 2024.
+\newblock URL \url{https://skyfoundry.com/product}.
+
+\bibitem[{U.S. Department of Energy}(2024)]{DOE_BuildingMOTIF}
+{U.S. Department of Energy}.
+\newblock Semantic modeling and interoperability.
+\newblock DOE Buildings program page, 2024.
+\newblock URL
+  \url{https://www.energy.gov/eere/buildings/semantic-modeling-and-interoperability}.
+
+\bibitem[{Wood Mackenzie}(2025)]{WoodMac2025}
+{Wood Mackenzie}.
+\newblock 2025 {North America} virtual power plant market report.
+\newblock Technical report, Wood Mackenzie, September 2025.
+\newblock URL
+  \url{https://www.woodmac.com/press-releases/virtual-power-plant-capacity-expands-13.7-year-over-year-to-reach-37.5-gw}.
+
+\bibitem[{RMI (Rocky Mountain Institute)}(2025)]{RMI_VP3_2025}
+{RMI (Rocky Mountain Institute)}.
+\newblock {VP3} progress report: From awareness to action.
+\newblock Technical report, Rocky Mountain Institute / Virtual Power Plant
+  Partnership, April 2025.
+\newblock URL
+  \url{https://rmi.org/insight/vp3-progress-report-from-awareness-to-action/}.
+
+\bibitem[{Smart Electric Power Alliance (SEPA)} and {NC Clean Energy Technology
+  Center}(2025)]{SEPA_NCCETC2025}
+{Smart Electric Power Alliance (SEPA)} and {NC Clean Energy Technology Center}.
+\newblock 50 states of virtual power plants and supporting distributed energy
+  resources: 2024 state policy snapshot.
+\newblock Technical report, SEPA / NC Clean Energy Technology Center, February
+  2025.
+\newblock URL
+  \url{https://sepapower.org/resource/50-states-of-virtual-power-plant-and-supporting-distributed-energy-resources-2024-state-policy-snapshot/}.
+
+\bibitem[{California Energy Commission}(2024)]{CEC_EPRI2024}
+{California Energy Commission}.
+\newblock Virtual power plant approaches for demand flexibility ({VPP-FLEX}),
+  grant {GFO-23-309}.
+\newblock Grant award announcement, 2024.
+\newblock URL
+  \url{https://www.energy.ca.gov/solicitations/2024-03/gfo-23-309-virtual-power-plant-approaches-demand-flexibility-vpp-flex}.
+
+\bibitem[{U.S. Department of Energy}(2025)]{DOE_VPP2025}
+{U.S. Department of Energy}.
+\newblock Pathways to commercial liftoff: {Virtual Power Plants} 2025 update.
+\newblock Technical report, U.S. Department of Energy, Office of Technology
+  Transitions, January 2025.
+\newblock URL
+  \url{https://climateprogramportal.org/wp-content/uploads/2025/06/LIFTOFF_DOE_VPP_2025_Update.pdf}.
+
+\bibitem[Sivasubramaniam et~al.(2024)Sivasubramaniam, Osei-Akoto, Zhang,
+  Stockinger, and Fuerst]{Sivasubramaniam2024}
+Sithursan Sivasubramaniam, Cedric Osei-Akoto, Yi~Zhang, Kurt Stockinger, and
+  Jonathan Fuerst.
+\newblock {SM3-Text-to-Query}: Synthetic multi-model medical text-to-query
+  benchmark.
+\newblock \emph{arXiv preprint arXiv:2411.05521}, November 2024.
+\newblock URL \url{https://arxiv.org/abs/2411.05521}.
+\newblock Benchmarks LLM text-to-query performance across Cypher, SPARQL, and
+  SQL; finds LLMs achieve higher accuracy on Cypher than SPARQL.
+
+\end{thebibliography}
