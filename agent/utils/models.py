@@ -4,7 +4,14 @@ from typing import Optional, Union, Any
 import uuid
 import os
 
-# New import for LiteLLM support
+# Silence the "Provider List: …" banner LiteLLM prints on every call
+try:
+    import litellm as _litellm
+    _litellm.suppress_debug_info = True
+except ImportError:
+    _litellm = None  # type: ignore[assignment]
+
+# LiteLLM ADK wrapper
 try:
     from google.adk.models.lite_llm import LiteLlm
 except ImportError:
