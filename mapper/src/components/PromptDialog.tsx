@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { FolderPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -49,6 +50,7 @@ export function PromptDialog({
     }, [isOpen, defaultValue]);
 
     if (!isVisible && !isOpen) return null;
+    if (typeof document === 'undefined') return null;
 
     const handleSubmit = (e?: React.FormEvent) => {
         e?.preventDefault();
@@ -58,7 +60,7 @@ export function PromptDialog({
         }
     };
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
@@ -73,7 +75,7 @@ export function PromptDialog({
             <form
                 onSubmit={handleSubmit}
                 className={cn(
-                    "relative bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border border-white/20 dark:border-zinc-800 rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl transform transition-all duration-300 ease-out",
+                    "relative bg-[var(--background)] border border-[var(--muted-foreground)]/20 rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl transform transition-all duration-300 ease-out",
                     isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"
                 )}
             >
@@ -119,6 +121,7 @@ export function PromptDialog({
                     </div>
                 </div>
             </form>
-        </div>
+        </div>,
+        document.body
     );
 }
