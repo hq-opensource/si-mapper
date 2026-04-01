@@ -40,7 +40,7 @@ Virtual Power Plant sector.
 \subsection{The BACnet Point Mapping Problem}
 \label{subsec:bacnet-problem}
 
-A Building Automation System (BAS) exposes operational data through a hierarchy of \emph{points}---
+A Building Automation System (BAS) exposes operational data through a hierarchy of \emph{points}, 
 individual sensors, actuators, setpoints, alarms, and status flags.
 In BACnet (the dominant open protocol for commercial building controls), each point is a typed object
 (Analog Inputs, Binary Outputs, Analog Values, etc.)\ with a unique address on the network.
@@ -50,14 +50,14 @@ campus facility may have tens of thousands~\cite{Trenbath2022}.
 The \emph{mapping problem} is this: a raw list of BACnet points contains no standard information about
 what physical equipment each point belongs to, what role it plays in the system, or how that equipment
 connects to other components.
-A point named \texttt{AHU-1.SA-T} tells a human engineer ``probably supply air temperature on
+A point named AHU-1.SA-T tells a human engineer ``probably supply air temperature on
 Air Handling Unit 1,'' but only if the engineer already knows the naming convention used by that
 particular BMS installer.
 It is common to find conventions that differ between contractors, between projects, and even between
 systems within the same building.
 
-Reconstructing the full picture of the building---which points belong to which equipment, what each
-point means, and how the equipment connects into a complete HVAC system---requires reading as-built
+Reconstructing the full picture of the building, which points belong to which equipment, what each
+point means, and how the equipment connects into a complete HVAC system, requires reading as-built
 HVAC drawings, interrogating BMS programming, and applying expert engineering judgment.
 This process is manual, time-consuming, and dependent on domain expertise.
 
@@ -106,7 +106,7 @@ Energy performance drift from poor commissioning
   & \cite{PingCx2024} \\
 \addlinespace
 First-year unplanned expenses (case study school)
-  & \$175{,}000---nearly equal to original commissioning cost
+  & \$175{,}000, nearly equal to original commissioning cost
   & \cite{PingCx2024} \\
 \addlinespace
 HVAC technician shortage (2024--2025)
@@ -122,19 +122,16 @@ first-year expenses due to inadequate point documentation, nearly doubling the e
 commissioning phase~\cite{PingCx2024}.
 According to NREL~\cite{Trenbath2022}, complete BAS installation averages \$7.76 per square foot
 across the United States, with the legacy systems integration premium adding a further 20 to 40
-percent on retrofit projects~\cite{Envigilance2023}.
+percent on retrofit projects~\cite{Envigilance2023} (data from 2022 and 2023).
 
 Manual approaches are also incomplete by design.
 Industry practice typically tests only 10 to 20 percent of terminal units during commissioning~\cite{PingCx2024};
 every 10 percent reduction in testing coverage correlates to approximately a 6 to 8 percent increase
 in post-occupancy issues.
 The result is a pervasive, chronic problem: buildings begin their operational life with
-under-documented, partially verified control systems, and the cost of correction grows over time.
-
-Industry practitioners report per-point costs of \$50--\$200 for full commissioning including point
-mapping, though exact figures vary by project type, contractor, and system complexity.
+under-documented, partially verified control systems, and the cost of correction grows over time. 
 Wang et al.~\cite{Wang2017} describe manual point mapping as ``labor intensive and costly, presenting
-a major impediment to innovations in building control''---validating the scale of the problem even
+a major impediment to innovations in building control'', validating the scale of the problem even
 where precise figures are contractor-dependent.
 
 \subsection{The Research Gap and Emerging Solutions}
@@ -245,38 +242,83 @@ modulated to respond to grid signals, shifting load away from peak demand period
 In aggregate, this flexibility represents enormous potential grid capacity.
 
 The Virtual Power Plants market is growing rapidly.
-North American Virtual Power Plants programs totaled 37.5\,GW of flexible behind-the-meter capacity as of 2025, up
-approximately 14 percent from 2024, with active deployments rising more than 33 percent in the same
-period~\cite{WoodMac2025}.
+North American Virtual Power Plants programs totaled 37.5\,GW of flexible behind-the-meter capacity
+as of 2025, up approximately 14 percent from 2024, with active deployments rising more than 33
+percent in the same period~\cite{WoodMac2025}.
 Policy support is accelerating: ten state legislatures introduced Virtual Power Plants bills in
 2024~\cite{RMI_VP3_2025,SEPA_NCCETC2025}; Massachusetts utilities are implementing a
-\$50\,million Grid Services Compensation Fund to promote non-wire alternatives by compensating
-dispatchable distributed energy resources and flexible loads~\cite{RMI_VP3_2025}; and the
-California Energy Commission awarded a \$2\,million EPRI grant specifically to demonstrate Virtual Power Plantss
-for commercial buildings including HVAC controls~\cite{CEC_EPRI2024}.
+\$50\,million Grid Services Compensation Fund to promote non-wire alternatives~\cite{RMI_VP3_2025};
+and the California Energy Commission awarded a \$2\,million EPRI grant specifically to demonstrate
+Virtual Power Plants for commercial buildings including HVAC controls~\cite{CEC_EPRI2024}.
 
-Despite this growth, the original DOE Virtual Power Plants Liftoff report identifies a critical structural barrier:
-``No industry standardization exists. Virtual Power Plants vendors have been building their solutions from the ground up, then working on a case-by-case
-basis with utilities to develop customized solutions, resulting in rigid systems that can't easily
-be replicated in new areas''~\cite{DOE_VPP2023}.
+\textbf{How aggregators operate today.}
+Two types of aggregators participate in these programs.
+\emph{Hardware aggregators} manufacture controllable devices (smart thermostats, batteries, EV
+chargers) and aggregate their own installed base into a dispatchable resource portfolio.
+\emph{Software aggregators} act as protocol proxies, connecting heterogeneous devices from
+multiple vendors under a single management layer.
+Both types sell capacity and demand response services to utilities and grid operators, who dispatch
+them using standardized signals such as OpenADR or IEEE~2030.5.
+This model works efficiently for residential assets and fleets of identical devices because the
+aggregator controls the endpoint hardware and already knows its capabilities.
 
-The barrier is technical and it is the same one described throughout this section.
-The chain of causality is straightforward:
+\textbf{Commercial buildings are structurally different.}
+A commercial building's HVAC system is not a device the aggregator manufactured.
+It was designed by an engineering firm, installed by a mechanical contractor, and programmed by a
+BMS provider (Siemens, Johnson Controls, ABB, Niagara, or equivalent).
+Each of these parties has a legitimate interest in protecting the reliability of the system: the BMS
+provider guarantees uptime; the commissioning engineer designed the control sequences; the building
+operator is legally responsible for occupant comfort.
+None of them will willingly allow an external party to write arbitrary setpoints to their system
+without a formal agreement and a clear technical boundary.
+The result is that every commercial building enrollment today requires a custom, building-by-building
+negotiation and integration project, estimated at \$5{,}000--\$15{,}000 per building~\cite{DOE_VPP2023}.
+The DOE Virtual Power Plants Liftoff report identifies this directly: ``No industry standardization
+exists. Virtual Power Plants vendors have been building their solutions from the ground up, then
+working on a case-by-case basis with utilities to develop customized solutions, resulting in rigid
+systems that can't easily be replicated in new areas''~\cite{DOE_VPP2023}.
+
+\textbf{How an ASHRAE 223P ontology changes the logistics.}
+An ASHRAE 223P semantic model of a building is not a control system replacement --- it is a
+machine-readable contract that describes what is controllable, how to reach it, and under what
+conditions.
+Consider the operational chain it enables:
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
-  \item Building HVAC system data is not machine-readable in a standard form.
-  \item Each building requires custom integration work to connect to a Virtual Power Plants platform.
-  \item Custom integration costs \$5{,}000--\$15{,}000 per building, or more for complex facilities.
-  \item High per-building cost prevents Virtual Power Plants aggregators from enrolling the thousands of buildings
-        needed for reliable grid capacity.
-  \item Without scale, Virtual Power Plants programs cannot deliver the consistent grid services that utilities require.
+  \item \textbf{Asset discovery.} The ontology declares every controllable component (fans, coils,
+        VAV boxes, dampers) as a typed entity with its position in the HVAC topology.
+        An aggregator can query it to answer ``what loads does this building contain and what are
+        their nominal capacities?'' without a site visit or manual documentation review.
+  \item \textbf{Live telemetry access.} ASHRAE 223P's \emph{external reference} mechanism links
+        each semantic property directly to its BACnet object address.
+        A supply air temperature sensor in the model carries the address of the physical BACnet
+        point that reports its value.
+        The aggregator reads live sensor data by following those references, with no custom
+        integration code per building.
+  \item \textbf{Flexibility estimation.} With topology and live telemetry available, an AI
+        algorithm can compute how much load the building can shed, for how long, and with what
+        thermal lag, before comfort constraints are violated.
+        This estimate feeds directly into the aggregator's dispatch optimization.
+  \item \textbf{Controlled dispatch.} The ontology also identifies the BACnet addresses of
+        controllable setpoints (supply air temperature setpoint, fan speed command, cooling
+        setpoint).
+        When the grid operator sends an OpenADR curtailment signal, the aggregator translates it
+        into targeted BACnet writes at precisely the addresses the ontology specifies --- within
+        the boundaries agreed contractually with the building owner.
+        The BMS continues to run its reliability logic; the aggregator adjusts only the setpoints
+        that were explicitly licensed under the agreement.
 \end{enumerate}
 
-If buildings had ASHRAE 223P semantic models, Virtual Power Plants platforms could automatically discover what
-controllable loads exist, query their current state, and dispatch them, all without a custom integration project.
-The semantic model becomes the interoperability layer that eliminates step~2 from the chain above.
+\textbf{The new business model.}
+The ASHRAE 223P model is also the foundation of a scalable commercial agreement.
+An aggregator can offer building owners the following value proposition: ``We will create and
+maintain your building's semantic model, provide you with monitoring dashboards and fault detection
+analytics powered by that model, and in exchange, we receive the right to adjust specific setpoints
+within agreed comfort and reliability bounds during grid events.''
+The building owner receives a service (the ontology, the analytics); the aggregator receives
+dispatchable capacity; the grid receives a standardized, scalable enrollment path.
 
 This positions SI-Mapper as more than a productivity tool for HVAC engineers.
-It is potentially a piece of critical infrastructure for the energy transition: the automation layer
-that creates the semantic data required to connect commercial building flexibility to the grid at
-scale~\cite{DOE_VPP2025}.
+It is potentially the foundational automation step in this business model: the tool that creates the
+semantic model at acceptable cost and speed, making the above value exchange economically viable for
+buildings of all sizes rather than only the largest, most resource-rich facilities~\cite{DOE_VPP2025}.
