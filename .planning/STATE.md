@@ -127,3 +127,4 @@ progress:
 - Phase 12 added: Session persistence and management with database backend
 - Phase 13 added: Migrate OntologyGenerator and OntologyValidator sub-agents to master agent skills
 - Phase 14 added: Write comprehensive research report on SI-Mapper development
+- Phase 15 added: Refactor coding skills and standardize agent architecture
