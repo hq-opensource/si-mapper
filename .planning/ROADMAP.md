@@ -76,6 +76,16 @@
 | R14-05 | Phase 14 | Planned |
 | R14-06 | Phase 14 | Planned |
 | R14-07 | Phase 14 | Planned |
+| P15-01 | Phase 15 | Planned |
+| P15-02 | Phase 15 | Planned |
+| P15-03 | Phase 15 | Planned |
+| P15-04 | Phase 15 | Planned |
+| P15-05 | Phase 15 | Planned |
+| P15-06 | Phase 15 | Planned |
+| P15-07 | Phase 15 | Planned |
+| P15-08 | Phase 15 | Planned |
+| P15-09 | Phase 15 | Planned |
+| P15-10 | Phase 15 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -236,3 +246,15 @@ Plans:
 - [ ] 14-02-PLAN.md — Sections 1 (Introduction), 2 (Problem), 3 (Solution)
 - [ ] 14-03-PLAN.md — Section 4 (Implementation) + Section 5 (Results placeholder)
 - [ ] 14-04-PLAN.md — Section 6 (Conclusions) + final compilation verification
+
+### Phase 15: Refactor coding skills and standardize agent architecture
+
+**Goal:** Delete dead sub_agents/ code, migrate root 223p/ into agent/223p/ with session-scoped archives, implement three-write pattern for real-time CodeWindow visibility, add extract_lessons tool, and audit both ontology skills for correct paths and enhanced workflows.
+**Requirements**: [P15-01, P15-02, P15-03, P15-04, P15-05, P15-06, P15-07, P15-08, P15-09, P15-10]
+**Depends on:** Phase 14
+**Plans:** 3 plans
+
+Plans:
+- [ ] 15-01-PLAN.md — Delete sub_agents/ directory + clean up stale tests
+- [ ] 15-02-PLAN.md — Migrate 223p/ files + update path constants + three-write pattern + extract_lessons tool
+- [ ] 15-03-PLAN.md — Audit and enhance skill-ontology-generation and skill-ontology-validation
