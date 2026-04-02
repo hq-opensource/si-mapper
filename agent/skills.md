@@ -139,7 +139,7 @@ This skill reads the current grid state, looks up the relevant library classes, 
 - Code samples are unreadable
 
 ### Tools used
-`read_internal_grid`, `search_class_mapping`, `scan_python_files_filtered`, `read_prompt`, `write_ontology`, `exit_generator_success`, `exit_generator_failure`
+`read_internal_grid`, `search_class_mapping`, `scan_python_files_filtered`, `read_prompt`, `write_ontology`, `extract_lessons`, `exit_generator_success`, `exit_generator_failure`
 
 ---
 
