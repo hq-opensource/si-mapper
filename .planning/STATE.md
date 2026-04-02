@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 15
 status: unknown
-last_updated: "2026-04-02T14:28:41.756Z"
+last_updated: "2026-04-02T14:41:03.307Z"
 progress:
   total_phases: 15
-  completed_phases: 8
+  completed_phases: 9
   total_plans: 29
-  completed_plans: 28
+  completed_plans: 29
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 15
-- **Overall Completion:** [██████████] 97%
-- **Active Plan:** 15-02 (complete)
-- **Last Completed:** 15-02 (migrated all 223p assets to agent/223p/; implemented three-write pattern in write_ontology and execute_ontology; added extract_lessons tool; deleted root 223p/ and skill-read-code/; 21 tests pass)
+- **Overall Completion:** [██████████] 100%
+- **Active Plan:** 15-03 (complete)
+- **Last Completed:** 15-03 (audited and updated both ontology SKILL.md files: LESSONS.md Step 0, BACnet custom_fields awareness, extract_lessons HITL section in generation skill; skill-read-code removed and paths fixed in both skills)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -84,10 +84,12 @@ progress:
 - **Decision (15-02):** TTL_OUTPUT_DIR = _223P_DIR — ontology.ttl written as agent/223p/ontology.ttl directly, not a subdirectory.
 - **Decision (15-02):** Three-write pattern established: write_ontology and execute_ontology write to scratch + session_N archive + mapper/uploads/ for real-time frontend visibility.
 - **Decision (15-02):** Session ID auto-detects from disk (len(existing_sessions)+1) to avoid drift after state reset.
+- **Decision (15-03):** skill-read-code mention removed even from "do not use" warning text in Step 0 to satisfy grep-count acceptance criterion (0 matches required).
+- **Decision (15-03):** BACnet custom_fields bullet placed in Equipment modeling guidelines (not Sensors) since custom_fields is a key in components returned by read_internal_grid.
 
 ### Next Steps
 
-1. Phase 15 plan 15-02 complete — agent/223p/ populated, three-write pattern, extract_lessons wired
+1. Phase 15 complete — all 3 plans done: 223p migration, extract_lessons, skill audits
 
 ### Session Log
 
@@ -117,6 +119,7 @@ progress:
 - **2026-03-25:** Completed 14-03-PLAN.md. Wrote Section 4 (Implementation, 305 lines): 9-iteration experiment narrative, final architecture with 2 diagram includes, 6-row skills table, 10-category tools table, key technology decisions. Wrote Section 5 (Results placeholder, 120 lines, 31 \\todo{} markers): 5 subsections, 4 booktabs tables, screenshot placeholders. Decision: Tools table uses 10 categories covering all ~25 tools; skill-control-points excluded (placeholder not fully defined). 0 LaTeX compile errors.
 - **2026-03-25:** Completed 14-04-PLAN.md. Wrote Section 6 (Conclusions, 129 lines): Summary of Contributions (4 paragraphs synthesizing problem/approach/dev-process/tech-stack), Limitations (model dependency, validation scope, domain specificity, ASHRAE 223P maturity), Future Work (production validation, multi-system, VPP pilot, automated metrics, multi-language). Full 18-page PDF compiled with 0 LaTeX errors. Phase 14 complete — research report draft-complete pending experiment data.
 - **2026-04-02:** Completed 15-02-PLAN.md. Migrated all 223p assets to agent/223p/; implemented three-write pattern for write_ontology and execute_ontology; added extract_lessons tool wired into master agent; deleted root 223p/ (432 files) and skill-read-code/. 21 tests pass (15 new + 6 existing).
+- **2026-04-02:** Completed 15-03-PLAN.md. Audited and updated skill-ontology-generation/SKILL.md (LESSONS.md Step 0, BACnet custom_fields, extract_lessons HITL section, path fix) and skill-ontology-validation/SKILL.md (removed 3 skill-read-code refs, updated Preparation, fixed paths). Phase 15 complete.
 
 ## Roadmap Evolution
 

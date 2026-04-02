@@ -252,7 +252,7 @@ Plans:
 **Goal:** Delete dead sub_agents/ code, migrate root 223p/ into agent/223p/ with session-scoped archives, implement three-write pattern for real-time CodeWindow visibility, add extract_lessons tool, and audit both ontology skills for correct paths and enhanced workflows.
 **Requirements**: [P15-01, P15-02, P15-03, P15-04, P15-05, P15-06, P15-07, P15-08, P15-09, P15-10]
 **Depends on:** Phase 14
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 15-01-PLAN.md — Delete sub_agents/ directory + clean up stale tests
