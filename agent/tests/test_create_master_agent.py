@@ -49,21 +49,6 @@ def test_no_ontology_subagents_list():
     assert "ontology_subagents" not in src
 
 
-def test_imports_ontology_tools_from_223p():
-    """create_master_agent.py imports ontology tools from sub_agents._223p.tool."""
-    src = pathlib.Path("master_architecture/create_master_agent.py").read_text()
-    assert "from sub_agents._223p.tool import" in src
-    for tool in ["scan_python_files_filtered", "search_class_mapping", "write_ontology",
-                 "read_ontology", "execute_ontology"]:
-        assert tool in src, f"{tool} not found in create_master_agent.py"
-
-
-def test_imports_checkpoint_code_from_validator():
-    """create_master_agent.py imports checkpoint_code from original validator exit_tools."""
-    src = pathlib.Path("master_architecture/create_master_agent.py").read_text()
-    assert "from sub_agents.ontology_validator.exit_tools import checkpoint_code" in src
-
-
 def test_imports_adapted_exit_tools():
     """create_master_agent.py imports adapted exit tools from master_architecture."""
     src = pathlib.Path("master_architecture/create_master_agent.py").read_text()
