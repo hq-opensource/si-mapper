@@ -107,6 +107,18 @@ This skill reads BMS CSV files, identifies which points belong to which equipmen
 
 ---
 
+## skill-ontology-lessons
+
+**File:** `skills/skill-ontology-lessons/SKILL.md`
+**Purpose:** Curated error-to-resolution lessons from past ontology generation sessions. Read by both `skill-ontology-generation` (step 5) and `skill-ontology-validation` (preparation) before any code is written or fixed.
+
+This skill is the living knowledge base for ontology coding. It is updated via the `extract_lessons` HITL-gated tool when the user explicitly asks to distill lessons from session iteration archives. The 6 categories are: Imports, Instantiation pattern, Connection wiring, Sensor API, Serialization, Structural approach.
+
+### Tools used
+`extract_lessons` (write path, HITL-gated)
+
+---
+
 ## skill-ontology-generation
 
 **File:** `skills/skill-ontology-generation/SKILL.md`
@@ -151,7 +163,7 @@ This skill reads the current grid state, looks up the relevant library classes, 
 This skill runs after `skill-ontology-generation`. It enters a fix loop: read → execute → analyze errors → fix → write → checkpoint → repeat, until the file runs cleanly and produces a valid TTL.
 
 ### Workflow
-1. Read `agent/223p/LESSONS.md` for error-resolution lessons from previous sessions (if empty or absent, proceed without it)
+1. Read `agent/skills/skill-ontology-lessons/SKILL.md` for error-resolution lessons from previous sessions (if empty or absent, proceed without it)
 2. Read the current `ontology.py` via `read_ontology`
 3. Execute via `execute_ontology` — capture stdout, stderr, return code
 4. If clean and TTL produced → read the TTL file content, call `exit_validator_success(code=..., ttl_content=..., summary=...)`
@@ -165,7 +177,7 @@ This skill runs after `skill-ontology-generation`. It enters a fix loop: read �
 - `checkpoint_code` is mandatory after every `write_ontology` call
 
 ### Stop conditions (call `exit_validator_failure`)
-- `agent/223p/LESSONS.md` is unreadable and no error-resolution context is available — proceed best-effort but log the limitation
+- `agent/skills/skill-ontology-lessons/SKILL.md` is unreadable and no error-resolution context is available — proceed best-effort but log the limitation
 - `read_ontology` returns empty or missing file
 - `search_class_mapping` returns empty for known class names
 - Same error persists after 10 consecutive fix attempts

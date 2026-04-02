@@ -68,7 +68,7 @@ Fail immediately (no text response) if any of the following:
 2. **Class lookup** — Call `search_class_mapping(keywords=[<class names from step 1>])` to find which library file each class lives in. Note the `path` field for each match.
 3. **Library source** — Call `scan_python_files_filtered` using the `scan_dir` field from `search_class_mapping` results and the class name keywords to read the actual class source. `scan_dir` is the absolute path to the directory in the venv where the class file lives — use it directly. No full catalog dump needed.
 4. **Samples** — Call `scan_python_files_filtered` on `agent/223p/ref/code` with the same class name keywords to find relevant reference implementations.
-5. **Read lessons** — Read `agent/skills/skill-ontology-lessons/SKILL.md` using the Read tool. Apply every error-to-resolution lesson listed there to your generation plan before writing any code. If the file is empty or absent, proceed without it.
+5. **Read lessons** —Load the skill `skill-ontology-lessons` and apply every error-to-resolution lesson listed there to your generation plan before writing any code. If the file is empty or absent, proceed without it.
 6. **Plan** — Outline entities, connections, and spatial hierarchy.
 7. **Generate** — Write the Python ontology code.
 8. **Validate** — Confirm output is valid, executable Python using `bob`/`scratch`.
