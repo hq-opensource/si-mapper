@@ -18,12 +18,11 @@ from tools.internal_grid_tools import (
 from tools.capture_frontend_state_tool import capture_frontend_state_tool
 from tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
 from tools.ontology_tools import (
-    scan_python_files_filtered,
+    read_python_files,
+    scan_python_folder,
     search_class_mapping,
     write_ontology,
-    read_ontology,
     execute_ontology,
-    read_prompt,
     extract_lessons,
 )
 from tools.ontology_exit_tools import (
@@ -85,13 +84,12 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         update_component_metadata_batch,
         capture_frontend_state_tool,
         load_ttl_to_neo4j_tool,
-        # Ontology tools (previously in sub-agents, now direct)
-        scan_python_files_filtered,
+        # Ontology tools
+        read_python_files,
+        scan_python_folder,
         search_class_mapping,
         write_ontology,
-        read_ontology,
         execute_ontology,
-        read_prompt,
         extract_lessons,
         # Ontology exit/checkpoint tools
         checkpoint_code,

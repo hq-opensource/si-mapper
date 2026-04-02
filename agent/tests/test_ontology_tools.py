@@ -3,12 +3,14 @@ Unit tests for agent/tools/ontology_tools.py.
 
 Covers:
 - Path constants pointing to agent/223p/
+- read_python_files: absolute path, project-relative path, missing file, multi-path
+- scan_python_folder: keyword filtering, missing dir error
 - Three-write pattern for write_ontology (scratch + session archive + uploads)
 - Session ID auto-detection from disk
 - Zero-padded archive filename
 - Three-write pattern for execute_ontology TTL
-- extract_lessons function (returns session iteration files as JSON)
-- create_master_agent.py imports extract_lessons
+- extract_lessons function (returns session iteration files + current skill content)
+- create_master_agent.py wiring (read_python_files, scan_python_folder, extract_lessons)
 """
 from __future__ import annotations
 
@@ -43,7 +45,8 @@ from tools.ontology_tools import (  # noqa: E402
     PYTHON_ITERATIONS_DIR,
     TTL_ITERATIONS_DIR,
     LESSONS_FILE,
-    _PROMPT_MD,
+    read_python_files,
+    scan_python_folder,
     write_ontology,
     execute_ontology,
     extract_lessons,
@@ -109,11 +112,92 @@ def test_lessons_file_ends_with_skill_ontology_lessons():
     )
 
 
-def test_prompt_md_ends_with_ref_code():
-    """_PROMPT_MD must point to agent/223p/ref/code/prompt.md."""
-    assert _PROMPT_MD.replace("\\", "/").endswith("agent/223p/ref/code/prompt.md"), (
-        f"Expected _PROMPT_MD to end with 'agent/223p/ref/code/prompt.md', got: {_PROMPT_MD}"
-    )
+# ---------------------------------------------------------------------------
+# read_python_files
+# ---------------------------------------------------------------------------
+
+def test_read_python_files_absolute_path(tmp_path):
+    """read_python_files reads a file given an absolute path."""
+    f = tmp_path / "test.py"
+    f.write_text("print('hello')", encoding="utf-8")
+
+    result = json.loads(read_python_files([str(f)]))
+    assert result[str(f)]["content"] == "print('hello')"
+    assert "error" not in result[str(f)]
+
+
+def test_read_python_files_project_relative_path(tmp_path):
+    """read_python_files resolves project-relative paths (e.g. 'agent/223p/ontology.py')."""
+    # Point _PROJECT_ROOT at tmp_path, create the expected relative file
+    rel = "agent/223p/ontology.py"
+    target = tmp_path / "agent" / "223p" / "ontology.py"
+    target.parent.mkdir(parents=True)
+    target.write_text("# ontology", encoding="utf-8")
+
+    with patch("tools.ontology_tools._PROJECT_ROOT", str(tmp_path)):
+        result = json.loads(read_python_files([rel]))
+
+    assert result[rel]["content"] == "# ontology"
+    assert "error" not in result[rel]
+
+
+def test_read_python_files_missing_file(tmp_path):
+    """read_python_files returns an error entry for files that do not exist."""
+    missing = str(tmp_path / "does_not_exist.py")
+    result = json.loads(read_python_files([missing]))
+    assert "error" in result[missing]
+    assert result[missing]["content"] == ""
+
+
+def test_read_python_files_multiple_paths(tmp_path):
+    """read_python_files reads multiple files in one call."""
+    f1 = tmp_path / "a.py"
+    f2 = tmp_path / "b.py"
+    f1.write_text("aaa", encoding="utf-8")
+    f2.write_text("bbb", encoding="utf-8")
+
+    result = json.loads(read_python_files([str(f1), str(f2)]))
+    assert result[str(f1)]["content"] == "aaa"
+    assert result[str(f2)]["content"] == "bbb"
+
+
+def test_read_python_files_handles_non_py_files(tmp_path):
+    """read_python_files reads non-.py files (e.g. prompt.md) without error."""
+    md = tmp_path / "prompt.md"
+    md.write_text("# prompt content", encoding="utf-8")
+
+    result = json.loads(read_python_files([str(md)]))
+    assert result[str(md)]["content"] == "# prompt content"
+
+
+# ---------------------------------------------------------------------------
+# scan_python_folder
+# ---------------------------------------------------------------------------
+
+def test_scan_python_folder_keyword_filtering(tmp_path):
+    """scan_python_folder returns only files whose content contains a keyword."""
+    (tmp_path / "fan.py").write_text("class Fan: pass", encoding="utf-8")
+    (tmp_path / "coil.py").write_text("class Coil: pass", encoding="utf-8")
+
+    result = json.loads(scan_python_folder(str(tmp_path), ["fan"]))
+    assert "fan.py" in result["files"]
+    assert "coil.py" not in result["files"]
+
+
+def test_scan_python_folder_missing_dir(tmp_path):
+    """scan_python_folder returns an error when the directory does not exist."""
+    missing = str(tmp_path / "no_such_dir")
+    result = json.loads(scan_python_folder(missing, ["anything"]))
+    assert "error" in result
+    assert result["files"] == {}
+
+
+def test_scan_python_folder_rejects_file_path(tmp_path):
+    """scan_python_folder returns an error when given a file path instead of a dir."""
+    f = tmp_path / "not_a_dir.py"
+    f.write_text("x = 1")
+    result = json.loads(scan_python_folder(str(f), ["x"]))
+    assert "error" in result
 
 
 # ---------------------------------------------------------------------------
@@ -254,6 +338,24 @@ def test_extract_lessons_returns_session_files(tmp_path):
     assert result["total_files"] == 2
 
 
+def test_extract_lessons_includes_current_skill_content(tmp_path):
+    """extract_lessons returns current_skill_content from skill-ontology-lessons/SKILL.md."""
+    skill_file = tmp_path / "SKILL.md"
+    skill_file.write_text("# existing lessons", encoding="utf-8")
+
+    iterations = tmp_path / "iterations"
+    iterations.mkdir()
+
+    with (
+        patch("tools.ontology_tools.LESSONS_FILE", str(skill_file)),
+        patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(iterations)),
+    ):
+        result_json = extract_lessons()
+
+    result = json.loads(result_json)
+    assert result["current_skill_content"] == "# existing lessons"
+
+
 def test_extract_lessons_empty_dir(tmp_path):
     """extract_lessons returns empty result when no iterations exist."""
     with patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(tmp_path)):
@@ -281,11 +383,23 @@ def test_extract_lessons_nonexistent_dir(tmp_path):
 # Master agent wiring
 # ---------------------------------------------------------------------------
 
-def test_create_master_agent_imports_extract_lessons():
-    """create_master_agent.py must import and wire extract_lessons."""
+def test_create_master_agent_wires_new_tools():
+    """create_master_agent.py must import read_python_files, scan_python_folder, extract_lessons."""
     src = (
         Path(__file__).parent.parent / "master_architecture" / "create_master_agent.py"
     ).read_text(encoding="utf-8")
-    assert "extract_lessons" in src, (
-        "extract_lessons not found in create_master_agent.py"
+    assert "read_python_files" in src, "read_python_files not found in create_master_agent.py"
+    assert "scan_python_folder" in src, "scan_python_folder not found in create_master_agent.py"
+    assert "extract_lessons" in src, "extract_lessons not found in create_master_agent.py"
+
+
+def test_create_master_agent_does_not_import_removed_tools():
+    """create_master_agent.py must not import the removed read_ontology, read_prompt, scan_python_files_filtered."""
+    src = (
+        Path(__file__).parent.parent / "master_architecture" / "create_master_agent.py"
+    ).read_text(encoding="utf-8")
+    assert "read_ontology" not in src, "Removed tool read_ontology still in create_master_agent.py"
+    assert "read_prompt" not in src, "Removed tool read_prompt still in create_master_agent.py"
+    assert "scan_python_files_filtered" not in src, (
+        "Removed tool scan_python_files_filtered still in create_master_agent.py"
     )

@@ -128,9 +128,9 @@ This skill reads the current grid state, looks up the relevant library classes, 
 
 ### Workflow
 1. **Grid** — Call `read_internal_grid` to get all components and coordinates. Extract equipment class names (e.g. "Fan", "Coil", "Damper")
-2. **Class lookup** — Call `search_class_mapping(keywords=[<class names>])` to find which library file each class lives in. Note the `scan_dir` field in each result
-3. **Library source** — Call `scan_python_files_filtered` using the `scan_dir` field from `search_class_mapping` to read the actual class source
-4. **Samples** — Call `scan_python_files_filtered` on `agent/223p/ref/code` with the same keywords to find reference implementations
+2. **Class lookup** — Call `search_class_mapping(keywords=[<class names>])` to find which library file each class lives in. Note the `abs_path` field for each result
+3. **Library source** — Call `read_python_files([abs_path, ...])` with the `abs_path` values from step 2 — reads exactly those class files, nothing else
+4. **Samples** — Call `scan_python_folder("agent/223p/ref/code", keywords=[...])` to find reference implementations
 5. **Plan** — Outline entities, connections, and spatial hierarchy
 6. **Generate** — Write the Python ontology code
 7. **Validate** — Confirm the output is valid, executable Python
@@ -151,7 +151,7 @@ This skill reads the current grid state, looks up the relevant library classes, 
 - Code samples are unreadable
 
 ### Tools used
-`read_internal_grid`, `search_class_mapping`, `scan_python_files_filtered`, `read_prompt`, `write_ontology`, `extract_lessons`, `exit_generator_success`, `exit_generator_failure`
+`read_internal_grid`, `search_class_mapping`, `read_python_files`, `scan_python_folder`, `write_ontology`, `extract_lessons`, `exit_generator_success`, `exit_generator_failure`
 
 ---
 
@@ -164,10 +164,10 @@ This skill runs after `skill-ontology-generation`. It enters a fix loop: read �
 
 ### Workflow
 1. Read `agent/skills/skill-ontology-lessons/SKILL.md` for error-resolution lessons from previous sessions (if empty or absent, proceed without it)
-2. Read the current `ontology.py` via `read_ontology`
+2. Read the current `ontology.py` via `read_python_files(["agent/223p/ontology.py"])`
 3. Execute via `execute_ontology` — capture stdout, stderr, return code
 4. If clean and TTL produced → read the TTL file content, call `exit_validator_success(code=..., ttl_content=..., summary=...)`
-5. Otherwise → analyze errors, look up affected classes via `search_class_mapping` + `scan_python_files_filtered`, write corrected file via `write_ontology`, then immediately call `checkpoint_code` to save a version snapshot
+5. Otherwise → analyze errors, look up affected classes via `search_class_mapping` + `read_python_files([abs_path])`, write corrected file via `write_ontology`, then immediately call `checkpoint_code` to save a version snapshot
 6. Go to step 3
 
 ### Fixing strategy
@@ -178,7 +178,7 @@ This skill runs after `skill-ontology-generation`. It enters a fix loop: read �
 
 ### Stop conditions (call `exit_validator_failure`)
 - `agent/skills/skill-ontology-lessons/SKILL.md` is unreadable and no error-resolution context is available — proceed best-effort but log the limitation
-- `read_ontology` returns empty or missing file
+- `read_python_files(["agent/223p/ontology.py"])` returns empty or missing file
 - `search_class_mapping` returns empty for known class names
 - Same error persists after 10 consecutive fix attempts
 - Code is fundamentally broken (non-Python, random text)
@@ -189,7 +189,7 @@ This skill runs after `skill-ontology-generation`. It enters a fix loop: read �
 - Path of the produced TTL file
 
 ### Tools used
-`read_ontology`, `execute_ontology`, `write_ontology`, `checkpoint_code`, `search_class_mapping`, `scan_python_files_filtered`, `read_prompt`, `exit_validator_success`, `exit_validator_failure`
+`read_python_files`, `scan_python_folder`, `search_class_mapping`, `execute_ontology`, `write_ontology`, `checkpoint_code`, `exit_validator_success`, `exit_validator_failure`
 
 
 ---

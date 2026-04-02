@@ -3,15 +3,16 @@ Ontology tools for the master agent.
 
 Available tools
 ---------------
-Introspection / mapping
-  - ``scan_python_files_filtered`` -- scan .py files matching keywords
-  - ``search_class_mapping``       -- grep across classes_bob/scratch JSONL
+File reading
+  - ``read_python_files``    -- read one or more files by path (absolute or project-relative)
+  - ``scan_python_folder``   -- recursively scan a directory, return .py files matching keywords
+
+Class mapping
+  - ``search_class_mapping`` -- grep across classes_bob/scratch JSONL; returns abs_path per class
 
 Ontology (agent/223p/ontology.py)
-  - ``read_ontology``    -- read current source of ontology.py
   - ``write_ontology``   -- overwrite ontology.py (three-write: scratch + session archive + uploads)
   - ``execute_ontology`` -- run ontology.py and return stdout/stderr/TTL path (three-write for TTL)
-  - ``read_prompt``      -- read the prompt.md generation reference
   - ``extract_lessons``  -- read all session iteration files for LLM lesson extraction (HITL-gated)
 """
 
@@ -23,7 +24,6 @@ import os
 import shutil
 import subprocess
 import sys
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
@@ -50,7 +50,6 @@ _MAPPINGS_DIR = os.path.join(_223P_DIR, "mappings")
 PYTHON_ITERATIONS_DIR = os.path.join(_223P_DIR, "python_iterations")
 TTL_ITERATIONS_DIR = os.path.join(_223P_DIR, "ttl_iterations")
 LESSONS_FILE = os.path.join(_AGENT_ROOT, "skills", "skill-ontology-lessons", "SKILL.md")
-_PROMPT_MD = os.path.join(_223P_DIR, "ref", "code", "prompt.md")
 
 _JSONL_FILES = {
     "bob": "classes_bob.jsonl",
@@ -63,14 +62,68 @@ _EMPTY_PARAMS: dict[str, Any] = {"type": "object", "properties": {}, "required":
 
 
 # ---------------------------------------------------------------------------
-# Tool: scan_python_files_filtered
+# Tool: read_python_files
 # ---------------------------------------------------------------------------
 
-def scan_python_files_filtered(path: str, keywords: list[str]) -> str:
+def read_python_files(paths: list[str]) -> str:
+    """Read one or more files by path and return their contents.
+
+    Accepts absolute paths or paths relative to the project root
+    (e.g. ``"agent/223p/ontology.py"``, ``"agent/223p/ref/code/prompt.md"``).
+    Handles any text file — not limited to ``.py``.
+
+    Typical uses:
+    - Read a specific library class file: pass ``abs_path`` from
+      ``search_class_mapping`` directly.
+    - Read ``ontology.py``: pass ``"agent/223p/ontology.py"``.
+    - Read the prompt reference: pass ``"agent/223p/ref/code/prompt.md"``.
+
+    Returns a JSON object::
+
+        {
+          "<original path>": {"content": "<text>"},
+          "<original path>": {"content": "", "error": "<message>"},
+          ...
+        }
     """
-    Recursively scan a directory and return the full source content of every
-    ``.py`` file whose content contains at least one of the given keywords
+    results: dict[str, Any] = {}
+    for path in paths:
+        expanded = os.path.expanduser(path)
+        # Resolve: try as-is first (works for absolute paths), then relative to project root.
+        if os.path.isabs(expanded):
+            resolved = os.path.realpath(expanded)
+        else:
+            resolved = os.path.realpath(os.path.join(_PROJECT_ROOT, expanded))
+
+        if not os.path.exists(resolved):
+            results[path] = {"content": "", "error": f"File not found: {resolved}"}
+        elif not os.path.isfile(resolved):
+            results[path] = {"content": "", "error": f"Not a file: {resolved}"}
+        else:
+            try:
+                with open(resolved, "r", encoding="utf-8", errors="replace") as fh:
+                    results[path] = {"content": fh.read()}
+            except OSError as exc:
+                results[path] = {"content": "", "error": str(exc)}
+
+    return json.dumps(results, ensure_ascii=False, indent=2)
+
+
+# ---------------------------------------------------------------------------
+# Tool: scan_python_folder
+# ---------------------------------------------------------------------------
+
+def scan_python_folder(path: str, keywords: list[str]) -> str:
+    """Recursively scan a directory and return the full source of every
+    ``.py`` file whose content contains at least one keyword
     (case-insensitive substring match).
+
+    Use this for exploratory scans of known directories, e.g.
+    ``agent/223p/ref/code`` to find reference implementations.
+    For reading a specific file whose path you already know, use
+    ``read_python_files`` instead.
+
+    Accepts absolute paths or paths relative to the project root.
 
     Returns a JSON object::
 
@@ -83,7 +136,11 @@ def scan_python_files_filtered(path: str, keywords: list[str]) -> str:
           "error": "<message>"   // only present on failure
         }
     """
-    resolved = os.path.realpath(os.path.expanduser(path))
+    expanded = os.path.expanduser(path)
+    if os.path.isabs(expanded):
+        resolved = os.path.realpath(expanded)
+    else:
+        resolved = os.path.realpath(os.path.join(_PROJECT_ROOT, expanded))
 
     if not os.path.exists(resolved):
         return json.dumps({"error": f"Path not found: {resolved!r}", "root": resolved, "files": {}})
@@ -105,8 +162,7 @@ def scan_python_files_filtered(path: str, keywords: list[str]) -> str:
             except OSError as exc:
                 files[rel_path] = f"<ERROR reading file: {exc}>"
                 continue
-            content_lower = content.lower()
-            if any(kw in content_lower for kw in lower_keywords):
+            if any(kw in content.lower() for kw in lower_keywords):
                 files[rel_path] = content
 
     return json.dumps({"root": resolved, "files": files}, ensure_ascii=False, indent=2)
@@ -130,32 +186,23 @@ def _load_mapping(library: str) -> list[dict]:
 
 
 def _find_site_packages() -> str | None:
-    """Locate the site-packages directory where bob and scratch are installed.
-
-    Uses importlib to find the bob package, then derives site-packages from it.
-    Falls back to None if the package is not importable.
-    """
+    """Locate the site-packages directory where bob and scratch are installed."""
     import importlib.util
     spec = importlib.util.find_spec("bob")
     if spec and spec.origin:
-        # spec.origin = .../site-packages/bob/__init__.py
-        # parent = .../site-packages/bob/
-        # parent.parent = .../site-packages/
         return str(os.path.dirname(os.path.dirname(spec.origin)))
     return None
 
 
 def search_class_mapping(keywords: list[str]) -> str:
-    """
-    Grep-like search across classes_bob.jsonl and classes_scratch.jsonl.
+    """Grep-like search across classes_bob.jsonl and classes_scratch.jsonl.
     Returns entries where class_name contains any keyword (case-insensitive).
 
     Each result includes:
       - 'library': 'bob' or 'scratch'
       - 'path': relative path within the library (e.g. 'bob/equipment/hvac/fan.py')
-      - 'abs_path': absolute path to the file in the venv site-packages
-      - 'scan_dir': parent directory of the file — pass this directly to
-                    scan_python_files_filtered to read the class source
+      - 'abs_path': absolute path to the file — pass directly to ``read_python_files``
+                    to read exactly that class file (one file, no scanning overhead)
     """
     site_packages = _find_site_packages()
 
@@ -169,24 +216,13 @@ def search_class_mapping(keywords: list[str]) -> str:
                 if site_packages:
                     abs_path = os.path.join(site_packages, entry["path"])
                     result["abs_path"] = abs_path
-                    result["scan_dir"] = os.path.dirname(abs_path)
                 results.append(result)
     return json.dumps(results, ensure_ascii=False, indent=2)
 
 
 # ---------------------------------------------------------------------------
-# Ontology tools — shared helpers
+# Ontology tools — internal helpers
 # ---------------------------------------------------------------------------
-
-def _read_text_file(path: str) -> str:
-    if not os.path.exists(path):
-        return json.dumps({"path": path, "content": "", "error": f"File not found: {path}"})
-    try:
-        with open(path, "r", encoding="utf-8") as fh:
-            return json.dumps({"path": path, "content": fh.read()}, ensure_ascii=False)
-    except OSError as exc:
-        return json.dumps({"path": path, "content": "", "error": str(exc)})
-
 
 def _backup_file(path: str) -> tuple[str | None, str | None]:
     """Create a numbered backup of *path* (e.g. ``file_1.py``, ``file_2.py``, …).
@@ -209,21 +245,6 @@ def _backup_file(path: str) -> tuple[str | None, str | None]:
 
 
 # ---------------------------------------------------------------------------
-# Tool: read_ontology
-# ---------------------------------------------------------------------------
-
-def read_ontology() -> str:
-    """Read the current content of ``223p/src/ontology.py``.
-
-    Returns a JSON object::
-
-        {"path": "<absolute path>", "content": "<source code>"}
-        {"path": "...", "content": "", "error": "<message>"}  // on failure
-    """
-    return _read_text_file(ONTOLOGY_FILE)
-
-
-# ---------------------------------------------------------------------------
 # Tool: write_ontology
 # ---------------------------------------------------------------------------
 
@@ -242,7 +263,7 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
         {"path": "...", "success": true, "backup": "<backup path>"}
         {"path": "...", "success": false, "error": "<message>"}  // on failure
     """
-    # 1. State snapshots (existing behavior -- keep as-is)
+    # 1. State snapshots
     if tool_context:
         snapshots = list(tool_context.state.get("python_code_snapshots", []))
         label = f"Iteration {len(snapshots) + 1}"
@@ -254,7 +275,7 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
         })
         tool_context.state["python_code_snapshots"] = snapshots
 
-    # 2. Scratch write (existing behavior)
+    # 2. Scratch write
     os.makedirs(os.path.dirname(ONTOLOGY_FILE), exist_ok=True)
     backup_path, backup_err = _backup_file(ONTOLOGY_FILE)
     if backup_err:
@@ -297,8 +318,7 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
 # ---------------------------------------------------------------------------
 
 def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
-    """
-    Execute agent/223p/ontology.py in a subprocess using the agent's virtual
+    """Execute agent/223p/ontology.py in a subprocess using the agent's virtual
     environment Python interpreter.
 
     Implements the three-write pattern for TTL on success:
@@ -352,7 +372,7 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
                 logger.warning("Failed to read TTL file: %s", e)
 
             if ttl_content and tool_context:
-                # Existing snapshot behavior
+                # Snapshot behavior
                 snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
                 label = f"Version {len(snapshots) + 1}"
                 snapshots.append({
@@ -363,7 +383,7 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
                 })
                 tool_context.state["ttl_code_snapshots"] = snapshots
 
-                # Session archive write (three-write pattern)
+                # Session archive write
                 session_id = tool_context.state.get("ontology_session_id")
                 iter_count = tool_context.state.get("ontology_code_iteration_count", 0)
                 if session_id is not None:
@@ -382,21 +402,6 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
     return json.dumps({"success": success, "returncode": proc.returncode,
                        "stdout": proc.stdout, "stderr": proc.stderr,
                        "ttl_file": ttl_file}, ensure_ascii=False)
-
-
-# ---------------------------------------------------------------------------
-# Tool: read_prompt
-# ---------------------------------------------------------------------------
-
-def read_prompt() -> str:
-    """Read the 223P ontology generator ``prompt.md`` reference file.
-
-    Returns a JSON object::
-
-        {"path": "<absolute path>", "content": "<text>"}
-        {"path": "...", "content": "", "error": "<message>"}  // on failure
-    """
-    return _read_text_file(_PROMPT_MD)
 
 
 # ---------------------------------------------------------------------------
