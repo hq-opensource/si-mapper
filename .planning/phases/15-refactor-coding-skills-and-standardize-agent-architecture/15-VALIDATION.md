@@ -2,8 +2,8 @@
 phase: 15
 slug: refactor-coding-skills-and-standardize-agent-architecture
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-04-02
 ---
 
@@ -38,19 +38,20 @@ created: 2026-04-02
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 15-01-01 | 01 | 1 | sub_agents deletion | unit | `cd agent && python -m pytest tests/test_create_master_agent.py -v` | ✅ | ⬜ pending |
-| 15-01-02 | 01 | 1 | test file deletion | unit | `cd agent && python -m pytest tests/ -v` | ✅ | ⬜ pending |
-| 15-02-01 | 02 | 2 | 223p migration | unit | `cd agent && python -m pytest tests/ -v` | ✅ | ⬜ pending |
-| 15-03-01 | 03 | 3 | skill refactor | unit | `cd agent && python -m pytest tests/ -v` | ✅ | ⬜ pending |
+| 15-01-01 | 01 | 1 | sub_agents deletion | unit | `cd agent && python -m pytest tests/test_create_master_agent.py -v` | yes | pending |
+| 15-02-01 | 02 | 1 | 223p migration | filesystem | `test -f agent/223p/LESSONS.md && echo PASS` | n/a | pending |
+| 15-02-02 | 02 | 1 | three-write + extract_lessons tests (Wave 0) | unit | `cd agent && python -c "import ast; ast.parse(open('tests/test_ontology_tools.py').read())"` | **creates** test_ontology_tools.py | pending |
+| 15-02-03 | 02 | 1 | path constants + three-write + extract_lessons impl | unit | `cd agent && python -m pytest tests/test_ontology_tools.py tests/test_create_master_agent.py -v` | yes (from 15-02-02) | pending |
+| 15-03-01 | 03 | 2 | skill refactor | unit | `cd agent && python -m pytest tests/ -v` | yes | pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Status: pending / green / red / flaky*
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] `agent/tests/test_ontology_tools_extended.py` — new tests for three-write behavior in `write_ontology` / `execute_ontology`
-- [ ] Update `agent/tests/test_create_master_agent.py` — remove stale sub_agents import assertions
+- [x] `agent/tests/test_ontology_tools.py` — created in Plan 15-02 Task 2 (Wave 0) BEFORE implementation in Task 3
+- [ ] Update `agent/tests/test_create_master_agent.py` — remove stale sub_agents import assertions (Plan 15-01 Task 1)
 
 *Existing infrastructure covers test runner and fixtures.*
 
@@ -66,11 +67,11 @@ created: 2026-04-02
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** ready
