@@ -14,7 +14,8 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 ## Workflow
 
 **Preparation**
-- Use `skill-read-code` skill to acquire error-resolution lessons.  Confirm when done.
+- Read `agent/223p/LESSONS.md` for error-resolution lessons from previous sessions. If the file is empty or absent, proceed without it.
+- Use `read_prompt` to read the original generation guidelines from `agent/223p/ref/code/prompt.md`. Keep result in cache.
 
 **Fix loop:**
 1. read full source.
@@ -34,9 +35,9 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 
 ---
 ## Available skills and tools
-- `skill-read-code` skill to acquire error-resolution lessons. Keep result in cache.
+- Read `agent/223p/LESSONS.md` directly for error-resolution lessons (no separate skill needed).
 - `search_class_mapping` tool to find which file a class lives in. Pass class names from errors as keywords.
-- `scan_python_files_filtered` tool to read the source of a specific class file (use `path` from `search_class_mapping` result). Also use for `../223p/ref/code` when looking for reference patterns.
+- `scan_python_files_filtered` tool to read the source of a specific class file (use `path` from `search_class_mapping` result). Also use for `agent/223p/ref/code` when looking for reference patterns.
 - `read_prompt` tool for original generation guidelines. Keep result in cache.
 - `read_ontology` tool to read the full source code of the current `ontology.py`.
 - `execute_ontology` tool to run the current `ontology.py` and capture stdout, stderr, and return code.
@@ -48,7 +49,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 ---
 
 ## Stop Conditions → `exit_validator_failure(reason="VALIDATION_FAILED: ...")`
-- Usage of skill `skill-read-code` was unsuccessfully — unable to acquire error-resolution lessons.
+- `agent/223p/LESSONS.md` is unreadable and no error-resolution context is available — proceed with best-effort fixing but log the limitation.
 - `read_ontology` returns empty or missing file.
 - `search_class_mapping` returns empty for known class names — mapping files may be missing or corrupt.
 - Same error persists after 10 consecutive fix attempts — escalate to human review.
