@@ -94,45 +94,32 @@ fan_1_r.add_property(OnOffStatus(label="STATUT DIG 1R", comment="BACnet: 2500.BV
 
 damper_paf_lower = Damper(label="PAF-Lower-Damper")
 
-from bob.core import Junction
-from bob.connections.air import AirInletConnectionPoint, AirOutletConnectionPoint
-from bob.enum import Fluid
-
-fan_1_r_junction = Junction(label="Fan_1_R_Discharge_Junction")
-
-fan_1_r.airOutlet >> fan_1_r_junction
-
-fan_1_r_junction >> damper_evac.airInlet
-fan_1_r_junction >> damper_melange.airInlet
-fan_1_r_junction >> damper_rav.airInlet
-
 # VFD -> Fan Connections
 vfd_1_a.electricalOutlet >> fan_1_a.electricalInlet
 vfd_1_r.electricalOutlet >> fan_1_r.electricalInlet
 
 # Duct connections
+fan_1_r.airOutlet >> damper_evac.airInlet
+fan_1_r.airOutlet >> damper_melange.airInlet
+fan_1_r.airOutlet >> damper_rav.airInlet
 
 damper_evac.airOutlet >> fan_1_e.airInlet
-
-mixed_air_junction = Junction(label="Mixed_Air_Junction")
-damper_melange.airOutlet >> mixed_air_junction
-damper_paf_upper.airOutlet >> mixed_air_junction
-damper_paf_lower.airOutlet >> mixed_air_junction
-
-mixed_air_junction >> filter_1.airInlet
+damper_melange.airOutlet >> filter_1.airInlet
+damper_paf_upper.airOutlet >> filter_1.airInlet
+damper_paf_lower.airOutlet >> filter_1.airInlet
 
 filter_1.airOutlet >> cc_1.airInlet
 cc_1.airOutlet >> hc_1.airInlet
 hc_1.airOutlet >> fan_1_a.airInlet
 
 # Sensor mapping
-t_mix % filter_1.airInlet
-dp_filter_1 % filter_1.airInlet
-dp_filter_1 % filter_1.airOutlet
-t_ret % fan_1_r.airInlet
-h_ret % fan_1_r.airInlet
-freeze_stat % hc_1.airOutlet
-sp_1 % fan_1_a.airOutlet
+t_mix.add_property(filter_1.airInlet)
+dp_filter_1.add_property(filter_1.airInlet)
+dp_filter_1.add_property(filter_1.airOutlet)
+t_ret.add_property(fan_1_r.airInlet)
+h_ret.add_property(fan_1_r.airInlet)
+freeze_stat.add_property(hc_1.airOutlet)
+sp_1.add_property(fan_1_a.airOutlet)
 
 if __name__ == "__main__":
     dump()

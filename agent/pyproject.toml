@@ -36,6 +36,6 @@ asyncio_mode = "auto"
 packages = []
 
 [tool.uv.sources]
-bob = { path = "../223p/bin/bob-0.99.8.tar.gz" }
-scratch = { path = "../223p/bin/scratch-0.2.tar.gz" }
+bob = { path = "223p/bin/bob-0.99.8.tar.gz" }
+scratch = { path = "223p/bin/scratch-0.2.tar.gz" }
 

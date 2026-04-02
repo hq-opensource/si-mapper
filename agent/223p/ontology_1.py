@@ -1,5 +1,5 @@
-from bob.core import bind_model_namespace, dump, UNIT
-from bob.enum import Role
+from bob.core import bind_model_namespace, dump, UNIT, Junction
+from bob.enum import Role, Fluid
 from bob.sensor.temperature import AirTemperatureSensor
 from bob.sensor.pressure import AirDifferentialStaticPressureSensor
 from bob.connections.electricity import Electricity_600VLL_3Ph_60HzInletConnectionPoint
@@ -10,8 +10,9 @@ from scratch.hvac.damper import ElectricalActuatedProportionalDamper
 from bob.equipment.hvac.filter import Filter
 from bob.equipment.hvac.coil import ChilledWaterCoil, HotWaterCoil
 from scratch.hvac.humidifier import ElectricalHumidifier
-from scratch.hvac.valve import TwoWayActuatedProportionalValve
-from bob.connections.air import AirConnection
+from bob.equipment.hvac.humidifier import SteamPipe
+from bob.equipment.hvac.valve import ThreeWayValveMixing
+from bob.connections.air import AirConnection, AirInletConnectionPoint, AirOutletConnectionPoint
 from scratch.assemblage import model_namespace
 
 model_name, global_ns = model_namespace(__file__)
@@ -24,7 +25,7 @@ ahu_template = {
             "hasUnit": UNIT.DEG_C,
             "comment": "Return Air Temperature",
         },
-        ("H-RET", AirTemperatureSensor): { # Using temperature sensor as fallback for humidity if humidity sensor is missing, but let's use standard properties later.
+        ("H-RET", AirTemperatureSensor): { 
             "hasUnit": UNIT.PERCENT_RH,
             "comment": "Return Air Humidity",
         },
@@ -77,8 +78,8 @@ ahu_template = {
         ("CC-1", ChilledWaterCoil): {
             "comment": "Cooling Coil",
         },
-        ("3WV-CC", TwoWayActuatedProportionalValve): {
-            "comment": "3-Way Valve for Cooling Coil (using TwoWay for now as proxy)",
+        ("3WV-CC", ThreeWayValveMixing): {
+            "comment": "3-Way Valve for Cooling Coil",
         },
         ("1-A", Fan): {
             "comment": "Supply Fan",
@@ -91,23 +92,64 @@ ahu_template = {
             "comment": "Heating Coil",
         },
         ("Hum-1", ElectricalHumidifier): {
-            "comment": "Humidifier",
+            "comment": "Humidifier Generator",
+        },
+        ("Hum-1-Pipe", SteamPipe): {
+            "comment": "Humidifier Injection Pipe",
+        },
+    },
+    "junctions": {
+        ("ExhaustDuct", Junction): {
+            "comment": "Duct to exhaust damper",
+            "hasMedium": Fluid.Air,
+            "fromExhaustFan": AirInletConnectionPoint,
+            "toExhaustDamper": AirOutletConnectionPoint,
+        },
+        ("ReturnSplit", Junction): {
+            "comment": "Splits return air to exhaust or mixed",
+            "hasMedium": Fluid.Air,
+            "fromReturnFan": AirInletConnectionPoint,
+            "toRAV": AirOutletConnectionPoint,
+            "toMelange": AirOutletConnectionPoint,
+        },
+        ("FreshAirMerge", Junction): {
+            "comment": "Merges upper and lower fresh air dampers",
+            "hasMedium": Fluid.Air,
+            "fromUpper": AirInletConnectionPoint,
+            "fromLower": AirInletConnectionPoint,
+            "toMixedPlenum": AirOutletConnectionPoint,
+        },
+        ("MixedAirPlenum", Junction): {
+            "comment": "Mixes return air and fresh air",
+            "hasMedium": Fluid.Air,
+            "fromFresh": AirInletConnectionPoint,
+            "fromMelange": AirInletConnectionPoint,
+            "toFilter": AirOutletConnectionPoint,
         },
     },
     "relations": [
-        ("self['1-E']", ">>", "self['EVAC-Damper']"),
-        ("self['VFD-1-E']", ">>", "self['1-E']"),
-        ("self['1-R']", ">>", "self['RAV-Damper']"),
-        ("self['1-R']", ">>", "self['Melange-Damper']"),
-        ("self['VFD-1-R']", ">>", "self['1-R']"),
-        ("self['PAF-Upper-Damper']", ">>", "self['Filter-1']"),
-        ("self['PAF-Lower-Damper']", ">>", "self['Filter-1']"),
-        ("self['Melange-Damper']", ">>", "self['Filter-1']"),
-        ("self['Filter-1']", ">>", "self['CC-1']"),
-        ("self['CC-1']", ">>", "self['1-A']"),
-        ("self['1-A']", ">>", "self['HC-1']"),
-        ("self['HC-1']", ">>", "self['Hum-1']"),
-        ("self['VFD-1-A']", ">>", "self['1-A']"),
+        ("self['1-E'].airOutlet", ">>", "self['ExhaustDuct'].fromExhaustFan"),
+        ("self['ExhaustDuct'].toExhaustDamper", ">>", "self['EVAC-Damper']['damper'].airInlet"),
+        ("self['VFD-1-E'].electricalOutlet", ">>", "self['1-E'].electricalInlet"),
+        
+        ("self['1-R'].airOutlet", ">>", "self['ReturnSplit'].fromReturnFan"),
+        ("self['ReturnSplit'].toRAV", ">>", "self['RAV-Damper']['damper'].airInlet"),
+        ("self['ReturnSplit'].toMelange", ">>", "self['Melange-Damper']['damper'].airInlet"),
+        ("self['VFD-1-R'].electricalOutlet", ">>", "self['1-R'].electricalInlet"),
+        
+        ("self['PAF-Upper-Damper']['damper'].airOutlet", ">>", "self['FreshAirMerge'].fromUpper"),
+        ("self['PAF-Lower-Damper']['damper'].airOutlet", ">>", "self['FreshAirMerge'].fromLower"),
+        ("self['FreshAirMerge'].toMixedPlenum", ">>", "self['MixedAirPlenum'].fromFresh"),
+        
+        ("self['Melange-Damper']['damper'].airOutlet", ">>", "self['MixedAirPlenum'].fromMelange"),
+        ("self['MixedAirPlenum'].toFilter", ">>", "self['Filter-1'].airInlet"),
+        
+        ("self['Filter-1'].airOutlet", ">>", "self['CC-1'].airInlet"),
+        ("self['CC-1'].airOutlet", ">>", "self['1-A'].airInlet"),
+        ("self['1-A'].airOutlet", ">>", "self['HC-1'].airInlet"),
+        ("self['HC-1'].airOutlet", ">>", "self['Hum-1-Pipe'].airInlet"),
+        ("self['Hum-1'].steamOutlet", ">>", "self['Hum-1-Pipe'].steamInlet"),
+        ("self['VFD-1-A'].electricalOutlet", ">>", "self['1-A'].electricalInlet"),
     ]
 }
 
@@ -118,7 +160,7 @@ ahu["T-RET"] % ahu["1-R"]
 ahu["H-RET"] % ahu["1-R"]
 ahu["T-MIX"] % ahu["Filter-1"]
 ahu["DP-Filter-1"] % ahu["Filter-1"]
-ahu["SP-1"] % ahu["Hum-1"]
+ahu["SP-1"] % ahu["Hum-1-Pipe"]
 
 if __name__ == "__main__":
     dump()

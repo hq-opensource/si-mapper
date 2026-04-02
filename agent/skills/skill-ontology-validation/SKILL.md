@@ -14,8 +14,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 ## Workflow
 
 **Preparation**
-- Read `agent/skills/skill-ontology-lessons/SKILL.md` using the Read tool. Apply every error-to-resolution lesson listed there before entering the fix loop. If the file is empty or absent, proceed without it.
-- Call `read_python_files(["agent/223p/ref/code/prompt.md"])` to read the original generation guidelines. Keep result in cache.
+- Read lessons — Load the skill `skill-ontology-lessons` and apply every error-to-resolution lesson listed there to your generation plan before writing any code. If the file is empty or absent, proceed without it.
 
 **Fix loop:**
 1. Call `read_python_files(["agent/223p/ontology.py"])` to read the full current source.
@@ -35,7 +34,6 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 
 ---
 ## Available skills and tools
-- Read `agent/skills/skill-ontology-lessons/SKILL.md` directly for error-resolution lessons.
 - `search_class_mapping` tool to find which file a class lives in. Pass class names from errors as keywords.
 - `read_python_files([abs_path, ...])` to read specific class files — pass `abs_path` from `search_class_mapping` directly (reads exactly that file, no scanning overhead).
 - `scan_python_folder("agent/223p/ref/code", keywords=[...])` when looking for reference patterns across the sample library.

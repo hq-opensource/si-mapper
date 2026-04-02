@@ -126,13 +126,13 @@ cc_1.airOutlet >> hc_1.airInlet
 hc_1.airOutlet >> fan_1_a.airInlet
 
 # Sensor mapping
-t_mix % filter_1.airInlet
-dp_filter_1 % filter_1.airInlet
-dp_filter_1 % filter_1.airOutlet
-t_ret % fan_1_r.airInlet
-h_ret % fan_1_r.airInlet
-freeze_stat % hc_1.airOutlet
-sp_1 % fan_1_a.airOutlet
+t_mix.add_property(filter_1.airInlet)
+dp_filter_1.add_property(filter_1.airInlet)
+dp_filter_1.add_property(filter_1.airOutlet)
+t_ret.add_property(fan_1_r.airInlet)
+h_ret.add_property(fan_1_r.airInlet)
+freeze_stat.add_property(hc_1.airOutlet)
+sp_1.add_property(fan_1_a.airOutlet)
 
 if __name__ == "__main__":
     dump()
