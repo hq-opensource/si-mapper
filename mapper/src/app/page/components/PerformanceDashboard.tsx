@@ -3,11 +3,12 @@
 import React, { useMemo } from 'react';
 import { useThoughts } from '../../../context/ThoughtsContext';
 import { SharedPageContainer } from './SharedPageContainer';
-import { Activity, Zap, Cpu, Clock, Layers, Hash } from 'lucide-react';
+import { Activity, Zap, Cpu, Clock, Layers, Hash, Brain } from 'lucide-react';
 import { StatusPlaceholder } from './StatusPlaceholder';
 
 export function PerformanceDashboard() {
-    const { events } = useThoughts();
+    const { events, data } = useThoughts();
+    const llmModel = data?.llm_model as string | undefined;
 
     // Aggregate metrics from all events
     const metricsHistory = useMemo(() => {
@@ -68,6 +69,20 @@ export function PerformanceDashboard() {
             fullHeight
         >
             <div className="p-8 space-y-12">
+                {/* Section header */}
+                <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-black text-[var(--foreground)] uppercase tracking-widest flex items-center gap-2">
+                        <span className="h-1 w-6 bg-[var(--accent)] rounded-full"></span>
+                        Model Performance
+                    </h4>
+                    {llmModel && (
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/20">
+                            <Brain size={12} className="shrink-0" />
+                            <span className="font-mono normal-case tracking-tight">{llmModel}</span>
+                        </div>
+                    )}
+                </div>
+
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
                     {stats.map((stat, i) => (

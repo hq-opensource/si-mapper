@@ -37,7 +37,6 @@ const FOLDER_COLORS = [
   { bg: 'bg-rose-500/15',   icon: 'text-rose-500'   },
 ];
 
-const DEFAULT_AI_MODEL = 'gemini-2.0-flash';
 
 // ── Inner page (needs useSearchParams — must be inside Suspense) ──────────────
 
@@ -149,7 +148,7 @@ function ProjectsPageInner() {
     const res = await fetch(`/api/projects/${selectedProjectId}/systems`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, ai_model_name: DEFAULT_AI_MODEL }),
+      body: JSON.stringify({ name }),
     });
     if (res.ok) {
       const created: System = await res.json();

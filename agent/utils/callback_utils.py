@@ -224,6 +224,12 @@ async def shared_before_model_callback(
     _call_start_times[callback_context.agent_name] = time.perf_counter()
     await _ensure_pending_artifacts_injected(callback_context, llm_request)
     _log_artifact_visibility(callback_context, llm_request)
+
+    # Capture the current model name and persist it to session state.
+    current_model = getattr(llm_request, "model", None)
+    if current_model:
+        callback_context.state["llm_model"] = current_model
+
     return None
 
 
@@ -291,38 +297,12 @@ def _print_iteration_report(
             print(f"       [{i}] {t}")
     print(f"{SEP}\n")
 
-async def shared_model_callback(
-    callback_context: CallbackContext,
-    llm_response: LlmResponse
-) -> Optional[LlmResponse]:
-    """
-    Unified callback to process LLM responses, transform content for frontend,
-    and persist thoughts/tool calls to the session state for polling.
-    """
-    agent_name = callback_context.agent_name
-    state = callback_context.state
-    
-    # Update active agent in state
-    state["active_agent"] = agent_name
-    
-    # Extract session ID from invocation context
-    try:
-        session_id = callback_context.session.id
-    except:
-        session_id = "default-session"
-    
-    # Process all agents that have this callback registered
-    pass
-
-    if not llm_response.content or not llm_response.content.parts:
-        return llm_response
-
+def _extract_metrics(agent_name: str, llm_response: LlmResponse) -> Dict[str, Any]:
+    """Pops the per-call start time and returns a timing + token-usage metrics dict."""
     start = _call_start_times.pop(agent_name, None)
     elapsed = (time.perf_counter() - start) if start is not None else None
-    
-    # Extract token usage
     usage = getattr(llm_response, "usage_metadata", None)
-    metrics = {
+    return {
         "latency_s": elapsed,
         "prompt_tokens": getattr(usage, "prompt_token_count", 0),
         "completion_tokens": getattr(usage, "candidates_token_count", 0),
@@ -331,30 +311,37 @@ async def shared_model_callback(
         "provider": "google",
     }
 
-    # --- DEBUG: Print parts types ---
+
+def _debug_log_parts(agent_name: str, llm_response: LlmResponse) -> None:
+    """Logs a structured debug summary of every part in the LLM response."""
     parts_info = []
     for p in llm_response.content.parts:
         info = f"type(p)={type(p)}"
-        if hasattr(p, 'thought'): info += f", thought={p.thought}"
-        if hasattr(p, 'text'): info += f", text_len={len(p.text) if p.text else 0}"
-        if hasattr(p, 'function_call'): info += f", fn={p.function_call.name if p.function_call else 'None'}"
+        if hasattr(p, "thought"):
+            info += f", thought={p.thought}"
+        if hasattr(p, "text"):
+            info += f", text_len={len(p.text) if p.text else 0}"
+        if hasattr(p, "function_call"):
+            info += f", fn={p.function_call.name if p.function_call else 'None'}"
         parts_info.append(info)
     logger.debug(f"[{agent_name}] Response Parts: {parts_info}")
-    # --------------------------------
 
-    # ── Artifact pending-state management ────────────────────────────────────
-    # Track requested artifact names so _ensure_pending_artifacts_injected
-    # can re-inject them if ADK's own injection check missed (race condition
-    # when load_artifacts was called alongside other tools).
-    fn_calls_in_response = [
-        p.function_call.name
-        for p in llm_response.content.parts
-        if getattr(p, "function_call", None)
-    ]
+
+def _manage_artifact_pending_state(
+    callback_context: CallbackContext,
+    llm_response: LlmResponse,
+    fn_calls_in_response: List[str],
+) -> None:
+    """
+    Tracks artifact names requested via load_artifacts so the re-injection
+    safety net (_ensure_pending_artifacts_injected) can act on the next call.
+    Clears the pending list once the model produces a real text response.
+    """
+    agent_name = callback_context.agent_name
+    state = callback_context.state
 
     if "load_artifacts" in fn_calls_in_response:
-        # Extract artifact names from the load_artifacts function call args.
-        requested_names: list[str] = []
+        requested_names: List[str] = []
         for p in llm_response.content.parts:
             fn_call = getattr(p, "function_call", None)
             if fn_call and fn_call.name == "load_artifacts":
@@ -364,9 +351,6 @@ async def shared_model_callback(
             state["temp:_pending_artifacts"] = requested_names
 
         other_tools = [t for t in fn_calls_in_response if t != "load_artifacts"]
-        pass
-
-        # Emit event for frontend
         event = AgentEvent(
             agent_name=agent_name,
             event_type=EventType.ARTIFACT,
@@ -375,14 +359,14 @@ async def shared_model_callback(
                 "load_artifacts": True,
                 "requested_names": requested_names,
                 "tool_calls": fn_calls_in_response,
-                "other_tools": other_tools
-            }
+                "other_tools": other_tools,
+            },
         )
-        events_list = callback_context.state.get("events", [])
+        events_list = state.get("events", [])
         events_list.append(event.model_dump())
-        callback_context.state["events"] = events_list[-200:]
-    # When model produces a real text response (not just more tool calls),
-    # it has processed whatever artifacts were pending — clear the pending state.
+        state["events"] = events_list[-200:]
+
+    # Clear pending list once a real text response (not tool-call-only) arrives.
     has_text_response = any(
         p.text and p.text.strip() and not getattr(p, "thought", False)
         for p in llm_response.content.parts
@@ -391,142 +375,165 @@ async def shared_model_callback(
         if state.get("temp:_pending_artifacts"):
             logger.debug(f"[{agent_name}] Clearing temp:_pending_artifacts (model produced text response)")
             state["temp:_pending_artifacts"] = []
-    # ─────────────────────────────────────────────────────────────────────────
 
-    # 1. NEW: Process structured events
-    
-    # Generate fresh events for this chunk (Enables appending behavior in frontend)
+
+def _process_and_update_events(
+    callback_context: CallbackContext,
+    llm_response: LlmResponse,
+    metrics: Dict[str, Any],
+) -> None:
+    """
+    Runs the EventProcessor, appends new events to state history, and
+    rebuilds the backward-compatible 'thoughts' / 'tool_calls' lists.
+    """
+    agent_name = callback_context.agent_name
+    state = callback_context.state
+
     new_events = EventProcessor.process_parts(agent_name, llm_response, metrics=metrics)
     logger.debug(f"[{agent_name}] Extracted {len(new_events)} new events")
-    
-    # 2. Update local state history
+
     events_history = state.get("events", [])
     for ne in new_events:
-        # Every chunk from a stream is treated as a new unique event to ensure history is preserved
         events_history.append(ne.model_dump())
-    
-    state["events"] = events_history[-200:] # Keep more history for complex loops
+    state["events"] = events_history[-200:]
 
-    # ... (Step 3: backward compatibility fields simplified for length)
-    thoughts_list = []
-    tools_list = []
+    thoughts_list: List[Dict] = []
+    tools_list: List[Dict] = []
     for e in state["events"]:
+        entry = {
+            "id": e["id"],
+            "content": e["content"],
+            "agentName": e["agent_name"],
+            "timestamp": e["timestamp"],
+        }
         if e["event_type"] in [EventType.BRAINSTORM, EventType.DELEGATION]:
-            thoughts_list.append({"id": e["id"], "content": e["content"], "agentName": e["agent_name"], "timestamp": e["timestamp"]})
+            thoughts_list.append(entry)
         elif e["event_type"] in [EventType.ACTION_TRIGGER, EventType.STATE_MUTATION]:
-            tools_list.append({"id": e["id"], "content": e["content"], "agentName": e["agent_name"], "timestamp": e["timestamp"]})
+            tools_list.append(entry)
     state["thoughts"] = thoughts_list[-100:]
     state["tool_calls"] = tools_list[-100:]
 
-    # 4. Transform parts for frontend chat display
-    new_parts = []
-    for i, part in enumerate(llm_response.content.parts):
+
+def _transform_parts_for_frontend(llm_response: LlmResponse) -> List[Any]:
+    """
+    Rewrites response parts for the chat UI:
+    - Wraps thought text in :::thought … ::: markers.
+    - Prepends a human-readable :::tool_call … ::: part for every function call.
+    """
+    new_parts: List[Any] = []
+    for part in llm_response.content.parts:
         is_thought = getattr(part, "thought", False)
         fn_call = getattr(part, "function_call", None)
         text = part.text or ""
-        
-        # If native thought summary
+
         if is_thought:
-            clean_text = text.replace(":::thought\n", "").replace(":::thought", "").replace("\n:::\n", "").replace("\n:::", "").replace(":::", "").strip()
-            # Wrap in markers for UI highlighting
+            clean_text = (
+                text.replace(":::thought\n", "")
+                    .replace(":::thought", "")
+                    .replace("\n:::\n", "")
+                    .replace("\n:::", "")
+                    .replace(":::", "")
+                    .strip()
+            )
             part.text = f":::thought\n{clean_text}\n:::\n"
         elif fn_call:
-            ui_marker = f"Calling tool: **{fn_call.name}**"
-            ui_text = f":::tool_call\n{ui_marker}\nArguments: `{fn_call.args}`\n:::\n"
+            ui_text = (
+                f":::tool_call\nCalling tool: **{fn_call.name}**\n"
+                f"Arguments: `{fn_call.args}`\n:::\n"
+            )
             try:
-                ui_part = type(part)(text=ui_text)
-                new_parts.append(ui_part)
-            except: pass
-        else:
-            pass
-        new_parts.append(part)
+                new_parts.append(type(part)(text=ui_text))
+            except Exception:
+                pass
 
-    # 5. --- GLOBAL STORE UPDATE (Deduplicated Merging) ---
+        new_parts.append(part)
+    return new_parts
+
+
+def _update_global_store(callback_context: CallbackContext, session_id: str) -> None:
+    """
+    Merges the current session state into GLOBAL_SESSION_STORE, deduplicating
+    list entries by their 'id' / 'trace_id' key so the frontend always sees a
+    consistent, non-duplicated event stream.
+    """
+    state = callback_context.state
     try:
         current_state_dict = state.to_dict() if hasattr(state, "to_dict") else dict(state)
-        
+
         if session_id not in GLOBAL_SESSION_STORE:
             GLOBAL_SESSION_STORE[session_id] = {}
-        
+
         target_store = GLOBAL_SESSION_STORE[session_id]
-        
-        # Lists that need careful merging/deduplication
         list_keys = ["events", "thoughts", "tool_calls"]
-        
+
         for key, value in current_state_dict.items():
             if key in list_keys and isinstance(value, list):
                 existing_list = target_store.get(key, [])
-                
-                # Deduplicate based on 'id' or 'trace_id'
                 new_list = list(existing_list)
                 for item in value:
                     item_id = item.get("id") or item.get("trace_id")
-                    
-                    found_idx = -1
-                    for i, existing_item in enumerate(new_list):
-                        if (existing_item.get("id") == item_id and item_id) or \
-                           (existing_item.get("trace_id") == item_id and item_id):
-                            found_idx = i
-                            break
-                    
+                    found_idx = next(
+                        (
+                            i for i, ex in enumerate(new_list)
+                            if item_id and (ex.get("id") == item_id or ex.get("trace_id") == item_id)
+                        ),
+                        -1,
+                    )
                     if found_idx >= 0:
                         new_list[found_idx] = item
                     else:
                         new_list.append(item)
-                
-                target_store[key] = new_list[-100:] # Maintain buffer
+                target_store[key] = new_list[-100:]
             else:
-                # Direct update for status, active_agent, plan, etc.
                 target_store[key] = value
-                
+
         GLOBAL_SESSION_STORE["latest"] = GLOBAL_SESSION_STORE[session_id]
     except Exception as e:
         logger.warning(f"Failed to update GLOBAL_SESSION_STORE: {e}")
 
-    # --- VERBOSE LOGGING FOR DEBUGGING---
-    # print(f"\n{'='*20} ADK AGENT UPDATE ({format_agent_name(agent_name)}) {'='*20}")
-    # print(f"  - Session: {session_id}")
-    
-    # Calculate Metrics
-    text_len = sum(len(p.text) for p in llm_response.content.parts if p.text)
-    blob_count = sum(1 for p in llm_response.content.parts if p.inline_data)
-    tool_calls = [p.function_call.name for p in llm_response.content.parts if p.function_call]
-    
-    # print(f"  - Response Size: {len(llm_response.content.parts)} parts ({text_len} chars, {blob_count} blobs)")
-    if tool_calls:
-        # print(f"  - Tool Calls: {', '.join(tool_calls)}")
-        pass
+
+async def shared_model_callback(
+    callback_context: CallbackContext,
+    llm_response: LlmResponse,
+) -> Optional[LlmResponse]:
+    """
+    Unified callback to process LLM responses, transform content for frontend,
+    and persist thoughts/tool calls to the session state for polling.
+    """
+    agent_name = callback_context.agent_name
+    state = callback_context.state
+
+    state["active_agent"] = agent_name
 
     try:
-        for key in ["status", "current_step", "active_agent"]:
-            val = current_state_dict.get(key)
-            if val:
-                # print(f"  - {key.upper()}: {val}")
-                pass
-        
-        # Log counts of complex objects
-        for key in ["events", "tasks", "thoughts"]:
-            val = current_state_dict.get(key)
-            if isinstance(val, list):
-                # print(f"  - {key.upper()} Count: {len(val)}")
-                pass
-    except Exception as e:
-        # print(f"  - Logging Error: {e}")
-        pass
-    # print(f"{'='*60}\n")
+        session_id = callback_context.session.id
+    except Exception:
+        session_id = "default-session"
 
-    # Replace parts
-    llm_response.content.parts = new_parts
+    if not llm_response.content or not llm_response.content.parts:
+        return llm_response
 
-    has_action = any(getattr(p, "function_call", None) for p in llm_response.content.parts)
-    has_real_text = any(
-        p.text and p.text.strip()
-        and not getattr(p, "thought", False)
-        and ":::tool_call" not in p.text
+    # 1. Timing + token metrics
+    metrics = _extract_metrics(agent_name, llm_response)
+
+    # 2. Debug log parts structure
+    _debug_log_parts(agent_name, llm_response)
+
+    # 3. Artifact pending-state management
+    fn_calls_in_response = [
+        p.function_call.name
         for p in llm_response.content.parts
-    )
+        if getattr(p, "function_call", None)
+    ]
+    _manage_artifact_pending_state(callback_context, llm_response, fn_calls_in_response)
 
-    # _print_iteration_report(agent_name, llm_response, elapsed)
-    # ─────────────────────────────────────────────────────────────────────────
+    # 4. Process structured events + update backward-compat state fields
+    _process_and_update_events(callback_context, llm_response, metrics)
+
+    # 5. Rewrite parts for frontend display
+    llm_response.content.parts = _transform_parts_for_frontend(llm_response)
+
+    # 6. Sync to global session store
+    _update_global_store(callback_context, session_id)
 
     return llm_response

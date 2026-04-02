@@ -98,7 +98,7 @@ function ZeroSystemState() {
     const res = await fetch(`/api/projects/${activeProject.id}/systems`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, ai_model_name: 'gemini-2.0-flash' }),
+      body: JSON.stringify({ name }),
     });
     if (res.ok) {
       const created: System = await res.json();

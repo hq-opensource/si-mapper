@@ -2,8 +2,8 @@
 
 /**
  * SystemEditDialog
- * Modal dialog for editing a system's name and AI model.
- * Calls PATCH /api/projects/[id]/systems/[sysId] with { name, ai_model_name }.
+ * Modal dialog for editing a system's name.
+ * Calls PATCH /api/projects/[id]/systems/[sysId] with { name }.
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -28,7 +28,6 @@ export function SystemEditDialog({
   onSuccess,
 }: SystemEditDialogProps) {
   const [name, setName] = useState('');
-  const [aiModel, setAiModel] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -36,7 +35,6 @@ export function SystemEditDialog({
   useEffect(() => {
     if (isOpen) {
       setName(system.name);
-      setAiModel(system.ai_model_name);
       setError(null);
       setTimeout(() => nameRef.current?.focus(), 80);
     }
@@ -53,7 +51,6 @@ export function SystemEditDialog({
     setError(null);
     try {
       const body: Record<string, string> = { name: trimmedName };
-      if (aiModel.trim()) body.ai_model_name = aiModel.trim();
 
       const res = await fetch(
         `/api/projects/${projectId}/systems/${system.id}`,
@@ -133,20 +130,6 @@ export function SystemEditDialog({
             />
           </div>
 
-          {/* AI Model */}
-          <div>
-            <label className="block text-xs font-bold text-[var(--foreground)] mb-1.5">
-              AI Model{' '}
-              <span className="text-[var(--muted-foreground)] font-normal">(optional)</span>
-            </label>
-            <input
-              value={aiModel}
-              onChange={e => setAiModel(e.target.value)}
-              placeholder="e.g. gemini-2.0-flash"
-              className="w-full px-4 py-2.5 border border-[var(--muted-foreground)]/30 rounded-xl text-sm focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20 bg-[var(--background)] text-[var(--foreground)]"
-            />
-          </div>
-
           {/* Graphivac Grid ID — read-only */}
           <div>
             <label className="block text-xs font-semibold text-[var(--muted-foreground)] mb-1.5">
@@ -185,4 +168,3 @@ export function SystemEditDialog({
     </div>
   );
 }
-

@@ -155,14 +155,12 @@ describe('System CRUD', () => {
     const system = await createSystemOnDisk(projectFolderPath, {
       name: 'Chilled Water Plant',
       graphivac_grid_id: 'G-grid1',
-      ai_model_name: 'gemini-pro',
     });
 
     expect(system.id).toMatch(/^sys-/);
     expect(system.folder_path).toBe(system.id);
     expect(system.name).toBe('Chilled Water Plant');
     expect(system.graphivac_grid_id).toBe('G-grid1');
-    expect(system.ai_model_name).toBe('gemini-pro');
 
     const stat = await fs.stat(
       path.join(PROJECTS_ROOT, projectFolderPath, system.folder_path)
@@ -183,12 +181,10 @@ describe('System CRUD', () => {
     const s1 = await createSystemOnDisk(projectFolderPath, {
       name: 'System 1',
       graphivac_grid_id: 'G-1',
-      ai_model_name: 'model-a',
     });
     const s2 = await createSystemOnDisk(projectFolderPath, {
       name: 'System 2',
       graphivac_grid_id: 'G-2',
-      ai_model_name: 'model-b',
     });
 
     const list = await listSystems(projectFolderPath);
@@ -203,7 +199,6 @@ describe('System CRUD', () => {
     const created = await createSystemOnDisk(projectFolderPath, {
       name: 'Find Me System',
       graphivac_grid_id: 'G-FM',
-      ai_model_name: 'model-x',
     });
 
     const found = await getSystem(projectFolderPath, created.id);
@@ -224,16 +219,15 @@ describe('System CRUD', () => {
     const system = await createSystemOnDisk(projectFolderPath, {
       name: 'Original System',
       graphivac_grid_id: 'G-upd',
-      ai_model_name: 'model-old',
     });
     const originalUpdatedAt = system.updated_at;
 
     await new Promise((r) => setTimeout(r, 20));
 
-    await writeSystem(projectFolderPath, { ...system, ai_model_name: 'model-new' });
+    await writeSystem(projectFolderPath, { ...system, name: 'Updated System' });
 
     const updated = await getSystem(projectFolderPath, system.id);
-    expect(updated!.ai_model_name).toBe('model-new');
+    expect(updated!.name).toBe('Updated System');
     expect(updated!.updated_at).not.toBe(originalUpdatedAt);
     expect(updated!.created_at).toBe(system.created_at);
   });
@@ -244,7 +238,6 @@ describe('System CRUD', () => {
     const system = await createSystemOnDisk(projectFolderPath, {
       name: 'To Delete System',
       graphivac_grid_id: 'G-del',
-      ai_model_name: 'model-z',
     });
 
     const sysDir = path.join(PROJECTS_ROOT, projectFolderPath, system.folder_path);
@@ -266,7 +259,6 @@ describe('System CRUD', () => {
     const system = await createSystemOnDisk(projectFolderPath, {
       name: 'Nested System',
       graphivac_grid_id: 'G-nested',
-      ai_model_name: 'model-n',
     });
 
     const sysDir = path.join(PROJECTS_ROOT, projectFolderPath, system.folder_path);

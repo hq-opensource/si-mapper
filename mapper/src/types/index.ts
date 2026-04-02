@@ -40,7 +40,6 @@ export interface System {
     name: string;
     folder_path: string;
     graphivac_grid_id: string;
-    ai_model_name: string;
     thread_id?: string;
     sessions?: Session[];
     created_at: string;

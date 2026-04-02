@@ -29,7 +29,6 @@ type AgentState = {
     name: string;
     folder_path: string;
     graphivac_grid_id: string;
-    ai_model_name: string;
   } | null;
 };
 
@@ -57,7 +56,7 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
     const { data } = pooledState || {};
     const adkData = agentState.data;
 
-    const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'thoughts', 'tool_calls', 'events', 'data', 'active_project', 'active_system'];
+    const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'thoughts', 'tool_calls', 'events'];
 
     const pooledRest = pooledState ? Object.fromEntries(
       Object.entries(pooledState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
@@ -132,7 +131,6 @@ export default function CopilotKitPage() {
         name: activeSystem.name,
         folder_path: activeSystem.folder_path,
         graphivac_grid_id: activeSystem.graphivac_grid_id,
-        ai_model_name: activeSystem.ai_model_name,
       } : null,
     });
   }, [activeProject, activeSystem]); // setAgentState intentionally omitted — accessed via ref above

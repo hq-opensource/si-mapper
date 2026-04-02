@@ -35,7 +35,6 @@ const SYSTEM: System = {
   name: 'Chilled Water Plant',
   folder_path: 'sys-xyz789012345678',
   graphivac_grid_id: 'G-gridtest',
-  ai_model_name: 'gemini-pro',
   created_at: '2026-01-01T00:00:00.000Z',
   updated_at: '2026-01-01T00:00:00.000Z',
 };
@@ -109,16 +108,6 @@ describe('PATCH /api/projects/[id]/systems/[sysId]', () => {
     );
   });
 
-  test('200 — updates ai_model_name', async () => {
-    const updated = { ...SYSTEM, ai_model_name: 'gpt-4o', updated_at: '2026-06-01T00:00:00.000Z' };
-    mProjects.getProject.mockResolvedValue(PROJECT);
-    mProjects.getSystem.mockResolvedValueOnce(SYSTEM).mockResolvedValueOnce(updated);
-    mProjects.writeSystem.mockResolvedValue(undefined);
-
-    const res = await PATCH(patchReq({ ai_model_name: 'gpt-4o' }), params(PROJECT.id, SYSTEM.id));
-    expect(res.status).toBe(200);
-    expect((await res.json()).ai_model_name).toBe('gpt-4o');
-  });
 
   test('404 — when project does not exist', async () => {
     mProjects.getProject.mockResolvedValue(null);

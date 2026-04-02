@@ -56,7 +56,6 @@ export interface System {
   name: string;
   folder_path: string;
   graphivac_grid_id: string;
-  ai_model_name: string;
   /** CopilotKit thread ID of the last active conversation for this system. */
   thread_id?: string;
   /** Named conversation sessions for this system. */

@@ -53,7 +53,6 @@ const SYSTEM: System = {
   name: 'Chilled Water Plant',
   folder_path: 'sys-xyz789012345678',
   graphivac_grid_id: 'G-gridtest',
-  ai_model_name: 'gemini-pro',
   created_at: '2026-01-01T00:00:00.000Z',
   updated_at: '2026-01-01T00:00:00.000Z',
 };

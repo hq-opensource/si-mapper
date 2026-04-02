@@ -24,7 +24,6 @@ const SessionSchema = z.object({
 
 const PatchSystemSchema = z.object({
   name: z.string().min(1).optional(),
-  ai_model_name: z.string().min(1).optional(),
   thread_id: z.string().optional(),
   sessions: z.array(SessionSchema).optional(),
 });
@@ -85,7 +84,6 @@ export async function PATCH(req: NextRequest, { params }: Params): Promise<NextR
   const updated = {
     ...system,
     ...(parsed.data.name !== undefined ? { name: parsed.data.name } : {}),
-    ...(parsed.data.ai_model_name !== undefined ? { ai_model_name: parsed.data.ai_model_name } : {}),
     ...(parsed.data.thread_id !== undefined ? { thread_id: parsed.data.thread_id } : {}),
     ...(parsed.data.sessions !== undefined ? { sessions: parsed.data.sessions } : {}),
   };

@@ -35,7 +35,6 @@ const SYSTEM: System = {
   name: 'Chilled Water Plant',
   folder_path: 'sys-xyz789012345678',
   graphivac_grid_id: 'G-gridtest',
-  ai_model_name: 'gemini-pro',
   created_at: '2026-01-01T00:00:00.000Z',
   updated_at: '2026-01-01T00:00:00.000Z',
 };
@@ -101,7 +100,7 @@ describe('POST /api/projects/[id]/systems', () => {
     mGraphivac.createGrid.mockResolvedValue('G-new');
     mProjects.createSystemOnDisk.mockResolvedValue({ ...SYSTEM, graphivac_grid_id: 'G-new' });
 
-    const res = await POST(postReq({ name: 'CWP', ai_model_name: 'gemini-pro' }), params(PROJECT.id));
+    const res = await POST(postReq({ name: 'CWP' }), params(PROJECT.id));
     expect(res.status).toBe(201);
     const body = await res.json();
     expect(body.graphivac_grid_id).toBe('G-new');
@@ -112,7 +111,7 @@ describe('POST /api/projects/[id]/systems', () => {
     mGraphivac.createGrid.mockResolvedValue('G-new');
     mProjects.createSystemOnDisk.mockResolvedValue(SYSTEM);
 
-    await POST(postReq({ name: 'AHU-1', ai_model_name: 'gpt-4o' }), params(PROJECT.id));
+    await POST(postReq({ name: 'AHU-1' }), params(PROJECT.id));
 
     expect(mGraphivac.createGrid).toHaveBeenCalledWith(PROJECT.graphivac_project_id, 'AHU-1');
   });
@@ -120,21 +119,14 @@ describe('POST /api/projects/[id]/systems', () => {
   test('404 — when project does not exist', async () => {
     mProjects.getProject.mockResolvedValue(null);
 
-    const res = await POST(postReq({ name: 'X', ai_model_name: 'y' }), params('proj-missing'));
+    const res = await POST(postReq({ name: 'X' }), params('proj-missing'));
     expect(res.status).toBe(404);
   });
 
   test('400 — missing name', async () => {
     mProjects.getProject.mockResolvedValue(PROJECT);
 
-    const res = await POST(postReq({ ai_model_name: 'gemini-pro' }), params(PROJECT.id));
-    expect(res.status).toBe(400);
-  });
-
-  test('400 — missing ai_model_name', async () => {
-    mProjects.getProject.mockResolvedValue(PROJECT);
-
-    const res = await POST(postReq({ name: 'CWP' }), params(PROJECT.id));
+    const res = await POST(postReq({}), params(PROJECT.id));
     expect(res.status).toBe(400);
   });
 
@@ -154,7 +146,7 @@ describe('POST /api/projects/[id]/systems', () => {
     mProjects.getProject.mockResolvedValue(PROJECT);
     mGraphivac.createGrid.mockRejectedValue(new Error('Graphivac down'));
 
-    const res = await POST(postReq({ name: 'CWP', ai_model_name: 'gemini-pro' }), params(PROJECT.id));
+    const res = await POST(postReq({ name: 'CWP' }), params(PROJECT.id));
     expect(res.status).toBe(502);
     // Disk write must NOT have been called
     expect(mProjects.createSystemOnDisk).not.toHaveBeenCalled();
@@ -165,7 +157,7 @@ describe('POST /api/projects/[id]/systems', () => {
     mGraphivac.createGrid.mockResolvedValue('G-new');
     mProjects.createSystemOnDisk.mockRejectedValue(new Error('ENOSPC'));
 
-    const res = await POST(postReq({ name: 'CWP', ai_model_name: 'gemini-pro' }), params(PROJECT.id));
+    const res = await POST(postReq({ name: 'CWP' }), params(PROJECT.id));
     expect(res.status).toBe(500);
   });
 });

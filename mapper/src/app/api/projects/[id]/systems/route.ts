@@ -12,7 +12,6 @@ import { createGrid } from '@/lib/graphivac-client';
 
 const CreateSystemSchema = z.object({
   name: z.string().min(1, 'name is required'),
-  ai_model_name: z.string().min(1, 'ai_model_name is required'),
 });
 
 // ── Shared helper ─────────────────────────────────────────────────────────────
@@ -63,7 +62,7 @@ export async function POST(req: NextRequest, { params }: Params): Promise<NextRe
     );
   }
 
-  const { name, ai_model_name } = parsed.data;
+  const { name } = parsed.data;
 
   // 1. Create Graphivac Grid — fail early if this fails.
   let graphivac_grid_id: string;
@@ -82,7 +81,6 @@ export async function POST(req: NextRequest, { params }: Params): Promise<NextRe
     const system = await createSystemOnDisk(project.folder_path, {
       name,
       graphivac_grid_id,
-      ai_model_name,
     });
     return NextResponse.json(system, { status: 201 });
   } catch (err) {
