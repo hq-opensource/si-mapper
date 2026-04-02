@@ -1,4 +1,7 @@
 import warnings
+from pathlib import Path
+from urllib.parse import quote
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 """Main entrypoint for the PAR Agent Service."""
@@ -25,6 +28,11 @@ load_dotenv()
 logger = configure_logging()
 
 SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
+DB_FILE_PATH = Path(os.getenv("SESSIONS_DB_PATH", "/app/data/sessions.db")).resolve()
+if not DB_FILE_PATH.is_file():
+    DB_FILE_PATH = DB_FILE_PATH / "sessions.db"
+os.makedirs(DB_FILE_PATH.parent, exist_ok=True)
+
 # Per-system model override (13-09): ACTIVE_AI_MODEL can be set to the value of
 # active_system.ai_model_name before the agent process starts (e.g. injected by
 # the launcher or Docker entrypoint).  Falls back to SHARED_ADK_MODEL so existing
@@ -33,14 +41,12 @@ SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
 ACTIVE_AI_MODEL = os.getenv("ACTIVE_AI_MODEL", "") or SHARED_ADK_MODEL
 logger.info(f"Using SHARED_ADK_MODEL: {SHARED_ADK_MODEL}")
 logger.info(f"Effective model: {ACTIVE_AI_MODEL}")
+
 APP_TITLE = "SI-MAPPER Agent"
 AGENT_NAME = "si_mapper_agent"
 
 # --- SQLite Session DB ---
-_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-os.makedirs(_DATA_DIR, exist_ok=True)
-_DB_URL = f"sqlite+aiosqlite:///{os.path.join(_DATA_DIR, 'sessions.db')}"
-
+_DB_URL = f"sqlite+aiosqlite:///{quote(DB_FILE_PATH.as_posix(), safe='/:')}"
 
 def create_app() -> FastAPI:
     """Initializes and configures the FastAPI application."""

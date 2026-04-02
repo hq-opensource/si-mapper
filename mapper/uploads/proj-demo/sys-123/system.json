@@ -2,8 +2,21 @@
   "id": "sys-123",
   "name": "Demo HVAC System",
   "folder_path": "sys-123",
-  "graphivac_grid_id": "G-LAiRS3mgp6",
+  "graphivac_grid_id": "G-KrQikAPDsL",
   "ai_model_name": "gemini-3.1-pro-preview-customtools",
   "created_at": "2026-03-25T10:00:00.000Z",
-  "updated_at": "2026-03-25T10:00:00.000Z"
+  "updated_at": "2026-04-02T19:10:36.087Z",
+  "thread_id": "f0bf828e-9773-4cbb-b37c-0ef066548d9f",
+  "sessions": [
+    {
+      "id": "6483324d-76c4-4071-b7e1-9b947448e5dd",
+      "name": "Session A",
+      "created_at": "2026-04-02T01:00:04.768Z"
+    },
+    {
+      "id": "f0bf828e-9773-4cbb-b37c-0ef066548d9f",
+      "name": "Session B",
+      "created_at": "2026-04-02T01:00:27.372Z"
+    }
+  ]
 }

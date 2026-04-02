@@ -2,8 +2,16 @@
   "id": "sys-456",
   "name": "Demo HVAC System - MBR",
   "folder_path": "sys-456",
-  "graphivac_grid_id": "G-BGv1x7dJXX",
-  "ai_model_name": "gemini-3.1-pro-preview-customtools",
+  "graphivac_grid_id": "G-WgX7VWwA3o",
+  "ai_model_name": "github_copilot/claude-sonnet-4.5",
   "created_at": "2026-03-25T10:00:00.000Z",
-  "updated_at": "2026-03-25T10:00:00.000Z"
+  "updated_at": "2026-04-02T02:33:44.733Z",
+  "thread_id": "4e0496cb-f2cc-414e-9559-be4da1b4e7cc",
+  "sessions": [
+    {
+      "id": "4e0496cb-f2cc-414e-9559-be4da1b4e7cc",
+      "name": "New Session [2026/04/01 21:26:05]",
+      "created_at": "2026-04-02T01:26:05.907Z"
+    }
+  ]
 }
