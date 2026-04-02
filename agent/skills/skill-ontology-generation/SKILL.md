@@ -27,9 +27,8 @@ You generate Python code that models equipment, connections, and relationships f
   - `%` (`Sensor.__mod__`): These operators represent sensor-to-equipment relationships.
 
 ## Code samples
-- Run `scan_python_files_filtered` on `../223p/ref/code` with equipment class name keywords for relevant reference implementations.
+- Run `scan_python_files_filtered` on `agent/223p/ref/code` with equipment class name keywords for relevant reference implementations.
 - Study patterns for entities, connections, Sensors, Controllers, and BACnet points.
-- Use the `skill-read-code` skill to acquire error-resolution lessons.
 
 ## Failure conditions → call `exit_generator_failure(reason="...")`
 Fail immediately (no text response) if any of the following:
@@ -42,6 +41,7 @@ Fail immediately (no text response) if any of the following:
 ## Equipment
 - Every grid component (fans, coils, dampers, sensors, etc.) → ontology entity with metadata (BACnet points, control sequences, electrical info).
 - Do not redefine ConnectionPoints already defined in `bob`/`scratch`; use and connect them directly.
+- Components returned by `read_internal_grid` may have a `custom_fields` key containing BACnet points (object names, descriptions, units). When modeling sensors and equipment, include these BACnet metadata points as properties in the ontology — they provide real-world measurement context.
 
 ## Connections
 - Use `>>` / `<<` for directional relationships; connection points are inferred from library definitions — do not set inlet/outlet explicitly if already defined.
@@ -64,10 +64,11 @@ Fail immediately (no text response) if any of the following:
 
 # Workflow
 
+0. **Lessons** — Read `agent/223p/LESSONS.md` using `scan_python_files_filtered(path="agent/223p", keywords=["LESSONS"])` or ask the LLM to read the file directly. If the file is empty or absent, proceed without it. Apply any error-resolution lessons to your generation plan.
 1. **Grid** — Call `read_internal_grid` to get all components and coordinates. Extract equipment class names from the result (e.g. "Fan", "Coil", "Damper").
 2. **Class lookup** — Call `search_class_mapping(keywords=[<class names from step 1>])` to find which library file each class lives in. Note the `path` field for each match.
 3. **Library source** — Call `scan_python_files_filtered` using the `scan_dir` field from `search_class_mapping` results and the class name keywords to read the actual class source. `scan_dir` is the absolute path to the directory in the venv where the class file lives — use it directly. No full catalog dump needed.
-4. **Samples** — Call `scan_python_files_filtered` on `../223p/ref/code` with the same class name keywords to find relevant reference implementations.
+4. **Samples** — Call `scan_python_files_filtered` on `agent/223p/ref/code` with the same class name keywords to find relevant reference implementations.
 5. **Plan** — Outline entities, connections, and spatial hierarchy.
 6. **Generate** — Write the Python ontology code.
 7. **Validate** — Confirm output is valid, executable Python using `bob`/`scratch`.
@@ -75,3 +76,10 @@ Fail immediately (no text response) if any of the following:
 9. **Exit** — Call `exit_generator_success(summary="...")` immediately after writing. Summary must include: equipment count, connection types used, notable design decisions. **Do not output text — call the tool.**
 
 
+# Lesson Extraction (HITL gate)
+
+If the user explicitly says "extract lessons", "update lessons", or "distill lessons":
+1. Call `extract_lessons()` tool — it returns all Python iteration files across sessions.
+2. Analyze the iteration sequence: identify what patterns caused errors in earlier versions and how later versions fixed them.
+3. Write the updated `agent/223p/LESSONS.md` using `write_ontology` or direct file write, structured by the 6 categories: Imports, Instantiation pattern, Connection wiring, Sensor API, Serialization, Structural approach.
+4. Do NOT auto-trigger this step. Only execute when the user explicitly asks.
