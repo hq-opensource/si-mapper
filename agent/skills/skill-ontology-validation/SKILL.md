@@ -14,7 +14,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 ## Workflow
 
 **Preparation**
-- Read `agent/223p/LESSONS.md` for error-resolution lessons from previous sessions. If the file is empty or absent, proceed without it.
+- Read `agent/skills/skill-ontology-lessons/SKILL.md` using the Read tool. Apply every error-to-resolution lesson listed there before entering the fix loop. If the file is empty or absent, proceed without it.
 - Use `read_prompt` to read the original generation guidelines from `agent/223p/ref/code/prompt.md`. Keep result in cache.
 
 **Fix loop:**
@@ -35,7 +35,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 
 ---
 ## Available skills and tools
-- Read `agent/223p/LESSONS.md` directly for error-resolution lessons (no separate skill needed).
+- Read `agent/skills/skill-ontology-lessons/SKILL.md` directly for error-resolution lessons.
 - `search_class_mapping` tool to find which file a class lives in. Pass class names from errors as keywords.
 - `scan_python_files_filtered` tool to read the source of a specific class file (use `path` from `search_class_mapping` result). Also use for `agent/223p/ref/code` when looking for reference patterns.
 - `read_prompt` tool for original generation guidelines. Keep result in cache.
@@ -49,7 +49,7 @@ Read the generated `ontology.py`, validate it, and iteratively fix all issues un
 ---
 
 ## Stop Conditions → `exit_validator_failure(reason="VALIDATION_FAILED: ...")`
-- `agent/223p/LESSONS.md` is unreadable and no error-resolution context is available — proceed with best-effort fixing but log the limitation.
+- `agent/skills/skill-ontology-lessons/SKILL.md` is unreadable and no error-resolution context is available — proceed with best-effort fixing but log the limitation.
 - `read_ontology` returns empty or missing file.
 - `search_class_mapping` returns empty for known class names — mapping files may be missing or corrupt.
 - Same error persists after 10 consecutive fix attempts — escalate to human review.

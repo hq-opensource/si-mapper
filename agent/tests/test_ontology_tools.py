@@ -102,10 +102,10 @@ def test_ttl_iterations_dir_exists():
     )
 
 
-def test_lessons_file_ends_with_agent_223p():
-    """LESSONS_FILE must point to agent/223p/LESSONS.md."""
-    assert LESSONS_FILE.replace("\\", "/").endswith("agent/223p/LESSONS.md"), (
-        f"Expected LESSONS_FILE to end with 'agent/223p/LESSONS.md', got: {LESSONS_FILE}"
+def test_lessons_file_ends_with_skill_ontology_lessons():
+    """LESSONS_FILE must point to agent/skills/skill-ontology-lessons/SKILL.md."""
+    assert LESSONS_FILE.replace("\\", "/").endswith("skill-ontology-lessons/SKILL.md"), (
+        f"Expected LESSONS_FILE to end with 'skill-ontology-lessons/SKILL.md', got: {LESSONS_FILE}"
     )
 
 

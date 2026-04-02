@@ -64,22 +64,27 @@ Fail immediately (no text response) if any of the following:
 
 # Workflow
 
-0. **Lessons** — Read `agent/223p/LESSONS.md` using `scan_python_files_filtered(path="agent/223p", keywords=["LESSONS"])` or ask the LLM to read the file directly. If the file is empty or absent, proceed without it. Apply any error-resolution lessons to your generation plan.
 1. **Grid** — Call `read_internal_grid` to get all components and coordinates. Extract equipment class names from the result (e.g. "Fan", "Coil", "Damper").
 2. **Class lookup** — Call `search_class_mapping(keywords=[<class names from step 1>])` to find which library file each class lives in. Note the `path` field for each match.
 3. **Library source** — Call `scan_python_files_filtered` using the `scan_dir` field from `search_class_mapping` results and the class name keywords to read the actual class source. `scan_dir` is the absolute path to the directory in the venv where the class file lives — use it directly. No full catalog dump needed.
 4. **Samples** — Call `scan_python_files_filtered` on `agent/223p/ref/code` with the same class name keywords to find relevant reference implementations.
-5. **Plan** — Outline entities, connections, and spatial hierarchy.
-6. **Generate** — Write the Python ontology code.
-7. **Validate** — Confirm output is valid, executable Python using `bob`/`scratch`.
-8. **Write** — Call `write_ontology` to save the file.
-9. **Exit** — Call `exit_generator_success(summary="...")` immediately after writing. Summary must include: equipment count, connection types used, notable design decisions. **Do not output text — call the tool.**
+5. **Read lessons** — Read `agent/skills/skill-ontology-lessons/SKILL.md` using the Read tool. Apply every error-to-resolution lesson listed there to your generation plan before writing any code. If the file is empty or absent, proceed without it.
+6. **Plan** — Outline entities, connections, and spatial hierarchy.
+7. **Generate** — Write the Python ontology code.
+8. **Validate** — Confirm output is valid, executable Python using `bob`/`scratch`.
+9. **Write** — Call `write_ontology` to save the file.
+10. **Exit** — Call `exit_generator_success(summary="...")` immediately after writing. Summary must include: equipment count, connection types used, notable design decisions. **Do not output text — call the tool.**
 
 
 # Lesson Extraction (HITL gate)
 
 If the user explicitly says "extract lessons", "update lessons", or "distill lessons":
-1. Call `extract_lessons()` tool — it returns all Python iteration files across sessions.
-2. Analyze the iteration sequence: identify what patterns caused errors in earlier versions and how later versions fixed them.
-3. Write the updated `agent/223p/LESSONS.md` using `write_ontology` or direct file write, structured by the 6 categories: Imports, Instantiation pattern, Connection wiring, Sensor API, Serialization, Structural approach.
-4. Do NOT auto-trigger this step. Only execute when the user explicitly asks.
+1. Call `extract_lessons()` tool — it returns all Python iteration files across sessions AND the current content of `skill-ontology-lessons/SKILL.md`.
+2. Read the current skill content from the `current_skill_content` field of the result.
+3. Analyze the iteration sequence: identify what patterns caused errors in earlier versions and how later versions fixed them.
+4. **Merge** new findings into the existing skill — do NOT replace it. For each of the 6 categories (Imports, Instantiation pattern, Connection wiring, Sensor API, Serialization, Structural approach):
+   - Keep all existing lessons that are still valid.
+   - Add new error-to-resolution entries discovered from the iterations.
+   - Remove entries that have been superseded by newer findings.
+5. Write the merged result to `agent/skills/skill-ontology-lessons/SKILL.md` using a direct file write (preserve the frontmatter header at the top of the file).
+6. Do NOT auto-trigger this step. Only execute when the user explicitly asks.

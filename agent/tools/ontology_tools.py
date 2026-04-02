@@ -49,7 +49,7 @@ TTL_OUTPUT_DIR = _223P_DIR  # ontology.ttl written as agent/223p/ontology.ttl
 _MAPPINGS_DIR = os.path.join(_223P_DIR, "mappings")
 PYTHON_ITERATIONS_DIR = os.path.join(_223P_DIR, "python_iterations")
 TTL_ITERATIONS_DIR = os.path.join(_223P_DIR, "ttl_iterations")
-LESSONS_FILE = os.path.join(_223P_DIR, "LESSONS.md")
+LESSONS_FILE = os.path.join(_AGENT_ROOT, "skills", "skill-ontology-lessons", "SKILL.md")
 _PROMPT_MD = os.path.join(_223P_DIR, "ref", "code", "prompt.md")
 
 _JSONL_FILES = {
@@ -407,8 +407,9 @@ EXTRACT_LESSONS_SCHEMA = {
     "name": "extract_lessons",
     "description": (
         "Read all Python iteration files from agent/223p/python_iterations/ "
-        "across all sessions. Returns structured JSON for LLM analysis to write "
-        "LESSONS.md. HITL-gated: only call when user explicitly asks."
+        "across all sessions, plus the current content of skill-ontology-lessons/SKILL.md. "
+        "Returns structured JSON for LLM analysis to MERGE new lessons into the existing skill — "
+        "not replace it. HITL-gated: only call when user explicitly asks."
     ),
     "parameters": _EMPTY_PARAMS,
 }
@@ -417,6 +418,9 @@ EXTRACT_LESSONS_SCHEMA = {
 def extract_lessons(tool_context: Optional[ToolContext] = None) -> str:
     """Read all python iteration files across sessions for LLM-powered lesson extraction.
 
+    Also reads the current content of skill-ontology-lessons/SKILL.md so the LLM
+    can merge new findings into the existing skill rather than replacing it.
+
     Returns JSON::
 
         {
@@ -424,15 +428,26 @@ def extract_lessons(tool_context: Optional[ToolContext] = None) -> str:
           "sessions": {
             "session_1": [{"file": "ontology_001.py", "content": "<code>"}, ...]
           },
-          "lessons_file": "<path to LESSONS.md>",
+          "current_skill_content": "<current text of skill-ontology-lessons/SKILL.md>",
+          "lessons_file": "<path to skill-ontology-lessons/SKILL.md>",
           "total_files": <int>
         }
     """
+    # Read current skill content for merge context
+    current_skill_content = ""
+    try:
+        skill_path = Path(LESSONS_FILE)
+        if skill_path.exists():
+            current_skill_content = skill_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        logger.warning("Failed to read skill-ontology-lessons/SKILL.md: %s", exc)
+
     iterations_dir = Path(PYTHON_ITERATIONS_DIR)
     if not iterations_dir.exists():
         return json.dumps({
             "success": True,
             "sessions": {},
+            "current_skill_content": current_skill_content,
             "lessons_file": LESSONS_FILE,
             "total_files": 0,
         })
@@ -456,6 +471,7 @@ def extract_lessons(tool_context: Optional[ToolContext] = None) -> str:
     return json.dumps({
         "success": True,
         "sessions": sessions,
+        "current_skill_content": current_skill_content,
         "lessons_file": LESSONS_FILE,
         "total_files": total,
     }, ensure_ascii=False)
