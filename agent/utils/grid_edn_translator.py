@@ -9,6 +9,7 @@ Public API:
     internal_grid_to_edn_comps(internal_grid: dict) -> dict
 """
 
+import json
 import logging
 from typing import Any, Dict, List
 
@@ -136,6 +137,21 @@ def edn_comps_to_internal_grid(comps_map: dict) -> dict:
                 rot = value.get(Keyword("rot"), 0)
                 component["rotation"] = int(rot) if rot else 0
 
+            # Preserve custom-fields (BACnet points, control metadata, etc.)
+            cf = value.get(Keyword("custom-fields"))
+            if cf and isinstance(cf, dict):
+                deserialized: dict = {}
+                for k, v in cf.items():
+                    key_str = k.name if isinstance(k, Keyword) else str(k)
+                    if isinstance(v, str):
+                        try:
+                            deserialized[key_str] = json.loads(v)
+                        except (json.JSONDecodeError, ValueError):
+                            deserialized[key_str] = v
+                    else:
+                        deserialized[key_str] = v
+                component["custom_fields"] = deserialized
+
             components.append(component)
 
         else:
@@ -191,6 +207,16 @@ def internal_grid_to_edn_comps(internal_grid: dict) -> dict:
             # Rotation: write Keyword("rot") only if non-zero
             if comp_type in ROTATION_TYPES and comp.get("rotation", 0) != 0:
                 value[Keyword("rot")] = comp["rotation"]
+
+            # Write custom-fields back (BACnet points, control metadata, etc.)
+            custom_fields = comp.get("custom_fields")
+            if custom_fields and isinstance(custom_fields, dict):
+                serialized: dict = {}
+                for k, v in custom_fields.items():
+                    if isinstance(v, (dict, list)):
+                        v = json.dumps(v)
+                    serialized[k] = v
+                value[Keyword("custom-fields")] = serialized
 
             comps[key] = value
 

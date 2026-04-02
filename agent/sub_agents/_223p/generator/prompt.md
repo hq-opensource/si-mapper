@@ -17,8 +17,8 @@ Generate Python code that models equipment, connections, and relationships from 
 ---
 
 ## Data Source
-- **Primary**: `read_grid` — equipment, ducts, pipes, coordinates.
-- **Secondary**: other read-only MCP tools only when `read_grid` is insufficient.
+- **Primary**: `read_internal_grid` — equipment, ducts, pipes, coordinates.
+- **Secondary**: other read-only MCP tools only when `read_internal_grid` is insufficient.
 - ⚠️ **Never call MCP write tools.**
 
 ---
@@ -67,7 +67,7 @@ Generate Python code that models equipment, connections, and relationships from 
 
 ## Workflow
 
-1. **Grid** — Call `read_grid` to get all components and coordinates.
+1. **Grid** — Call `read_internal_grid` to get all components and coordinates.
 2. **Libraries** — Batch-inspect needed classes with `list_library_classes` + `get_class_details`.
 3. **Samples** — Analyse code samples.
 4. **Plan** — Outline entities, connections, and spatial hierarchy.
@@ -80,6 +80,6 @@ Generate Python code that models equipment, connections, and relationships from 
 
 ## Stop Conditions → call `exit_loop_generator_failure(reason="...")`
 Fail immediately (no text response) if any of the following:
-- `read_grid` returns empty, no equipment, only ducts/pipes, or an error.
+- `read_internal_grid` returns empty, no equipment, only ducts/pipes, or an error.
 - `bob`/`scratch` libraries are unreadable or not found.
 - Code samples are unreadable.

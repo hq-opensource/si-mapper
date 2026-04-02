@@ -115,8 +115,6 @@ FOR EACH dated session folder (chronological order):
 
 ## 7. Distillation Protocol
 
-> This section is for the **master agent**, not the ontology sub-agents.
-
 When the user explicitly requests lesson distillation (e.g. "update lessons", "distill lessons"):
 
 1. **Read all dated session folders** using the Reading Algorithm (Section 5).

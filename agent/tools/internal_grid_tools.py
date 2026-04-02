@@ -307,6 +307,95 @@ def delete_components_batch(tool_context: ToolContext, names: List[str]) -> str:
     )
 
 
+def update_component_metadata(
+    tool_context: ToolContext,
+    component_name: str,
+    metadata: dict,
+) -> str:
+    """
+    Merges metadata into a component's custom_fields in the internal grid.
+    Use this to store BACnet points or other metadata before syncing to GraphyVAC.
+
+    Args:
+        component_name: The name of the component to update (e.g. "AHU-1").
+        metadata: Key-value pairs to merge (e.g. {"bacnet": {"2500.AI11": {"name": "...", "unit": "..."}}}).
+    """
+    if "internal_grid" not in tool_context.state:
+        return ":::thought\n[System] Internal grid not initialized.\n:::"
+
+    components = tool_context.state["internal_grid"]["components"]
+    for component in components:
+        if component["name"] == component_name:
+            existing_cf = component.get("custom_fields", {})
+            for key, val in metadata.items():
+                if key in existing_cf and isinstance(existing_cf[key], dict) and isinstance(val, dict):
+                    existing_cf[key].update(val)
+                else:
+                    existing_cf[key] = val
+            component["custom_fields"] = existing_cf
+            tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
+            tool_context.state["_updated_grid"] = True
+            keys = list(metadata.keys())
+            print(f"[GRID] METADATA '{component_name}' ← {keys}", flush=True)
+            return (
+                f":::thought\n[System] Metadata merged into '{component_name}': "
+                f"keys={keys}\n:::"
+            )
+
+    return f":::thought\n[System] Error: Component '{component_name}' not found in internal grid.\n:::"
+
+
+def update_component_metadata_batch(
+    tool_context: ToolContext,
+    updates: dict,
+) -> str:
+    """
+    Merges metadata into multiple components' custom_fields in a single operation.
+    Use this to store BACnet points or other metadata before syncing to GraphyVAC.
+
+    Args:
+        updates: Dict where each key is a component name and the value is its metadata dict.
+                 Example: {
+                   "AHU-1": {"bacnet": {"2500.AI11": {"name": "VITESSE RET.", "unit": "A"}}},
+                   "VAV-101": {"bacnet": {"2501.BI3": {"name": "STATUT", "unit": ""}}}
+                 }
+    """
+    if "internal_grid" not in tool_context.state:
+        return ":::thought\n[System] Internal grid not initialized.\n:::"
+
+    components = tool_context.state["internal_grid"]["components"]
+    name_index = {c["name"]: c for c in components}
+
+    processed = 0
+    not_found = []
+
+    for component_name, metadata in updates.items():
+        component = name_index.get(component_name)
+        if component is None:
+            not_found.append(component_name)
+            continue
+        existing_cf = component.get("custom_fields", {})
+        for key, val in metadata.items():
+            if key in existing_cf and isinstance(existing_cf[key], dict) and isinstance(val, dict):
+                existing_cf[key].update(val)
+            else:
+                existing_cf[key] = val
+        component["custom_fields"] = existing_cf
+        processed += 1
+
+    if processed > 0:
+        tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
+        tool_context.state["_updated_grid"] = True
+
+    n_total = len(updates)
+    detail = f" Not found: {not_found}." if not_found else ""
+    print(f"[GRID] METADATA BATCH {processed}/{n_total} components updated", flush=True)
+    return (
+        f":::thought\n[System] Metadata batch: {processed}/{n_total} components updated."
+        f"{detail}\n:::"
+    )
+
+
 def read_internal_grid(
     tool_context: ToolContext,
     component_type: Optional[str] = None,

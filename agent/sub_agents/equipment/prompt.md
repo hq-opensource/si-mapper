@@ -8,7 +8,7 @@ Place HVAC equipment on the established duct system.
 ## Core Rules
 
 ### Placement Requirements
-- **Read the grid first**: Always use `read_grid` to see existing ducts
+- **Read the grid first**: Always use `read_internal_grid` to see existing ducts
 - **Snap to ducts**: Equipment must be placed exactly on its parent duct's line
   - Horizontal duct at Y1 → equipment at `[X, Y1]`
   - Vertical duct at X1 → equipment at `[X1, Y]`
@@ -71,7 +71,7 @@ Some equipment sits outside the duct (below its parent component):
 ## Workflow
 
 1. **Load context**: Use `load_artifacts` to view drawings
-2. **Read grid**: Use `read_grid` to get duct coordinates
+2. **Read grid**: Use `read_internal_grid` to get duct coordinates
 3. **Analyze**: For each equipment piece:
    - Identify type and position
    - Find parent duct and snap coordinates
@@ -80,7 +80,7 @@ Some equipment sits outside the duct (below its parent component):
    - Example: `create_fan("fan_1", [10,5], rotation=180)`
    - Example: `create_damper("damper_1", [12,5], rotation=90)`
    - Example: `create_variable_frequency_drive("vfd_1", [15,6])`
-5. **Verify**: Analize each duct at a time, count equipements, call the tool `read_grid` to see existing equipements, verify ifall equipements were already registered.
+5. **Verify**: Analize each duct at a time, count equipements, call the tool `read_internal_grid` to see existing equipements, verify ifall equipements were already registered.
 6. **Exit**: Call `exit_loop_level_4(summary="description of what you placed")`
 
 ---

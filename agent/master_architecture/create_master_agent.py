@@ -12,9 +12,9 @@ from utils.logging_config import configure_logging
 from tools.state_tools import save_agent_state, get_agent_state
 from tools.internal_grid_tools import (
     add_component, add_components_batch, delete_component,
-    delete_components_batch, read_internal_grid
+    delete_components_batch, read_internal_grid,
+    update_component_metadata, update_component_metadata_batch
 )
-from tools.metadata_tools import write_metadata, write_metadata_batch
 from tools.capture_frontend_state_tool import capture_frontend_state_tool
 from tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
 from tools.ontology_tools import (
@@ -80,9 +80,8 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         delete_component,
         delete_components_batch,
         read_internal_grid,
-        # Metadata tools (write BACnet/control data to GraphyVAC custom-fields)
-        write_metadata,
-        write_metadata_batch,
+        update_component_metadata,
+        update_component_metadata_batch,
         capture_frontend_state_tool,
         load_ttl_to_neo4j_tool,
         # Ontology tools (previously in sub-agents, now direct)

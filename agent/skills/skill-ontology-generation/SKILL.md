@@ -9,23 +9,27 @@ You generate Python code that models equipment, connections, and relationships f
 
 
 # General rules
-## Exclusive libraries to use
+## Data Source
+- **Primary**: `read_internal_grid` — returns all HVAC components and coordinates from the agent's internal state.
+- If the internal grid is empty, the master agent must synchronize the frontend before calling this agent.
+
+## Output
+- Single executable Python file using `bob` and `scratch`.
+- never write TTL manually, the libraries `bob`/`scratch` will convert python code to TTL. Your job is to write the python code using the libraries, not to write TTL.
+
+## Exclusive libraries to use to generate the ontology
 - Use **`bob`** and **`scratch`** libraries exclusively. Do not use `rdflib`, `owlready2`, or other ontology libraries.
 - The `bob` and `scratch` libraries are located in the `.venv` directory of the agent folder.
 - Use `search_class_mapping` to find the path of the file where a class lives, then use `scan_python_files_filtered` to read its source.
 - Read and understand how to use the bob and scratch source code before generating code.
 - Key operators to master:
-  - `>>` / `<<` (`Node.__rshift__`/`__lshift__`): model directional connections.
-  - `%` (`Sensor.__mod__`): model sensor-to-equipment relationships.
+  - `>>` / `<<` (`Node.__rshift__`/`__lshift__`): These operators represent directional connections.
+  - `%` (`Sensor.__mod__`): These operators represent sensor-to-equipment relationships.
 
-## Data Source
-- **Primary**: `read_internal_grid` — returns all components and coordinates from the agent's internal state.
-- If the internal grid is empty, the master agent must synchronize the frontend before calling this agent.
-
-## Output
-- Single executable Python file using `bob` and `scratch`.
-- never write TTL manually, let `bob`/`scratch` handle serialization.
-- Code must be well-structured, modular, readable, and error-free.
+## Code samples
+- Run `scan_python_files_filtered` on `../223p/ref/code` with equipment class name keywords for relevant reference implementations.
+- Study patterns for entities, connections, Sensors, Controllers, and BACnet points.
+- Use the `skill-read-code` skill to acquire error-resolution lessons.
 
 ## Failure conditions → call `exit_generator_failure(reason="...")`
 Fail immediately (no text response) if any of the following:
@@ -57,13 +61,6 @@ Fail immediately (no text response) if any of the following:
 - **Matching class, missing properties**: subclass it and add needed properties.
 - **Other case**: use a generic class and attach custom properties.
 
-# Code Samples
-
-## 223P References
-- Run `scan_python_files_filtered` on `../223p/ref/code` with equipment class name keywords for relevant reference implementations.
-- Study patterns for entities, connections, Sensors, Controllers, and BACnet points.
-## error-resolution lessons
-- Use the `skill-read-code` skill to acquire error-resolution lessons.
 
 # Workflow
 

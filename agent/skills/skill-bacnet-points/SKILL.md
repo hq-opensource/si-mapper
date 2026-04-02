@@ -94,7 +94,15 @@ For each equipment piece found in the CSV, build a nested metadata structure. Sa
 ```
 
 ### 4. Write Metadata
-- Call `write_metadata_batch` with your dictionary of updates to persist the BACnet data to the grid components.
+- Call `update_component_metadata_batch` with a single dict covering all equipment found in the CSV.
+  - Example:
+    ```json
+    {
+      "AHU-1": {"bacnet": {"2500.AI11": {"name": "VITESSE RET. No.1A", "unit": "Amperes"}}},
+      "VAV-101": {"bacnet": {"2501.BI3": {"name": "STATUT", "unit": ""}}}
+    }
+    ```
+- After the batch update, call `sync_agent_to_graphivac` once to push all changes to GraphyVAC in a single transaction.
 
 ### 5. Verify and Exit
 - Confirm all identified equipment has been mapped.

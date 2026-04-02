@@ -81,10 +81,6 @@ def scan_python_files_filtered(path: str, keywords: list[str]) -> str:
           },
           "error": "<message>"   // only present on failure
         }
-
-    Use this instead of ``scan_python_files`` when you know which class names
-    or terms you need — it reduces context window consumption by only returning
-    files that are relevant.
     """
     resolved = os.path.realpath(os.path.expanduser(path))
 
