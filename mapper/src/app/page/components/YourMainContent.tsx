@@ -144,6 +144,7 @@ function YourMainContent({
   agentState,
   onUseSession,
   onNewSession,
+  onRemoveSession,
   threadId,
   sessions,
 }: {
@@ -151,6 +152,7 @@ function YourMainContent({
   agentState: AgentState,
   onUseSession: (sessionId: string) => void,
   onNewSession: (name: string) => void,
+  onRemoveSession: (sessionId: string) => void,
   threadId?: string | null,
   sessions?: import('@/types').Session[],
 }) {
@@ -226,6 +228,7 @@ function YourMainContent({
         onTabChange={handleTabChange}
         onUseSession={onUseSession}
         onNewSession={onNewSession}
+        onRemoveSession={onRemoveSession}
         threadId={threadId}
         sessions={sessions ?? []}
       />

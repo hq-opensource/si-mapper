@@ -168,27 +168,62 @@ export default function CopilotKitPage() {
     setThreadId(newId);
   }
 
-  // Creates a named session, persists it to system.json, and activates it
-  const handleNewSession = (sessionName: string) => {
-    if (!activeProject || !activeSystem) return;
-    const newSession: Session = {
-      id: crypto.randomUUID(),
-      name: sessionName,
-      created_at: new Date().toISOString(),
-    };
-    const updatedSessions = [...(activeSystem.sessions ?? []), newSession];
-    // Persist both the new sessions list and the new thread_id
-    fetch(`/api/projects/${activeProject.id}/systems/${activeSystem.id}`, {
+  // ── Shared PATCH helper ───────────────────────────────────────────────────
+  const patchSystem = (projectId: string, systemId: string, body: object) =>
+    fetch(`/api/projects/${projectId}/systems/${systemId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessions: updatedSessions, thread_id: newSession.id }),
-    })
-      .then(res => res.ok ? res.json() as Promise<System> : Promise.reject(res.statusText))
+      body: JSON.stringify(body),
+    }).then(res => res.ok ? res.json() as Promise<System> : Promise.reject(res.statusText));
+
+  // ── Shared: create a session, persist it, and activate it ───────────────
+  const addSession = (name: string, existingSessions: Session[]) => {
+    if (!activeProject || !activeSystem) return;
+    const newSession: Session = { id: crypto.randomUUID(), name, created_at: new Date().toISOString() };
+    patchSystem(activeProject.id, activeSystem.id, { sessions: [...existingSessions, newSession], thread_id: newSession.id })
       .then(updated => {
         updateActiveSystem({ sessions: updated.sessions, thread_id: updated.thread_id });
         setThreadId(newSession.id);
       })
       .catch(err => console.error('[page] Failed to create session:', err));
+  };
+
+  // Auto-create a timestamped session (used on first load or after last session is removed)
+  const createAutoSession = (existingSessions: Session[] = []) => {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const now = new Date();
+    const autoName = `New Session [${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}]`;
+    addSession(autoName, existingSessions);
+  };
+
+  // Creates a named session (called from the "New session" dialog)
+  const handleNewSession = (sessionName: string) => {
+    addSession(sessionName, activeSystem?.sessions ?? []);
+  };
+
+  // Removes a session from system.json, then selects the next one (or auto-creates)
+  const handleRemoveSession = (sessionId: string) => {
+    if (!activeProject || !activeSystem) return;
+    const remaining = (activeSystem.sessions ?? []).filter(s => s.id !== sessionId);
+    if (remaining.length > 0) {
+      // Pick the session that was after the removed one, otherwise the last one
+      const removedIndex = (activeSystem.sessions ?? []).findIndex(s => s.id === sessionId);
+      const nextSession = remaining[removedIndex] ?? remaining[remaining.length - 1];
+      patchSystem(activeProject.id, activeSystem.id, { sessions: remaining, thread_id: nextSession.id })
+        .then(updated => {
+          updateActiveSystem({ sessions: updated.sessions, thread_id: updated.thread_id });
+          setThreadId(nextSession.id);
+        })
+        .catch(err => console.error('[page] Failed to remove session:', err));
+    } else {
+      // No sessions left — remove from disk first, then auto-create
+      patchSystem(activeProject.id, activeSystem.id, { sessions: [], thread_id: '' })
+        .then(updated => {
+          updateActiveSystem({ sessions: updated.sessions ?? [], thread_id: updated.thread_id });
+          createAutoSession([]);
+        })
+        .catch(err => console.error('[page] Failed to remove last session:', err));
+    }
   };
 
   // Load / initialise the session when the active system changes
@@ -197,11 +232,6 @@ export default function CopilotKitPage() {
     if (!activeSystem || !activeProject) return;
     if (activeSystem.id === prevSystemIdRef.current) return;
     prevSystemIdRef.current = activeSystem.id;
-
-    const patchUrl = `/api/projects/${activeProject.id}/systems/${activeSystem.id}`;
-    const patch = (body: object) =>
-      fetch(patchUrl, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-        .then(res => res.ok ? res.json() as Promise<System> : Promise.reject(res.statusText));
 
     // ── Case 1: system already has an active thread_id ──────────────────────
     if (activeSystem.thread_id) {
@@ -213,24 +243,15 @@ export default function CopilotKitPage() {
     if (activeSystem.sessions && activeSystem.sessions.length > 0) {
       const first = activeSystem.sessions[0];
       setThreadId(first.id);
-      patch({ thread_id: first.id })
+      patchSystem(activeProject.id, activeSystem.id, { thread_id: first.id })
         .then(updated => updateActiveSystem({ thread_id: updated.thread_id }))
         .catch(err => console.error('[page] Failed to persist first session as thread_id:', err));
       return;
     }
 
     // ── Case 3: no sessions at all → auto-create a timestamped one ──────────
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const now = new Date();
-    const autoName = `New Session [${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}]`;
-    const newSession: Session = { id: crypto.randomUUID(), name: autoName, created_at: now.toISOString() };
-    patch({ sessions: [newSession], thread_id: newSession.id })
-      .then(updated => {
-        updateActiveSystem({ sessions: updated.sessions, thread_id: updated.thread_id });
-        setThreadId(newSession.id);
-      })
-      .catch(err => console.error('[page] Failed to auto-create session:', err));
-  }, [activeSystem, activeProject, setThreadId, updateActiveSystem]);
+    createAutoSession([]);
+  }, [activeSystem, activeProject, setThreadId, updateActiveSystem]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Persist the active threadId to system.json whenever it changes
   const isMountedRef = useRef(false);
@@ -268,6 +289,7 @@ export default function CopilotKitPage() {
             agentState={combinedState}
             onUseSession={useSession}
             onNewSession={handleNewSession}
+            onRemoveSession={handleRemoveSession}
             threadId={threadId}
             sessions={activeSystem?.sessions ?? []}
           />

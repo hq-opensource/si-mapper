@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package, Code2, ChevronDown, Plus } from "lucide-react";
+import { Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package, Code2, ChevronDown, Plus, X } from "lucide-react";
 import { AgentState } from "./AgentStateOverlay";
 import { useState, useEffect, useRef } from "react";
 import { useThoughts } from "@/context/ThoughtsContext";
@@ -17,11 +17,13 @@ function SessionDropdown({
     sessions,
     onUseSession,
     onNewSession,
+    onRemoveSession,
 }: {
     threadId?: string | null;
     sessions: Session[];
     onUseSession: (id: string) => void;
     onNewSession: (name: string) => void;
+    onRemoveSession: (id: string) => void;
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -68,18 +70,27 @@ function SessionDropdown({
                                     <div
                                         key={session.id}
                                         onClick={() => { onUseSession(session.id); setIsOpen(false); }}
-                                        className={`flex flex-col px-4 py-2 cursor-pointer hover:bg-[var(--foreground)]/5 transition-colors
+                                        className={`flex items-center px-4 py-2 cursor-pointer hover:bg-[var(--foreground)]/5 transition-colors group/session
                                             ${threadId === session.id ? 'text-[var(--accent)]' : 'text-[var(--foreground)]'}`}
                                     >
-                                        <span className="flex items-center gap-1.5 text-xs font-semibold">
-                                            {threadId === session.id && (
-                                                <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
-                                            )}
-                                            {session.name}
-                                        </span>
-                                        <span className="text-[10px] text-[var(--muted-foreground)] font-mono truncate mt-0.5">
-                                            {session.id}
-                                        </span>
+                                        <div className="flex flex-col flex-1 min-w-0">
+                                            <span className="flex items-center gap-1.5 text-xs font-semibold">
+                                                {threadId === session.id && (
+                                                    <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                                                )}
+                                                {session.name}
+                                            </span>
+                                            <span className="text-[10px] text-[var(--muted-foreground)] font-mono truncate mt-0.5">
+                                                {session.id}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); onRemoveSession(session.id); setIsOpen(false); }}
+                                            className="flex-shrink-0 ml-2 p-1 rounded-md opacity-0 group-hover/session:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition-all"
+                                            title="Remove session"
+                                        >
+                                            <X size={10} />
+                                        </button>
                                     </div>
                                 ))
                             )}
@@ -118,11 +129,12 @@ interface AgentNavbarProps {
     onTabChange: (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl') => void;
     onUseSession: (sessionId: string) => void;
     onNewSession: (name: string) => void;
+    onRemoveSession: (sessionId: string) => void;
     threadId?: string | null;
     sessions: Session[];
 }
 
-export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, onNewSession, threadId, sessions }: AgentNavbarProps) {
+export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, onNewSession, onRemoveSession, threadId, sessions }: AgentNavbarProps) {
 
     const navItems = [
         { id: 'view', label: 'View', icon: Eye },
@@ -217,6 +229,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, 
                         sessions={sessions}
                         onUseSession={onUseSession}
                         onNewSession={onNewSession}
+                        onRemoveSession={onRemoveSession}
                     />
                 </div>
 
