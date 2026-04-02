@@ -26,3 +26,9 @@ Engineers can upload a drawing and related technical files (Excel, BACnet, PDFs)
 - **Multi-modal Complexity**: Data sources may be contradictory or incomplete; the agent must handle "best-guess" engineering logic.
 - **Alignment Accuracy**: Components must stay within the bounds of their parent ducts (Y-coordinate alignment).
 - **No Stack Changes**: Maintain the current Python (FastAPI/GenAI) and TypeScript (Next.js) stack.
+
+## Current State
+
+Phase 15 complete (2026-04-02) — Agent architecture standardized: sub_agents/ deleted, 223p assets migrated to agent/223p/, three-write pattern implemented for real-time CodeWindow visibility, extract_lessons HITL-gated tool added, both ontology skills updated with correct paths and LESSONS.md integration.
+
+**Last updated:** 2026-04-02
