@@ -12,9 +12,11 @@ interface AgentNavbarProps {
     agentState: AgentState;
     activeTab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl';
     onTabChange: (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl') => void;
+    onUseSession: (sessionId: string) => void;
+    threadId?: string | null;
 }
 
-export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarProps) {
+export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, threadId }: AgentNavbarProps) {
 
     // Derived state for the status indicator
     // const isActive = agentState?.status && agentState.status !== 'idle';
@@ -45,6 +47,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
     const [hasNewArtifacts, setHasNewArtifacts] = useState(false);
     const [lastEventCount, setLastEventCount] = useState(0);
     const [lastDataHash, setLastDataHash] = useState("");
+    const [sessionIdInput, setSessionIdInput] = useState("");
 
     // Track new events (Thoughts/Tools)
     useEffect(() => {
@@ -86,6 +89,16 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
         if (activeTab === 'artifacts') setHasNewArtifacts(false);
     }, [activeTab]);
 
+    useEffect(() => {
+        setSessionIdInput(threadId ?? "");
+    }, [threadId]);
+
+    const handleApplySession = () => {
+        const trimmed = sessionIdInput.trim();
+        if (!trimmed) return;
+        onUseSession(trimmed);
+    };
+
 
 
 
@@ -118,6 +131,27 @@ export function AgentNavbar({ activeTab, onTabChange, agentState }: AgentNavbarP
                     <ProjectSelector />
                     <span className="text-[var(--muted-foreground)]/40 text-xs select-none px-0.5">/</span>
                     <SystemSelector />
+                    <input
+                        type="text"
+                        value={sessionIdInput}
+                        onChange={(e) => setSessionIdInput(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleApplySession();
+                            }
+                        }}
+                        placeholder="Session ID"
+                        className="ml-2 h-8 w-40 rounded-lg border border-[var(--muted-foreground)]/20 bg-[var(--background)] px-2 text-xs text-[var(--foreground)] outline-none transition-colors focus:border-[var(--accent)]"
+                    />
+                    <button
+                        type="button"
+                        onClick={handleApplySession}
+                        disabled={!sessionIdInput.trim()}
+                        className="h-8 rounded-lg border border-[var(--muted-foreground)]/20 px-2 text-xs font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        Use session
+                    </button>
                 </div>
 
                 {/* Navigation Items */}

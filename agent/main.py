@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from ag_ui_adk import ADKAgent, add_adk_fastapi_endpoint
+from google.adk.sessions import DatabaseSessionService
 
 # Local imports
 from master_architecture.create_master_agent import create_master_agent
@@ -34,6 +35,11 @@ logger.info(f"Using SHARED_ADK_MODEL: {SHARED_ADK_MODEL}")
 logger.info(f"Effective model: {ACTIVE_AI_MODEL}")
 APP_TITLE = "SI-MAPPER Agent"
 AGENT_NAME = "si_mapper_agent"
+
+# --- SQLite Session DB ---
+_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+os.makedirs(_DATA_DIR, exist_ok=True)
+_DB_URL = f"sqlite+aiosqlite:///{os.path.join(_DATA_DIR, 'sessions.db')}"
 
 
 def create_app() -> FastAPI:
@@ -62,6 +68,9 @@ def create_app() -> FastAPI:
     )
 
     # 3. Wrap with ADK
+    session_service = DatabaseSessionService(db_url=_DB_URL)
+    logger.info(f"Using DatabaseSessionService → {_DB_URL}")
+
     adk_agent = ADKAgent(
         adk_agent=master_agent,
         app_name="si_mapper", # Must match what the frontend expects
@@ -69,6 +78,7 @@ def create_app() -> FastAPI:
         session_timeout_seconds=3600,
         execution_timeout_seconds=1800, # 30 minutes
         tool_timeout_seconds=900,       # 15 minutes
+        session_service=session_service,
         use_in_memory_services=True
     )
 

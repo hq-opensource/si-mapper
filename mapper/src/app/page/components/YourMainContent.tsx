@@ -139,7 +139,17 @@ function ZeroSystemState() {
 
 // ── YourMainContent ───────────────────────────────────────────────────────────
 
-function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agentState: AgentState }) {
+function YourMainContent({
+  isEditMode,
+  agentState,
+  onUseSession,
+  threadId,
+}: {
+  isEditMode: boolean,
+  agentState: AgentState,
+  onUseSession: (sessionId: string) => void,
+  threadId?: string | null,
+}) {
   const [activeTab, setActiveTab] = useState<'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl'>(isEditMode ? 'edit' : 'view');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [graphivacConfig, setGraphivacConfig] = useState<GraphivacConfig | null>(null);
@@ -210,6 +220,8 @@ function YourMainContent({ isEditMode, agentState }: { isEditMode: boolean, agen
         agentState={agentState}
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        onUseSession={onUseSession}
+        threadId={threadId}
       />
 
       {/* Main Content Area */}

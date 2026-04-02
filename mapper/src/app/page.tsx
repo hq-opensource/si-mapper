@@ -1,6 +1,6 @@
 "use client";
 
-import { useCopilotAction, useCoAgent } from "@copilotkit/react-core";
+import { useCopilotAction, useCoAgent, useCopilotContext } from "@copilotkit/react-core";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { SplitSidebar } from "@/components/SplitSidebar";
 import { YourMainContent } from "@/app/page/components/YourMainContent";
@@ -162,6 +162,17 @@ export default function CopilotKitPage() {
     },
   });
 
+  const { threadId, setThreadId } = useCopilotContext();
+  const startNewSession = () => {
+    // Generate a new unique ID to start a fresh conversation
+    const newId = crypto.randomUUID();
+    setThreadId(newId);
+  };
+  // methode that receives the new threadId from the backend when a new session is started there, and updates the context accordingly
+  const useSession = (newId: string) => {
+    setThreadId(newId);
+  }
+
   // Chat is disabled until both an active project and an active system are selected
   const isWorkspaceReady = !!activeProject && !!activeSystem;
 
@@ -178,6 +189,8 @@ export default function CopilotKitPage() {
           <YourMainContent
             isEditMode={isEditMode}
             agentState={combinedState}
+            onUseSession={useSession}
+            threadId={threadId}
           />
         </div>
       </ThoughtsProvider>
