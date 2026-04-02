@@ -1,21 +1,18 @@
 """
 Ontology tools for the master agent.
 
-Provides Python library introspection, file-scanning utilities, and
-ontology read/write/execute tools that the master agent calls directly
-(no sub-agent delegation).
-
 Available tools
 ---------------
 Introspection / mapping
-  - ``scan_python_files_filtered`` – scan .py files matching keywords
-  - ``search_class_mapping``       – grep across classes_bob/scratch JSONL
+  - ``scan_python_files_filtered`` -- scan .py files matching keywords
+  - ``search_class_mapping``       -- grep across classes_bob/scratch JSONL
 
-Ontology (223p/src/ontology.py)
-  - ``read_ontology``    – read current source of ontology.py
-  - ``write_ontology``   – overwrite ontology.py (auto-backup)
-  - ``execute_ontology`` – run ontology.py and return stdout/stderr/TTL path
-  - ``read_prompt``      – read the prompt.md generation reference
+Ontology (agent/223p/ontology.py)
+  - ``read_ontology``    -- read current source of ontology.py
+  - ``write_ontology``   -- overwrite ontology.py (three-write: scratch + session archive + uploads)
+  - ``execute_ontology`` -- run ontology.py and return stdout/stderr/TTL path (three-write for TTL)
+  - ``read_prompt``      -- read the prompt.md generation reference
+  - ``extract_lessons``  -- read all session iteration files for LLM lesson extraction (HITL-gated)
 """
 
 from __future__ import annotations
@@ -26,9 +23,12 @@ import os
 import shutil
 import subprocess
 import sys
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Optional
 
 from google.adk.tools import ToolContext
+from tools.ontology_exit_tools import _persist_python, _persist_ttl
 
 logger = logging.getLogger(__name__)
 
@@ -36,26 +36,27 @@ logger = logging.getLogger(__name__)
 # Path anchors
 # ---------------------------------------------------------------------------
 # This file: agent/tools/ontology_tools.py
-# parents[0] = tools/, parents[1] = agent/, parents[2] = project_root/
+# _HERE = agent/tools/
+# _AGENT_ROOT = agent/
+# _PROJECT_ROOT = project_root/
 _HERE = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", ".."))
+_AGENT_ROOT = os.path.abspath(os.path.join(_HERE, ".."))    # agent/
+_PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", ".."))  # project root
 
-ONTOLOGY_FILE = os.path.join(_PROJECT_ROOT, "223p", "src", "ontology.py")
-TTL_OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "223p", "ttl")
+_223P_DIR = os.path.join(_AGENT_ROOT, "223p")
+ONTOLOGY_FILE = os.path.join(_223P_DIR, "ontology.py")
+TTL_OUTPUT_DIR = _223P_DIR  # ontology.ttl written as agent/223p/ontology.ttl
+_MAPPINGS_DIR = os.path.join(_223P_DIR, "mappings")
+PYTHON_ITERATIONS_DIR = os.path.join(_223P_DIR, "python_iterations")
+TTL_ITERATIONS_DIR = os.path.join(_223P_DIR, "ttl_iterations")
+LESSONS_FILE = os.path.join(_223P_DIR, "LESSONS.md")
+_PROMPT_MD = os.path.join(_223P_DIR, "ref", "code", "prompt.md")
 
-_MAPPINGS_DIR = os.path.join(
-    _PROJECT_ROOT, "agent", "skills", "skill-read-code", "assets", "mappings"
-)
 _JSONL_FILES = {
     "bob": "classes_bob.jsonl",
     "scratch": "classes_scratch.jsonl",
 }
 _mapping_cache: dict[str, list[dict]] = {}
-
-# Prompt.md lives in the original sub-agent generator folder.
-_PROMPT_MD = os.path.join(
-    _PROJECT_ROOT, "agent", "sub_agents", "_223p", "generator", "prompt.md"
-)
 
 # Reused across schemas that take no parameters.
 _EMPTY_PARAMS: dict[str, Any] = {"type": "object", "properties": {}, "required": []}
@@ -227,16 +228,21 @@ def read_ontology() -> str:
 # ---------------------------------------------------------------------------
 
 def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> str:
-    """Overwrite ``223p/src/ontology.py`` with *content*.
+    """Overwrite ``agent/223p/ontology.py`` with *content*.
 
-    A numbered backup is created before writing
-    (e.g. ``ontology_1.py``, ``ontology_2.py``, …).
+    Implements the three-write pattern:
+    1. Scratch write: agent/223p/ontology.py (immediate availability)
+    2. Session archive: agent/223p/python_iterations/session_N/ontology_NNN.py
+    3. Uploads write: mapper/uploads/python/ (real-time frontend visibility)
+
+    A numbered backup is created before writing the scratch file.
 
     Returns a JSON object::
 
         {"path": "...", "success": true, "backup": "<backup path>"}
         {"path": "...", "success": false, "error": "<message>"}  // on failure
     """
+    # 1. State snapshots (existing behavior -- keep as-is)
     if tool_context:
         snapshots = list(tool_context.state.get("python_code_snapshots", []))
         label = f"Iteration {len(snapshots) + 1}"
@@ -248,21 +254,42 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
         })
         tool_context.state["python_code_snapshots"] = snapshots
 
+    # 2. Scratch write (existing behavior)
     os.makedirs(os.path.dirname(ONTOLOGY_FILE), exist_ok=True)
-
     backup_path, backup_err = _backup_file(ONTOLOGY_FILE)
     if backup_err:
         return json.dumps({"path": ONTOLOGY_FILE, "success": False, "error": backup_err})
-
     try:
         with open(ONTOLOGY_FILE, "w", encoding="utf-8") as fh:
             fh.write(content)
-        result: dict[str, Any] = {"path": ONTOLOGY_FILE, "success": True}
-        if backup_path is not None:
-            result["backup"] = backup_path
-        return json.dumps(result)
     except OSError as exc:
         return json.dumps({"path": ONTOLOGY_FILE, "success": False, "error": str(exc)})
+
+    # 3. Session archive write
+    if tool_context:
+        session_id = tool_context.state.get("ontology_session_id")
+        iter_count = tool_context.state.get("ontology_code_iteration_count", 0)
+        if session_id is None:
+            # Auto-detect from disk to avoid session ID drift after state reset
+            existing = sorted(Path(PYTHON_ITERATIONS_DIR).glob("session_*"))
+            session_id = len(existing) + 1 if existing else 1
+            tool_context.state["ontology_session_id"] = session_id
+        session_dir = Path(PYTHON_ITERATIONS_DIR) / f"session_{session_id}"
+        session_dir.mkdir(parents=True, exist_ok=True)
+        archive_name = f"ontology_{iter_count + 1:03d}.py"
+        archive = session_dir / archive_name
+        try:
+            archive.write_text(content, encoding="utf-8")
+        except OSError as exc:
+            logger.warning("Failed to write session archive %s: %s", archive, exc)
+
+    # 4. Uploads write (real-time frontend visibility)
+    _persist_python(content, "write_ontology")
+
+    result: dict[str, Any] = {"path": ONTOLOGY_FILE, "success": True}
+    if backup_path is not None:
+        result["backup"] = backup_path
+    return json.dumps(result)
 
 
 # ---------------------------------------------------------------------------
@@ -271,8 +298,13 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
 
 def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
     """
-    Execute 223p/src/ontology.py in a subprocess using the agent's virtual
+    Execute agent/223p/ontology.py in a subprocess using the agent's virtual
     environment Python interpreter.
+
+    Implements the three-write pattern for TTL on success:
+    1. Scratch: agent/223p/ontology.ttl (produced by the script)
+    2. Session archive: agent/223p/ttl_iterations/session_N/ontology_NNN.ttl
+    3. Uploads write: mapper/uploads/ttl/ (real-time frontend visibility)
 
     Returns a JSON object::
 
@@ -288,7 +320,7 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
     if not os.path.exists(venv_python):
         venv_python = sys.executable
 
-    run_cwd = os.path.join(_PROJECT_ROOT, "223p")
+    run_cwd = _223P_DIR
     os.makedirs(TTL_OUTPUT_DIR, exist_ok=True)
 
     try:
@@ -312,22 +344,40 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
         candidate = os.path.join(TTL_OUTPUT_DIR, "ontology.ttl")
         if os.path.exists(candidate):
             ttl_file = candidate
+            ttl_content: str | None = None
+            try:
+                with open(ttl_file, "r", encoding="utf-8") as f:
+                    ttl_content = f.read()
+            except Exception as e:
+                logger.warning("Failed to read TTL file: %s", e)
 
-            if tool_context:
-                try:
-                    with open(ttl_file, "r", encoding="utf-8") as f:
-                        ttl_content = f.read()
-                    snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
-                    label = f"Version {len(snapshots) + 1}"
-                    snapshots.append({
-                        "label": label,
-                        "code": ttl_content,
-                        "iteration": len(snapshots),
-                        "status": "validated"
-                    })
-                    tool_context.state["ttl_code_snapshots"] = snapshots
-                except Exception as e:
-                    logger.warning("Failed to read TTL file for snapshot: %s", e)
+            if ttl_content and tool_context:
+                # Existing snapshot behavior
+                snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
+                label = f"Version {len(snapshots) + 1}"
+                snapshots.append({
+                    "label": label,
+                    "code": ttl_content,
+                    "iteration": len(snapshots),
+                    "status": "validated"
+                })
+                tool_context.state["ttl_code_snapshots"] = snapshots
+
+                # Session archive write (three-write pattern)
+                session_id = tool_context.state.get("ontology_session_id")
+                iter_count = tool_context.state.get("ontology_code_iteration_count", 0)
+                if session_id is not None:
+                    session_dir = Path(TTL_ITERATIONS_DIR) / f"session_{session_id}"
+                    session_dir.mkdir(parents=True, exist_ok=True)
+                    ttl_archive = session_dir / f"ontology_{iter_count:03d}.ttl"
+                    try:
+                        ttl_archive.write_text(ttl_content, encoding="utf-8")
+                    except OSError as exc:
+                        logger.warning("Failed to write TTL archive %s: %s", ttl_archive, exc)
+
+            # Uploads write (real-time frontend visibility)
+            if ttl_content:
+                _persist_ttl(ttl_content)
 
     return json.dumps({"success": success, "returncode": proc.returncode,
                        "stdout": proc.stdout, "stderr": proc.stderr,
@@ -347,3 +397,65 @@ def read_prompt() -> str:
         {"path": "...", "content": "", "error": "<message>"}  // on failure
     """
     return _read_text_file(_PROMPT_MD)
+
+
+# ---------------------------------------------------------------------------
+# Tool: extract_lessons
+# ---------------------------------------------------------------------------
+
+EXTRACT_LESSONS_SCHEMA = {
+    "name": "extract_lessons",
+    "description": (
+        "Read all Python iteration files from agent/223p/python_iterations/ "
+        "across all sessions. Returns structured JSON for LLM analysis to write "
+        "LESSONS.md. HITL-gated: only call when user explicitly asks."
+    ),
+    "parameters": _EMPTY_PARAMS,
+}
+
+
+def extract_lessons(tool_context: Optional[ToolContext] = None) -> str:
+    """Read all python iteration files across sessions for LLM-powered lesson extraction.
+
+    Returns JSON::
+
+        {
+          "success": true,
+          "sessions": {
+            "session_1": [{"file": "ontology_001.py", "content": "<code>"}, ...]
+          },
+          "lessons_file": "<path to LESSONS.md>",
+          "total_files": <int>
+        }
+    """
+    iterations_dir = Path(PYTHON_ITERATIONS_DIR)
+    if not iterations_dir.exists():
+        return json.dumps({
+            "success": True,
+            "sessions": {},
+            "lessons_file": LESSONS_FILE,
+            "total_files": 0,
+        })
+
+    sessions: dict[str, list[dict]] = {}
+    total = 0
+    for session_dir in sorted(iterations_dir.iterdir()):
+        if not session_dir.is_dir() or not session_dir.name.startswith("session_"):
+            continue
+        files = []
+        for py_file in sorted(session_dir.glob("*.py")):
+            try:
+                content = py_file.read_text(encoding="utf-8")
+                files.append({"file": py_file.name, "content": content})
+                total += 1
+            except OSError as exc:
+                logger.warning("Failed to read %s: %s", py_file, exc)
+        if files:
+            sessions[session_dir.name] = files
+
+    return json.dumps({
+        "success": True,
+        "sessions": sessions,
+        "lessons_file": LESSONS_FILE,
+        "total_files": total,
+    }, ensure_ascii=False)
