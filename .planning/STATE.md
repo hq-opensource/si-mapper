@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 15
 status: unknown
-last_updated: "2026-04-02T14:21:02.937Z"
+last_updated: "2026-04-02T14:28:41.756Z"
 progress:
   total_phases: 15
   completed_phases: 8
   total_plans: 29
-  completed_plans: 27
+  completed_plans: 28
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 15
-- **Overall Completion:** [█████████░] 93%
-- **Active Plan:** 15-01 (complete)
-- **Last Completed:** 15-01 (deleted agent/sub_agents/ dead code directory (37 files, 4290 lines) and 5 stale test files; removed 2 stale assertions from test_create_master_agent.py; 6 tests pass; zero sub_agents imports remain)
+- **Overall Completion:** [██████████] 97%
+- **Active Plan:** 15-02 (complete)
+- **Last Completed:** 15-02 (migrated all 223p assets to agent/223p/; implemented three-write pattern in write_ontology and execute_ontology; added extract_lessons tool; deleted root 223p/ and skill-read-code/; 21 tests pass)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -80,10 +80,14 @@ progress:
 - **Decision (13-01):** EXIT_LEVEL_2 pattern: master-level exit tools set EXIT_LEVEL_2 + actions.escalate=True so MasterMainLoopAgent.is_loop_finished terminates correctly.
 - **Decision (13-02):** all_subagents = subagents or [] — ontology agents removed from sub-agents list entirely; master now runs generation/validation directly.
 - **Decision (13-02):** max_iterations increased from 10 to 100 — multi-step ontology generation/validation loops require more iterations than standard task flows.
+- **Decision (15-02):** Root 223p/ deleted entirely (historical ontology_1-39.py, results/, run_validation.py, bin/, ttl/) — no lessons distilled, predates session-archive pattern.
+- **Decision (15-02):** TTL_OUTPUT_DIR = _223P_DIR — ontology.ttl written as agent/223p/ontology.ttl directly, not a subdirectory.
+- **Decision (15-02):** Three-write pattern established: write_ontology and execute_ontology write to scratch + session_N archive + mapper/uploads/ for real-time frontend visibility.
+- **Decision (15-02):** Session ID auto-detects from disk (len(existing_sessions)+1) to avoid drift after state reset.
 
 ### Next Steps
 
-1. Phase 11 complete — all plans (11-01, 11-02, 11-03, 11-04) done
+1. Phase 15 plan 15-02 complete — agent/223p/ populated, three-write pattern, extract_lessons wired
 
 ### Session Log
 
@@ -112,6 +116,7 @@ progress:
 - **2026-03-25:** Completed 14-01-PLAN.md. Created LaTeX skeleton (main.tex + 6 section stubs) with full preamble. Compiled via Docker texlive:latest (0 errors, 2-page PDF). Rendered 3 Mermaid diagrams (pipeline, architecture, experiment-progression) to PNG via mmdc v10.6.1. Decision: LaTeX via Docker (no local texlive/no sudo); mmdc via ~/.npm-global for Node 18 compat.
 - **2026-03-25:** Completed 14-03-PLAN.md. Wrote Section 4 (Implementation, 305 lines): 9-iteration experiment narrative, final architecture with 2 diagram includes, 6-row skills table, 10-category tools table, key technology decisions. Wrote Section 5 (Results placeholder, 120 lines, 31 \\todo{} markers): 5 subsections, 4 booktabs tables, screenshot placeholders. Decision: Tools table uses 10 categories covering all ~25 tools; skill-control-points excluded (placeholder not fully defined). 0 LaTeX compile errors.
 - **2026-03-25:** Completed 14-04-PLAN.md. Wrote Section 6 (Conclusions, 129 lines): Summary of Contributions (4 paragraphs synthesizing problem/approach/dev-process/tech-stack), Limitations (model dependency, validation scope, domain specificity, ASHRAE 223P maturity), Future Work (production validation, multi-system, VPP pilot, automated metrics, multi-language). Full 18-page PDF compiled with 0 LaTeX errors. Phase 14 complete — research report draft-complete pending experiment data.
+- **2026-04-02:** Completed 15-02-PLAN.md. Migrated all 223p assets to agent/223p/; implemented three-write pattern for write_ontology and execute_ontology; added extract_lessons tool wired into master agent; deleted root 223p/ (432 files) and skill-read-code/. 21 tests pass (15 new + 6 existing).
 
 ## Roadmap Evolution
 
