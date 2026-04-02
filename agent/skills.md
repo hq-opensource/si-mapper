@@ -107,38 +107,6 @@ This skill reads BMS CSV files, identifies which points belong to which equipmen
 
 ---
 
-## skill-read-code
-
-**File:** `skills/skill-read-code/SKILL.md`
-**Purpose:** Read and compare dated iteration folders in `skill-read-code/assets/` to extract error-resolution lessons from previous ontology code generation attempts.
-
-This skill is used internally by `skill-ontology-generation` and `skill-ontology-validation` to load historical lessons before generating or fixing code. It teaches the agent what went wrong in past sessions so it does not repeat the same mistakes.
-
-### How it works
-The `assets/` folder contains dated session folders (e.g. `2026-03-13-1/`). Each folder holds a sequence of iteration files:
-- `ontology_1.py`, `ontology_2.py`, ... → failed/intermediate attempts
-- `ontology.py` (no suffix) → final working file for that session
-
-The skill diffs each consecutive pair to extract what changed and why, classifies the fix into one of six categories, and processes sessions in chronological order.
-
-### Lesson categories
-| Category | What it captures |
-|----------|-----------------|
-| Imports | Modules added, removed, or moved between `bob` and `scratch` |
-| Instantiation pattern | Constructor argument changes |
-| Connection wiring | `>>` chain restructured or explicit port names introduced |
-| Sensor API | Method used to attach a property or observation changed |
-| Serialization | Function used to write the output file changed |
-| Structural approach | Class hierarchy replaced with flat pattern (or vice versa) |
-
-### LESSONS.md shortcut
-If `LESSONS.md` exists in the skill directory, the skill reads it directly and skips the asset walk entirely. `LESSONS.md` is authoritative — it is written by the master agent when explicitly asked to "distill lessons" or "update lessons".
-
-### Tools used
-None — this skill reads files directly using the Read tool.
-
----
-
 ## skill-ontology-generation
 
 **File:** `skills/skill-ontology-generation/SKILL.md`
@@ -150,7 +118,7 @@ This skill reads the current grid state, looks up the relevant library classes, 
 1. **Grid** — Call `read_internal_grid` to get all components and coordinates. Extract equipment class names (e.g. "Fan", "Coil", "Damper")
 2. **Class lookup** — Call `search_class_mapping(keywords=[<class names>])` to find which library file each class lives in. Note the `scan_dir` field in each result
 3. **Library source** — Call `scan_python_files_filtered` using the `scan_dir` field from `search_class_mapping` to read the actual class source
-4. **Samples** — Call `scan_python_files_filtered` on `../223p/ref/code` with the same keywords to find reference implementations
+4. **Samples** — Call `scan_python_files_filtered` on `agent/223p/ref/code` with the same keywords to find reference implementations
 5. **Plan** — Outline entities, connections, and spatial hierarchy
 6. **Generate** — Write the Python ontology code
 7. **Validate** — Confirm the output is valid, executable Python
@@ -173,8 +141,6 @@ This skill reads the current grid state, looks up the relevant library classes, 
 ### Tools used
 `read_internal_grid`, `search_class_mapping`, `scan_python_files_filtered`, `read_prompt`, `write_ontology`, `exit_generator_success`, `exit_generator_failure`
 
-**Also uses:** `skill-read-code` to load error-resolution lessons before generating
-
 ---
 
 ## skill-ontology-validation
@@ -185,7 +151,7 @@ This skill reads the current grid state, looks up the relevant library classes, 
 This skill runs after `skill-ontology-generation`. It enters a fix loop: read → execute → analyze errors → fix → write → checkpoint → repeat, until the file runs cleanly and produces a valid TTL.
 
 ### Workflow
-1. Load `skill-read-code` lessons (error-resolution history)
+1. Read `agent/223p/LESSONS.md` for error-resolution lessons from previous sessions (if empty or absent, proceed without it)
 2. Read the current `ontology.py` via `read_ontology`
 3. Execute via `execute_ontology` — capture stdout, stderr, return code
 4. If clean and TTL produced → read the TTL file content, call `exit_validator_success(code=..., ttl_content=..., summary=...)`
@@ -199,7 +165,7 @@ This skill runs after `skill-ontology-generation`. It enters a fix loop: read �
 - `checkpoint_code` is mandatory after every `write_ontology` call
 
 ### Stop conditions (call `exit_validator_failure`)
-- `skill-read-code` lessons could not be loaded
+- `agent/223p/LESSONS.md` is unreadable and no error-resolution context is available — proceed best-effort but log the limitation
 - `read_ontology` returns empty or missing file
 - `search_class_mapping` returns empty for known class names
 - Same error persists after 10 consecutive fix attempts
@@ -213,7 +179,6 @@ This skill runs after `skill-ontology-generation`. It enters a fix loop: read �
 ### Tools used
 `read_ontology`, `execute_ontology`, `write_ontology`, `checkpoint_code`, `search_class_mapping`, `scan_python_files_filtered`, `read_prompt`, `exit_validator_success`, `exit_validator_failure`
 
-**Also uses:** `skill-read-code` to load error-resolution lessons before starting the fix loop
 
 ---
 
