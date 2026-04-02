@@ -124,6 +124,9 @@ services:
     volumes:
       # Shared with si-mapper-frontend so both services read/write the same project files.
       - ./mapper/uploads:/app/uploads
+      # Bind-mount so SQLite session data persists on the host and
+      # survives container restarts and image rebuilds.
+      - agent_sessions:/app/data
     profiles:
       - deploy
       - build
@@ -153,3 +156,4 @@ volumes:
   portainer_data:
   neo4j_data:
   graphivac_data:
+  agent_sessions:

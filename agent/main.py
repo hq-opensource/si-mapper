@@ -28,10 +28,8 @@ load_dotenv()
 logger = configure_logging()
 
 SHARED_ADK_MODEL = os.getenv("SHARED_ADK_MODEL", "gemini-3.1-pro")
-DB_FILE_PATH = Path(os.getenv("SESSIONS_DB_PATH", "/app/data/sessions.db")).resolve()
-if not DB_FILE_PATH.is_file():
-    DB_FILE_PATH = DB_FILE_PATH / "sessions.db"
-os.makedirs(DB_FILE_PATH.parent, exist_ok=True)
+SESSIONS_DB_PATH = os.getenv("SESSIONS_DB_PATH", "/app/data/sessions.db")
+Path(SESSIONS_DB_PATH).parent.mkdir(parents=True, exist_ok=True)
 
 # Per-system model override (13-09): ACTIVE_AI_MODEL can be set to the value of
 # active_system.ai_model_name before the agent process starts (e.g. injected by
@@ -46,7 +44,7 @@ APP_TITLE = "SI-MAPPER Agent"
 AGENT_NAME = "si_mapper_agent"
 
 # --- SQLite Session DB ---
-_DB_URL = f"sqlite+aiosqlite:///{quote(DB_FILE_PATH.as_posix(), safe='/:')}"
+_DB_URL = f"sqlite+aiosqlite:///{quote(SESSIONS_DB_PATH, safe='/:')}"
 
 def create_app() -> FastAPI:
     """Initializes and configures the FastAPI application."""
