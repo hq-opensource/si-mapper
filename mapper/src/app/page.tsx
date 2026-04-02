@@ -7,6 +7,7 @@ import { YourMainContent } from "@/app/page/components/YourMainContent";
 import { ThoughtsProvider, useThoughts, type Thought, type ToolCall, type AgentEvent } from "@/context/ThoughtsContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { useAgentPolling } from "@/hooks/useAgentPolling";
+import type { System, Session } from "@/types";
 
 type AgentState = {
   status: string;
@@ -83,7 +84,7 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
 export default function CopilotKitPage() {
   const [themeColor, setThemeColor] = useState("#6366f1");
   const [isEditMode, setIsEditMode] = useState(false);
-  const { activeProject, activeSystem } = useWorkspace();
+  const { activeProject, activeSystem, updateActiveSystem } = useWorkspace();
 
   const pollingConfig = useMemo(() => ({
     baseUrl: process.env.NEXT_PUBLIC_AGENT_BACKEND_URL ?? "http://localhost:8001",
@@ -163,15 +164,93 @@ export default function CopilotKitPage() {
   });
 
   const { threadId, setThreadId } = useCopilotContext();
-  const startNewSession = () => {
-    // Generate a new unique ID to start a fresh conversation
-    const newId = crypto.randomUUID();
-    setThreadId(newId);
-  };
-  // methode that receives the new threadId from the backend when a new session is started there, and updates the context accordingly
+
+  // Receives a threadId (from the dropdown or backend) and applies it
   const useSession = (newId: string) => {
     setThreadId(newId);
   }
+
+  // Creates a named session, persists it to system.json, and activates it
+  const handleNewSession = (sessionName: string) => {
+    if (!activeProject || !activeSystem) return;
+    const newSession: Session = {
+      id: crypto.randomUUID(),
+      name: sessionName,
+      created_at: new Date().toISOString(),
+    };
+    const updatedSessions = [...(activeSystem.sessions ?? []), newSession];
+    // Persist both the new sessions list and the new thread_id
+    fetch(`/api/projects/${activeProject.id}/systems/${activeSystem.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessions: updatedSessions, thread_id: newSession.id }),
+    })
+      .then(res => res.ok ? res.json() as Promise<System> : Promise.reject(res.statusText))
+      .then(updated => {
+        updateActiveSystem({ sessions: updated.sessions, thread_id: updated.thread_id });
+        setThreadId(newSession.id);
+      })
+      .catch(err => console.error('[page] Failed to create session:', err));
+  };
+
+  // Load / initialise the session when the active system changes
+  const prevSystemIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!activeSystem || !activeProject) return;
+    if (activeSystem.id === prevSystemIdRef.current) return;
+    prevSystemIdRef.current = activeSystem.id;
+
+    const patchUrl = `/api/projects/${activeProject.id}/systems/${activeSystem.id}`;
+    const patch = (body: object) =>
+      fetch(patchUrl, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        .then(res => res.ok ? res.json() as Promise<System> : Promise.reject(res.statusText));
+
+    // ── Case 1: system already has an active thread_id ──────────────────────
+    if (activeSystem.thread_id) {
+      setThreadId(activeSystem.thread_id);
+      return;
+    }
+
+    // ── Case 2: no thread_id but sessions exist → activate the first one ────
+    if (activeSystem.sessions && activeSystem.sessions.length > 0) {
+      const first = activeSystem.sessions[0];
+      setThreadId(first.id);
+      patch({ thread_id: first.id })
+        .then(updated => updateActiveSystem({ thread_id: updated.thread_id }))
+        .catch(err => console.error('[page] Failed to persist first session as thread_id:', err));
+      return;
+    }
+
+    // ── Case 3: no sessions at all → auto-create a timestamped one ──────────
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const now = new Date();
+    const autoName = `New Session [${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}]`;
+    const newSession: Session = { id: crypto.randomUUID(), name: autoName, created_at: now.toISOString() };
+    patch({ sessions: [newSession], thread_id: newSession.id })
+      .then(updated => {
+        updateActiveSystem({ sessions: updated.sessions, thread_id: updated.thread_id });
+        setThreadId(newSession.id);
+      })
+      .catch(err => console.error('[page] Failed to auto-create session:', err));
+  }, [activeSystem, activeProject, setThreadId, updateActiveSystem]);
+
+  // Persist the active threadId to system.json whenever it changes
+  const isMountedRef = useRef(false);
+  useEffect(() => {
+    if (!isMountedRef.current) { isMountedRef.current = true; return; }
+    if (!activeProject || !activeSystem || !threadId) return;
+    // Skip if already in sync
+    if (activeSystem.thread_id === threadId) return;
+
+    fetch(`/api/projects/${activeProject.id}/systems/${activeSystem.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ thread_id: threadId }),
+    })
+      .then(res => res.ok ? res.json() as Promise<System> : Promise.reject(res.statusText))
+      .then(updated => updateActiveSystem({ thread_id: updated.thread_id }))
+      .catch(err => console.error('[page] Failed to save threadId to system.json:', err));
+  }, [threadId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Chat is disabled until both an active project and an active system are selected
   const isWorkspaceReady = !!activeProject && !!activeSystem;
@@ -190,7 +269,9 @@ export default function CopilotKitPage() {
             isEditMode={isEditMode}
             agentState={combinedState}
             onUseSession={useSession}
+            onNewSession={handleNewSession}
             threadId={threadId}
+            sessions={activeSystem?.sessions ?? []}
           />
         </div>
       </ThoughtsProvider>

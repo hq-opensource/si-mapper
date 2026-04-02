@@ -41,6 +41,8 @@ interface WorkspaceContextValue {
   setActiveProject: (project: Project) => Promise<void>;
   /** Switch the active system. Persists to localStorage. */
   setActiveSystem: (system: System) => void;
+  /** Merge a partial update into the active system (local state only). */
+  updateActiveSystem: (patch: Partial<System>) => void;
   /** Refresh the project list from the API. Auto-switches if active was deleted. */
   refreshProjects: () => Promise<void>;
   /** Refresh the system list for the active project. Auto-switches if active was deleted. */
@@ -188,6 +190,15 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('active-system-id', system.id);
   }, []);
 
+  // ── updateActiveSystem ──────────────────────────────────────────────────────
+
+  const updateActiveSystem = useCallback((patch: Partial<System>) => {
+    setActiveSystemState(prev => (prev ? { ...prev, ...patch } : prev));
+    setSystems(prev =>
+      prev.map(s => (s.id === activeSystemRef.current?.id ? { ...s, ...patch } : s))
+    );
+  }, []);
+
   // ── Bootstrap on mount ──────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -237,6 +248,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         systems,
         setActiveProject,
         setActiveSystem,
+        updateActiveSystem,
         refreshProjects,
         refreshSystems,
         isLoading,

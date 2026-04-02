@@ -143,12 +143,16 @@ function YourMainContent({
   isEditMode,
   agentState,
   onUseSession,
+  onNewSession,
   threadId,
+  sessions,
 }: {
   isEditMode: boolean,
   agentState: AgentState,
   onUseSession: (sessionId: string) => void,
+  onNewSession: (name: string) => void,
   threadId?: string | null,
+  sessions?: import('@/types').Session[],
 }) {
   const [activeTab, setActiveTab] = useState<'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl'>(isEditMode ? 'edit' : 'view');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -221,7 +225,9 @@ function YourMainContent({
         activeTab={activeTab}
         onTabChange={handleTabChange}
         onUseSession={onUseSession}
+        onNewSession={onNewSession}
         threadId={threadId}
+        sessions={sessions ?? []}
       />
 
       {/* Main Content Area */}

@@ -44,25 +44,23 @@ export interface Project {
   updated_at: string;
 }
 
-export interface System {
-  /** Stable, unique identifier. Generated once at creation. */
+export interface Session {
   id: string;
-  /** Human-readable display name (e.g. "Chilled Water Plant"). */
   name: string;
-  /**
-   * Relative path of the system's subfolder inside the project's folder.
-   * Convention: same as `id` (e.g. "sys-xyz789").
-   * Absolute path: path.join(PROJECTS_ROOT, project.folder_path, folder_path)
-   */
+  created_at: string;
+}
+
+export interface System {
+  // ...existing fields...
+  id: string;
+  name: string;
   folder_path: string;
-  /**
-   * ID of the Graphivac Grid that represents this system's canvas.
-   * Created in the project's Graphivac Project when this system is created.
-   */
   graphivac_grid_id: string;
-  /** AI model used by the agent when working on this system. */
   ai_model_name: string;
-  /** ISO 8601 timestamps managed by the storage layer. */
+  /** CopilotKit thread ID of the last active conversation for this system. */
+  thread_id?: string;
+  /** Named conversation sessions for this system. */
+  sessions?: Session[];
   created_at: string;
   updated_at: string;
 }

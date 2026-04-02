@@ -23,6 +23,15 @@ export interface Project {
 }
 
 /**
+ * Named conversation session stored inside a system.
+ */
+export interface Session {
+    id: string;
+    name: string;
+    created_at: string;
+}
+
+/**
  * System — mirrors lib/projects.ts#System.
  * Defined here so client components can import it without bundling server-only fs modules.
  */
@@ -32,6 +41,8 @@ export interface System {
     folder_path: string;
     graphivac_grid_id: string;
     ai_model_name: string;
+    thread_id?: string;
+    sessions?: Session[];
     created_at: string;
     updated_at: string;
 }

@@ -1,27 +1,128 @@
 "use client";
 
-import { Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package, Code2 } from "lucide-react";
+import { Eye, Edit3, BarChart2, Brain, Folder, Wrench, Database, Package, Code2, ChevronDown, Plus } from "lucide-react";
 import { AgentState } from "./AgentStateOverlay";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useThoughts } from "@/context/ThoughtsContext";
 import { formatAgentName } from "@/lib/utils";
 import { ProjectSelector } from "@/components/ProjectSelector";
 import { SystemSelector } from "@/components/SystemSelector";
+import { PromptDialog } from "@/components/PromptDialog";
+import type { Session } from "@/types";
+
+// ── SessionDropdown ───────────────────────────────────────────────────────────
+
+function SessionDropdown({
+    threadId,
+    sessions,
+    onUseSession,
+    onNewSession,
+}: {
+    threadId?: string | null;
+    sessions: Session[];
+    onUseSession: (id: string) => void;
+    onNewSession: (name: string) => void;
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false);
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    const activeSession = sessions.find(s => s.id === threadId);
+    const activeLabel = activeSession?.name ?? (threadId ? `${threadId.slice(0, 8)}…` : 'Session');
+
+    const handleCreate = (name: string) => {
+        onNewSession(name);
+        setIsOpen(false);
+    };
+
+    return (
+        <>
+            <div className="relative ml-2" ref={ref}>
+                <button
+                    onClick={() => setIsOpen(o => !o)}
+                    className="h-8 flex items-center gap-1.5 rounded-lg border border-[var(--muted-foreground)]/20 px-2 text-xs font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--accent)]"
+                    title={threadId ?? 'No session'}
+                >
+                    <span className="max-w-[8rem] truncate">{activeLabel}</span>
+                    <ChevronDown
+                        size={10}
+                        className={`flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                    />
+                </button>
+
+                {isOpen && (
+                    <div className="absolute left-0 top-full mt-1 w-72 bg-[var(--background)] border border-[var(--muted-foreground)]/20 rounded-2xl shadow-2xl z-[200] overflow-hidden">
+                        <div className="max-h-48 overflow-y-auto py-1.5">
+                            {sessions.length === 0 ? (
+                                <p className="px-4 py-3 text-xs text-[var(--muted-foreground)]">No sessions yet.</p>
+                            ) : (
+                                sessions.map(session => (
+                                    <div
+                                        key={session.id}
+                                        onClick={() => { onUseSession(session.id); setIsOpen(false); }}
+                                        className={`flex flex-col px-4 py-2 cursor-pointer hover:bg-[var(--foreground)]/5 transition-colors
+                                            ${threadId === session.id ? 'text-[var(--accent)]' : 'text-[var(--foreground)]'}`}
+                                    >
+                                        <span className="flex items-center gap-1.5 text-xs font-semibold">
+                                            {threadId === session.id && (
+                                                <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                                            )}
+                                            {session.name}
+                                        </span>
+                                        <span className="text-[10px] text-[var(--muted-foreground)] font-mono truncate mt-0.5">
+                                            {session.id}
+                                        </span>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                        <div className="border-t border-[var(--muted-foreground)]/20 p-1.5">
+                            <button
+                                onClick={() => { setIsOpen(false); setIsDialogOpen(true); }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-[var(--foreground)] rounded-xl hover:bg-[var(--foreground)]/5 transition-colors"
+                            >
+                                <Plus size={12} className="text-[var(--accent)]" />
+                                <span>New session</span>
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <PromptDialog
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                onConfirm={handleCreate}
+                title="New Session"
+                description="Give this conversation session a name."
+                placeholder="e.g. Initial mapping"
+                confirmText="Create"
+            />
+        </>
+    );
+}
+
+// ── AgentNavbar ───────────────────────────────────────────────────────────────
 
 interface AgentNavbarProps {
     agentState: AgentState;
     activeTab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl';
     onTabChange: (tab: 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl') => void;
     onUseSession: (sessionId: string) => void;
+    onNewSession: (name: string) => void;
     threadId?: string | null;
+    sessions: Session[];
 }
 
-export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, threadId }: AgentNavbarProps) {
-
-    // Derived state for the status indicator
-    // const isActive = agentState?.status && agentState.status !== 'idle';
-    // const agentName = agentState?.active_agent || 'Agent';
-    // const status = agentState?.status || 'Idle';
+export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, onNewSession, threadId, sessions }: AgentNavbarProps) {
 
     const navItems = [
         { id: 'view', label: 'View', icon: Eye },
@@ -47,24 +148,19 @@ export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, 
     const [hasNewArtifacts, setHasNewArtifacts] = useState(false);
     const [lastEventCount, setLastEventCount] = useState(0);
     const [lastDataHash, setLastDataHash] = useState("");
-    const [sessionIdInput, setSessionIdInput] = useState("");
 
     // Track new events (Thoughts/Tools)
     useEffect(() => {
         if (events.length > lastEventCount) {
             const newEvents = events.slice(lastEventCount);
-
             const hasThoughts = newEvents.some(e => e.event_type === 'BRAINSTORM' || e.event_type === 'DELEGATION');
             const hasTools = newEvents.some(e => e.event_type === 'ACTION_TRIGGER' || e.event_type === 'ACTION_RESULT' || e.event_type === 'STATE_MUTATION');
             const hasPerf = newEvents.some(e => e.metadata?.latency_s !== undefined);
-
+            const hasArtifacts = newEvents.some(e => e.event_type === 'ARTIFACT');
             if (activeTab !== 'thoughts' && hasThoughts) setHasNewThoughts(true);
             if (activeTab !== 'tools' && hasTools) setHasNewTools(true);
             if (activeTab !== 'performance' && hasPerf) setHasNewPerformance(true);
-
-            const hasArtifacts = newEvents.some(e => e.event_type === 'ARTIFACT');
             if (activeTab !== 'artifacts' && hasArtifacts) setHasNewArtifacts(true);
-
             setLastEventCount(events.length);
         }
     }, [events, activeTab, lastEventCount]);
@@ -73,9 +169,7 @@ export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, 
     useEffect(() => {
         const currentHash = JSON.stringify(data);
         if (currentHash !== "{}" && currentHash !== lastDataHash) {
-            if (activeTab !== 'state') {
-                setHasNewState(true);
-            }
+            if (activeTab !== 'state') setHasNewState(true);
             setLastDataHash(currentHash);
         }
     }, [data, lastDataHash, activeTab]);
@@ -88,19 +182,6 @@ export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, 
         if (activeTab === 'performance') setHasNewPerformance(false);
         if (activeTab === 'artifacts') setHasNewArtifacts(false);
     }, [activeTab]);
-
-    useEffect(() => {
-        setSessionIdInput(threadId ?? "");
-    }, [threadId]);
-
-    const handleApplySession = () => {
-        const trimmed = sessionIdInput.trim();
-        if (!trimmed) return;
-        onUseSession(trimmed);
-    };
-
-
-
 
     return (
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-24 flex items-center z-30">
@@ -131,27 +212,12 @@ export function AgentNavbar({ activeTab, onTabChange, agentState, onUseSession, 
                     <ProjectSelector />
                     <span className="text-[var(--muted-foreground)]/40 text-xs select-none px-0.5">/</span>
                     <SystemSelector />
-                    <input
-                        type="text"
-                        value={sessionIdInput}
-                        onChange={(e) => setSessionIdInput(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleApplySession();
-                            }
-                        }}
-                        placeholder="Session ID"
-                        className="ml-2 h-8 w-40 rounded-lg border border-[var(--muted-foreground)]/20 bg-[var(--background)] px-2 text-xs text-[var(--foreground)] outline-none transition-colors focus:border-[var(--accent)]"
+                    <SessionDropdown
+                        threadId={threadId}
+                        sessions={sessions}
+                        onUseSession={onUseSession}
+                        onNewSession={onNewSession}
                     />
-                    <button
-                        type="button"
-                        onClick={handleApplySession}
-                        disabled={!sessionIdInput.trim()}
-                        className="h-8 rounded-lg border border-[var(--muted-foreground)]/20 px-2 text-xs font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        Use session
-                    </button>
                 </div>
 
                 {/* Navigation Items */}
