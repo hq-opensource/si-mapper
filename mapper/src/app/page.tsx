@@ -1,21 +1,19 @@
 "use client";
 
-import { useCopilotAction, useCoAgent } from "@copilotkit/react-core";
+import { useCopilotAction } from "@copilotkit/react-core";
 import { useState, useEffect, useMemo } from "react";
 import { SplitSidebar } from "@/components/SplitSidebar";
 import { YourMainContent } from "@/app/page/components/YourMainContent";
-import { ThoughtsProvider, useThoughts, type Thought, type ToolCall, type AgentEvent } from "@/context/ThoughtsContext";
+import { ThoughtsProvider, useThoughts } from "@/context/ThoughtsContext";
 import { useAgentPolling } from "@/hooks/useAgentPolling";
+import { type AgentState } from "@/app/page/components/AgentStateOverlay";
 
-type AgentState = {
-  status: string;
-  current_step: string;
-  observed_steps: string[];
-  data: Record<string, unknown>;
-  active_agent?: string;
-  thoughts?: Thought[];
-  tool_calls?: ToolCall[];
-  events?: AgentEvent[];
+// Stable module-level constant — never causes re-renders
+const DEFAULT_AGENT_STATE: AgentState = {
+  status: "idle",
+  current_step: "",
+  observed_steps: [],
+  data: {} as Record<string, unknown>,
 };
 
 // Internal component to handle syncing to context
@@ -25,32 +23,32 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
   useEffect(() => {
     // 1. Merge sources (prioritize streaming agentState for real-time thoughts)
     const combinedEvents = [
-      ...(agentState.events || []),
-      ...(pooledState?.events || [])
+      ...(agentState.events as Array<Record<string, unknown>> || []),
+      ...(pooledState?.events as Array<Record<string, unknown>> || [])
     ];
     const combinedThoughts = [
-      ...(agentState.thoughts || []),
-      ...(pooledState?.thoughts || [])
+      ...(agentState.thoughts as Array<Record<string, unknown>> || []),
+      ...(pooledState?.thoughts as Array<Record<string, unknown>> || [])
     ];
     const combinedToolCalls = [
-      ...(agentState.tool_calls || []),
-      ...(pooledState?.tool_calls || [])
+      ...(agentState.tool_calls as Array<Record<string, unknown>> || []),
+      ...(pooledState?.tool_calls as Array<Record<string, unknown>> || [])
     ];
-    if (combinedThoughts.length > 0) syncThoughts(combinedThoughts);
-    if (combinedToolCalls.length > 0) syncToolCalls(combinedToolCalls);
-    if (combinedEvents.length > 0) syncEvents(combinedEvents);
+    if (combinedThoughts.length > 0) syncThoughts(combinedThoughts as never[]);
+    if (combinedToolCalls.length > 0) syncToolCalls(combinedToolCalls as never[]);
+    if (combinedEvents.length > 0) syncEvents(combinedEvents as never[]);
 
     // 2. Sync Custom Data
-    const { data } = pooledState || {};
-    const adkData = agentState.data;
+    const data = pooledState?.data as Record<string, unknown> | undefined;
+    const adkData = agentState.data as Record<string, unknown> | undefined;
 
     const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'thoughts', 'tool_calls', 'events', 'data'];
-    
+
     // Filter rest from both sources
     const pooledRest = pooledState ? Object.fromEntries(
       Object.entries(pooledState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
     ) : {};
-    
+
     const agentRest = Object.fromEntries(
       Object.entries(agentState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
     );
@@ -81,29 +79,11 @@ export default function CopilotKitPage() {
 
   const { pooledState } = useAgentPolling<AgentState>(pollingConfig);
 
-  // 2. Co-Agent State (Primary/Streaming)
-  const { state: agentState } = useCoAgent<AgentState>({
-    name: "my_agent", // This matches the runtime config
-    initialState: {
-      status: "idle",
-      current_step: "",
-      observed_steps: [],
-      data: {},
-    },
-  });
-
-  // 🤖 Combined State
-  // We prioritize pooledState for tasks and plan if they are more complete
-  const combinedState = {
-    ...agentState,
-    ...(pooledState || {}),
-    status: pooledState?.status || agentState.status,
-    current_step: pooledState?.current_step || agentState.current_step,
-    active_agent: pooledState?.active_agent || agentState.active_agent,
-  } as AgentState;
+  // Combined State — polling is the sole source of truth
+  const combinedState: AgentState = pooledState ?? DEFAULT_AGENT_STATE;
 
 
-  // 🪁 Frontend Actions
+  // Frontend Actions
   useCopilotAction({
     name: "setThemeColor",
     parameters: [{
@@ -119,7 +99,7 @@ export default function CopilotKitPage() {
   return (
     <main className="flex h-screen" style={{ "--copilot-kit-primary-color": themeColor, "--accent": themeColor } as React.CSSProperties}>
       <ThoughtsProvider currentAgentName={combinedState.active_agent || "SI-MAPPER"}>
-        <StateSyncer pooledState={pooledState} agentState={agentState} />
+        <StateSyncer pooledState={pooledState} agentState={DEFAULT_AGENT_STATE} />
         <SplitSidebar isEditMode={isEditMode} toggleEditMode={() => setIsEditMode(!isEditMode)} />
         <div className="flex-grow min-w-0 overflow-hidden">
           <YourMainContent
