@@ -2,24 +2,24 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 19
+current_phase: 20
 status: unknown
-last_updated: "2026-04-03T19:12:35.034Z"
+last_updated: "2026-04-03T19:48:02.249Z"
 progress:
-  total_phases: 19
-  completed_phases: 13
-  total_plans: 39
-  completed_plans: 39
+  total_phases: 20
+  completed_phases: 14
+  total_plans: 40
+  completed_plans: 40
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 19
+- **Current Phase:** 20
 - **Overall Completion:** [██████████] 100%
-- **Active Plan:** 19-03 (complete — plan 03 done)
-- **Last Completed:** 19-03 (updated test_ontology_tools.py: replaced ontology_exit_tools import with exit_tools, added generic exit tool tests, execute_ontology snapshot patching test, wiring test; fixed pre-existing API mismatch in read_python_files and scan_python_folder tests; 33 tests pass)
+- **Active Plan:** 20-01 (complete — plan 01 done)
+- **Last Completed:** 20-01 (per-session JSONL event logger: created agent/utils/session_logger.py with log_events() function, 7 TDD unit tests, wired into shared_model_callback in callback_utils.py, gitignored agent/logs/)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -142,6 +142,7 @@ progress:
 - **2026-04-03:** Completed 19-02-PLAN.md. Updated all 5 skills to call exit_with_success/exit_with_failure with domain-specific summary requirements. Added one-task-at-a-time Task Execution Rule to master_instruction.md. Removed all old exit tool name references (exit_generator_success/failure, exit_validator_success/failure, checkpoint_code) from master instruction. Phase 19 complete.
 - **2026-04-03:** Completed 19-03-PLAN.md. Updated test_ontology_tools.py: replaced ontology_exit_tools import with exit_tools, added generic exit tool tests (EXIT_LEVEL_2 pattern), execute_ontology snapshot patching test, and level_3_master_main_llm.py wiring test. Fixed pre-existing read_python_files and scan_python_folder tests for current grep-style API. 33 tests pass. Phase 19 complete.
 - **2026-04-03:** Completed 18-01-PLAN.md (executed after phase 19). Rewrote skill-ontology-validation/SKILL.md with all 11 optimizations: Exit Protocol elevated to line 12, sub-steps 4a-4d for class lookup, Retry Escalation 3/5/10 tiers, inline error classification, minimum-change constraint, root-cause ordering, pre-write advisory, mid-loop lessons trigger, scan_python_folder in Step 0. Added targeted consultation note to skill-ontology-lessons/SKILL.md. Zero deprecated references. No new test failures.
+- **2026-04-03:** Completed 20-01-PLAN.md. Created agent/utils/session_logger.py (log_events function, JSONL append, OSError silencing, lazy dir creation). Created agent/tests/test_session_logger.py (7 TDD tests, all pass). Wired log_events into shared_model_callback in callback_utils.py after state events update. Added logs/ to agent/.gitignore. 7 new tests pass + 59 existing pass.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -150,6 +151,9 @@ progress:
 - **Decision (19-02):** checkpoint_code removed from master instruction ASHRAE Sequence step 3 tool list — no longer exists as a tool.
 - **Decision (19-03):** Pre-existing read_python_files tests updated to grep-style API (full_content=True, array response) — auto-fix since import failure blocked entire test run.
 - **Decision (19-03):** scan_python_folder files field is a list not dict — tests updated to assert membership via list comprehension and empty list assertion.
+- **Decision (20-01):** log_events uses model_dump(mode='json') to serialize EventType Enum as plain string, not Python Enum object.
+- **Decision (20-01):** Only new_events (fresh batch per callback) are persisted — not full events_history (truncated to 200).
+- **Decision (20-01):** OSError caught silently in session_logger — write failures must never crash the agent callback.
 
 ## Roadmap Evolution
 
