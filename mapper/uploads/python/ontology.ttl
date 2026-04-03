@@ -1,0 +1,2355 @@
+@prefix bob: <http://data.ashrae.org/standard223/si-builder#> .
+@prefix latest_ontology: <urn:python:latest_ontology/> .
+@prefix p223: <http://data.ashrae.org/proposal-to-standard223#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix qudtqk: <http://qudt.org/vocab/quantitykind/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix scratch: <http://data.ashrae.org/standard223/si-builder/prototype#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+latest_ontology:00001 a s223:Connectable,
+        s223:Equipment,
+        s223:Humidifier ;
+    rdfs:label "Hum-1" ;
+    s223:cnx latest_ontology:00003,
+        latest_ontology:00005,
+        latest_ontology:00010 ;
+    s223:contains latest_ontology:00013,
+        latest_ontology:00014 ;
+    s223:hasConnectionPoint latest_ontology:00003,
+        latest_ontology:00004,
+        latest_ontology:00005,
+        latest_ontology:00006,
+        latest_ontology:00007,
+        latest_ontology:00008,
+        latest_ontology:00009,
+        latest_ontology:00010 ;
+    s223:hasProperty latest_ontology:00002,
+        latest_ontology:00011,
+        latest_ontology:00019,
+        latest_ontology:00020,
+        latest_ontology:00021 ;
+    bob:drainOutlet latest_ontology:00005 ;
+    bob:modulation latest_ontology:00002 ;
+    bob:powerInlet latest_ontology:00006 ;
+    bob:steamOutlet latest_ontology:00003 ;
+    bob:waterInlet latest_ontology:00004 .
+
+latest_ontology:00002 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00003 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:SteamConnectionPoint ;
+    rdfs:label "Hum-1.steamOutlet" ;
+    s223:hasMedium s223:Water-Steam ;
+    s223:isConnectionPointOf latest_ontology:00001 .
+
+latest_ontology:00004 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "Hum-1.waterInlet" ;
+    s223:cnx latest_ontology:00001 ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf latest_ontology:00001 .
+
+latest_ontology:00005 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "Hum-1.drainOutlet" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf latest_ontology:00001 .
+
+latest_ontology:00006 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "Hum-1.powerInlet" ;
+    s223:cnx latest_ontology:00001 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf latest_ontology:00001 .
+
+latest_ontology:00007 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint,
+        bob:Electricity_600VLL_3Ph_60HzConnectionPoint ;
+    rdfs:label "Hum-1.electricalInlet" ;
+    s223:cnx latest_ontology:00001 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf latest_ontology:00001 .
+
+latest_ontology:00008 a p223:BinaryInput,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:OnOffSignalConnectionPoint ;
+    rdfs:label "Hum-1.startCommand" ;
+    s223:cnx latest_ontology:00001 ;
+    s223:hasMedium p223:Signal-OnOffSignal ;
+    s223:isConnectionPointOf latest_ontology:00001 .
+
+latest_ontology:00009 a p223:AnalogInput,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ModulationSignalConnectionPoint ;
+    rdfs:label "Hum-1.modulationSignal" ;
+    s223:cnx latest_ontology:00001 ;
+    s223:hasMedium s223:Signal-Modulated ;
+    s223:isConnectionPointOf latest_ontology:00001 .
+
+latest_ontology:00010 a p223:BinaryOutput,
+        s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:OnOffSignalConnectionPoint ;
+    rdfs:label "Hum-1.alarm" ;
+    s223:hasMedium p223:Signal-OnOffSignal ;
+    s223:isConnectionPointOf latest_ontology:00001 .
+
+latest_ontology:00011 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+latest_ontology:00012 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RelativeHumidity ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:RelativeHumidity ;
+    qudt:hasUnit unit:L-PER-SEC .
+
+latest_ontology:00013 a s223:Connectable,
+        s223:Equipment,
+        s223:HumiditySensor,
+        s223:Sensor ;
+    rdfs:label "HHL" ;
+    s223:hasProperty latest_ontology:00012 ;
+    s223:observes latest_ontology:00012 ;
+    rdfs:comment "Humidity High Limit" .
+
+latest_ontology:00014 a s223:Connectable,
+        s223:Equipment,
+        s223:PressureSensor,
+        s223:Sensor ;
+    rdfs:label "FlowSwitch" ;
+    s223:hasProperty latest_ontology:00015,
+        latest_ontology:00016,
+        latest_ontology:00017 ;
+    s223:observes latest_ontology:00015 ;
+    bob:differential_static_pressure latest_ontology:00015 ;
+    bob:observation_pressure latest_ontology:00016 ;
+    bob:reference_pressure latest_ontology:00017 ;
+    rdfs:comment "Air FLow Switch" .
+
+latest_ontology:00015 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:DifferentialStaticPressure ;
+    rdfs:label "FlowSwitch.DifferentialStaticPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:ForcePerArea ;
+    qudt:isDeltaQuantity true .
+
+latest_ontology:00016 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "FlowSwitch.ObservationPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+latest_ontology:00017 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "FlowSwitch.ReferencePressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+latest_ontology:00018 a s223:Function ;
+    rdfs:label "differential calculation" ;
+    s223:hasInput latest_ontology:00016,
+        latest_ontology:00017 ;
+    s223:hasOutput latest_ontology:00015 ;
+    rdfs:comment "Will output High minus Low" .
+
+latest_ontology:00019 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "P.C. HUM 1A" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AV249" .
+
+latest_ontology:00020 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "HUMIDIFICATEUR 1A" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AO40" .
+
+latest_ontology:00021 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "STATUT HUMI. 1A" ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A ;
+    rdfs:comment "BACnet: 2500.AI19" .
+
+latest_ontology:00022 a s223:Connectable,
+        s223:ElectricResistanceElement,
+        s223:Equipment ;
+    rdfs:label "HC-1" ;
+    s223:cnx latest_ontology:00024 ;
+    s223:connected latest_ontology:00094,
+        latest_ontology:00124 ;
+    s223:connectedFrom latest_ontology:00094 ;
+    s223:connectedThrough latest_ontology:00228,
+        latest_ontology:00229 ;
+    s223:connectedTo latest_ontology:00124 ;
+    s223:hasConnectionPoint latest_ontology:00023,
+        latest_ontology:00024,
+        latest_ontology:00025 ;
+    s223:hasProperty latest_ontology:00026,
+        latest_ontology:00027,
+        latest_ontology:00028,
+        latest_ontology:00029,
+        latest_ontology:00030,
+        latest_ontology:00031,
+        latest_ontology:00032 ;
+    s223:hasRole s223:Role-Heating ;
+    bob:airInlet latest_ontology:00023 ;
+    bob:airOutlet latest_ontology:00024 .
+
+latest_ontology:00023 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "HC-1.airInlet" ;
+    s223:cnx latest_ontology:00022 ;
+    s223:connectsThrough latest_ontology:00228 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00022 ;
+    s223:pairedConnectionPoint latest_ontology:00024 .
+
+latest_ontology:00024 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "HC-1.airOutlet" ;
+    s223:cnx latest_ontology:00229 ;
+    s223:connectsThrough latest_ontology:00229 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00022 ;
+    s223:pairedConnectionPoint latest_ontology:00023 .
+
+latest_ontology:00025 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint,
+        bob:Electricity_600VLL_3Ph_60HzConnectionPoint ;
+    rdfs:label "HC-1.electricalInlet" ;
+    s223:cnx latest_ontology:00022 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf latest_ontology:00022 .
+
+latest_ontology:00026 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "amps" ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+latest_ontology:00027 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+latest_ontology:00028 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "modulation" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00029 a s223:ActuatableProperty,
+        s223:EnumerableProperty,
+        s223:EnumeratedActuatableProperty,
+        s223:Property ;
+    rdfs:label "onOffCommand" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+latest_ontology:00030 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "PID SERP. ELEC. 1A" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.CO9" .
+
+latest_ontology:00031 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "SERP. ELECT. 1A" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AO13" .
+
+latest_ontology:00032 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "PC. SERP. ELEC. 1A" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C ;
+    rdfs:comment "BACnet: 2500.AV248" .
+
+latest_ontology:00033 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+latest_ontology:00034 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor,
+        s223:TemperatureSensor,
+        bob:AirTemperatureSensor ;
+    rdfs:label "Freeze-Stat" ;
+    s223:hasObservationLocation latest_ontology:00024 ;
+    s223:hasProperty latest_ontology:00033,
+        latest_ontology:00035 ;
+    s223:observes latest_ontology:00033 .
+
+latest_ontology:00035 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "ARRET BAS LIM GEL 1A" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BV254" .
+
+latest_ontology:00036 a s223:Connectable,
+        s223:Equipment,
+        s223:PressureSensor,
+        s223:Sensor ;
+    rdfs:label "DP-Filter-1" ;
+    s223:hasObservationLocation latest_ontology:00185 ;
+    s223:hasProperty latest_ontology:00037,
+        latest_ontology:00038,
+        latest_ontology:00039,
+        latest_ontology:00041 ;
+    s223:hasReferenceLocation latest_ontology:00186 ;
+    s223:observes latest_ontology:00037 ;
+    bob:differential_static_pressure latest_ontology:00037 ;
+    bob:hasReferenceLocation latest_ontology:00186 ;
+    bob:observation_pressure latest_ontology:00038 ;
+    bob:reference_pressure latest_ontology:00039 .
+
+latest_ontology:00037 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:DifferentialStaticPressure ;
+    rdfs:label "DP-Filter-1.DifferentialStaticPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:ForcePerArea ;
+    qudt:hasUnit unit:IN-H2O ;
+    qudt:isDeltaQuantity true .
+
+latest_ontology:00038 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "DP-Filter-1.ObservationPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN-H2O .
+
+latest_ontology:00039 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "DP-Filter-1.ReferencePressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN-H2O .
+
+latest_ontology:00040 a s223:Function ;
+    rdfs:label "differential calculation" ;
+    s223:hasInput latest_ontology:00038,
+        latest_ontology:00039 ;
+    s223:hasOutput latest_ontology:00037 ;
+    rdfs:comment "Will output High minus Low" .
+
+latest_ontology:00041 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "PRESSION FILTRE 1A" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN-H2O ;
+    rdfs:comment "BACnet: 2500.AI18" .
+
+latest_ontology:00042 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+latest_ontology:00043 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor,
+        s223:TemperatureSensor,
+        bob:AirTemperatureSensor ;
+    rdfs:label "T-MIX" ;
+    s223:hasObservationLocation latest_ontology:00185 ;
+    s223:hasProperty latest_ontology:00042,
+        latest_ontology:00044 ;
+    s223:observes latest_ontology:00042 .
+
+latest_ontology:00044 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "TEMP. MEL. No.1A" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C ;
+    rdfs:comment "BACnet: 2500.AI15" .
+
+latest_ontology:00045 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment,
+        scratch:Damper ;
+    rdfs:label "PAF-Upper-Damper" ;
+    s223:cnx latest_ontology:00047 ;
+    s223:connected latest_ontology:00218 ;
+    s223:connectedThrough latest_ontology:00222 ;
+    s223:connectedTo latest_ontology:00218 ;
+    s223:hasConnectionPoint latest_ontology:00046,
+        latest_ontology:00047,
+        latest_ontology:00048 ;
+    s223:hasProperty latest_ontology:00049 ;
+    bob:airInlet latest_ontology:00046 ;
+    bob:airOutlet latest_ontology:00047 ;
+    scratch:linkageInlet latest_ontology:00048 .
+
+latest_ontology:00046 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "PAF-Upper-Damper.airInlet" ;
+    s223:cnx latest_ontology:00045 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00045 ;
+    s223:pairedConnectionPoint latest_ontology:00047 .
+
+latest_ontology:00047 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "PAF-Upper-Damper.airOutlet" ;
+    s223:cnx latest_ontology:00222 ;
+    s223:connectsThrough latest_ontology:00222 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00045 ;
+    s223:pairedConnectionPoint latest_ontology:00046 .
+
+latest_ontology:00048 a p223:MechanicalConnectionPoint,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    rdfs:label "PAF-Upper-Damper.linkageInlet" ;
+    s223:cnx latest_ontology:00045 ;
+    s223:hasMedium p223:Medium-MechanicalCoupling ;
+    s223:isConnectionPointOf latest_ontology:00045 .
+
+latest_ontology:00049 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "VOLET P.A.F.1A" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AO42" .
+
+latest_ontology:00050 a s223:Connectable,
+        s223:Controller,
+        s223:Equipment,
+        s223:VariableFrequencyDrive,
+        scratch:VariableFrequencyDrive ;
+    rdfs:label "VFD-1-A" ;
+    s223:cnx latest_ontology:00052,
+        latest_ontology:00053,
+        latest_ontology:00054,
+        latest_ontology:00057,
+        latest_ontology:00058,
+        latest_ontology:00059 ;
+    s223:connected latest_ontology:00124 ;
+    s223:connectedThrough latest_ontology:00215 ;
+    s223:connectedTo latest_ontology:00124 ;
+    s223:contains latest_ontology:00071,
+        latest_ontology:00073,
+        latest_ontology:00075 ;
+    s223:executes latest_ontology:00069,
+        latest_ontology:00076 ;
+    s223:hasConnectionPoint latest_ontology:00051,
+        latest_ontology:00052,
+        latest_ontology:00053,
+        latest_ontology:00054,
+        latest_ontology:00055,
+        latest_ontology:00056,
+        latest_ontology:00057,
+        latest_ontology:00058,
+        latest_ontology:00059 ;
+    s223:hasProperty latest_ontology:00060,
+        latest_ontology:00061,
+        latest_ontology:00062,
+        latest_ontology:00063,
+        latest_ontology:00064,
+        latest_ontology:00065,
+        latest_ontology:00066,
+        latest_ontology:00067,
+        latest_ontology:00068,
+        latest_ontology:00077,
+        latest_ontology:00078 ;
+    scratch:amps latest_ontology:00070 ;
+    scratch:volts latest_ontology:00072 .
+
+latest_ontology:00051 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint,
+        bob:Electricity_600VLL_3Ph_60HzConnectionPoint ;
+    rdfs:label "VFD-1-A.electricalInlet" ;
+    s223:cnx latest_ontology:00050 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00052 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ElectricalConnectionPoint,
+        bob:Electricity_600VLL_3Ph_60HzConnectionPoint ;
+    rdfs:label "VFD-1-A.electricalOutlet" ;
+    s223:cnx latest_ontology:00215 ;
+    s223:connectsThrough latest_ontology:00215 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00053 a s223:BidirectionalConnectionPoint,
+        s223:ConnectionPoint,
+        bob:EthernetConnectionPoint ;
+    rdfs:label "VFD-1-A.ethernet_port" ;
+    s223:cnx latest_ontology:00050 ;
+    s223:hasMedium s223:Signal-WiredEthernet ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00054 a s223:BidirectionalConnectionPoint,
+        s223:ConnectionPoint,
+        bob:RS485ConnectionPoint ;
+    rdfs:label "VFD-1-A.mstp_port" ;
+    s223:cnx latest_ontology:00050 ;
+    s223:hasMedium s223:Signal-EIA485 ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00055 a p223:AnalogInput,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ModulationSignalConnectionPoint ;
+    rdfs:label "VFD-1-A.speedrefInlet" ;
+    s223:cnx latest_ontology:00050 ;
+    s223:hasMedium s223:Signal-Modulated ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00056 a p223:BinaryInput,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:OnOffSignalConnectionPoint ;
+    rdfs:label "VFD-1-A.drive_command_dry_contact" ;
+    s223:cnx latest_ontology:00050 ;
+    s223:hasMedium p223:Signal-OnOffSignal ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00057 a p223:BinaryOutput,
+        s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:OnOffSignalConnectionPoint ;
+    rdfs:label "VFD-1-A.drive_running_dry_contact" ;
+    s223:hasMedium p223:Signal-OnOffSignal ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00058 a p223:BinaryOutput,
+        s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:OnOffSignalConnectionPoint ;
+    rdfs:label "VFD-1-A.alarm_dry_contact" ;
+    s223:hasMedium p223:Signal-OnOffSignal ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00059 a p223:AnalogOutput,
+        s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ModulationSignalConnectionPoint ;
+    rdfs:label "VFD-1-A.current_feedback" ;
+    s223:hasMedium s223:Signal-Modulated ;
+    s223:isConnectionPointOf latest_ontology:00050 .
+
+latest_ontology:00060 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:HP ;
+    rdfs:label "hp" ;
+    qudt:hasQuantityKind qudtqk:Power ;
+    qudt:hasUnit unit:HP .
+
+latest_ontology:00061 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+latest_ontology:00062 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Frequency ;
+    rdfs:label "frequency" ;
+    qudt:hasQuantityKind qudtqk:Frequency ;
+    qudt:hasUnit unit:HZ .
+
+latest_ontology:00063 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "speed_reference" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00064 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RPM ;
+    rdfs:label "rpm" ;
+    qudt:hasQuantityKind qudtqk:AngularVelocity ;
+    qudt:hasUnit unit:REV-PER-MIN .
+
+latest_ontology:00065 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "motor_temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+latest_ontology:00066 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "drive_running" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+latest_ontology:00067 a s223:ActuatableProperty,
+        s223:EnumerableProperty,
+        s223:EnumeratedActuatableProperty,
+        s223:Property ;
+    rdfs:label "run_command" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+latest_ontology:00068 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "alarm_status" ;
+    s223:hasEnumerationKind p223:EnumerationKind-NormalAlarm .
+
+latest_ontology:00069 a s223:Function ;
+    rdfs:label "motor_temp_effect" ;
+    s223:hasInput latest_ontology:00064 ;
+    s223:hasOutput latest_ontology:00065 .
+
+latest_ontology:00070 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Constituent-Electricity ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+latest_ontology:00071 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor ;
+    rdfs:label "current_sensor" ;
+    s223:hasObservationLocation latest_ontology:00052 ;
+    s223:hasProperty latest_ontology:00070 ;
+    s223:observes latest_ontology:00070 .
+
+latest_ontology:00072 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Volts ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Constituent-Electricity ;
+    qudt:hasQuantityKind qudtqk:Voltage ;
+    qudt:hasUnit unit:V .
+
+latest_ontology:00073 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor ;
+    rdfs:label "voltage_sensor" ;
+    s223:hasObservationLocation latest_ontology:00052 ;
+    s223:hasProperty latest_ontology:00072 ;
+    s223:observes latest_ontology:00072 .
+
+latest_ontology:00074 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Volts ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Constituent-Electricity ;
+    qudt:hasQuantityKind qudtqk:Voltage ;
+    qudt:hasUnit unit:V .
+
+latest_ontology:00075 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor ;
+    rdfs:label "speed_ref_voltage_sensor" ;
+    s223:hasObservationLocation latest_ontology:00055 ;
+    s223:hasProperty latest_ontology:00074 ;
+    s223:observes latest_ontology:00074 .
+
+latest_ontology:00076 a s223:Function,
+        scratch:VFDFunction ;
+    rdfs:label "VFD-1-A.function_block" ;
+    s223:hasInput latest_ontology:00070,
+        latest_ontology:00072,
+        latest_ontology:00074 ;
+    s223:hasOutput latest_ontology:00061,
+        latest_ontology:00062,
+        latest_ontology:00063,
+        latest_ontology:00064,
+        latest_ontology:00066,
+        latest_ontology:00068 ;
+    scratch:alarm latest_ontology:00068 ;
+    scratch:amps_load latest_ontology:00070 ;
+    scratch:drive_running latest_ontology:00066 ;
+    scratch:frequency_load latest_ontology:00062 ;
+    scratch:kW_load latest_ontology:00061 ;
+    scratch:rpm latest_ontology:00064 ;
+    scratch:speed_ref latest_ontology:00074 ;
+    scratch:speed_ref_percent latest_ontology:00063 ;
+    scratch:volts_load latest_ontology:00072 .
+
+latest_ontology:00077 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "VITESSE ALIM. No. 1A" ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A ;
+    rdfs:comment "BACnet: 2500.AI6" .
+
+latest_ontology:00078 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "MOD. DRIVE ALM No.1A" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AO6" .
+
+latest_ontology:00079 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan,
+        scratch:Fan ;
+    rdfs:label "1-E" ;
+    s223:cnx latest_ontology:00081 ;
+    s223:connected latest_ontology:00106 ;
+    s223:connectedFrom latest_ontology:00106 ;
+    s223:connectedThrough latest_ontology:00217 ;
+    s223:hasConnectionPoint latest_ontology:00080,
+        latest_ontology:00081,
+        latest_ontology:00082 ;
+    s223:hasProperty latest_ontology:00083,
+        latest_ontology:00084,
+        latest_ontology:00085,
+        latest_ontology:00086,
+        latest_ontology:00087,
+        latest_ontology:00088,
+        latest_ontology:00089,
+        latest_ontology:00090,
+        latest_ontology:00091,
+        latest_ontology:00092,
+        latest_ontology:00093 ;
+    bob:airInlet latest_ontology:00080 ;
+    bob:airOutlet latest_ontology:00081 .
+
+latest_ontology:00080 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-E.airInlet" ;
+    s223:cnx latest_ontology:00079 ;
+    s223:connectsThrough latest_ontology:00217 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00079 ;
+    s223:pairedConnectionPoint latest_ontology:00081 .
+
+latest_ontology:00081 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-E.airOutlet" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00079 ;
+    s223:pairedConnectionPoint latest_ontology:00080 .
+
+latest_ontology:00082 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-E.electricalInlet" ;
+    s223:cnx latest_ontology:00079 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf latest_ontology:00079 .
+
+latest_ontology:00083 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "speedRatio" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00084 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "staticPressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:PA .
+
+latest_ontology:00085 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "amps" ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+latest_ontology:00086 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RPM ;
+    rdfs:label "rpm" ;
+    qudt:hasQuantityKind qudtqk:AngularVelocity ;
+    qudt:hasUnit unit:REV-PER-MIN .
+
+latest_ontology:00087 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Flow ;
+    rdfs:label "cfm" ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:hasUnit unit:FT3-PER-MIN .
+
+latest_ontology:00088 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:HP ;
+    rdfs:label "hp" ;
+    qudt:hasQuantityKind qudtqk:Power ;
+    qudt:hasUnit unit:HP .
+
+latest_ontology:00089 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+latest_ontology:00090 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:PowerFactor ;
+    rdfs:label "powerFactor" ;
+    qudt:hasQuantityKind qudtqk:PowerFactor ;
+    qudt:hasUnit unit:UNITLESS .
+
+latest_ontology:00091 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Percent ;
+    rdfs:label "efficiency" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00092 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "STATUT DIG 1E" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BV1" .
+
+latest_ontology:00093 a s223:ActuatableProperty,
+        s223:EnumerableProperty,
+        s223:EnumeratedActuatableProperty,
+        s223:Property ;
+    rdfs:label "A/D EVAC. No.1E" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BO11" .
+
+latest_ontology:00094 a s223:Coil,
+        s223:Connectable,
+        s223:CoolingCoil,
+        s223:Equipment ;
+    rdfs:label "CC-1" ;
+    s223:cnx latest_ontology:00096,
+        latest_ontology:00098 ;
+    s223:connected latest_ontology:00022,
+        latest_ontology:00184 ;
+    s223:connectedFrom latest_ontology:00184 ;
+    s223:connectedThrough latest_ontology:00227,
+        latest_ontology:00228 ;
+    s223:connectedTo latest_ontology:00022 ;
+    s223:hasConnectionPoint latest_ontology:00095,
+        latest_ontology:00096,
+        latest_ontology:00097,
+        latest_ontology:00098 ;
+    s223:hasProperty latest_ontology:00099,
+        latest_ontology:00100,
+        latest_ontology:00101,
+        latest_ontology:00102,
+        latest_ontology:00103,
+        latest_ontology:00104,
+        latest_ontology:00105 ;
+    s223:hasRole s223:Role-Cooling ;
+    bob:airInlet latest_ontology:00095 ;
+    bob:airOutlet latest_ontology:00096 ;
+    bob:chilledWaterInlet latest_ontology:00097 ;
+    bob:chilledWaterOutlet latest_ontology:00098 .
+
+latest_ontology:00095 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "CC-1.airInlet" ;
+    s223:cnx latest_ontology:00094 ;
+    s223:connectsThrough latest_ontology:00227 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00094 ;
+    s223:pairedConnectionPoint latest_ontology:00096 .
+
+latest_ontology:00096 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "CC-1.airOutlet" ;
+    s223:cnx latest_ontology:00228 ;
+    s223:connectsThrough latest_ontology:00228 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00094 ;
+    s223:pairedConnectionPoint latest_ontology:00095 .
+
+latest_ontology:00097 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ChilledWaterConnectionPoint ;
+    rdfs:label "CC-1.chilledWaterInlet" ;
+    s223:cnx latest_ontology:00094 ;
+    s223:hasMedium s223:Water-ChilledWater ;
+    s223:isConnectionPointOf latest_ontology:00094 ;
+    s223:pairedConnectionPoint latest_ontology:00098 .
+
+latest_ontology:00098 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ChilledWaterConnectionPoint ;
+    rdfs:label "CC-1.chilledWaterOutlet" ;
+    s223:hasMedium s223:Water-ChilledWater ;
+    s223:isConnectionPointOf latest_ontology:00094 ;
+    s223:pairedConnectionPoint latest_ontology:00097 .
+
+latest_ontology:00099 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "averageSurfaceTemperature" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+latest_ontology:00100 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "internalPressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure .
+
+latest_ontology:00101 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "internalTemperature" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+latest_ontology:00102 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "PERM REFR 1A" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BV253" .
+
+latest_ontology:00103 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "P.C. SERP REF 1A" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C ;
+    rdfs:comment "BACnet: 2500.AV252" .
+
+latest_ontology:00104 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "SERP. REF. No.1A" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AO9" .
+
+latest_ontology:00105 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "PERM. REF. 1A" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BV147" .
+
+latest_ontology:00106 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment,
+        scratch:Damper ;
+    rdfs:label "EVAC-Damper" ;
+    s223:cnx latest_ontology:00108 ;
+    s223:connected latest_ontology:00079,
+        latest_ontology:00206 ;
+    s223:connectedFrom latest_ontology:00206 ;
+    s223:connectedThrough latest_ontology:00210,
+        latest_ontology:00217 ;
+    s223:connectedTo latest_ontology:00079 ;
+    s223:hasConnectionPoint latest_ontology:00107,
+        latest_ontology:00108,
+        latest_ontology:00109 ;
+    s223:hasProperty latest_ontology:00110 ;
+    bob:airInlet latest_ontology:00107 ;
+    bob:airOutlet latest_ontology:00108 ;
+    scratch:linkageInlet latest_ontology:00109 .
+
+latest_ontology:00107 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "EVAC-Damper.airInlet" ;
+    s223:cnx latest_ontology:00106 ;
+    s223:connectsThrough latest_ontology:00210 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00106 ;
+    s223:pairedConnectionPoint latest_ontology:00108 .
+
+latest_ontology:00108 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "EVAC-Damper.airOutlet" ;
+    s223:cnx latest_ontology:00217 ;
+    s223:connectsThrough latest_ontology:00217 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00106 ;
+    s223:pairedConnectionPoint latest_ontology:00107 .
+
+latest_ontology:00109 a p223:MechanicalConnectionPoint,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    rdfs:label "EVAC-Damper.linkageInlet" ;
+    s223:cnx latest_ontology:00106 ;
+    s223:hasMedium p223:Medium-MechanicalCoupling ;
+    s223:isConnectionPointOf latest_ontology:00106 .
+
+latest_ontology:00110 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "VOLET EVAC. No.1E" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AO12" .
+
+latest_ontology:00111 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RelativeHumidity ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:RelativeHumidity ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00112 a s223:Connectable,
+        s223:Equipment,
+        s223:HumiditySensor,
+        s223:Sensor ;
+    rdfs:label "H-RET" ;
+    s223:hasObservationLocation latest_ontology:00188 ;
+    s223:hasProperty latest_ontology:00111,
+        latest_ontology:00113 ;
+    s223:observes latest_ontology:00111 .
+
+latest_ontology:00113 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RelativeHumidity ;
+    rdfs:label "HUMIDITE RET. No.1A" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:RelativeHumidity ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AI16" .
+
+latest_ontology:00114 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C .
+
+latest_ontology:00115 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor,
+        s223:TemperatureSensor,
+        bob:AirTemperatureSensor ;
+    rdfs:label "T-RET" ;
+    s223:hasObservationLocation latest_ontology:00188 ;
+    s223:hasProperty latest_ontology:00114,
+        latest_ontology:00116 ;
+    s223:observes latest_ontology:00114 .
+
+latest_ontology:00116 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "TEMP. RETOUR No.1A" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C ;
+    rdfs:comment "BACnet: 2500.AI14" .
+
+latest_ontology:00117 a s223:Connectable,
+        s223:Equipment,
+        s223:PressureSensor,
+        s223:Sensor ;
+    rdfs:label "SP-1" ;
+    s223:hasObservationLocation latest_ontology:00126 ;
+    s223:hasProperty latest_ontology:00118,
+        latest_ontology:00119,
+        latest_ontology:00120,
+        latest_ontology:00122,
+        latest_ontology:00123 ;
+    s223:observes latest_ontology:00118 ;
+    bob:differential_static_pressure latest_ontology:00118 ;
+    bob:observation_pressure latest_ontology:00119 ;
+    bob:reference_pressure latest_ontology:00120 .
+
+latest_ontology:00118 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:DifferentialStaticPressure ;
+    rdfs:label "SP-1.DifferentialStaticPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:ForcePerArea ;
+    qudt:hasUnit unit:IN-H2O ;
+    qudt:isDeltaQuantity true .
+
+latest_ontology:00119 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "SP-1.ObservationPressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN-H2O .
+
+latest_ontology:00120 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "SP-1.ReferencePressure" ;
+    s223:ofMedium s223:Fluid-Air ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN-H2O .
+
+latest_ontology:00121 a s223:Function ;
+    rdfs:label "differential calculation" ;
+    s223:hasInput latest_ontology:00119,
+        latest_ontology:00120 ;
+    s223:hasOutput latest_ontology:00118 ;
+    rdfs:comment "Will output High minus Low" .
+
+latest_ontology:00122 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "PRES. STAT. No.1A" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN-H2O ;
+    rdfs:comment "BACnet: 2500.AI17" .
+
+latest_ontology:00123 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "P.C. PRES STAT 1A" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:IN-H2O ;
+    rdfs:comment "BACnet: 2500.AV250" .
+
+latest_ontology:00124 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan,
+        scratch:Fan ;
+    rdfs:label "1-A" ;
+    s223:cnx latest_ontology:00126 ;
+    s223:connected latest_ontology:00022,
+        latest_ontology:00050 ;
+    s223:connectedFrom latest_ontology:00022,
+        latest_ontology:00050 ;
+    s223:connectedThrough latest_ontology:00215,
+        latest_ontology:00229 ;
+    s223:hasConnectionPoint latest_ontology:00125,
+        latest_ontology:00126,
+        latest_ontology:00127 ;
+    s223:hasProperty latest_ontology:00128,
+        latest_ontology:00129,
+        latest_ontology:00130,
+        latest_ontology:00131,
+        latest_ontology:00132,
+        latest_ontology:00133,
+        latest_ontology:00134,
+        latest_ontology:00135,
+        latest_ontology:00136,
+        latest_ontology:00137,
+        latest_ontology:00138,
+        latest_ontology:00139 ;
+    bob:airInlet latest_ontology:00125 ;
+    bob:airOutlet latest_ontology:00126 .
+
+latest_ontology:00125 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-A.airInlet" ;
+    s223:cnx latest_ontology:00124 ;
+    s223:connectsThrough latest_ontology:00229 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00124 ;
+    s223:pairedConnectionPoint latest_ontology:00126 .
+
+latest_ontology:00126 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-A.airOutlet" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00124 ;
+    s223:pairedConnectionPoint latest_ontology:00125 .
+
+latest_ontology:00127 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-A.electricalInlet" ;
+    s223:cnx latest_ontology:00124 ;
+    s223:connectsThrough latest_ontology:00215 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf latest_ontology:00124 .
+
+latest_ontology:00128 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "speedRatio" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00129 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "staticPressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:PA .
+
+latest_ontology:00130 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "amps" ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+latest_ontology:00131 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RPM ;
+    rdfs:label "rpm" ;
+    qudt:hasQuantityKind qudtqk:AngularVelocity ;
+    qudt:hasUnit unit:REV-PER-MIN .
+
+latest_ontology:00132 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Flow ;
+    rdfs:label "cfm" ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:hasUnit unit:FT3-PER-MIN .
+
+latest_ontology:00133 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:HP ;
+    rdfs:label "hp" ;
+    qudt:hasQuantityKind qudtqk:Power ;
+    qudt:hasUnit unit:HP .
+
+latest_ontology:00134 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+latest_ontology:00135 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:PowerFactor ;
+    rdfs:label "powerFactor" ;
+    qudt:hasQuantityKind qudtqk:PowerFactor ;
+    qudt:hasUnit unit:UNITLESS .
+
+latest_ontology:00136 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Percent ;
+    rdfs:label "efficiency" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00137 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "STATUT DIG 1A" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BV255" .
+
+latest_ontology:00138 a s223:ActuatableProperty,
+        s223:EnumerableProperty,
+        s223:EnumeratedActuatableProperty,
+        s223:Property ;
+    rdfs:label "A/D VENT. ALM. No.1A" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BO5" .
+
+latest_ontology:00139 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "TEMP. ALIM. No.1A" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C ;
+    rdfs:comment "BACnet: 2500.AI13" .
+
+latest_ontology:00140 a s223:Connectable,
+        s223:Controller,
+        s223:Equipment,
+        s223:VariableFrequencyDrive,
+        scratch:VariableFrequencyDrive ;
+    rdfs:label "VFD-1-R" ;
+    s223:cnx latest_ontology:00142,
+        latest_ontology:00143,
+        latest_ontology:00144,
+        latest_ontology:00147,
+        latest_ontology:00148,
+        latest_ontology:00149 ;
+    s223:connected latest_ontology:00187 ;
+    s223:connectedThrough latest_ontology:00216 ;
+    s223:connectedTo latest_ontology:00187 ;
+    s223:contains latest_ontology:00161,
+        latest_ontology:00163,
+        latest_ontology:00165 ;
+    s223:executes latest_ontology:00159,
+        latest_ontology:00166 ;
+    s223:hasConnectionPoint latest_ontology:00141,
+        latest_ontology:00142,
+        latest_ontology:00143,
+        latest_ontology:00144,
+        latest_ontology:00145,
+        latest_ontology:00146,
+        latest_ontology:00147,
+        latest_ontology:00148,
+        latest_ontology:00149 ;
+    s223:hasProperty latest_ontology:00150,
+        latest_ontology:00151,
+        latest_ontology:00152,
+        latest_ontology:00153,
+        latest_ontology:00154,
+        latest_ontology:00155,
+        latest_ontology:00156,
+        latest_ontology:00157,
+        latest_ontology:00158,
+        latest_ontology:00167,
+        latest_ontology:00168 ;
+    scratch:amps latest_ontology:00160 ;
+    scratch:volts latest_ontology:00162 .
+
+latest_ontology:00141 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint,
+        bob:Electricity_600VLL_3Ph_60HzConnectionPoint ;
+    rdfs:label "VFD-1-R.electricalInlet" ;
+    s223:cnx latest_ontology:00140 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00142 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ElectricalConnectionPoint,
+        bob:Electricity_600VLL_3Ph_60HzConnectionPoint ;
+    rdfs:label "VFD-1-R.electricalOutlet" ;
+    s223:cnx latest_ontology:00216 ;
+    s223:connectsThrough latest_ontology:00216 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00143 a s223:BidirectionalConnectionPoint,
+        s223:ConnectionPoint,
+        bob:EthernetConnectionPoint ;
+    rdfs:label "VFD-1-R.ethernet_port" ;
+    s223:cnx latest_ontology:00140 ;
+    s223:hasMedium s223:Signal-WiredEthernet ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00144 a s223:BidirectionalConnectionPoint,
+        s223:ConnectionPoint,
+        bob:RS485ConnectionPoint ;
+    rdfs:label "VFD-1-R.mstp_port" ;
+    s223:cnx latest_ontology:00140 ;
+    s223:hasMedium s223:Signal-EIA485 ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00145 a p223:AnalogInput,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ModulationSignalConnectionPoint ;
+    rdfs:label "VFD-1-R.speedrefInlet" ;
+    s223:cnx latest_ontology:00140 ;
+    s223:hasMedium s223:Signal-Modulated ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00146 a p223:BinaryInput,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:OnOffSignalConnectionPoint ;
+    rdfs:label "VFD-1-R.drive_command_dry_contact" ;
+    s223:cnx latest_ontology:00140 ;
+    s223:hasMedium p223:Signal-OnOffSignal ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00147 a p223:BinaryOutput,
+        s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:OnOffSignalConnectionPoint ;
+    rdfs:label "VFD-1-R.drive_running_dry_contact" ;
+    s223:hasMedium p223:Signal-OnOffSignal ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00148 a p223:BinaryOutput,
+        s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:OnOffSignalConnectionPoint ;
+    rdfs:label "VFD-1-R.alarm_dry_contact" ;
+    s223:hasMedium p223:Signal-OnOffSignal ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00149 a p223:AnalogOutput,
+        s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:ModulationSignalConnectionPoint ;
+    rdfs:label "VFD-1-R.current_feedback" ;
+    s223:hasMedium s223:Signal-Modulated ;
+    s223:isConnectionPointOf latest_ontology:00140 .
+
+latest_ontology:00150 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:HP ;
+    rdfs:label "hp" ;
+    qudt:hasQuantityKind qudtqk:Power ;
+    qudt:hasUnit unit:HP .
+
+latest_ontology:00151 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+latest_ontology:00152 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Frequency ;
+    rdfs:label "frequency" ;
+    qudt:hasQuantityKind qudtqk:Frequency ;
+    qudt:hasUnit unit:HZ .
+
+latest_ontology:00153 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "speed_reference" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00154 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RPM ;
+    rdfs:label "rpm" ;
+    qudt:hasQuantityKind qudtqk:AngularVelocity ;
+    qudt:hasUnit unit:REV-PER-MIN .
+
+latest_ontology:00155 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "motor_temp" ;
+    qudt:hasQuantityKind qudtqk:Temperature .
+
+latest_ontology:00156 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "drive_running" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+latest_ontology:00157 a s223:ActuatableProperty,
+        s223:EnumerableProperty,
+        s223:EnumeratedActuatableProperty,
+        s223:Property ;
+    rdfs:label "run_command" ;
+    s223:hasEnumerationKind s223:Binary-OnOff .
+
+latest_ontology:00158 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "alarm_status" ;
+    s223:hasEnumerationKind p223:EnumerationKind-NormalAlarm .
+
+latest_ontology:00159 a s223:Function ;
+    rdfs:label "motor_temp_effect" ;
+    s223:hasInput latest_ontology:00154 ;
+    s223:hasOutput latest_ontology:00155 .
+
+latest_ontology:00160 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Constituent-Electricity ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+latest_ontology:00161 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor ;
+    rdfs:label "current_sensor" ;
+    s223:hasObservationLocation latest_ontology:00142 ;
+    s223:hasProperty latest_ontology:00160 ;
+    s223:observes latest_ontology:00160 .
+
+latest_ontology:00162 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Volts ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Constituent-Electricity ;
+    qudt:hasQuantityKind qudtqk:Voltage ;
+    qudt:hasUnit unit:V .
+
+latest_ontology:00163 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor ;
+    rdfs:label "voltage_sensor" ;
+    s223:hasObservationLocation latest_ontology:00142 ;
+    s223:hasProperty latest_ontology:00162 ;
+    s223:observes latest_ontology:00162 .
+
+latest_ontology:00164 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Volts ;
+    rdfs:label "observed_property" ;
+    s223:ofMedium s223:Constituent-Electricity ;
+    qudt:hasQuantityKind qudtqk:Voltage ;
+    qudt:hasUnit unit:V .
+
+latest_ontology:00165 a s223:Connectable,
+        s223:Equipment,
+        s223:Sensor ;
+    rdfs:label "speed_ref_voltage_sensor" ;
+    s223:hasObservationLocation latest_ontology:00145 ;
+    s223:hasProperty latest_ontology:00164 ;
+    s223:observes latest_ontology:00164 .
+
+latest_ontology:00166 a s223:Function,
+        scratch:VFDFunction ;
+    rdfs:label "VFD-1-R.function_block" ;
+    s223:hasInput latest_ontology:00160,
+        latest_ontology:00162,
+        latest_ontology:00164 ;
+    s223:hasOutput latest_ontology:00151,
+        latest_ontology:00152,
+        latest_ontology:00153,
+        latest_ontology:00154,
+        latest_ontology:00156,
+        latest_ontology:00158 ;
+    scratch:alarm latest_ontology:00158 ;
+    scratch:amps_load latest_ontology:00160 ;
+    scratch:drive_running latest_ontology:00156 ;
+    scratch:frequency_load latest_ontology:00152 ;
+    scratch:kW_load latest_ontology:00151 ;
+    scratch:rpm latest_ontology:00154 ;
+    scratch:speed_ref latest_ontology:00164 ;
+    scratch:speed_ref_percent latest_ontology:00153 ;
+    scratch:volts_load latest_ontology:00162 .
+
+latest_ontology:00167 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "MOD. DRIVE RET No.1R" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AO8" .
+
+latest_ontology:00168 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "VITESSE RET. No.1A" ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A ;
+    rdfs:comment "BACnet: 2500.AI11" .
+
+latest_ontology:00169 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment,
+        scratch:Damper ;
+    rdfs:label "RAV-Damper" ;
+    s223:cnx latest_ontology:00171 ;
+    s223:connected latest_ontology:00206 ;
+    s223:connectedFrom latest_ontology:00206 ;
+    s223:connectedThrough latest_ontology:00214 ;
+    s223:hasConnectionPoint latest_ontology:00170,
+        latest_ontology:00171,
+        latest_ontology:00172 ;
+    bob:airInlet latest_ontology:00170 ;
+    bob:airOutlet latest_ontology:00171 ;
+    scratch:linkageInlet latest_ontology:00172 .
+
+latest_ontology:00170 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "RAV-Damper.airInlet" ;
+    s223:cnx latest_ontology:00169 ;
+    s223:connectsThrough latest_ontology:00214 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00169 ;
+    s223:pairedConnectionPoint latest_ontology:00171 .
+
+latest_ontology:00171 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "RAV-Damper.airOutlet" ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00169 ;
+    s223:pairedConnectionPoint latest_ontology:00170 .
+
+latest_ontology:00172 a p223:MechanicalConnectionPoint,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    rdfs:label "RAV-Damper.linkageInlet" ;
+    s223:cnx latest_ontology:00169 ;
+    s223:hasMedium p223:Medium-MechanicalCoupling ;
+    s223:isConnectionPointOf latest_ontology:00169 .
+
+latest_ontology:00173 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment,
+        scratch:Damper ;
+    rdfs:label "Melange-Damper" ;
+    s223:cnx latest_ontology:00175 ;
+    s223:connected latest_ontology:00206,
+        latest_ontology:00218 ;
+    s223:connectedFrom latest_ontology:00206 ;
+    s223:connectedThrough latest_ontology:00212,
+        latest_ontology:00220 ;
+    s223:connectedTo latest_ontology:00218 ;
+    s223:hasConnectionPoint latest_ontology:00174,
+        latest_ontology:00175,
+        latest_ontology:00176 ;
+    s223:hasProperty latest_ontology:00177,
+        latest_ontology:00178 ;
+    bob:airInlet latest_ontology:00174 ;
+    bob:airOutlet latest_ontology:00175 ;
+    scratch:linkageInlet latest_ontology:00176 .
+
+latest_ontology:00174 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "Melange-Damper.airInlet" ;
+    s223:cnx latest_ontology:00173 ;
+    s223:connectsThrough latest_ontology:00212 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00173 ;
+    s223:pairedConnectionPoint latest_ontology:00175 .
+
+latest_ontology:00175 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "Melange-Damper.airOutlet" ;
+    s223:cnx latest_ontology:00220 ;
+    s223:connectsThrough latest_ontology:00220 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00173 ;
+    s223:pairedConnectionPoint latest_ontology:00174 .
+
+latest_ontology:00176 a p223:MechanicalConnectionPoint,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    rdfs:label "Melange-Damper.linkageInlet" ;
+    s223:cnx latest_ontology:00173 ;
+    s223:hasMedium p223:Medium-MechanicalCoupling ;
+    s223:isConnectionPointOf latest_ontology:00173 .
+
+latest_ontology:00177 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "VOLET MEL. No.1A" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT ;
+    rdfs:comment "BACnet: 2500.AO10" .
+
+latest_ontology:00178 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Temperature ;
+    rdfs:label "P.C. VOLET MEL 1A" ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:hasUnit unit:DEG_C ;
+    rdfs:comment "BACnet: 2500.AV251" .
+
+latest_ontology:00179 a s223:Connectable,
+        s223:Equipment,
+        s223:ThreeWayValve,
+        s223:Valve,
+        scratch:ThreeWayValveMixing ;
+    rdfs:label "3WV-CC" ;
+    s223:cnx latest_ontology:00182 ;
+    s223:hasConnectionPoint latest_ontology:00180,
+        latest_ontology:00181,
+        latest_ontology:00182,
+        latest_ontology:00183 ;
+    bob:fluidInletA latest_ontology:00180 ;
+    bob:fluidInletB latest_ontology:00181 ;
+    bob:fluidOutlet latest_ontology:00182 ;
+    scratch:linkageInlet latest_ontology:00183 .
+
+latest_ontology:00180 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "3WV-CC.fluidInletA" ;
+    s223:cnx latest_ontology:00179 ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf latest_ontology:00179 ;
+    s223:pairedConnectionPoint latest_ontology:00182 .
+
+latest_ontology:00181 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "3WV-CC.fluidInletB" ;
+    s223:cnx latest_ontology:00179 ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf latest_ontology:00179 .
+
+latest_ontology:00182 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:WaterConnectionPoint ;
+    rdfs:label "3WV-CC.fluidOutlet" ;
+    s223:hasMedium s223:Fluid-Water ;
+    s223:isConnectionPointOf latest_ontology:00179 ;
+    s223:pairedConnectionPoint latest_ontology:00180 .
+
+latest_ontology:00183 a p223:MechanicalConnectionPoint,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    rdfs:label "3WV-CC.linkageInlet" ;
+    s223:cnx latest_ontology:00179 ;
+    s223:hasMedium p223:Medium-MechanicalCoupling ;
+    s223:isConnectionPointOf latest_ontology:00179 .
+
+latest_ontology:00184 a s223:Connectable,
+        s223:Equipment,
+        s223:Filter ;
+    rdfs:label "Filter-1" ;
+    s223:cnx latest_ontology:00186 ;
+    s223:connected latest_ontology:00094,
+        latest_ontology:00218 ;
+    s223:connectedFrom latest_ontology:00218 ;
+    s223:connectedThrough latest_ontology:00226,
+        latest_ontology:00227 ;
+    s223:connectedTo latest_ontology:00094 ;
+    s223:hasConnectionPoint latest_ontology:00185,
+        latest_ontology:00186 ;
+    bob:airInlet latest_ontology:00185 ;
+    bob:airOutlet latest_ontology:00186 .
+
+latest_ontology:00185 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "Filter-1.airInlet" ;
+    s223:cnx latest_ontology:00184 ;
+    s223:connectsThrough latest_ontology:00226 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00184 ;
+    s223:pairedConnectionPoint latest_ontology:00186 .
+
+latest_ontology:00186 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "Filter-1.airOutlet" ;
+    s223:cnx latest_ontology:00227 ;
+    s223:connectsThrough latest_ontology:00227 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00184 ;
+    s223:pairedConnectionPoint latest_ontology:00185 .
+
+latest_ontology:00187 a s223:Connectable,
+        s223:Equipment,
+        s223:Fan,
+        scratch:Fan ;
+    rdfs:label "1-R" ;
+    s223:cnx latest_ontology:00189 ;
+    s223:connected latest_ontology:00140,
+        latest_ontology:00206 ;
+    s223:connectedFrom latest_ontology:00140 ;
+    s223:connectedThrough latest_ontology:00208,
+        latest_ontology:00216 ;
+    s223:connectedTo latest_ontology:00206 ;
+    s223:hasConnectionPoint latest_ontology:00188,
+        latest_ontology:00189,
+        latest_ontology:00190 ;
+    s223:hasProperty latest_ontology:00191,
+        latest_ontology:00192,
+        latest_ontology:00193,
+        latest_ontology:00194,
+        latest_ontology:00195,
+        latest_ontology:00196,
+        latest_ontology:00197,
+        latest_ontology:00198,
+        latest_ontology:00199,
+        latest_ontology:00200,
+        latest_ontology:00201 ;
+    bob:airInlet latest_ontology:00188 ;
+    bob:airOutlet latest_ontology:00189 .
+
+latest_ontology:00188 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-R.airInlet" ;
+    s223:cnx latest_ontology:00187 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00187 ;
+    s223:pairedConnectionPoint latest_ontology:00189 .
+
+latest_ontology:00189 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "1-R.airOutlet" ;
+    s223:cnx latest_ontology:00208 ;
+    s223:connectsThrough latest_ontology:00208 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00187 ;
+    s223:pairedConnectionPoint latest_ontology:00188 .
+
+latest_ontology:00190 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:ElectricalConnectionPoint ;
+    rdfs:label "1-R.electricalInlet" ;
+    s223:cnx latest_ontology:00187 ;
+    s223:connectsThrough latest_ontology:00216 ;
+    s223:hasMedium s223:Constituent-Electricity ;
+    s223:isConnectionPointOf latest_ontology:00187 .
+
+latest_ontology:00191 a s223:ActuatableProperty,
+        s223:Property,
+        s223:QuantifiableActuatableProperty,
+        s223:QuantifiableProperty,
+        bob:PercentCommand ;
+    rdfs:label "speedRatio" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00192 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Pressure ;
+    rdfs:label "staticPressure" ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:hasUnit unit:PA .
+
+latest_ontology:00193 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Amps ;
+    rdfs:label "amps" ;
+    qudt:hasQuantityKind qudtqk:ElectricCurrent ;
+    qudt:hasUnit unit:A .
+
+latest_ontology:00194 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:RPM ;
+    rdfs:label "rpm" ;
+    qudt:hasQuantityKind qudtqk:AngularVelocity ;
+    qudt:hasUnit unit:REV-PER-MIN .
+
+latest_ontology:00195 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Flow ;
+    rdfs:label "cfm" ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:hasUnit unit:FT3-PER-MIN .
+
+latest_ontology:00196 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:HP ;
+    rdfs:label "hp" ;
+    qudt:hasQuantityKind qudtqk:Power ;
+    qudt:hasUnit unit:HP .
+
+latest_ontology:00197 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:ElectricPower,
+        bob:ElectricPowerkW ;
+    rdfs:label "kW" ;
+    qudt:hasQuantityKind qudtqk:ElectricPower ;
+    qudt:hasUnit unit:KiloW .
+
+latest_ontology:00198 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:PowerFactor ;
+    rdfs:label "powerFactor" ;
+    qudt:hasQuantityKind qudtqk:PowerFactor ;
+    qudt:hasUnit unit:UNITLESS .
+
+latest_ontology:00199 a s223:ObservableProperty,
+        s223:Property,
+        s223:QuantifiableObservableProperty,
+        s223:QuantifiableProperty,
+        bob:Percent ;
+    rdfs:label "efficiency" ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:hasUnit unit:PERCENT .
+
+latest_ontology:00200 a s223:ActuatableProperty,
+        s223:EnumerableProperty,
+        s223:EnumeratedActuatableProperty,
+        s223:Property ;
+    rdfs:label "A/D VENT. RET. No.1A" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BO7" .
+
+latest_ontology:00201 a s223:EnumerableProperty,
+        s223:EnumeratedObservableProperty,
+        s223:ObservableProperty,
+        s223:Property ;
+    rdfs:label "STATUT DIG 1R" ;
+    s223:hasEnumerationKind s223:Binary-OnOff ;
+    rdfs:comment "BACnet: 2500.BV256" .
+
+latest_ontology:00202 a s223:Connectable,
+        s223:Damper,
+        s223:Equipment,
+        scratch:Damper ;
+    rdfs:label "PAF-Lower-Damper" ;
+    s223:cnx latest_ontology:00204 ;
+    s223:connected latest_ontology:00218 ;
+    s223:connectedThrough latest_ontology:00224 ;
+    s223:connectedTo latest_ontology:00218 ;
+    s223:hasConnectionPoint latest_ontology:00203,
+        latest_ontology:00204,
+        latest_ontology:00205 ;
+    bob:airInlet latest_ontology:00203 ;
+    bob:airOutlet latest_ontology:00204 ;
+    scratch:linkageInlet latest_ontology:00205 .
+
+latest_ontology:00203 a s223:ConnectionPoint,
+        s223:InletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "PAF-Lower-Damper.airInlet" ;
+    s223:cnx latest_ontology:00202 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00202 ;
+    s223:pairedConnectionPoint latest_ontology:00204 .
+
+latest_ontology:00204 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint,
+        bob:AirConnectionPoint ;
+    rdfs:label "PAF-Lower-Damper.airOutlet" ;
+    s223:cnx latest_ontology:00224 ;
+    s223:connectsThrough latest_ontology:00224 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00202 ;
+    s223:pairedConnectionPoint latest_ontology:00203 .
+
+latest_ontology:00205 a p223:MechanicalConnectionPoint,
+        s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    rdfs:label "PAF-Lower-Damper.linkageInlet" ;
+    s223:cnx latest_ontology:00202 ;
+    s223:hasMedium p223:Medium-MechanicalCoupling ;
+    s223:isConnectionPointOf latest_ontology:00202 .
+
+latest_ontology:00206 a s223:Connectable,
+        s223:Junction ;
+    rdfs:label "Fan_1_R_Discharge_Junction" ;
+    s223:cnx latest_ontology:00209,
+        latest_ontology:00211,
+        latest_ontology:00213 ;
+    s223:connected latest_ontology:00106,
+        latest_ontology:00169,
+        latest_ontology:00173,
+        latest_ontology:00187 ;
+    s223:connectedFrom latest_ontology:00187 ;
+    s223:connectedThrough latest_ontology:00208,
+        latest_ontology:00210,
+        latest_ontology:00212,
+        latest_ontology:00214 ;
+    s223:connectedTo latest_ontology:00106,
+        latest_ontology:00169,
+        latest_ontology:00173 ;
+    s223:hasConnectionPoint latest_ontology:00207,
+        latest_ontology:00209,
+        latest_ontology:00211,
+        latest_ontology:00213 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00207 a s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    s223:cnx latest_ontology:00206 ;
+    s223:connectsThrough latest_ontology:00208 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00206 .
+
+latest_ontology:00208 a s223:Connection ;
+    s223:cnx latest_ontology:00207 ;
+    s223:connectsAt latest_ontology:00189,
+        latest_ontology:00207 ;
+    s223:connectsFrom latest_ontology:00187 ;
+    s223:connectsTo latest_ontology:00206 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00209 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint ;
+    s223:cnx latest_ontology:00210 ;
+    s223:connectsThrough latest_ontology:00210 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00206 .
+
+latest_ontology:00210 a s223:Connection ;
+    s223:cnx latest_ontology:00107 ;
+    s223:connectsAt latest_ontology:00107,
+        latest_ontology:00209 ;
+    s223:connectsFrom latest_ontology:00206 ;
+    s223:connectsTo latest_ontology:00106 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00211 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint ;
+    s223:cnx latest_ontology:00212 ;
+    s223:connectsThrough latest_ontology:00212 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00206 .
+
+latest_ontology:00212 a s223:Connection ;
+    s223:cnx latest_ontology:00174 ;
+    s223:connectsAt latest_ontology:00174,
+        latest_ontology:00211 ;
+    s223:connectsFrom latest_ontology:00206 ;
+    s223:connectsTo latest_ontology:00173 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00213 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint ;
+    s223:cnx latest_ontology:00214 ;
+    s223:connectsThrough latest_ontology:00214 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00206 .
+
+latest_ontology:00214 a s223:Connection ;
+    s223:cnx latest_ontology:00170 ;
+    s223:connectsAt latest_ontology:00170,
+        latest_ontology:00213 ;
+    s223:connectsFrom latest_ontology:00206 ;
+    s223:connectsTo latest_ontology:00169 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00215 a s223:Connection ;
+    s223:cnx latest_ontology:00127 ;
+    s223:connectsAt latest_ontology:00052,
+        latest_ontology:00127 ;
+    s223:connectsFrom latest_ontology:00050 ;
+    s223:connectsTo latest_ontology:00124 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz .
+
+latest_ontology:00216 a s223:Connection ;
+    s223:cnx latest_ontology:00190 ;
+    s223:connectsAt latest_ontology:00142,
+        latest_ontology:00190 ;
+    s223:connectsFrom latest_ontology:00140 ;
+    s223:connectsTo latest_ontology:00187 ;
+    s223:hasMedium s223:AC-600VLL-3Ph-60Hz .
+
+latest_ontology:00217 a s223:Connection ;
+    s223:cnx latest_ontology:00080 ;
+    s223:connectsAt latest_ontology:00080,
+        latest_ontology:00108 ;
+    s223:connectsFrom latest_ontology:00106 ;
+    s223:connectsTo latest_ontology:00079 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00218 a s223:Connectable,
+        s223:Junction ;
+    rdfs:label "Mixed_Air_Junction" ;
+    s223:cnx latest_ontology:00225 ;
+    s223:connected latest_ontology:00045,
+        latest_ontology:00173,
+        latest_ontology:00184,
+        latest_ontology:00202 ;
+    s223:connectedFrom latest_ontology:00045,
+        latest_ontology:00173,
+        latest_ontology:00202 ;
+    s223:connectedThrough latest_ontology:00220,
+        latest_ontology:00222,
+        latest_ontology:00224,
+        latest_ontology:00226 ;
+    s223:connectedTo latest_ontology:00184 ;
+    s223:hasConnectionPoint latest_ontology:00219,
+        latest_ontology:00221,
+        latest_ontology:00223,
+        latest_ontology:00225 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00219 a s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    s223:cnx latest_ontology:00218 ;
+    s223:connectsThrough latest_ontology:00220 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00218 .
+
+latest_ontology:00220 a s223:Connection ;
+    s223:cnx latest_ontology:00219 ;
+    s223:connectsAt latest_ontology:00175,
+        latest_ontology:00219 ;
+    s223:connectsFrom latest_ontology:00173 ;
+    s223:connectsTo latest_ontology:00218 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00221 a s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    s223:cnx latest_ontology:00218 ;
+    s223:connectsThrough latest_ontology:00222 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00218 .
+
+latest_ontology:00222 a s223:Connection ;
+    s223:cnx latest_ontology:00221 ;
+    s223:connectsAt latest_ontology:00047,
+        latest_ontology:00221 ;
+    s223:connectsFrom latest_ontology:00045 ;
+    s223:connectsTo latest_ontology:00218 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00223 a s223:ConnectionPoint,
+        s223:InletConnectionPoint ;
+    s223:cnx latest_ontology:00218 ;
+    s223:connectsThrough latest_ontology:00224 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00218 .
+
+latest_ontology:00224 a s223:Connection ;
+    s223:cnx latest_ontology:00223 ;
+    s223:connectsAt latest_ontology:00204,
+        latest_ontology:00223 ;
+    s223:connectsFrom latest_ontology:00202 ;
+    s223:connectsTo latest_ontology:00218 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00225 a s223:ConnectionPoint,
+        s223:OutletConnectionPoint ;
+    s223:cnx latest_ontology:00226 ;
+    s223:connectsThrough latest_ontology:00226 ;
+    s223:hasMedium s223:Fluid-Air ;
+    s223:isConnectionPointOf latest_ontology:00218 .
+
+latest_ontology:00226 a s223:Connection ;
+    s223:cnx latest_ontology:00185 ;
+    s223:connectsAt latest_ontology:00185,
+        latest_ontology:00225 ;
+    s223:connectsFrom latest_ontology:00218 ;
+    s223:connectsTo latest_ontology:00184 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00227 a s223:Connection ;
+    s223:cnx latest_ontology:00095 ;
+    s223:connectsAt latest_ontology:00095,
+        latest_ontology:00186 ;
+    s223:connectsFrom latest_ontology:00184 ;
+    s223:connectsTo latest_ontology:00094 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00228 a s223:Connection ;
+    s223:cnx latest_ontology:00023 ;
+    s223:connectsAt latest_ontology:00023,
+        latest_ontology:00096 ;
+    s223:connectsFrom latest_ontology:00094 ;
+    s223:connectsTo latest_ontology:00022 ;
+    s223:hasMedium s223:Fluid-Air .
+
+latest_ontology:00229 a s223:Connection ;
+    s223:cnx latest_ontology:00125 ;
+    s223:connectsAt latest_ontology:00024,
+        latest_ontology:00125 ;
+    s223:connectsFrom latest_ontology:00022 ;
+    s223:connectsTo latest_ontology:00124 ;
+    s223:hasMedium s223:Fluid-Air .
+
