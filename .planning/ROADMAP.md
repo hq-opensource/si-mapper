@@ -375,3 +375,13 @@ Plans:
 
 Plans:
 - [ ] 21-01-PLAN.md — Remove useCoAgent, simplify combinedState and StateSyncer to polling-only
+
+### Phase 22: enhance-bacnet-parsing
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 21
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 22 to break down)
