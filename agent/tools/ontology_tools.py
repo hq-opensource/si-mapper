@@ -23,6 +23,7 @@ import logging
 import os
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
@@ -314,7 +315,7 @@ def scan_python_folder(
     that contains at least one keyword (case-insensitive substring match).
 
     Use for exploratory scans of known directories, e.g.
-    ``agent/223p/ref/code`` to find reference implementations.
+    ``agent/223p/examples/pritoni`` to find reference implementations.
     For a specific file whose path you already know, prefer
     ``read_python_files`` instead.
 
@@ -534,7 +535,16 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
     except OSError as exc:
         return json.dumps({"path": ONTOLOGY_FILE, "success": False, "error": str(exc)})
 
-    # 3. Session archive write
+    # 3. Dated write: mapper/uploads/python/ontology_YYYYMMDD_HHMMSS.py (consumed by frontend)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    dated_path = os.path.join(os.path.dirname(ONTOLOGY_FILE), f"ontology_{timestamp}.py")
+    try:
+        with open(dated_path, "w", encoding="utf-8") as fh:
+            fh.write(content)
+    except OSError as exc:
+        logger.warning("Failed to write dated archive %s: %s", dated_path, exc)
+
+    # 4. Session archive write
     if tool_context:
         session_id = tool_context.state.get("ontology_session_id")
         iter_count = tool_context.state.get("ontology_code_iteration_count", 0)

@@ -35,8 +35,7 @@ Read the generated `mapper/uploads/python/latest_ontology.py`, validate it, and 
 - `search_class_mapping(keywords=[<class names from error>])` — returns a JSON array of absolute file paths. Pass this list directly to `read_python_files`.
 - `read_python_files(<paths from search_class_mapping>, keywords=[<class names>])` — reads sections of those files around the keyword matches. Response: JSON array where each entry has `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`.
 - `read_python_files(["mapper/uploads/python/latest_ontology.py"], keywords=[], full_content=True)` to read the full source of the current ontology. The code is in `result[0]["sections"][0]["content"]`.
-- `read_python_files(["agent/223p/ref/code/prompt.md"], keywords=[], full_content=True)` for original generation guidelines.
-- `scan_python_folder("agent/223p/ref/code", keywords=[...])` when looking for reference patterns across the sample library. Response: `{"root": "...", "files": [...]}` — each file entry has `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`. Read `content` directly from each section.
+- `scan_python_folder("agent/223p/examples/pritoni", keywords=[...])` when looking for reference patterns across the sample library. Response: `{"root": "...", "files": [...]}` — each file entry has `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`. Read `content` directly from each section.
 - `execute_ontology` tool to run `mapper/uploads/python/latest_ontology.py` and capture stdout, stderr, and return code.
 - `write_ontology` tool to write the full corrected source code after each fix iteration.
 - `exit_validator_success(summary="...")` tool to signal successful validation and terminate the loop. Pass only the summary string — the tool reads the TTL from disk internally.

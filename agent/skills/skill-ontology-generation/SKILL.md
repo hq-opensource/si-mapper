@@ -16,7 +16,7 @@ Do not output any text after calling either tool. The tool call IS your final ac
 1. **Verify HVAC state** — Call `read_internal_grid` to get all HVAC components and coordinates. Extract equipment types from the result (e.g. "Fan", "Coil", "Damper"). If the internal grid is empty, call `sync_graphivac_to_agent` tool to synchronize the agent with the frontend.
 2. **Class lookup** — Call `search_class_mapping(keywords=[<class names from step 1>])`. Returns a JSON array of absolute file paths — one per unique file, deduplicated. Example: `["/abs/.../bob/equipment/hvac/fan.py", "/abs/.../scratch/hvac/damper.py"]`.
 3. **Read bob and scratch source code** — Pass the array from step 2 directly to `read_python_files(paths=<result from step 2>, keywords=[<class names from step 1>])`. The class names as keywords ensure only the relevant sections are returned — not the full files.
-4. **Read ontology examples** — Call `scan_python_folder("agent/223p/ref/code", keywords=[<class names>])` to find relevant reference implementations across the sample library. The response contains `"files": [...]` — each entry has `"path"` and `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`. Read the `content` field of each section; the surrounding lines provide the full usage context.
+4. **Read ontology examples** — Call `scan_python_folder("agent/223p/examples/pritoni", keywords=[<class names>])` to find relevant reference implementations across the sample library. The response contains `"files": [...]` — each entry has `"path"` and `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`. Read the `content` field of each section; the surrounding lines provide the full usage context.
 5. **Read lessons** — Load the skill `skill-ontology-lessons` and apply every error-to-resolution lesson listed there to your generation plan before writing any code. If the file is empty or absent, proceed without it.
 6. **Plan** — Outline entities, connections, and spatial hierarchy. Refer to the "Ontology Generation Principles" and "Modeling Guidelines" sections below for rules and best practices.
 7. **Generate** — Write a single Python file using `bob` and `scratch` libraries. Refer to the "Ontology Generation Principles" and "Modeling Guidelines" sections below for rules and best practices. Use the lessons from `skill-ontology-lessons` to avoid past pitfalls. Do not write TTL manually or use other ontology libraries.
@@ -33,7 +33,7 @@ Do not output any text after calling either tool. The tool call IS your final ac
 - To read a file in full (e.g. a lessons or prompt file), pass `keywords=[], full_content=True`.
 
 ## Code samples
-- Run `scan_python_folder("agent/223p/ref/code", keywords=[...])` with equipment class name keywords for relevant reference implementations.
+- Run `scan_python_folder("agent/223p/examples/pritoni", keywords=[...])` with equipment class name keywords for relevant reference implementations.
 - The response is `{"root": "...", "files": [...]}` where each file entry contains `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`. Each section is a contiguous block of lines around a keyword match — read `content` directly.
 - Study patterns for entities, connections, Sensors, Controllers, and BACnet points.
 
