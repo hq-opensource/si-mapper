@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 16
 status: unknown
-last_updated: "2026-04-03T11:36:12.947Z"
+last_updated: "2026-04-03T11:42:08.442Z"
 progress:
   total_phases: 16
   completed_phases: 9
   total_plans: 33
-  completed_plans: 30
+  completed_plans: 31
 ---
 
 # State: HVAC Reconstruction Project
@@ -18,8 +18,8 @@ progress:
 
 - **Current Phase:** 16
 - **Overall Completion:** [██████████] 100%
-- **Active Plan:** 16-01 (complete)
-- **Last Completed:** 16-01 (deleted _persist_python and _persist_ttl helpers from ontology_exit_tools.py and all call sites; removed import from ontology_tools.py; eliminates redundant timestamped uploads writes)
+- **Active Plan:** 16-02 (complete)
+- **Last Completed:** 16-02 (rewrote exit tool signatures to 2-param; added internal TTL disk read; folded checkpoint_code into write_ontology; fixed Linux venv path; added scan cap; removed checkpoint_code from master agent)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -88,10 +88,15 @@ progress:
 - **Decision (15-03):** BACnet custom_fields bullet placed in Equipment modeling guidelines (not Sensors) since custom_fields is a key in components returned by read_internal_grid.
 - **Decision (16-01):** _persist_python and _persist_ttl deleted — write_ontology already owns primary Python writes to ONTOLOGY_FILE; session archive handles versioning; no duplicate writes needed.
 - **Decision (16-01):** execute_ontology _persist_ttl call removed — script writes latest_ontology.ttl directly to TTL_OUTPUT_DIR via cwd; session archive handles versioning.
+- **Decision (16-02):** exit_generator_success and exit_validator_success take only (tool_context, summary) — clean break, code= removed entirely.
+- **Decision (16-02):** write_ontology auto-increments ontology_code_iteration_count after each archive write — checkpoint_code tool eliminated.
+- **Decision (16-02):** exit_validator_success reads TTL from _TTL_LATEST (Path anchor from __file__) — no ttl_content parameter.
+- **Decision (16-02):** scan_python_folder caps at 10 files with force=True escape hatch; returns message-only above cap.
+- **Decision (16-02):** execute_ontology checks Linux bin/python venv path first, then Windows Scripts/python.exe, then sys.executable.
 
 ### Next Steps
 
-1. Phase 16 in progress — 16-01 complete: deleted _persist helpers; continue with Wave 2 (checkpoint_code removal) and remaining plans
+1. Phase 16 in progress — 16-02 complete: Wave 2 code changes done (exit tool signatures, auto-checkpoint, Linux venv fix, scan cap); continue with 16-03 (SKILL.md updates) and 16-04 (tests)
 
 ### Session Log
 
@@ -123,6 +128,7 @@ progress:
 - **2026-04-02:** Completed 15-02-PLAN.md. Migrated all 223p assets to agent/223p/; implemented three-write pattern for write_ontology and execute_ontology; added extract_lessons tool wired into master agent; deleted root 223p/ (432 files) and skill-read-code/. 21 tests pass (15 new + 6 existing).
 - **2026-04-02:** Completed 15-03-PLAN.md. Audited and updated skill-ontology-generation/SKILL.md (LESSONS.md Step 0, BACnet custom_fields, extract_lessons HITL section, path fix) and skill-ontology-validation/SKILL.md (removed 3 skill-read-code refs, updated Preparation, fixed paths). Phase 15 complete.
 - **2026-04-03:** Completed 16-01-PLAN.md. Deleted _persist_python and _persist_ttl helpers from ontology_exit_tools.py (functions, constants, datetime/Path imports, 3 call sites). Removed import and _persist_ttl call from ontology_tools.py. Zero _persist references remain in agent/tools/ source files.
+- **2026-04-03:** Completed 16-02-PLAN.md. Rewrote exit_generator_success and exit_validator_success to 2-param signatures. Added _TTL_LATEST module constant; exit_validator_success reads TTL from disk. Deleted checkpoint_code function. Folded checkpoint logic into write_ontology (auto-increment). Fixed execute_ontology Linux venv path. Added scan_python_folder cap (10 files, force=True escape). Removed checkpoint_code from create_master_agent.py.
 
 ## Roadmap Evolution
 
