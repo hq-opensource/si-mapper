@@ -20,6 +20,26 @@ from mcp_server.graphivac.utils.grid_status import read_grid as read_grid_util
 
 logger = configure_logging()
 
+
+def _explode_bacnet_points(metadata: dict) -> dict:
+    """Convert nested bacnet dict to flat bacnet_N entries.
+
+    Converts {"bacnet": {"ADDR": {"name": ..., "unit": ...}}}
+    into     {"bacnet_1": {"address": "ADDR", "name": ..., "unit": ...}, ...}
+    All other keys in metadata pass through unchanged.
+
+    NOTE: This is an inlined copy of agent/utils/bacnet_helpers.explode_bacnet_points.
+    The MCP server and the agent are separate packages with separate sys.path, so we
+    cannot import across the boundary. Keep both copies in sync.
+    """
+    if "bacnet" not in metadata:
+        return metadata
+    result = {k: v for k, v in metadata.items() if k != "bacnet"}
+    for i, (address, point) in enumerate(metadata["bacnet"].items(), start=1):
+        result[f"bacnet_{i}"] = {"address": address, **point}
+    return result
+
+
 class MetadataManager:
     def __init__(self, org_id: str, project_id: str, grid_id: str, grid_title: str, font_configs: Dict[str, Any], base_url: str):
         self.api = GraphivacAPI(org_id, project_id, grid_id, grid_title, font_configs, base_url)
@@ -126,6 +146,9 @@ class MetadataManager:
                         logger.warning(f"Existing :custom-fields for {grid_name} is not a dict. Resetting.")
                         current_metadata = {}
 
+                    # Explode nested bacnet dict to flat bacnet_N entries
+                    metadata = _explode_bacnet_points(metadata)
+
                     # Merge new metadata with technical cleanup
                     for m_key, m_val in metadata.items():
                         # Clean key
@@ -226,6 +249,9 @@ class MetadataManager:
                     if not isinstance(value, dict):
                         logger.warning(f"Component {grid_name_str} is not a dictionary. Skipping.")
                         continue
+
+                    # Explode nested bacnet dict to flat bacnet_N entries
+                    target_metadata = _explode_bacnet_points(target_metadata)
 
                     # Prepare custom fields
                     current_metadata = value.get(k_custom_fields, {})

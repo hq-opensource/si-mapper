@@ -3,6 +3,7 @@ import json
 from typing import List, Optional
 from google.adk.tools import ToolContext
 from utils.logging_config import configure_logging
+from utils.bacnet_helpers import explode_bacnet_points
 
 logger = configure_logging()
 
@@ -318,11 +319,14 @@ def update_component_metadata(
 
     Args:
         component_name: The name of the component to update (e.g. "AHU-1").
-        metadata: Key-value pairs to merge (e.g. {"bacnet": {"2500.AI11": {"name": "...", "unit": "..."}}}).
+        metadata: Key-value pairs to merge (e.g. {"bacnet_1": {"address": "2500.AI11", "name": "...", "unit": "..."}}).
+                  If a "bacnet" key with nested points is provided, it will be automatically
+                  exploded into flat bacnet_N entries before storing.
     """
     if "internal_grid" not in tool_context.state:
         return ":::thought\n[System] Internal grid not initialized.\n:::"
 
+    metadata = explode_bacnet_points(metadata)
     components = tool_context.state["internal_grid"]["components"]
     for component in components:
         if component["name"] == component_name:
@@ -356,9 +360,11 @@ def update_component_metadata_batch(
     Args:
         updates: Dict where each key is a component name and the value is its metadata dict.
                  Example: {
-                   "AHU-1": {"bacnet": {"2500.AI11": {"name": "VITESSE RET.", "unit": "A"}}},
-                   "VAV-101": {"bacnet": {"2501.BI3": {"name": "STATUT", "unit": ""}}}
+                   "AHU-1": {"bacnet_1": {"address": "2500.AI11", "name": "VITESSE RET.", "unit": "A"}},
+                   "VAV-101": {"bacnet_1": {"address": "2501.BI3", "name": "STATUT", "unit": ""}}
                  }
+                 If a "bacnet" key with nested points is provided for any component, it will be
+                 automatically exploded into flat bacnet_N entries before storing.
     """
     if "internal_grid" not in tool_context.state:
         return ":::thought\n[System] Internal grid not initialized.\n:::"
@@ -374,6 +380,7 @@ def update_component_metadata_batch(
         if component is None:
             not_found.append(component_name)
             continue
+        metadata = explode_bacnet_points(metadata)
         existing_cf = component.get("custom_fields", {})
         for key, val in metadata.items():
             if key in existing_cf and isinstance(existing_cf[key], dict) and isinstance(val, dict):
