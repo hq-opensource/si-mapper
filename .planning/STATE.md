@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 19
 status: unknown
-last_updated: "2026-04-03T19:00:05.018Z"
+last_updated: "2026-04-03T19:06:18.062Z"
 progress:
   total_phases: 19
-  completed_phases: 11
+  completed_phases: 13
   total_plans: 39
-  completed_plans: 37
+  completed_plans: 39
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 19
-- **Overall Completion:** [██████████] 95%
-- **Active Plan:** 19-02 (complete — plan 02 done)
-- **Last Completed:** 19-02 (updated all 5 skills and master instruction to use exit_with_success/exit_with_failure; added one-task-at-a-time rule to master instruction)
+- **Overall Completion:** [██████████] 100%
+- **Active Plan:** 19-03 (complete — plan 03 done)
+- **Last Completed:** 19-03 (updated test_ontology_tools.py: replaced ontology_exit_tools import with exit_tools, added generic exit tool tests, execute_ontology snapshot patching test, wiring test; fixed pre-existing API mismatch in read_python_files and scan_python_folder tests; 33 tests pass)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -140,12 +140,16 @@ progress:
 - **2026-04-03:** Completed 17-02-PLAN.md. Verified EDN translator has zero hard-coded 'bacnet' logic (generic key iteration). Created test_grid_edn_translator.py (7 tests, all pass). Rewrote skill-bacnet-points/SKILL.md sections 3 and 4 and Rules to flat bacnet_N format. Updated live test SAMPLE_BACNET_POINTS to bacnet_1 through bacnet_5 with address fields, removed 'bacnet' wrapper from updates dict, rewrote verification logic per-key.
 - **2026-04-03:** Completed 19-01-PLAN.md. Replaced 5 fragmented exit tools with 2 generic ones (exit_with_success/exit_with_failure). Moved snapshot patching (python_code_snapshots Final/validated, ttl_code_snapshots TTL label) from exit_validator_success into execute_ontology. Updated MasterLlmAgent.default_tools. Removed ontology_exit_tools from create_master_agent.py. Deleted loop_exit_tools.py and ontology_exit_tools.py.
 - **2026-04-03:** Completed 19-02-PLAN.md. Updated all 5 skills to call exit_with_success/exit_with_failure with domain-specific summary requirements. Added one-task-at-a-time Task Execution Rule to master_instruction.md. Removed all old exit tool name references (exit_generator_success/failure, exit_validator_success/failure, checkpoint_code) from master instruction. Phase 19 complete.
+- **2026-04-03:** Completed 19-03-PLAN.md. Updated test_ontology_tools.py: replaced ontology_exit_tools import with exit_tools, added generic exit tool tests (EXIT_LEVEL_2 pattern), execute_ontology snapshot patching test, and level_3_master_main_llm.py wiring test. Fixed pre-existing read_python_files and scan_python_folder tests for current grep-style API. 33 tests pass. Phase 19 complete.
+- **2026-04-03:** Completed 18-01-PLAN.md (executed after phase 19). Rewrote skill-ontology-validation/SKILL.md with all 11 optimizations: Exit Protocol elevated to line 12, sub-steps 4a-4d for class lookup, Retry Escalation 3/5/10 tiers, inline error classification, minimum-change constraint, root-cause ordering, pre-write advisory, mid-loop lessons trigger, scan_python_folder in Step 0. Added targeted consultation note to skill-ontology-lessons/SKILL.md. Zero deprecated references. No new test failures.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
 - **Decision (19-02):** All 5 skills now instruct agents to call exit_with_success/exit_with_failure with domain-specific summary requirements (duct counts, equipment counts, BACnet points/matched/unmatched).
 - **Decision (19-02):** One-task-at-a-time rule added to master instruction — prevents unprompted skill chaining after exit tool fires.
 - **Decision (19-02):** checkpoint_code removed from master instruction ASHRAE Sequence step 3 tool list — no longer exists as a tool.
+- **Decision (19-03):** Pre-existing read_python_files tests updated to grep-style API (full_content=True, array response) — auto-fix since import failure blocked entire test run.
+- **Decision (19-03):** scan_python_folder files field is a list not dict — tests updated to assert membership via list comprehension and empty list assertion.
 
 ## Roadmap Evolution
 
