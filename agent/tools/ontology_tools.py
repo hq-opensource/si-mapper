@@ -21,14 +21,12 @@ from __future__ import annotations
 import json
 import logging
 import os
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Optional
 
 from google.adk.tools import ToolContext
-from tools.ontology_exit_tools import _persist_python, _persist_ttl
 
 logger = logging.getLogger(__name__)
 
@@ -44,8 +42,8 @@ _AGENT_ROOT = os.path.abspath(os.path.join(_HERE, ".."))    # agent/
 _PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", ".."))  # project root
 
 _223P_DIR = os.path.join(_AGENT_ROOT, "223p")
-ONTOLOGY_FILE = os.path.join(_223P_DIR, "ontology.py")
-TTL_OUTPUT_DIR = _223P_DIR  # ontology.ttl written as agent/223p/ontology.ttl
+ONTOLOGY_FILE = os.path.join(_PROJECT_ROOT, "mapper", "uploads", "python", "latest_ontology.py")
+TTL_OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "mapper", "uploads", "ttl")
 _MAPPINGS_DIR = os.path.join(_223P_DIR, "mappings")
 PYTHON_ITERATIONS_DIR = os.path.join(_223P_DIR, "python_iterations")
 TTL_ITERATIONS_DIR = os.path.join(_223P_DIR, "ttl_iterations")
@@ -224,43 +222,20 @@ def search_class_mapping(keywords: list[str]) -> str:
 # Ontology tools — internal helpers
 # ---------------------------------------------------------------------------
 
-def _backup_file(path: str) -> tuple[str | None, str | None]:
-    """Create a numbered backup of *path* (e.g. ``file_1.py``, ``file_2.py``, …).
-
-    Returns ``(backup_path, error_message)``.  Both are ``None`` when the
-    source file does not exist yet (nothing to back up).
-    """
-    if not os.path.exists(path):
-        return None, None
-    base, ext = os.path.splitext(path)
-    counter = 1
-    while os.path.exists(f"{base}_{counter}{ext}"):
-        counter += 1
-    candidate = f"{base}_{counter}{ext}"
-    try:
-        shutil.copy2(path, candidate)
-        return candidate, None
-    except OSError as exc:
-        return None, f"Backup failed: {exc}"
-
-
 # ---------------------------------------------------------------------------
 # Tool: write_ontology
 # ---------------------------------------------------------------------------
 
 def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> str:
-    """Overwrite ``agent/223p/ontology.py`` with *content*.
+    """Write *content* to ``mapper/uploads/python/latest_ontology.py``.
 
-    Implements the three-write pattern:
-    1. Scratch write: agent/223p/ontology.py (immediate availability)
+    Implements the two-write pattern:
+    1. Primary write: mapper/uploads/python/latest_ontology.py
     2. Session archive: agent/223p/python_iterations/session_N/ontology_NNN.py
-    3. Uploads write: mapper/uploads/python/ (real-time frontend visibility)
-
-    A numbered backup is created before writing the scratch file.
 
     Returns a JSON object::
 
-        {"path": "...", "success": true, "backup": "<backup path>"}
+        {"path": "...", "success": true}
         {"path": "...", "success": false, "error": "<message>"}  // on failure
     """
     # 1. State snapshots
@@ -275,11 +250,8 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
         })
         tool_context.state["python_code_snapshots"] = snapshots
 
-    # 2. Scratch write
+    # 2. Primary write: mapper/uploads/python/latest_ontology.py
     os.makedirs(os.path.dirname(ONTOLOGY_FILE), exist_ok=True)
-    backup_path, backup_err = _backup_file(ONTOLOGY_FILE)
-    if backup_err:
-        return json.dumps({"path": ONTOLOGY_FILE, "success": False, "error": backup_err})
     try:
         with open(ONTOLOGY_FILE, "w", encoding="utf-8") as fh:
             fh.write(content)
@@ -304,13 +276,7 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
         except OSError as exc:
             logger.warning("Failed to write session archive %s: %s", archive, exc)
 
-    # 4. Uploads write (real-time frontend visibility)
-    _persist_python(content, "write_ontology")
-
-    result: dict[str, Any] = {"path": ONTOLOGY_FILE, "success": True}
-    if backup_path is not None:
-        result["backup"] = backup_path
-    return json.dumps(result)
+    return json.dumps({"path": ONTOLOGY_FILE, "success": True})
 
 
 # ---------------------------------------------------------------------------
@@ -318,7 +284,7 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
 # ---------------------------------------------------------------------------
 
 def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
-    """Execute agent/223p/ontology.py in a subprocess using the agent's virtual
+    """Execute mapper/uploads/python/latest_ontology.py in a subprocess using the agent's virtual
     environment Python interpreter.
 
     Implements the three-write pattern for TTL on success:
@@ -340,7 +306,7 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
     if not os.path.exists(venv_python):
         venv_python = sys.executable
 
-    run_cwd = _223P_DIR
+    run_cwd = TTL_OUTPUT_DIR
     os.makedirs(TTL_OUTPUT_DIR, exist_ok=True)
 
     try:
@@ -361,43 +327,47 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
     success = proc.returncode == 0
     ttl_file: str | None = None
     if success:
-        candidate = os.path.join(TTL_OUTPUT_DIR, "ontology.ttl")
-        if os.path.exists(candidate):
-            ttl_file = candidate
+        # The script writes latest_ontology.ttl directly to TTL_OUTPUT_DIR (mapper/uploads/ttl/).
+        # No intermediate file — just read for state snapshots + write the versioned copy.
+        latest = os.path.join(TTL_OUTPUT_DIR, "latest_ontology.ttl")
+        if os.path.exists(latest):
             ttl_content: str | None = None
             try:
-                with open(ttl_file, "r", encoding="utf-8") as f:
+                with open(latest, "r", encoding="utf-8") as f:
                     ttl_content = f.read()
             except Exception as e:
                 logger.warning("Failed to read TTL file: %s", e)
 
-            if ttl_content and tool_context:
-                # Snapshot behavior
-                snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
-                label = f"Version {len(snapshots) + 1}"
-                snapshots.append({
-                    "label": label,
-                    "code": ttl_content,
-                    "iteration": len(snapshots),
-                    "status": "validated"
-                })
-                tool_context.state["ttl_code_snapshots"] = snapshots
+            if ttl_content:
+                ttl_file = latest
 
-                # Session archive write
-                session_id = tool_context.state.get("ontology_session_id")
-                iter_count = tool_context.state.get("ontology_code_iteration_count", 0)
-                if session_id is not None:
+                if tool_context:
+                    # Snapshot behavior
+                    snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
+                    label = f"Version {len(snapshots) + 1}"
+                    snapshots.append({
+                        "label": label,
+                        "code": ttl_content,
+                        "iteration": len(snapshots),
+                        "status": "validated"
+                    })
+                    tool_context.state["ttl_code_snapshots"] = snapshots
+
+                    # Session archive write — mirrors write_ontology session logic
+                    session_id = tool_context.state.get("ontology_session_id")
+                    iter_count = tool_context.state.get("ontology_code_iteration_count", 0)
+                    if session_id is None:
+                        # Auto-detect from python_iterations to stay in sync with Python session numbering
+                        existing = sorted(Path(PYTHON_ITERATIONS_DIR).glob("session_*"))
+                        session_id = len(existing) if existing else 1
+                        tool_context.state["ontology_session_id"] = session_id
                     session_dir = Path(TTL_ITERATIONS_DIR) / f"session_{session_id}"
                     session_dir.mkdir(parents=True, exist_ok=True)
-                    ttl_archive = session_dir / f"ontology_{iter_count:03d}.ttl"
+                    ttl_archive = session_dir / f"ontology_{iter_count + 1:03d}.ttl"
                     try:
                         ttl_archive.write_text(ttl_content, encoding="utf-8")
                     except OSError as exc:
                         logger.warning("Failed to write TTL archive %s: %s", ttl_archive, exc)
-
-            # Uploads write (real-time frontend visibility)
-            if ttl_content:
-                _persist_ttl(ttl_content)
 
     return json.dumps({"success": success, "returncode": proc.returncode,
                        "stdout": proc.stdout, "stderr": proc.stderr,
