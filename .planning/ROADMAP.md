@@ -329,7 +329,7 @@ Plans:
 **Goal:** Rewrite the ontology validation skill (SKILL.md) to implement 11 optimizations: structured sub-steps 4a-4d for class lookup, conditional scan_python_folder, re-read before fix, minimum-change constraint, graduated retry escalation (3/5/10), mid-loop lessons re-consultation, root-cause ordering, pre-write verification advisory, Exit Protocol elevated to top, and inline error classification. Update lessons skill with targeted consultation note.
 **Requirements**: [P18-01, P18-02, P18-03, P18-04, P18-05, P18-06, P18-07, P18-08, P18-09, P18-10, P18-11, P18-12]
 **Depends on:** Phase 17
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 18-01-PLAN.md — Full rewrite of validation SKILL.md (11 optimizations) + lessons consultation note
