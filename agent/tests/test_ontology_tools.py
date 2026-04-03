@@ -1,5 +1,5 @@
 """
-Unit tests for agent/tools/ontology_tools.py and agent/tools/ontology_exit_tools.py.
+Unit tests for agent/tools/ontology_tools.py and agent/tools/exit_tools.py.
 
 Covers:
 - Path constants pointing to agent/223p/
@@ -12,10 +12,12 @@ Covers:
 - Two-write pattern for execute_ontology TTL (session archive only)
 - execute_ontology Linux venv path checked before Windows path
 - execute_ontology auto-detects session from python_iterations
-- exit_generator_success: clean (tool_context, summary) signature — no code= parameter
-- exit_validator_success: reads TTL from disk, no ttl_content= parameter
+- exit_with_success: sets EXIT_LEVEL_2, returns success status, no domain-specific keys
+- exit_with_failure: sets EXIT_LEVEL_2, returns failure status, no domain-specific keys
+- execute_ontology patches python_code_snapshots to Final/validated on success
 - extract_lessons function (returns session iteration files + current skill content)
 - create_master_agent.py wiring (read_python_files, scan_python_folder, extract_lessons)
+- level_3_master_main_llm.py imports exit_with_success/exit_with_failure from exit_tools
 """
 from __future__ import annotations
 
@@ -56,9 +58,9 @@ from tools.ontology_tools import (  # noqa: E402
     execute_ontology,
     extract_lessons,
 )
-from tools.ontology_exit_tools import (  # noqa: E402
-    exit_generator_success,
-    exit_validator_success,
+from tools.exit_tools import (  # noqa: E402
+    exit_with_success,
+    exit_with_failure,
 )
 
 
@@ -126,36 +128,39 @@ def test_lessons_file_ends_with_skill_ontology_lessons():
 # ---------------------------------------------------------------------------
 
 def test_read_python_files_absolute_path(tmp_path):
-    """read_python_files reads a file given an absolute path."""
+    """read_python_files reads a file given an absolute path (full_content=True)."""
     f = tmp_path / "test.py"
     f.write_text("print('hello')", encoding="utf-8")
 
-    result = json.loads(read_python_files([str(f)]))
-    assert result[str(f)]["content"] == "print('hello')"
-    assert "error" not in result[str(f)]
+    results = json.loads(read_python_files([str(f)], keywords=[], full_content=True))
+    assert len(results) == 1
+    assert results[0]["error"] is None
+    assert results[0]["total_lines"] == 1
+    assert "print('hello')" in results[0]["sections"][0]["content"]
 
 
 def test_read_python_files_project_relative_path(tmp_path):
     """read_python_files resolves project-relative paths (e.g. 'agent/223p/ontology.py')."""
-    # Point _PROJECT_ROOT at tmp_path, create the expected relative file
     rel = "agent/223p/ontology.py"
     target = tmp_path / "agent" / "223p" / "ontology.py"
     target.parent.mkdir(parents=True)
     target.write_text("# ontology", encoding="utf-8")
 
     with patch("tools.ontology_tools._PROJECT_ROOT", str(tmp_path)):
-        result = json.loads(read_python_files([rel]))
+        results = json.loads(read_python_files([rel], keywords=[], full_content=True))
 
-    assert result[rel]["content"] == "# ontology"
-    assert "error" not in result[rel]
+    assert len(results) == 1
+    assert results[0]["error"] is None
+    assert "# ontology" in results[0]["sections"][0]["content"]
 
 
 def test_read_python_files_missing_file(tmp_path):
     """read_python_files returns an error entry for files that do not exist."""
     missing = str(tmp_path / "does_not_exist.py")
-    result = json.loads(read_python_files([missing]))
-    assert "error" in result[missing]
-    assert result[missing]["content"] == ""
+    results = json.loads(read_python_files([missing], keywords=[], full_content=True))
+    assert len(results) == 1
+    assert results[0]["error"] is not None
+    assert results[0]["sections"] == []
 
 
 def test_read_python_files_multiple_paths(tmp_path):
@@ -165,9 +170,11 @@ def test_read_python_files_multiple_paths(tmp_path):
     f1.write_text("aaa", encoding="utf-8")
     f2.write_text("bbb", encoding="utf-8")
 
-    result = json.loads(read_python_files([str(f1), str(f2)]))
-    assert result[str(f1)]["content"] == "aaa"
-    assert result[str(f2)]["content"] == "bbb"
+    results = json.loads(read_python_files([str(f1), str(f2)], keywords=[], full_content=True))
+    assert len(results) == 2
+    contents = [r["sections"][0]["content"] for r in results]
+    assert any("aaa" in c for c in contents)
+    assert any("bbb" in c for c in contents)
 
 
 def test_read_python_files_handles_non_py_files(tmp_path):
@@ -175,8 +182,10 @@ def test_read_python_files_handles_non_py_files(tmp_path):
     md = tmp_path / "prompt.md"
     md.write_text("# prompt content", encoding="utf-8")
 
-    result = json.loads(read_python_files([str(md)]))
-    assert result[str(md)]["content"] == "# prompt content"
+    results = json.loads(read_python_files([str(md)], keywords=[], full_content=True))
+    assert len(results) == 1
+    assert results[0]["error"] is None
+    assert "# prompt content" in results[0]["sections"][0]["content"]
 
 
 # ---------------------------------------------------------------------------
@@ -189,8 +198,9 @@ def test_scan_python_folder_keyword_filtering(tmp_path):
     (tmp_path / "coil.py").write_text("class Coil: pass", encoding="utf-8")
 
     result = json.loads(scan_python_folder(str(tmp_path), ["fan"]))
-    assert "fan.py" in result["files"]
-    assert "coil.py" not in result["files"]
+    file_paths = [f["path"] for f in result["files"]]
+    assert "fan.py" in file_paths
+    assert "coil.py" not in file_paths
 
 
 def test_scan_python_folder_missing_dir(tmp_path):
@@ -198,7 +208,7 @@ def test_scan_python_folder_missing_dir(tmp_path):
     missing = str(tmp_path / "no_such_dir")
     result = json.loads(scan_python_folder(missing, ["anything"]))
     assert "error" in result
-    assert result["files"] == {}
+    assert result["files"] == []
 
 
 def test_scan_python_folder_rejects_file_path(tmp_path):
@@ -216,7 +226,7 @@ def test_scan_python_folder_caps_at_10_files(tmp_path):
         (tmp_path / f"fan_{i}.py").write_text("class Fan: pass", encoding="utf-8")
     result = json.loads(scan_python_folder(str(tmp_path), ["fan"]))
     assert "message" in result, "Expected message key when > 10 matches"
-    assert result["files"] == {}, "Expected empty files dict when > 10 matches"
+    assert result["files"] == [], "Expected empty files list when > 10 matches"
     assert "12" in result["message"], "Message should contain match count"
 
 
@@ -398,48 +408,78 @@ def test_execute_ontology_checks_linux_venv_first(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# exit_generator_success signature
+# exit_with_success / exit_with_failure (generic exit tools)
 # ---------------------------------------------------------------------------
 
-def test_exit_generator_success_no_code_param():
-    """exit_generator_success only accepts (tool_context, summary) — no code parameter."""
+def test_exit_with_success_sets_exit_level_2_and_returns_status():
+    """exit_with_success sets EXIT_LEVEL_2=True, escalate=True, returns success."""
     ctx = MockToolContext(state={})
-    # Should work with just summary
-    result = exit_generator_success(ctx, summary="test")
-    assert result["status"] == "signal_sent"
-    assert ctx.state["ONTOLOGY_GENERATION_SUCCESS"] is True
-    # Should NOT accept code= keyword
-    import inspect
-    sig = inspect.signature(exit_generator_success)
-    assert "code" not in sig.parameters, "exit_generator_success still accepts code= parameter"
+    result = exit_with_success(ctx, summary="task done")
+    assert result["status"] == "success"
+    assert result["summary"] == "task done"
+    assert ctx.state["EXIT_LEVEL_2"] is True
+    assert ctx.actions.escalate is True
+    # Must NOT set any domain-specific keys
+    assert "ONTOLOGY_GENERATION_SUCCESS" not in ctx.state
+    assert "ONTOLOGY_VALIDATION_SUCCESS" not in ctx.state
+
+
+def test_exit_with_failure_sets_exit_level_2_and_returns_status():
+    """exit_with_failure sets EXIT_LEVEL_2=True, escalate=True, returns failure."""
+    ctx = MockToolContext(state={})
+    result = exit_with_failure(ctx, reason="could not parse")
+    assert result["status"] == "failure"
+    assert result["reason"] == "could not parse"
+    assert ctx.state["EXIT_LEVEL_2"] is True
+    assert ctx.actions.escalate is True
+    # Must NOT set any domain-specific keys
+    assert "ONTOLOGY_GENERATION_SUCCESS" not in ctx.state
+    assert "ONTOLOGY_VALIDATION_SUCCESS" not in ctx.state
 
 
 # ---------------------------------------------------------------------------
-# exit_validator_success reads TTL from disk
+# execute_ontology snapshot patching
 # ---------------------------------------------------------------------------
 
-def test_exit_validator_success_reads_ttl_from_disk(tmp_path):
-    """exit_validator_success reads TTL from disk internally, no ttl_content param."""
-    ttl_file = tmp_path / "latest_ontology.ttl"
-    ttl_file.write_text("@prefix s223: <urn:test> .", encoding="utf-8")
-    ctx = MockToolContext(state={"python_code_snapshots": [{"label": "Fix 0", "code": "x", "iteration": 0, "status": "fix"}]})
-    with patch("tools.ontology_exit_tools._TTL_LATEST", ttl_file):
-        result = exit_validator_success(ctx, summary="validated")
-    assert result["status"] == "signal_sent"
-    assert ctx.state["ONTOLOGY_VALIDATION_SUCCESS"] is True
-    # TTL snapshot written from disk content
-    ttl_snaps = ctx.state.get("ttl_code_snapshots", [])
-    assert len(ttl_snaps) == 1
-    assert "@prefix s223:" in ttl_snaps[0]["code"]
-    # Python snapshot patched to Final
+def test_execute_ontology_patches_python_snapshots_to_final(tmp_path):
+    """execute_ontology patches last python_code_snapshot to Final/validated on success."""
+    ttl_dir = tmp_path / "uploads" / "ttl"
+    ttl_dir.mkdir(parents=True)
+    latest = ttl_dir / "latest_ontology.ttl"
+    latest.write_text("@prefix s223: <urn:test> .", encoding="utf-8")
+
+    ttl_iterations = tmp_path / "ttl_iterations"
+    py_iterations = tmp_path / "py_iterations"
+
+    ctx = MockToolContext(state={
+        "ontology_session_id": 1,
+        "ontology_code_iteration_count": 0,
+        "python_code_snapshots": [
+            {"label": "Iteration 1", "code": "x=1", "iteration": 0, "status": "generated"}
+        ],
+    })
+
+    with (
+        patch("tools.ontology_tools.TTL_OUTPUT_DIR", str(ttl_dir)),
+        patch("tools.ontology_tools.TTL_ITERATIONS_DIR", str(ttl_iterations)),
+        patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(py_iterations)),
+        patch("subprocess.run") as mock_run,
+    ):
+        mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+        execute_ontology(tool_context=ctx)
+
+    # Python snapshot patched to Final/validated
     py_snaps = ctx.state["python_code_snapshots"]
     assert py_snaps[-1]["label"] == "Final"
     assert py_snaps[-1]["status"] == "validated"
-    # Verify no code= or ttl_content= param
-    import inspect
-    sig = inspect.signature(exit_validator_success)
-    assert "code" not in sig.parameters
-    assert "ttl_content" not in sig.parameters
+
+    # TTL snapshot uses label="TTL" and iteration=0
+    ttl_snaps = ctx.state.get("ttl_code_snapshots", [])
+    assert len(ttl_snaps) >= 1
+    assert ttl_snaps[-1]["label"] == "TTL"
+    assert ttl_snaps[-1]["iteration"] == 0
+    assert ttl_snaps[-1]["status"] == "validated"
+    assert "@prefix s223:" in ttl_snaps[-1]["code"]
 
 
 # ---------------------------------------------------------------------------
@@ -528,3 +568,20 @@ def test_create_master_agent_does_not_import_removed_tools():
     assert "scan_python_files_filtered" not in src, (
         "Removed tool scan_python_files_filtered still in create_master_agent.py"
     )
+    assert "exit_generator_success" not in src, "Removed exit_generator_success still in create_master_agent.py"
+    assert "exit_generator_failure" not in src, "Removed exit_generator_failure still in create_master_agent.py"
+    assert "exit_validator_success" not in src, "Removed exit_validator_success still in create_master_agent.py"
+    assert "exit_validator_failure" not in src, "Removed exit_validator_failure still in create_master_agent.py"
+    assert "ontology_exit_tools" not in src, "Removed ontology_exit_tools import still in create_master_agent.py"
+    assert "loop_exit_tools" not in src, "Removed loop_exit_tools import still in create_master_agent.py"
+
+
+def test_master_llm_imports_new_exit_tools():
+    """level_3_master_main_llm.py must import exit_with_success and exit_with_failure from exit_tools."""
+    src = (
+        Path(__file__).parent.parent / "master_architecture" / "level_3_master_main_llm.py"
+    ).read_text(encoding="utf-8")
+    assert "from tools.exit_tools import" in src, "exit_tools import not found in level_3_master_main_llm.py"
+    assert "exit_with_success" in src, "exit_with_success not found in level_3_master_main_llm.py"
+    assert "exit_with_failure" in src, "exit_with_failure not found in level_3_master_main_llm.py"
+    assert "exit_loop_level_2" not in src, "Old exit_loop_level_2 still in level_3_master_main_llm.py"
