@@ -127,6 +127,11 @@
 | P19-07 | Phase 19 | Planned |
 | P19-08 | Phase 19 | Planned |
 | P19-09 | Phase 19 | Planned |
+| P20-01 | Phase 20 | Planned |
+| P20-02 | Phase 20 | Planned |
+| P20-03 | Phase 20 | Planned |
+| P20-04 | Phase 20 | Planned |
+| P20-05 | Phase 20 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -345,3 +350,13 @@ Plans:
 - [ ] 19-01-PLAN.md — Create exit_tools.py + move snapshot patching to execute_ontology + update registrations + delete old files
 - [ ] 19-02-PLAN.md — Update all 5 skills with exit_with_success/exit_with_failure + master instruction one-task-at-a-time rule
 - [ ] 19-03-PLAN.md — Update tests for new exit tools, snapshot patching, and wiring
+
+### Phase 20: Agent Session Logging
+
+**Goal:** Persist every agent execution event — thinking traces, tool calls, tool results, state mutations, and artifact operations — to a per-session JSONL log file on disk so that thinking traces can be analyzed offline to optimize prompts and agent behavior. Each event line includes the full `AgentEvent` payload (timestamp, agent_name, event_type, content, metadata with latency and token counts).
+**Requirements**: [P20-01, P20-02, P20-03, P20-04, P20-05]
+**Depends on:** Phase 19
+**Plans:** 1 plan
+
+Plans:
+- [ ] 20-01-PLAN.md — session_logger.py module (TDD) + callback_utils.py wiring + .gitignore
