@@ -277,7 +277,7 @@ Plans:
 **Goal:** Fix 21 identified issues across the ontology pipeline: delete redundant _persist helpers, clean exit tool signatures (remove code=/ttl_content= params), fold checkpoint_code into write_ontology, fix Linux venv detection, add scan_python_folder cap, and update all three SKILL.md files for accuracy.
 **Requirements**: [P16-01, P16-02, P16-03, P16-04, P16-05, P16-06, P16-07, P16-08, P16-09, P16-10, P16-11, P16-12, P16-13]
 **Depends on:** Phase 15
-**Plans:** 2/5 plans executed
+**Plans:** 3/5 plans executed
 
 Plans:
 - [ ] 16-01-PLAN.md — Delete _persist_python and _persist_ttl helpers + remove all call sites
