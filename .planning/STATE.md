@@ -152,3 +152,4 @@ progress:
 ### Roadmap Evolution
 
 - Phase 16 added: optimize ontology skills
+- Phase 17 added: Restructure BACnet custom fields to flat numbered entries
