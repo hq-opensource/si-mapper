@@ -4,11 +4,11 @@ Ontology tools for the master agent.
 Available tools
 ---------------
 File reading
-  - ``read_python_files``    -- read one or more files by path (absolute or project-relative)
-  - ``scan_python_folder``   -- recursively scan a directory, return .py files matching keywords
+  - ``read_python_files``    -- grep-like read of one or more files; returns keyword-matched sections with context lines (use full_content=True for full file)
+  - ``scan_python_folder``   -- recursively scan a directory; returns keyword-matched sections per .py file (use full_content=True for full source of matching files)
 
 Class mapping
-  - ``search_class_mapping`` -- grep across classes_bob/scratch JSONL; returns abs_path per class
+  - ``search_class_mapping`` -- search classes_bob/scratch JSONL by keyword; returns deduplicated list of absolute file paths
 
 Ontology (agent/223p/ontology.py)
   - ``write_ontology``   -- overwrite ontology.py (two-write: primary + session archive); auto-increments iteration counter
@@ -60,49 +60,241 @@ _EMPTY_PARAMS: dict[str, Any] = {"type": "object", "properties": {}, "required":
 
 
 # ---------------------------------------------------------------------------
+# Internal helper: _custom_grep
+# ---------------------------------------------------------------------------
+
+def _custom_grep(
+    abs_path: str,
+    original_path: str,
+    keywords: list[str],
+    context_lines: int,
+    full_content: bool,
+    _content: Optional[str] = None,
+) -> dict:
+    """Grep-like search within a single file.
+
+    Returns sections of the file that contain the keywords, each surrounded by
+    ``context_lines`` lines of context.  Overlapping windows are merged so no
+    line is repeated.
+
+    Args:
+        abs_path:      Resolved absolute path to the file.
+        original_path: Path as supplied by the caller (used verbatim in output).
+        keywords:      Case-insensitive substrings to search for.
+        context_lines: Lines to include before and after each match.
+        full_content:  If True, return the whole file as one section (keywords
+                       are ignored for line selection but the file must still
+                       have been pre-screened by the caller for relevance).
+        _content:      Pre-read file text — skips the open() call.  Used by
+                       scan_python_folder to avoid reading each file twice.
+
+    Returns a plain dict (not a JSON string) with this shape::
+
+        {
+          "path":          "<original_path>",
+          "abs_path":      "<abs_path>",
+          "total_lines":   <int>,
+          "matches_found": <int | null>,   # null when full_content=True
+          "full_content":  <bool>,
+          "sections": [
+            {
+              "start_line": <int>,          # 1-based, inclusive
+              "end_line":   <int>,          # 1-based, inclusive
+              "content":    "<text>"        # line-numbered, one line per row
+            },
+            ...
+          ],
+          "error": <str | null>
+        }
+    """
+    if _content is None:
+        try:
+            with open(abs_path, "r", encoding="utf-8", errors="replace") as fh:
+                _content = fh.read()
+        except OSError as exc:
+            return {
+                "path": original_path,
+                "abs_path": abs_path,
+                "total_lines": 0,
+                "matches_found": None,
+                "full_content": full_content,
+                "sections": [],
+                "error": str(exc),
+            }
+
+    raw_lines = _content.splitlines(keepends=True)
+    total_lines = len(raw_lines)
+    pad = len(str(total_lines))  # digit width for aligned line-number prefix
+
+    def _format_section(start_0: int, end_0: int) -> dict:
+        """Render a contiguous slice of lines (0-based indices, inclusive)."""
+        content = "".join(
+            f"{start_0 + i + 1:{pad}d}: {line}"
+            for i, line in enumerate(raw_lines[start_0 : end_0 + 1])
+        )
+        return {
+            "start_line": start_0 + 1,
+            "end_line": end_0 + 1,
+            "content": content,
+        }
+
+    if full_content:
+        return {
+            "path": original_path,
+            "abs_path": abs_path,
+            "total_lines": total_lines,
+            "matches_found": None,
+            "full_content": True,
+            "sections": [_format_section(0, total_lines - 1)] if total_lines else [],
+            "error": None,
+        }
+
+    lower_keywords = [kw.lower() for kw in keywords]
+
+    # Collect 0-based indices of every line that contains at least one keyword.
+    # Enumeration order is ascending, so match_indices is already sorted.
+    match_indices = [
+        i
+        for i, line in enumerate(raw_lines)
+        if any(kw in line.lower() for kw in lower_keywords)
+    ]
+
+    if not match_indices:
+        return {
+            "path": original_path,
+            "abs_path": abs_path,
+            "total_lines": total_lines,
+            "matches_found": 0,
+            "full_content": False,
+            "sections": [],
+            "error": None,
+        }
+
+    # Build context windows (0-based, inclusive) and merge overlapping ones.
+    # Because match_indices is sorted, a single left-to-right pass suffices.
+    windows: list[list[int]] = []
+    for idx in match_indices:
+        start = max(0, idx - context_lines)
+        end = min(total_lines - 1, idx + context_lines)
+        if windows and start <= windows[-1][1] + 1:
+            # Overlapping or directly adjacent — extend the last window.
+            windows[-1][1] = max(windows[-1][1], end)
+        else:
+            windows.append([start, end])
+
+    return {
+        "path": original_path,
+        "abs_path": abs_path,
+        "total_lines": total_lines,
+        "matches_found": len(match_indices),
+        "full_content": False,
+        "sections": [_format_section(s, e) for s, e in windows],
+        "error": None,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Tool: read_python_files
 # ---------------------------------------------------------------------------
 
-def read_python_files(paths: list[str]) -> str:
-    """Read one or more files by path and return their contents.
+def read_python_files(
+    paths: list[str],
+    keywords: list[str],
+    context_lines: int = 40,
+    full_content: bool = False,
+) -> str:
+    """Read one or more files and return the sections that contain the keywords.
 
-    Accepts absolute paths or paths relative to the project root
-    (e.g. ``"agent/223p/ontology.py"``, ``"agent/223p/ref/code/prompt.md"``).
+    Accepts absolute paths or paths relative to the project root.
     Handles any text file — not limited to ``.py``.
 
-    Typical uses:
-    - Read a specific library class file: pass ``abs_path`` from
-      ``search_class_mapping`` directly.
-    - Read ``ontology.py``: pass ``"agent/223p/ontology.py"``.
-    - Read the prompt reference: pass ``"agent/223p/ref/code/prompt.md"``.
+    Typical uses
+    ------------
+    Read sections of a library class file (paths from ``search_class_mapping``)::
 
-    Returns a JSON object::
+        read_python_files(["<abs_path>"], keywords=["Damper", "airOutlet"])
 
-        {
-          "<original path>": {"content": "<text>"},
-          "<original path>": {"content": "", "error": "<message>"},
+    Read a file you need in full (e.g. the lessons skill, ontology.py)::
+
+        read_python_files(["agent/skills/skill-ontology-lessons/SKILL.md"],
+                          keywords=[], full_content=True)
+
+    Parameters
+    ----------
+    paths
+        One or more file paths to read.
+    keywords
+        Case-insensitive substrings to search for.  Every line that contains
+        at least one keyword is included in the output, surrounded by
+        ``context_lines`` lines of context.  Overlapping windows are merged.
+    context_lines
+        Lines to include before and after each matching line (default 40).
+    full_content
+        If True, return the entire file regardless of keywords.  Use when you
+        know you need the whole file.
+
+    Either ``keywords`` must be non-empty **or** ``full_content`` must be True.
+    If neither holds, the tool returns an error entry.
+
+    Returns a JSON array, one object per path::
+
+        [
+          {
+            "path":          "<original path>",
+            "abs_path":      "<resolved absolute path>",
+            "total_lines":   <int>,
+            "matches_found": <int | null>,
+            "full_content":  <bool>,
+            "sections": [
+              {
+                "start_line": <int>,
+                "end_line":   <int>,
+                "content":    "<line-numbered text>"
+              }
+            ],
+            "error": <str | null>
+          },
           ...
-        }
+        ]
     """
-    results: dict[str, Any] = {}
+    if not keywords and not full_content:
+        return json.dumps(
+            [{"error": "Provide at least one keyword, or set full_content=True to return the entire file."}],
+            ensure_ascii=False,
+        )
+
+    results: list[dict] = []
     for path in paths:
         expanded = os.path.expanduser(path)
-        # Resolve: try as-is first (works for absolute paths), then relative to project root.
         if os.path.isabs(expanded):
             resolved = os.path.realpath(expanded)
         else:
             resolved = os.path.realpath(os.path.join(_PROJECT_ROOT, expanded))
 
         if not os.path.exists(resolved):
-            results[path] = {"content": "", "error": f"File not found: {resolved}"}
+            results.append({
+                "path": path,
+                "abs_path": resolved,
+                "total_lines": 0,
+                "matches_found": None,
+                "full_content": full_content,
+                "sections": [],
+                "error": f"File not found: {resolved}",
+            })
         elif not os.path.isfile(resolved):
-            results[path] = {"content": "", "error": f"Not a file: {resolved}"}
+            results.append({
+                "path": path,
+                "abs_path": resolved,
+                "total_lines": 0,
+                "matches_found": None,
+                "full_content": full_content,
+                "sections": [],
+                "error": f"Not a file: {resolved}",
+            })
         else:
-            try:
-                with open(resolved, "r", encoding="utf-8", errors="replace") as fh:
-                    results[path] = {"content": fh.read()}
-            except OSError as exc:
-                results[path] = {"content": "", "error": str(exc)}
+            results.append(
+                _custom_grep(resolved, path, keywords, context_lines, full_content)
+            )
 
     return json.dumps(results, ensure_ascii=False, indent=2)
 
@@ -111,40 +303,73 @@ def read_python_files(paths: list[str]) -> str:
 # Tool: scan_python_folder
 # ---------------------------------------------------------------------------
 
-def scan_python_folder(path: str, keywords: list[str], force: bool = False) -> str:
-    """Recursively scan a directory and return the full source of every
-    ``.py`` file whose content contains at least one keyword
-    (case-insensitive substring match).
+def scan_python_folder(
+    path: str,
+    keywords: list[str],
+    context_lines: int = 40,
+    full_content: bool = False,
+    force: bool = False,
+) -> str:
+    """Recursively scan a directory and return sections of every ``.py`` file
+    that contains at least one keyword (case-insensitive substring match).
 
-    Use this for exploratory scans of known directories, e.g.
+    Use for exploratory scans of known directories, e.g.
     ``agent/223p/ref/code`` to find reference implementations.
-    For reading a specific file whose path you already know, use
+    For a specific file whose path you already know, prefer
     ``read_python_files`` instead.
 
     Accepts absolute paths or paths relative to the project root.
 
-    If more than 10 files match and ``force`` is False, returns a message
-    asking the agent to narrow keywords instead of returning file contents.
-    Pass ``force=True`` to override the cap and return all matching files.
+    Parameters
+    ----------
+    path
+        Directory to scan recursively.
+    keywords
+        Case-insensitive substrings used to (a) decide which files are
+        returned and (b) locate the matching lines within those files.
+    context_lines
+        Lines to include before and after each match (default 40).
+        Overlapping windows within the same file are merged.
+    full_content
+        If True, return the full source of each matching file instead of
+        just the sections around the keyword hits.  The keyword filter still
+        applies — only files that *contain* a keyword are returned.
+    force
+        If True, bypass the 10-file cap and return all matching files.
 
     Returns a JSON object::
 
         {
-          "root": "<resolved absolute path>",
-          "files": {
-            "subdir/module.py": "<source code>",
+          "root":          "<resolved absolute path>",
+          "context_lines": <int>,
+          "full_content":  <bool>,
+          "files": [
+            {
+              "path":          "<relative path from root>",
+              "abs_path":      "<absolute path>",
+              "total_lines":   <int>,
+              "matches_found": <int | null>,
+              "full_content":  <bool>,
+              "sections": [
+                {
+                  "start_line": <int>,
+                  "end_line":   <int>,
+                  "content":    "<line-numbered text>"
+                }
+              ],
+              "error": <str | null>
+            },
             ...
-          },
-          "error": "<message>"   // only present on failure
+          ]
         }
 
-    Or when cap is exceeded::
+    When the 10-file cap is exceeded and ``force`` is False::
 
         {
-          "root": "<resolved absolute path>",
-          "message": "There are N files matching these keywords. Narrow your keywords and try again.",
+          "root":        "<resolved absolute path>",
+          "message":     "There are N matching files. Narrow keywords or set force=True.",
           "match_count": N,
-          "files": {}
+          "files":       []
         }
     """
     expanded = os.path.expanduser(path)
@@ -154,13 +379,15 @@ def scan_python_folder(path: str, keywords: list[str], force: bool = False) -> s
         resolved = os.path.realpath(os.path.join(_PROJECT_ROOT, expanded))
 
     if not os.path.exists(resolved):
-        return json.dumps({"error": f"Path not found: {resolved!r}", "root": resolved, "files": {}})
+        return json.dumps({"error": f"Path not found: {resolved!r}", "root": resolved, "files": []})
     if not os.path.isdir(resolved):
-        return json.dumps({"error": f"Path is not a directory: {resolved!r}", "root": resolved, "files": {}})
+        return json.dumps({"error": f"Not a directory: {resolved!r}", "root": resolved, "files": []})
 
     lower_keywords = [kw.lower() for kw in keywords]
 
-    files: dict[str, str] = {}
+    # Single-pass walk: read each .py file once, screen for keywords, and keep
+    # the content in memory so _custom_grep does not need to open() it again.
+    candidates: list[tuple[str, str, str]] = []  # (abs_path, rel_path, content)
     for dirpath, _dirnames, filenames in os.walk(resolved):
         for filename in sorted(filenames):
             if not filename.endswith(".py"):
@@ -170,22 +397,34 @@ def scan_python_folder(path: str, keywords: list[str], force: bool = False) -> s
             try:
                 with open(abs_path, "r", encoding="utf-8", errors="replace") as fh:
                     content = fh.read()
-            except OSError as exc:
-                files[rel_path] = f"<ERROR reading file: {exc}>"
-                continue
+            except OSError:
+                continue  # silently skip unreadable files
             if any(kw in content.lower() for kw in lower_keywords):
-                files[rel_path] = content
+                candidates.append((abs_path, rel_path, content))
 
     MAX_FILES = 10
-    if len(files) > MAX_FILES and not force:
+    if len(candidates) > MAX_FILES and not force:
         return json.dumps({
             "root": resolved,
-            "message": f"There are {len(files)} files matching these keywords. Narrow your keywords and try again.",
-            "match_count": len(files),
-            "files": {},
+            "message": (
+                f"There are {len(candidates)} files matching these keywords. "
+                "Narrow your keywords or set force=True."
+            ),
+            "match_count": len(candidates),
+            "files": [],
         }, ensure_ascii=False, indent=2)
 
-    return json.dumps({"root": resolved, "files": files}, ensure_ascii=False, indent=2)
+    files = [
+        _custom_grep(abs_path, rel_path, keywords, context_lines, full_content, _content=content)
+        for abs_path, rel_path, content in candidates
+    ]
+
+    return json.dumps({
+        "root": resolved,
+        "context_lines": context_lines,
+        "full_content": full_content,
+        "files": files,
+    }, ensure_ascii=False, indent=2)
 
 
 # ---------------------------------------------------------------------------
@@ -215,29 +454,40 @@ def _find_site_packages() -> str | None:
 
 
 def search_class_mapping(keywords: list[str]) -> str:
-    """Grep-like search across classes_bob.jsonl and classes_scratch.jsonl.
-    Returns entries where class_name contains any keyword (case-insensitive).
+    """Search for classes in the bob and scratch libraries by keyword.
 
-    Each result includes:
-      - 'library': 'bob' or 'scratch'
-      - 'path': relative path within the library (e.g. 'bob/equipment/hvac/fan.py')
-      - 'abs_path': absolute path to the file — pass directly to ``read_python_files``
-                    to read exactly that class file (one file, no scanning overhead)
+    Returns a JSON array of unique absolute file paths for every class whose
+    name contains any of the keywords (case-insensitive substring match).
+    Multiple classes that live in the same file are deduplicated — each path
+    appears at most once.
+
+    Pass the returned list directly to ``read_python_files`` as the ``paths``
+    argument::
+
+        paths = search_class_mapping(keywords=["Fan", "Damper"])
+        # → ["/abs/.../bob/equipment/hvac/fan.py",
+        #    "/abs/.../scratch/hvac/damper.py"]
+
+        read_python_files(paths, keywords=["Fan", "Damper"])
+
+    Returns an empty array ``[]`` if no matches are found or if the library
+    installation cannot be located.
     """
     site_packages = _find_site_packages()
+    if not site_packages:
+        return json.dumps([])
 
     lower_keywords = [kw.lower() for kw in keywords]
-    results = []
+    seen: set[str] = set()
+    abs_paths: list[str] = []
     for library in ("bob", "scratch"):
         for entry in _load_mapping(library):
-            name_lower = entry["class_name"].lower()
-            if any(kw in name_lower for kw in lower_keywords):
-                result = {**entry, "library": library}
-                if site_packages:
-                    abs_path = os.path.join(site_packages, entry["path"])
-                    result["abs_path"] = abs_path
-                results.append(result)
-    return json.dumps(results, ensure_ascii=False, indent=2)
+            if any(kw in entry["class_name"].lower() for kw in lower_keywords):
+                abs_path = os.path.join(site_packages, entry["path"])
+                if abs_path not in seen:
+                    seen.add(abs_path)
+                    abs_paths.append(abs_path)
+    return json.dumps(abs_paths, ensure_ascii=False, indent=2)
 
 
 # ---------------------------------------------------------------------------

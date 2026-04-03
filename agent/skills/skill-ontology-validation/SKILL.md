@@ -16,7 +16,7 @@ Read the generated `mapper/uploads/python/latest_ontology.py`, validate it, and 
 **Step 0 — Preparation (run once):** Load skill `skill-ontology-lessons` and apply every lesson to your fixing strategy before entering the loop. If the file is empty or absent, proceed without it.
 
 **Fix loop:**
-1. Call `read_python_files(["mapper/uploads/python/latest_ontology.py"])` to read the full current source.
+1. Call `read_python_files(["mapper/uploads/python/latest_ontology.py"], keywords=[], full_content=True)` to read the full current source. The response is a JSON array; the code is in `result[0]["sections"][0]["content"]`.
 2. Call `execute_ontology()`. Check `result["success"] == true` to determine the path.
 3. `result["success"] == true` → call `exit_validator_success(summary="...")`. The tool reads the TTL from disk internally — pass only the summary string.
 4. Otherwise: analyze errors → look up affected classes/APIs → fix all errors that share the same root cause in one pass → write corrected full file via `write_ontology`.
@@ -32,11 +32,11 @@ Read the generated `mapper/uploads/python/latest_ontology.py`, validate it, and 
 
 ---
 ## Available skills and tools
-- `search_class_mapping` tool to find which file a class lives in. Pass class names from errors as keywords.
-- `read_python_files([abs_path, ...])` to read specific class files — pass `abs_path` from `search_class_mapping` directly (reads exactly that file, no scanning overhead).
-- `scan_python_folder("agent/223p/ref/code", keywords=[...])` when looking for reference patterns across the sample library.
-- `read_python_files(["agent/223p/ref/code/prompt.md"])` for original generation guidelines. Keep result in cache.
-- `read_python_files(["mapper/uploads/python/latest_ontology.py"])` to read the full source code of the current ontology.
+- `search_class_mapping(keywords=[<class names from error>])` — returns a JSON array of absolute file paths. Pass this list directly to `read_python_files`.
+- `read_python_files(<paths from search_class_mapping>, keywords=[<class names>])` — reads sections of those files around the keyword matches. Response: JSON array where each entry has `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`.
+- `read_python_files(["mapper/uploads/python/latest_ontology.py"], keywords=[], full_content=True)` to read the full source of the current ontology. The code is in `result[0]["sections"][0]["content"]`.
+- `read_python_files(["agent/223p/ref/code/prompt.md"], keywords=[], full_content=True)` for original generation guidelines.
+- `scan_python_folder("agent/223p/ref/code", keywords=[...])` when looking for reference patterns across the sample library. Response: `{"root": "...", "files": [...]}` — each file entry has `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`. Read `content` directly from each section.
 - `execute_ontology` tool to run `mapper/uploads/python/latest_ontology.py` and capture stdout, stderr, and return code.
 - `write_ontology` tool to write the full corrected source code after each fix iteration.
 - `exit_validator_success(summary="...")` tool to signal successful validation and terminate the loop. Pass only the summary string — the tool reads the TTL from disk internally.
@@ -49,7 +49,7 @@ Read the generated `mapper/uploads/python/latest_ontology.py`, validate it, and 
 
 ## Stop Conditions → `exit_validator_failure(reason="VALIDATION_FAILED: ...")`
 - `agent/skills/skill-ontology-lessons/SKILL.md` is unreadable and no error-resolution context is available — proceed with best-effort fixing but log the limitation.
-- `read_python_files(["mapper/uploads/python/latest_ontology.py"])` returns empty or missing file.
+- `read_python_files(["mapper/uploads/python/latest_ontology.py"], keywords=[], full_content=True)` returns empty or missing file.
 - `search_class_mapping` returns empty for known class names — mapping files may be missing or corrupt.
 - Same error persists after 10 consecutive fix attempts — escalate to human review.
 - Code is fundamentally broken (empty, non-Python, random text) — targeted fixes impossible.
