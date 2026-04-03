@@ -5,47 +5,30 @@ These set EXIT_LEVEL_2 so the master loop (MasterMainLoopAgent.is_loop_finished)
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 
 from google.adk.tools import ToolContext
 
 logger = logging.getLogger(__name__)
 
-
-def checkpoint_code(tool_context: ToolContext, code: str) -> dict:
-    """Appends a Fix N snapshot to python_code_snapshots. Does NOT escalate — validator loop continues."""
-    iteration = tool_context.state.get("ontology_code_iteration_count", 0)
-    snapshots = list(tool_context.state.get("python_code_snapshots", []))
-    snapshots.append(
-        {
-            "label": f"Fix {iteration}",
-            "code": code,
-            "iteration": iteration,
-            "status": "fix",
-        }
-    )
-    tool_context.state["python_code_snapshots"] = snapshots
-    tool_context.state["ontology_code_iteration_count"] = iteration + 1
-    return {"status": "snapshot_saved", "iteration": iteration}
-    # CRITICAL: No tool_context.actions.escalate here — loop must continue
+# ---------------------------------------------------------------------------
+# Path anchors
+# ---------------------------------------------------------------------------
+# This file: agent/tools/ontology_exit_tools.py
+# _PROJECT_ROOT = project root (two levels up from this file)
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_TTL_LATEST = _PROJECT_ROOT / "mapper" / "uploads" / "ttl" / "latest_ontology.ttl"
 
 
 def exit_generator_success(
     tool_context: ToolContext,
-    code: str,
     summary: str,
 ) -> dict:
-    """Appends Initial snapshot, sets ONTOLOGY_GENERATION_SUCCESS=True, escalates (EXIT_LEVEL_2)."""
+    """Signal generation success. Sets ONTOLOGY_GENERATION_SUCCESS=True, escalates (EXIT_LEVEL_2)."""
     logger.debug(
         "[exit_generator_success] called by %s",
         getattr(tool_context, "agent_name", "unknown"),
     )
-    # Read-copy-write pattern — never mutate the state list directly
-    snapshots = list(tool_context.state.get("python_code_snapshots", []))
-    snapshots.append(
-        {"label": "Initial", "code": code, "iteration": 0, "status": "generated"}
-    )
-    tool_context.state["python_code_snapshots"] = snapshots
-    tool_context.state["ontology_code_iteration_count"] = 0
     tool_context.state["ONTOLOGY_GENERATION_SUCCESS"] = True
     tool_context.state["EXIT_LEVEL_2"] = True
     tool_context.actions.escalate = True
@@ -70,34 +53,34 @@ def exit_generator_failure(
 
 def exit_validator_success(
     tool_context: ToolContext,
-    code: str,
     summary: str,
-    ttl_content: str = "",
 ) -> dict:
-    """Saves final Python snapshot, writes TTL snapshot, patches to Final/validated, escalates (EXIT_LEVEL_2)."""
+    """Signal validation success. Reads TTL from disk, patches last snapshot to Final, escalates (EXIT_LEVEL_2)."""
     logger.debug(
         "[exit_validator_success] called by %s",
         getattr(tool_context, "agent_name", "unknown"),
     )
-    # Inline checkpoint_code logic (read-copy-write) — avoids cross-module import
-    iteration = tool_context.state.get("ontology_code_iteration_count", 0)
-    snapshots = list(tool_context.state.get("python_code_snapshots", []))
-    snapshots.append({"label": f"Fix {iteration}", "code": code, "iteration": iteration, "status": "fix"})
-    tool_context.state["python_code_snapshots"] = snapshots
-    tool_context.state["ontology_code_iteration_count"] = iteration + 1
-    # Patch last Python snapshot to Final/validated
+    # Internal TTL read — file is written by execute_ontology before this exit is called
+    ttl_content = ""
+    try:
+        with open(_TTL_LATEST, "r", encoding="utf-8") as f:
+            ttl_content = f.read()
+    except OSError as exc:
+        logger.warning("[exit_validator_success] Failed to read TTL from disk: %s", exc)
+
+    # Patch last Python snapshot to Final/validated (read from state, not from parameter)
     snapshots = list(tool_context.state.get("python_code_snapshots", []))
     if snapshots:
         snapshots[-1]["label"] = "Final"
         snapshots[-1]["status"] = "validated"
         tool_context.state["python_code_snapshots"] = snapshots
+
     # Write TTL content to ttl_code_snapshots (separate key for TTL tab)
     if ttl_content:
         ttl_snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
-        ttl_snapshots.append(
-            {"label": "TTL", "code": ttl_content, "iteration": 0, "status": "validated"}
-        )
+        ttl_snapshots.append({"label": "TTL", "code": ttl_content, "iteration": 0, "status": "validated"})
         tool_context.state["ttl_code_snapshots"] = ttl_snapshots
+
     tool_context.state["ONTOLOGY_VALIDATION_SUCCESS"] = True
     tool_context.state["EXIT_LEVEL_2"] = True
     tool_context.actions.escalate = True
