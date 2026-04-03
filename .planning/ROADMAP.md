@@ -106,6 +106,18 @@
 | P17-05 | Phase 17 | Planned |
 | P17-06 | Phase 17 | Planned |
 | P17-07 | Phase 17 | Planned |
+| P18-01 | Phase 18 | Planned |
+| P18-02 | Phase 18 | Planned |
+| P18-03 | Phase 18 | Planned |
+| P18-04 | Phase 18 | Planned |
+| P18-05 | Phase 18 | Planned |
+| P18-06 | Phase 18 | Planned |
+| P18-07 | Phase 18 | Planned |
+| P18-08 | Phase 18 | Planned |
+| P18-09 | Phase 18 | Planned |
+| P18-10 | Phase 18 | Planned |
+| P18-11 | Phase 18 | Planned |
+| P18-12 | Phase 18 | Planned |
 | P19-01 | Phase 19 | Planned |
 | P19-02 | Phase 19 | Planned |
 | P19-03 | Phase 19 | Planned |
@@ -312,15 +324,15 @@ Plans:
 - [ ] 17-01-PLAN.md — Create explode_bacnet_points helper + wire into all 4 write-path files
 - [ ] 17-02-PLAN.md — Update EDN translator verification + SKILL.md + live integration test
 
-### Phase 18: optimize skill for ontology validation
+### Phase 18: Optimize skill for ontology validation
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Rewrite the ontology validation skill (SKILL.md) to implement 11 optimizations: structured sub-steps 4a-4d for class lookup, conditional scan_python_folder, re-read before fix, minimum-change constraint, graduated retry escalation (3/5/10), mid-loop lessons re-consultation, root-cause ordering, pre-write verification advisory, Exit Protocol elevated to top, and inline error classification. Update lessons skill with targeted consultation note.
+**Requirements**: [P18-01, P18-02, P18-03, P18-04, P18-05, P18-06, P18-07, P18-08, P18-09, P18-10, P18-11, P18-12]
 **Depends on:** Phase 17
-**Plans:** 0 plans
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 18 to break down)
+- [ ] 18-01-PLAN.md — Full rewrite of validation SKILL.md (11 optimizations) + lessons consultation note
 
 ### Phase 19: Standardize agent exit tools across all skills
 
