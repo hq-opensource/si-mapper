@@ -2,24 +2,24 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 16
+current_phase: 17
 status: unknown
-last_updated: "2026-04-03T11:55:05.413Z"
+last_updated: "2026-04-03T18:26:18.236Z"
 progress:
-  total_phases: 16
+  total_phases: 17
   completed_phases: 10
-  total_plans: 33
-  completed_plans: 33
+  total_plans: 35
+  completed_plans: 34
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 16
+- **Current Phase:** 17
 - **Overall Completion:** [██████████] 100%
-- **Active Plan:** 16-04 (complete)
-- **Last Completed:** 16-04 (updated test_ontology_tools.py for Wave 1+2: removed _persist_python/_persist_ttl mocks, added 6 new tests for auto-increment, exit signatures, TTL from disk, venv order, scan cap/force; 31 tests pass)
+- **Active Plan:** 17-02 (complete)
+- **Last Completed:** 17-02 (verified EDN translator handles flat bacnet_N keys generically; rewrote SKILL.md to flat bacnet_N format; updated live test SAMPLE_BACNET_POINTS to bacnet_1 through bacnet_5 with address fields; 7 translator tests pass)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -94,6 +94,8 @@ progress:
 - **Decision (16-02):** scan_python_folder caps at 10 files with force=True escape hatch; returns message-only above cap.
 - **Decision (16-02):** execute_ontology checks Linux bin/python venv path first, then Windows Scripts/python.exe, then sys.executable.
 - **Decision (16-03):** grep-0 criterion for code= in validation SKILL.md requires rewriting "do not pass code=" warnings to "pass only the summary string" to avoid the literal string appearing in the file.
+- **Decision (17-02):** EDN translator required no code changes — generic key iteration in custom_fields deserialization/serialization already handles any string key (including bacnet_N) without modification.
+- **Decision (17-02):** Live test SAMPLE_BACNET_POINTS passes flat bacnet_N keys directly as top-level metadata keys (no 'bacnet' wrapper), consistent with how plan 17-01 updated the write paths.
 
 ### Next Steps
 
@@ -132,6 +134,7 @@ progress:
 - **2026-04-03:** Completed 16-02-PLAN.md. Rewrote exit_generator_success and exit_validator_success to 2-param signatures. Added _TTL_LATEST module constant; exit_validator_success reads TTL from disk. Deleted checkpoint_code function. Folded checkpoint logic into write_ontology (auto-increment). Fixed execute_ontology Linux venv path. Added scan_python_folder cap (10 files, force=True escape). Removed checkpoint_code from create_master_agent.py.
 - **2026-04-03:** Completed 16-03-PLAN.md. Updated skill-ontology-generation/SKILL.md (Exit Protocol, clean exit call), skill-ontology-validation/SKILL.md (Step 0, clean exit, no checkpoint_code, correct paths, root-cause batch strategy, Operator Reference section), and skill-ontology-lessons/SKILL.md (unambiguous % operator lesson: sensor%equipment correct, sensor%property wrong).
 - **2026-04-03:** Completed 16-04-PLAN.md. Updated test_ontology_tools.py: removed all _persist_python/_persist_ttl mocks, renamed two-write pattern tests, added 6 new tests (auto-increment, exit signatures, TTL-from-disk, Linux venv order, scan cap/force). 31 tests pass. Phase 16 complete.
+- **2026-04-03:** Completed 17-02-PLAN.md. Verified EDN translator has zero hard-coded 'bacnet' logic (generic key iteration). Created test_grid_edn_translator.py (7 tests, all pass). Rewrote skill-bacnet-points/SKILL.md sections 3 and 4 and Rules to flat bacnet_N format. Updated live test SAMPLE_BACNET_POINTS to bacnet_1 through bacnet_5 with address fields, removed 'bacnet' wrapper from updates dict, rewrote verification logic per-key.
 
 ## Roadmap Evolution
 
