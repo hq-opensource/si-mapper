@@ -297,8 +297,18 @@ Plans:
 **Goal:** Replace the `{"bacnet": {"ADDR": {...}}}` custom_fields structure with a flat numbered format `{"bacnet_1": {"address": "ADDR", ...}, "bacnet_2": {...}}` across all write paths (internal grid tools, ADK metadata tools, MCP metadata manager), the EDN translator, the BACnet skill documentation, and the live integration test.
 **Requirements**: [P17-01, P17-02, P17-03, P17-04, P17-05, P17-06, P17-07]
 **Depends on:** Phase 16
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 17-01-PLAN.md — Create explode_bacnet_points helper + wire into all 4 write-path files
 - [ ] 17-02-PLAN.md — Update EDN translator verification + SKILL.md + live integration test
+
+### Phase 18: optimize skill for ontology validation
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 17
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 18 to break down)
