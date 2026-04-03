@@ -16,10 +16,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const showDevConsole = process.env.COPILOTKIT_DEV_CONSOLE === "true";
+
   return (
     <html lang="en" className="light">
       <body className={"antialiased"}>
-        <CopilotKit runtimeUrl="/api/copilotkit" agent="my_agent">
+        <CopilotKit runtimeUrl="/api/copilotkit" agent="my_agent" showDevConsole={showDevConsole} enableInspector={showDevConsole}>
           <AppIconsContextProvider>
             <WorkspaceProvider>
               {children}

@@ -10,24 +10,21 @@ This is the frontend for the MAPPER project.
 
 Environment-specific values (service URLs, credentials, paths) are managed through environment variables so that the same build can be deployed to different environments without touching source code.
 
-1. Copy the reference template to a local override file (gitignored):
-   ```bash
-   cp .env.example .env.local
-   ```
-2. Edit `.env.local` and fill in the values for your environment.
-3. See `.env.example` for the full list of variables, their defaults, and descriptions.
+- **Local dev:** copy `.env.example` → `.env.local` and fill in your values.
+- **Docker:** copy `docker.env.example` → `docker.env` and fill in your values.
 
-> **Docker deployments** — pass variables via `mapper/docker.env` instead of `.env.local`. See the [Docker Deployment](#docker-deployment) section below.
-
-| Variable | Side | Description |
-|---|---|---|
-| `AGENT_BACKEND_URL` | Server | Full base URL of the ADK agent FastAPI server |
-| `PROJECTS_FOLDER` | Server | Absolute path to the projects root folder (matches Docker volume mount) |
-| `NEO4J_BOLT_URI` | Server | Neo4j Bolt connection URI |
-| `NEO4J_USER` | Server | Neo4j username |
-| `NEO4J_PASSWORD` | Server | Neo4j password |
-| `NEXT_PUBLIC_AGENT_BACKEND_URL` | Client | Agent polling URL (must be reachable from the browser) |
-| `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` | Client | Graphivac grid base URL (leave empty to show a placeholder) |
+| Variable | Side | Default | Description |
+| :--- | :---: | :--- | :--- |
+| `AGENT_BACKEND_URL` | Server | `http://host.docker.internal:8001` | Internal (server-to-server) base URL of the ADK agent FastAPI service. |
+| `NEXT_PUBLIC_AGENT_BACKEND_URL` | Client | `http://localhost:8001` | Browser-facing URL of the agent — must be reachable from the end-user's machine. |
+| `PROJECTS_FOLDER` | Server | `/app/uploads` | Absolute path to the project-files root. Must match the Docker volume mount target. |
+| `NEO4J_BOLT_URI` | Server | `bolt://neo4j:7687` | Neo4j Bolt connection URI. |
+| `NEO4J_USER` | Server | `neo4j` | Neo4j username. |
+| `NEO4J_PASSWORD` | Server | `neo4j_password` | Neo4j password. |
+| `GRAPHIVAC_BASE_URL` | Server | `http://graphivac:3000` | Internal (server-to-server) Graphivac API base URL (no trailing slash). |
+| `GRAPHIVAC_PUBLIC_BASE_URL` | Client | `http://localhost:8888` | Public (browser-reachable) Graphivac URL used for the embedded iframe. Falls back to `GRAPHIVAC_BASE_URL` if unset. |
+| `GRAPHIVAC_ORG_ID` | Server | `public` | Graphivac organisation ID — deployment-wide constant. |
+| `COPILOTKIT_DEV_CONSOLE` | Server | `false` | Set to `true` to show the CopilotKit dev console and announcement banners in the UI. |
 
 ## Docker Deployment
 
@@ -44,17 +41,7 @@ The frontend ships as a self-contained Docker image built with Next.js [standalo
 cp mapper/docker.env.example mapper/docker.env
 ```
 
-Edit `mapper/docker.env`. Key variables:
-
-| Variable | Example value | Notes |
-|---|---|---|
-| `AGENT_BACKEND_URL` | `http://si-mapper-agent:8001` | Server-to-server (Docker service name) |
-| `NEXT_PUBLIC_AGENT_BACKEND_URL` | `http://localhost:8001` | Browser-to-server (host-exposed port) — see note below |
-| `NEXT_PUBLIC_GRAPHIVAC_GRID_URL` | `https://graphivac.hvac.io/o/public/p/P-.../g/G-...` | Graphivac iframe URL — see note below |
-| `PROJECTS_FOLDER` | `/app/uploads` | Must match the volume mount target below |
-| `NEO4J_BOLT_URI` | `bolt://neo4j:7687` | Use the Docker service name if Neo4j runs in Docker |
-
-> `mapper/docker.env` is gitignored — never commit real credentials.
+> See [Configuration](#configuration) above for the full list of variables and their defaults. `mapper/docker.env` is gitignored — never commit real credentials.
 
 > **⚠️ `NEXT_PUBLIC_` variables are inlined at build time, not runtime.**
 > Next.js bakes `NEXT_PUBLIC_*` values directly into the JavaScript bundle during `pnpm build`.

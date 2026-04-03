@@ -48,6 +48,17 @@ If you need to work on specific components independently:
 
 ---
 
+## ⚙️ Environment Variables
+
+Each component manages its own set of environment variables. Copy the relevant example file, fill in your values, and the service will pick them up at startup — the same variables apply whether you are running locally or in Docker.
+
+- **Frontend (mapper):** see [`mapper/README.md → Configuration`](mapper/README.md#configuration)
+- **Agent:** see [`agent/README.md → Environment Variables`](agent/README.md#environment-variables)
+
+> None of the env files (`*.env`, `*.env.local`, `docker.env`) are committed to source control — they are all gitignored.
+
+---
+
 ## 🐳 Docker Deployment
 
 All services are defined in `docker-compose.yml` at the project root and are grouped into **profiles** that let you start only the components you need.
