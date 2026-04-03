@@ -638,14 +638,24 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
                 if tool_context:
                     # Snapshot behavior
                     snapshots = list(tool_context.state.get("ttl_code_snapshots", []))
-                    label = f"Version {len(snapshots) + 1}"
                     snapshots.append({
-                        "label": label,
+                        "label": "TTL",
                         "code": ttl_content,
-                        "iteration": len(snapshots),
+                        "iteration": 0,
                         "status": "validated"
                     })
                     tool_context.state["ttl_code_snapshots"] = snapshots
+
+                    # Patch last Python snapshot to Final/validated
+                    # (moved from exit_validator_success — domain logic belongs here, not in exit tools)
+                    try:
+                        py_snapshots = list(tool_context.state.get("python_code_snapshots", []))
+                        if py_snapshots:
+                            py_snapshots[-1]["label"] = "Final"
+                            py_snapshots[-1]["status"] = "validated"
+                            tool_context.state["python_code_snapshots"] = py_snapshots
+                    except OSError as exc:
+                        logger.warning("Failed to patch python_code_snapshots: %s", exc)
 
                     # Session archive write — mirrors write_ontology session logic
                     session_id = tool_context.state.get("ontology_session_id")
