@@ -1,5 +1,8 @@
 # MCP Server
 
+> [!WARNING]
+> **Deprecated.** This MCP server is no longer used by the `agent` or `mapper` services and is not deployed as part of the standard stack. It is kept here for reference only and will be removed in a future release. Do not add new features or dependencies against this module.
+
 This directory contains the Model Context Protocol (MCP) server implementation for the Graphivac HVAC Agent.
 
 ## Structure

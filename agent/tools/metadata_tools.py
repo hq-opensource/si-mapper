@@ -1,9 +1,9 @@
 """
 Metadata tools: write BACnet/control metadata to GraphyVAC component custom-fields.
 
-These are ADK-native tools that replace the MCP-based write_metadata / write_metadata_batch.
+These are ADK-native tools that write metadata directly to Graphivac.
 They read the live grid, patch the target component's :custom-fields, and PUT it back — all
-in a single transaction. No MCP server required.
+in a single transaction.
 """
 
 import asyncio

@@ -4,7 +4,7 @@ This is the frontend for the MAPPER project.
 
 ## Getting Started
 
-> **🚀 One-Command Setup:** The easiest way to run the entire project is to execute `pnpm install` then `pnpm dev` in the **root directory**. This will start the UI, Agent, and MCP server concurrently. See the [Root README](../README.md) for details.
+> **🚀 One-Command Setup:** The easiest way to run the entire project is to execute `pnpm install` then `pnpm dev` in the **root directory**. This will start the UI and Agent concurrently. See the [Root README](../README.md) for details.
 
 ## Configuration
 
@@ -28,7 +28,7 @@ Environment-specific values (service URLs, credentials, paths) are managed throu
 
 ## Docker Deployment
 
-The frontend ships as a self-contained Docker image built with Next.js [standalone output](https://nextjs.org/docs/app/api-reference/config/next-config-js/output). It is wired into the root `docker-compose.yml` under the `deploy` profile alongside the agent and MCP server.
+The frontend ships as a self-contained Docker image built with Next.js [standalone output](https://nextjs.org/docs/app/api-reference/config/next-config-js/output). It is wired into the root `docker-compose.yml` under the `deploy` profile alongside the agent.
 
 ### Prerequisites
 
@@ -68,7 +68,7 @@ docker compose build si-mapper-frontend
 # Frontend only
 docker compose --profile deploy up si-mapper-frontend
 
-# Full stack (frontend + agent + MCP server)
+# Full stack (frontend + agent)
 docker compose --profile deploy up
 ```
 
@@ -93,11 +93,10 @@ docker compose --profile deploy up si-mapper-frontend
 ---
 
 ## Available Scripts
-- `dev` - Starts the UI, Agent, and MCP server concurrently in development mode.
+- `dev` - Starts the UI and Agent concurrently in development mode.
 - `dev:debug` - Starts development servers with debug logging enabled.
 - `dev:ui` - Starts only the Next.js UI server.
 - `dev:agent` - Starts only the ADK agent server.
-- `dev:mcp` - Starts only the MCP server.
 - `build` - Builds the Next.js application for production.
 - `start` - Starts the production server.
 - `lint` - Runs ESLint for code linting.

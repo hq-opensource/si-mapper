@@ -15,7 +15,6 @@ dependencies = [
     "litellm<=1.82.3", # !!!!! PIN LITELLM TO 1.82.3.  Latest version is currently being attacked and is compromised.
     "google-genai>=1.56.0",
     "httpx>=0.28.1",
-    "mcp>=1.25.0",
     "neo4j>=5.0.0",
     "playwright>=1.40.0",
     "psycopg>=3.3.2",

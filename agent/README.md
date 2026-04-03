@@ -1,5 +1,5 @@
 ### Agent
-The `agent` directory contains the core LLM orchestration service built with Fastmcp and Google ADK.
+The `agent` directory contains the core LLM orchestration service built with Google ADK.
 
 > **💡 Recommended Setup:** For the easiest setup, run `pnpm install` in the **mapper directory**. This will automatically handle the Python environment for you. See the [Mapper README](../mapper/README.md) for details.
 

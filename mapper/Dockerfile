@@ -4,7 +4,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 # --ignore-scripts skips the postinstall hook that syncs Python/uv environments
-# (agent and MCP server run in separate containers)
+# (agent runs in a separate container)
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # ── Stage 2: Build ──────────────────────────────────────────────────────────

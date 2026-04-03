@@ -17,7 +17,7 @@ Tools
 -----
 - All helpers from ``sub_agents/_223p/tool.py`` (library introspection,
   ontology read/write/execute, prompt reader).
-- Any common MCP/shared tools forwarded via the ``tools`` parameter.
+- Any common shared tools forwarded via the ``tools`` parameter.
 - ``checkpoint_code`` — saves a version snapshot after each fix iteration
   (does NOT terminate the loop).
 - ``exit_validator_success`` — signals clean validation and terminates the loop.
@@ -146,7 +146,7 @@ class OntologyValidatorInternal(LlmAgent):
             exit_validator_failure,
         ]
 
-        # Merge with any common/MCP tools forwarded by the caller
+        # Merge with any additional tools forwarded by the caller
         all_tools = local_tools + (tools or [])
 
         # Deduplicate by name (keeps first occurrence, which is the local tool)
