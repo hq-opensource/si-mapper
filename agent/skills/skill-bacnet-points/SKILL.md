@@ -80,15 +80,13 @@ The `nom` column uses French abbreviations. Use this mapping for extraction:
 
 ### 3. Build the Metadata Structure
 
-For each equipment piece found in the CSV, build a nested metadata structure. Save the `bacnet` column as `address`, the `nom` column as `name`, and the `unit` column as `unit`.
+For each equipment piece found in the CSV, build a flat metadata structure. Save the `bacnet` column as `address`, the `nom` column as `name`, and the `unit` column as `unit`. Each BACnet point gets its own top-level key (`bacnet_1`, `bacnet_2`, ...) with an `address` field containing the BACnet point ID.
 
 ```json
 {
   "AHU-1": {
-    "bacnet": {
-      "2500.AI11": { "name": "VITESSE RET. No.1A", "unit": "Amperes" },
-      "2500.AI13": { "name": "TEMP. ALIM. No.1A", "unit": "Celsius" }
-    }
+    "bacnet_1": { "address": "2500.AI11", "name": "VITESSE RET. No.1A", "unit": "Amperes" },
+    "bacnet_2": { "address": "2500.AI13", "name": "TEMP. ALIM. No.1A", "unit": "Celsius" }
   }
 }
 ```
@@ -98,8 +96,8 @@ For each equipment piece found in the CSV, build a nested metadata structure. Sa
   - Example:
     ```json
     {
-      "AHU-1": {"bacnet": {"2500.AI11": {"name": "VITESSE RET. No.1A", "unit": "Amperes"}}},
-      "VAV-101": {"bacnet": {"2501.BI3": {"name": "STATUT", "unit": ""}}}
+      "AHU-1": {"bacnet_1": {"address": "2500.AI11", "name": "VITESSE RET. No.1A", "unit": "Amperes"}},
+      "VAV-101": {"bacnet_1": {"address": "2501.BI3", "name": "STATUT", "unit": ""}}
     }
     ```
 - After the batch update, call `sync_agent_to_graphivac` once to push all changes to GraphyVAC in a single transaction.
@@ -113,7 +111,7 @@ For each equipment piece found in the CSV, build a nested metadata structure. Sa
 ## Rules
 
 - **Exact Matches First**: Prioritize exact equipment name matches (e.g., `VAV-101` matching `VAV_101`). If a match is partial but highly probable (e.g., `V-101`), note it in the metadata.
-- **Nested Structure**: Always put results under the `"bacnet"` key to avoid collisions with other metadata.
+- **Flat Numbered Keys**: Each BACnet point gets its own `bacnet_N` key (1-indexed). The point address goes in the `"address"` field. This avoids collisions with other metadata and allows the grid UI to display individual points.
 - **Batch Processing**: Process all equipment in one pass to minimize file reads.
 
 ## Verification Checklist
