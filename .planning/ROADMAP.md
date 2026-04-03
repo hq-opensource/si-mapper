@@ -99,6 +99,13 @@
 | P16-11 | Phase 16 | Planned |
 | P16-12 | Phase 16 | Planned |
 | P16-13 | Phase 16 | Planned |
+| P17-01 | Phase 17 | Planned |
+| P17-02 | Phase 17 | Planned |
+| P17-03 | Phase 17 | Planned |
+| P17-04 | Phase 17 | Planned |
+| P17-05 | Phase 17 | Planned |
+| P17-06 | Phase 17 | Planned |
+| P17-07 | Phase 17 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -284,3 +291,14 @@ Plans:
 - [ ] 16-02-PLAN.md — Clean exit signatures, fold checkpoint_code, fix venv path, add scan cap, update docstrings
 - [ ] 16-03-PLAN.md — Update generation, validation, and lessons SKILL.md files
 - [ ] 16-04-PLAN.md — Update tests for all changed behavior
+
+### Phase 17: Restructure BACnet custom fields to flat numbered entries
+
+**Goal:** Replace the `{"bacnet": {"ADDR": {...}}}` custom_fields structure with a flat numbered format `{"bacnet_1": {"address": "ADDR", ...}, "bacnet_2": {...}}` across all write paths (internal grid tools, ADK metadata tools, MCP metadata manager), the EDN translator, the BACnet skill documentation, and the live integration test.
+**Requirements**: [P17-01, P17-02, P17-03, P17-04, P17-05, P17-06, P17-07]
+**Depends on:** Phase 16
+**Plans:** 2 plans
+
+Plans:
+- [ ] 17-01-PLAN.md — Create explode_bacnet_points helper + wire into all 4 write-path files
+- [ ] 17-02-PLAN.md — Update EDN translator verification + SKILL.md + live integration test
