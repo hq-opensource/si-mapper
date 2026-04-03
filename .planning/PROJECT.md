@@ -29,6 +29,6 @@ Engineers can upload a drawing and related technical files (Excel, BACnet, PDFs)
 
 ## Current State
 
-Phase 16 complete (2026-04-03) — Ontology pipeline optimized: `_persist_python`/`_persist_ttl` deleted, exit tool signatures simplified to `(tool_context, summary)`, `checkpoint_code` folded into `write_ontology`, Linux venv path fixed, `scan_python_folder` capped at 10 results, all three SKILL.md files updated for clarity and correctness. 31 tests pass.
+Phase 17 complete (2026-04-03) — BACnet custom_fields restructured to flat numbered format: `{"bacnet_1": {"address": "...", "unit": "...", "name": "..."}}` replaces `{"bacnet": {"ADDR": {...}}}`. `explode_bacnet_points` helper wired into all 4 write paths (internal_grid_tools, metadata_tools, metadata_manager). EDN translator verified key-agnostic. SKILL.md and live integration test updated. 13 new tests pass.
 
-**Last updated:** 2026-04-02
+**Last updated:** 2026-04-03
