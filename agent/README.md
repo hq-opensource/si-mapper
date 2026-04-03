@@ -45,13 +45,38 @@ The system supports multiple LLM providers through a unified interface. It uses 
 
 ##### Supported Models
 
-You can choose one of the following validated models:
+###### Native ADK (Google Gemini)
 
-| Model ID | Provider | Mode |
+These models are handled directly by the Google ADK without any additional adapter. Set `SHARED_ADK_MODEL` to any of the following:
+
+| Model ID | Notes |
+| :--- | :--- |
+| `gemini-3.1-pro-preview-customtools` | **Recommended for agents** — strictly prioritizes custom tools over internal bash; ideal for production |
+| `gemini-3.1-pro-preview` | Standard reasoning flagship; may occasionally prefer its own bash sandbox for logic tasks |
+| `gemini-3-flash-preview` | Optimized for low-latency and real-time interaction (Gemini Live API) — Pro intelligence at Flash speed |
+| `gemini-3.1-flash-lite-preview` | Most cost-efficient option for high-frequency, simple agent tasks |
+| `gemini-2.5-pro` | GA model — complex reasoning with 1M context window, stable for production |
+| `gemini-2.5-flash` | Balanced speed/cost for standard automation and data parsing |
+| `gemini-2.0-flash` | Previous-gen Flash — well-tested in production |
+| `gemini-1.5-pro` | Stable long-context Pro — broad tool support |
+| `gemini-1.5-flash` | Stable Flash — high throughput |
+| `gemini-1.5-flash-8b` | Smallest 1.5 variant — minimal resource use |
+
+> More recent models may be available. For the full up-to-date list see the **[official Google Gemini model catalogue](https://ai.google.dev/gemini-api/docs/models)**.
+
+###### External Providers (via LiteLLM)
+
+Any model supported by [LiteLLM](https://models.litellm.ai/) can be used by setting the corresponding API key. The agent automatically routes non-Gemini model IDs through LiteLLM.
+
+| Model ID | Provider | Required key |
 | :--- | :--- | :--- |
-| `gemini-3.1-pro-preview-customtools` | Google | Native ADK |
-| `claude-sonnet-4-6` | Anthropic | via LiteLLM |
-| `gpt-5.4-2026-03-05` | OpenAI | via LiteLLM |
+| `github_copilot/claude-sonnet-4-5` | GitHub Copilot | `GITHUB_COPILOT_TOKEN` |
+| `github_copilot/gpt-4o` | GitHub Copilot | `GITHUB_COPILOT_TOKEN` |
+| `claude-sonnet-4-6` | Anthropic | `ANTHROPIC_API_KEY` |
+| `gpt-5.4-2026-03-05` | OpenAI | `OPENAI_API_KEY` |
+| `mistral/mistral-large-latest` | Mistral AI | `MISTRAL_API_KEY` |
+
+> For the full catalogue of LiteLLM-compatible models see **[models.litellm.ai](https://models.litellm.ai/)**.
 
 ##### Selecting a Model
 
