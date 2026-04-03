@@ -18,7 +18,7 @@ Read the generated `mapper/uploads/python/latest_ontology.py`, validate it, and 
 **Fix loop:**
 1. Call `read_python_files(["mapper/uploads/python/latest_ontology.py"], keywords=[], full_content=True)` to read the full current source. The response is a JSON array; the code is in `result[0]["sections"][0]["content"]`.
 2. Call `execute_ontology()`. Check `result["success"] == true` to determine the path.
-3. `result["success"] == true` → call `exit_validator_success(summary="...")`. The tool reads the TTL from disk internally — pass only the summary string.
+3. `result["success"] == true` → call `exit_with_success(summary="...")`. Pass only the summary string.
 4. Otherwise: analyze errors → look up affected classes/APIs → fix all errors that share the same root cause in one pass → write corrected full file via `write_ontology`.
 5. Go to step 2.
 
@@ -38,15 +38,15 @@ Read the generated `mapper/uploads/python/latest_ontology.py`, validate it, and 
 - `scan_python_folder("agent/223p/examples/pritoni", keywords=[...])` when looking for reference patterns across the sample library. Response: `{"root": "...", "files": [...]}` — each file entry has `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`. Read `content` directly from each section.
 - `execute_ontology` tool to run `mapper/uploads/python/latest_ontology.py` and capture stdout, stderr, and return code.
 - `write_ontology` tool to write the full corrected source code after each fix iteration.
-- `exit_validator_success(summary="...")` tool to signal successful validation and terminate the loop. Pass only the summary string — the tool reads the TTL from disk internally.
-- `exit_validator_failure` tool to signal validation failure and terminate the loop.
+- `exit_with_success(summary="...")` tool to signal successful validation and terminate the loop.
+- `exit_with_failure(reason="...")` tool to signal validation failure and terminate the loop.
 
 ---
 
 ## Operator Reference
 - `%` links a sensor to the equipment it monitors: `temp_sensor % fan`. Do NOT use `%` to attach a measurement property to a sensor — use `sensor.add_property(prop)` for that.
 
-## Stop Conditions → `exit_validator_failure(reason="VALIDATION_FAILED: ...")`
+## Stop Conditions → `exit_with_failure(reason="VALIDATION_FAILED: ...")`
 - `agent/skills/skill-ontology-lessons/SKILL.md` is unreadable and no error-resolution context is available — proceed with best-effort fixing but log the limitation.
 - `read_python_files(["mapper/uploads/python/latest_ontology.py"], keywords=[], full_content=True)` returns empty or missing file.
 - `search_class_mapping` returns empty for known class names — mapping files may be missing or corrupt.

@@ -74,7 +74,12 @@ After calling the tool `sync_agent_to_graphivac`, perform a **Duct Verification 
 - After all corrections are finished, call `sync_agent_to_graphivac` again and repeat the checkpoint instructions until the ducts match the reference.
 
 ## 6. Exit
-Summarize your actions.
+Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
+- Number of ducts registered (horizontal and vertical counts)
+- Number of corrections made during verification
+- Final verification result (pass/fail)
+
+**Failure path:** If verification cannot be resolved after 3 correction cycles, call `exit_with_failure(reason="...")` explaining the unresolvable discrepancies.
 
 
 # Rules

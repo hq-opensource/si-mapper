@@ -28,7 +28,12 @@ Place HVAC equipment on the established duct system.
    - Compare the snapshot against the reference image. Verify that all equipment components are present, correctly positioned, and correctly attached to the ducts.
    - If discrepancies are found, correct them and repeat the workflow until the equipment matches the reference.
    - Only mark the task as finished after visual confirmation passes.
-7. **Exit**: Summarize your actions.
+7. **Exit**: Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
+   - Number of equipment pieces placed
+   - Number of corrections made during verification
+   - Final verification result (pass/fail)
+
+   **Failure path:** If verification cannot be resolved after 3 correction cycles, call `exit_with_failure(reason="...")` explaining the unresolvable discrepancies.
 
 # Rules
 

@@ -104,7 +104,12 @@ For each equipment piece found in the CSV, build a flat metadata structure. Save
 
 ### 5. Verify and Exit
 - Confirm all identified equipment has been mapped.
-- Summarize what was extracted and any equipment that could not be matched.
+- Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
+  - Number of BACnet points extracted
+  - Number of equipment pieces matched
+  - List of unmatched items (if any)
+
+**Failure path:** If the CSV cannot be parsed or no equipment could be matched, call `exit_with_failure(reason="...")`.
 
 ---
 
