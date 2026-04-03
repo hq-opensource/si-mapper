@@ -2,24 +2,24 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 18
+current_phase: 19
 status: unknown
-last_updated: "2026-04-03T18:32:52.176Z"
+last_updated: "2026-04-03T18:56:17.594Z"
 progress:
-  total_phases: 18
+  total_phases: 19
   completed_phases: 11
-  total_plans: 35
-  completed_plans: 35
+  total_plans: 39
+  completed_plans: 36
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 18
-- **Overall Completion:** [██████████] 100%
-- **Active Plan:** 17-01 (complete — phase 17 all plans done)
-- **Last Completed:** 17-01 (created explode_bacnet_points helper with 6 TDD tests; wired explosion calls into all 4 write-path functions across ADK and MCP server layers)
+- **Current Phase:** 19
+- **Overall Completion:** [█████████░] 92%
+- **Active Plan:** 19-01 (complete — plan 01 done)
+- **Last Completed:** 19-01 (replaced 5 fragmented exit tools with 2 generic ones; moved snapshot patching into execute_ontology; deleted loop_exit_tools.py and ontology_exit_tools.py)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -138,6 +138,10 @@ progress:
 - **2026-04-03:** Completed 16-04-PLAN.md. Updated test_ontology_tools.py: removed all _persist_python/_persist_ttl mocks, renamed two-write pattern tests, added 6 new tests (auto-increment, exit signatures, TTL-from-disk, Linux venv order, scan cap/force). 31 tests pass. Phase 16 complete.
 - **2026-04-03:** Completed 17-01-PLAN.md. Created explode_bacnet_points helper in agent/utils/bacnet_helpers.py (6 unit tests all pass, TDD). Wired explosion calls into all 4 write-path functions: update_component_metadata, update_component_metadata_batch (internal_grid_tools.py), _apply_metadata (metadata_tools.py), MetadataManager.write_metadata + write_metadata_batch (mcp_server/graphivac/metadata_manager.py, inlined copy). Flat bacnet_N format guaranteed at every write site.
 - **2026-04-03:** Completed 17-02-PLAN.md. Verified EDN translator has zero hard-coded 'bacnet' logic (generic key iteration). Created test_grid_edn_translator.py (7 tests, all pass). Rewrote skill-bacnet-points/SKILL.md sections 3 and 4 and Rules to flat bacnet_N format. Updated live test SAMPLE_BACNET_POINTS to bacnet_1 through bacnet_5 with address fields, removed 'bacnet' wrapper from updates dict, rewrote verification logic per-key.
+- **2026-04-03:** Completed 19-01-PLAN.md. Replaced 5 fragmented exit tools with 2 generic ones (exit_with_success/exit_with_failure). Moved snapshot patching (python_code_snapshots Final/validated, ttl_code_snapshots TTL label) from exit_validator_success into execute_ontology. Updated MasterLlmAgent.default_tools. Removed ontology_exit_tools from create_master_agent.py. Deleted loop_exit_tools.py and ontology_exit_tools.py.
+- **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
+- **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
+- **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
 
 ## Roadmap Evolution
 
@@ -160,3 +164,4 @@ progress:
 - Phase 16 added: optimize ontology skills
 - Phase 17 added: Restructure BACnet custom fields to flat numbered entries
 - Phase 18 added: optimize skill for ontology validation
+- Phase 19 added: Standardize agent exit tools across all skills
