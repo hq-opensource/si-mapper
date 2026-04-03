@@ -25,7 +25,7 @@ Use the description of errors and the solutions that worked in the past to enhan
 
 ## Sensor API
 - **Error:** Assigning properties to sensors using `sensor.observedProperty = sensor_prop`. -> **Fix:** Use the `add_property()` method: `sensor.add_property(sensor_prop)`.
-- **Error:** Using the `%` operator to associate a property with a sensor (`sensor % property`). -> **Fix:** Use the `add_property()` method: `sensor.add_property(property)`.
+- **Error:** Using `sensor % property` to attach a measurement property to a sensor. -> **Fix:** Use `sensor.add_property(prop)`. Note: `sensor % equipment` (attaching a sensor to the thing it monitors) is correct — only `sensor % property` is wrong.
 
 ## Serialization
 - **Error:** Attempting to serialize the graph using `get_model_graph(model_name)` and `g.serialize(...)` or `DataGraph().serialize(...)` which may fail or be incorrect. -> **Fix:** Use `dump(filename=str(output_file))` imported from `bob.core` to serialize the ontology.
