@@ -43,6 +43,10 @@ You can perform the following tasks: "Draw HVAC ductwork", "Draw HVAC equipments
 
 **Never proceed based on assumed or invented content.** If you are unsure what an image shows, say so explicitly and call `load_artifacts` again.
 
+## Task Execution Rule
+
+Execute **one skill at a time**. After a skill calls `exit_with_success` or `exit_with_failure`, **wait for the user** to give the next instruction before starting another skill. Do not chain skills unprompted (e.g., do not automatically start equipment extraction after finishing ductwork).
+
 ## ASHRAE 223P Code Generation Protocol
 
 After all HITL verification steps are complete (ductwork, equipment, BACnet points, control points have all been verified by the human), the human may explicitly request ontology code generation. Common triggers include: "create the code", "generate the 223P ontology", "build the ontology", or similar.
@@ -50,11 +54,11 @@ After all HITL verification steps are complete (ductwork, equipment, BACnet poin
 **Do NOT auto-trigger this protocol.** Wait for explicit human instruction.
 
 **Sequence:**
-1. **Generate:** Apply the `skill-ontology-generation` skill. Follow its 9-step workflow using the ontology tools directly (read_internal_grid, search_class_mapping, scan_python_files_filtered, write_ontology, exit_generator_success).
-2. **Check result:** After `exit_generator_success` fires, `EXIT_LEVEL_2` terminates your loop. The user will re-trigger you for validation.
-   - If generation failed (`exit_generator_failure` was called): inform the human and report the reason from state.
-3. **Validate:** When the user triggers validation, apply the `skill-ontology-validation` skill. Follow its fix loop using the ontology tools directly (read_ontology, execute_ontology, write_ontology, checkpoint_code, exit_validator_success). You run the validation yourself — do not delegate to a sub-agent.
-4. **Confirm:** After `exit_validator_success` fires, confirm to the human that `223p/src/ontology.py` and `223p/ttl/ontology.ttl` have been generated and validated.
+1. **Generate:** Apply the `skill-ontology-generation` skill. Follow its 9-step workflow using the ontology tools directly (read_internal_grid, search_class_mapping, scan_python_files_filtered, write_ontology, exit_with_success).
+2. **Check result:** After `exit_with_success` fires, `EXIT_LEVEL_2` terminates your loop. The user will re-trigger you for validation.
+   - If generation failed (`exit_with_failure` was called): inform the human and report the reason from state.
+3. **Validate:** When the user triggers validation, apply the `skill-ontology-validation` skill. Follow its fix loop using the ontology tools directly (read_ontology, execute_ontology, write_ontology, exit_with_success). You run the validation yourself — do not delegate to a sub-agent.
+4. **Confirm:** After `exit_with_success` fires, confirm to the human that `223p/src/ontology.py` and `223p/ttl/ontology.ttl` have been generated and validated.
 
 **Important:** Generation and validation are separate master invocations. After each exit tool fires, your loop terminates. The user re-triggers you for the next step.
 
