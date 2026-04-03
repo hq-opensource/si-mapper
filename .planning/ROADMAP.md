@@ -132,6 +132,11 @@
 | P20-03 | Phase 20 | Planned |
 | P20-04 | Phase 20 | Planned |
 | P20-05 | Phase 20 | Planned |
+| P21-01 | Phase 21 | Planned |
+| P21-02 | Phase 21 | Planned |
+| P21-03 | Phase 21 | Planned |
+| P21-04 | Phase 21 | Planned |
+| P21-05 | Phase 21 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -360,3 +365,13 @@ Plans:
 
 Plans:
 - [ ] 20-01-PLAN.md — session_logger.py module (TDD) + callback_utils.py wiring + .gitignore
+
+### Phase 21: Remove useCoAgent and switch to polling-only state
+
+**Goal:** Remove `useCoAgent` from the frontend entirely and rely exclusively on `useAgentPolling` (polling-based state), fixing a "Maximum update depth exceeded" React render loop caused by `agentState` being a new object reference on every render.
+**Requirements**: [P21-01, P21-02, P21-03, P21-04, P21-05]
+**Depends on:** Phase 20
+**Plans:** 1 plan
+
+Plans:
+- [ ] 21-01-PLAN.md — Remove useCoAgent, simplify combinedState and StateSyncer to polling-only
