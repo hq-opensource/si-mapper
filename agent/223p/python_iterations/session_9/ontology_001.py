@@ -1,7 +1,7 @@
 import os
 import re
 from rdflib import URIRef
-from bob.core import bind_model_namespace, dump, UNIT, Property, Equipment, Junction
+from bob.core import bind_model_namespace, dump, UNIT, Property, Equipment
 from bob.externalreference.bacnet import BACnetExternalReference
 
 from scratch.hvac.fan import Fan
@@ -12,10 +12,8 @@ from scratch.hvac.humidifier import ElectricalHumidifier
 from scratch.electricity.vfd import VFD
 from bob.sensor.temperature import AirTemperatureSensor
 from bob.sensor.humidity import AirHumiditySensor
-from bob.sensor.pressure import AirDifferentialStaticPressureSensor, PressureSensor
+from bob.sensor.pressure import AirDifferentialStaticPressureSensor, AirStaticPressureSensor
 from scratch.assemblage import model_namespace
-from bob.enum import Air, Fluid
-from bob.connections.air import AirInletConnectionPoint, AirOutletConnectionPoint
 
 model_name, global_ns = model_namespace(__file__)
 _namespace = bind_model_namespace(model_name, f"urn:{global_ns}:{model_name}/")
@@ -51,11 +49,8 @@ hum_ret = AirHumiditySensor(label="HUM-RET", hasUnit=UNIT.PERCENT)
 temp_mix = AirTemperatureSensor(label="TEMP-MIX", hasUnit=UNIT.DEG_C)
 ll_1 = AirTemperatureSensor(label="LL-1", hasUnit=UNIT.DEG_C)
 
-sps_1 = PressureSensor(label="SPS-1", hasUnit=UNIT["IN-H2O"], ofMedium=Air)
+sps_1 = AirStaticPressureSensor(label="SPS-1", hasUnit=UNIT["IN-H2O"])
 dps_1 = AirDifferentialStaticPressureSensor(label="DPS-1", hasUnit=UNIT["IN-H2O"])
-
-# Junctions
-mixing_plenum = Junction(label="Mixing_Plenum", hasMedium=Fluid.Air)
 
 # Connections
 vfd_1a.electricalOutlet >> fan_1a.electricalInlet
@@ -67,11 +62,8 @@ damp_1e.airOutlet >> fan_1e.airInlet
 fan_1r.airOutlet >> damp_rav.airInlet
 
 damp_paf_low.airOutlet >> damp_paf_up.airInlet
-
-# PAF UP and MEL both go to the mixing plenum, which goes to the filter
-damp_paf_up.airOutlet >> mixing_plenum
-damp_mel.airOutlet >> mixing_plenum
-mixing_plenum >> filt_1.airInlet
+damp_paf_up.airOutlet >> filt_1.airInlet
+damp_mel.airOutlet >> filt_1.airInlet
 
 filt_1.airOutlet >> cc_1.airInlet
 cc_1.airOutlet >> fan_1a.airInlet

@@ -56,6 +56,12 @@ dps_1 = AirDifferentialStaticPressureSensor(label="DPS-1", hasUnit=UNIT["IN-H2O"
 
 # Junctions
 mixing_plenum = Junction(label="Mixing_Plenum", hasMedium=Fluid.Air)
+mixing_plenum_in_1 = AirInletConnectionPoint()
+mixing_plenum_in_2 = AirInletConnectionPoint()
+mixing_plenum_out = AirOutletConnectionPoint()
+mixing_plenum.add_connection_point(mixing_plenum_in_1)
+mixing_plenum.add_connection_point(mixing_plenum_in_2)
+mixing_plenum.add_connection_point(mixing_plenum_out)
 
 # Connections
 vfd_1a.electricalOutlet >> fan_1a.electricalInlet
@@ -68,10 +74,9 @@ fan_1r.airOutlet >> damp_rav.airInlet
 
 damp_paf_low.airOutlet >> damp_paf_up.airInlet
 
-# PAF UP and MEL both go to the mixing plenum, which goes to the filter
-damp_paf_up.airOutlet >> mixing_plenum
-damp_mel.airOutlet >> mixing_plenum
-mixing_plenum >> filt_1.airInlet
+damp_paf_up.airOutlet >> mixing_plenum_in_1
+damp_mel.airOutlet >> mixing_plenum_in_2
+mixing_plenum_out >> filt_1.airInlet
 
 filt_1.airOutlet >> cc_1.airInlet
 cc_1.airOutlet >> fan_1a.airInlet
