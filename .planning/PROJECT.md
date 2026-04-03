@@ -29,6 +29,6 @@ Engineers can upload a drawing and related technical files (Excel, BACnet, PDFs)
 
 ## Current State
 
-Phase 15 complete (2026-04-02) — Agent architecture standardized: sub_agents/ deleted, 223p assets migrated to agent/223p/, three-write pattern implemented for real-time CodeWindow visibility, extract_lessons HITL-gated tool added, both ontology skills updated with correct paths and LESSONS.md integration.
+Phase 16 complete (2026-04-03) — Ontology pipeline optimized: `_persist_python`/`_persist_ttl` deleted, exit tool signatures simplified to `(tool_context, summary)`, `checkpoint_code` folded into `write_ontology`, Linux venv path fixed, `scan_python_folder` capped at 10 results, all three SKILL.md files updated for clarity and correctness. 31 tests pass.
 
 **Last updated:** 2026-04-02
