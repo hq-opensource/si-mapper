@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 21
 status: unknown
-last_updated: "2026-04-03T21:01:48.920Z"
+last_updated: "2026-04-03T21:05:56.220Z"
 progress:
   total_phases: 22
-  completed_phases: 14
+  completed_phases: 15
   total_plans: 41
-  completed_plans: 40
+  completed_plans: 41
 ---
 
 # State: HVAC Reconstruction Project
@@ -18,8 +18,8 @@ progress:
 
 - **Current Phase:** 21
 - **Overall Completion:** [██████████] 100%
-- **Active Plan:** 20-01 (complete — plan 01 done)
-- **Last Completed:** 20-01 (per-session JSONL event logger: created agent/utils/session_logger.py with log_events() function, 7 TDD unit tests, wired into shared_model_callback in callback_utils.py, gitignored agent/logs/)
+- **Active Plan:** 21-01 (complete — plan 01 done)
+- **Last Completed:** 21-01 (removed useCoAgent from page.tsx; combinedState now derives from pooledState ?? DEFAULT_AGENT_STATE; StateSyncer simplified to single-source sync from pooledState only — fixes "Maximum update depth exceeded" render loop)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -143,6 +143,7 @@ progress:
 - **2026-04-03:** Completed 19-03-PLAN.md. Updated test_ontology_tools.py: replaced ontology_exit_tools import with exit_tools, added generic exit tool tests (EXIT_LEVEL_2 pattern), execute_ontology snapshot patching test, and level_3_master_main_llm.py wiring test. Fixed pre-existing read_python_files and scan_python_folder tests for current grep-style API. 33 tests pass. Phase 19 complete.
 - **2026-04-03:** Completed 18-01-PLAN.md (executed after phase 19). Rewrote skill-ontology-validation/SKILL.md with all 11 optimizations: Exit Protocol elevated to line 12, sub-steps 4a-4d for class lookup, Retry Escalation 3/5/10 tiers, inline error classification, minimum-change constraint, root-cause ordering, pre-write advisory, mid-loop lessons trigger, scan_python_folder in Step 0. Added targeted consultation note to skill-ontology-lessons/SKILL.md. Zero deprecated references. No new test failures.
 - **2026-04-03:** Completed 20-01-PLAN.md. Created agent/utils/session_logger.py (log_events function, JSONL append, OSError silencing, lazy dir creation). Created agent/tests/test_session_logger.py (7 TDD tests, all pass). Wired log_events into shared_model_callback in callback_utils.py after state events update. Added logs/ to agent/.gitignore. 7 new tests pass + 59 existing pass.
+- **2026-04-03:** Completed 21-01-PLAN.md. Removed useCoAgent from mapper/src/app/page.tsx. Added DEFAULT_AGENT_STATE module-level constant. Simplified combinedState to pooledState ?? DEFAULT_AGENT_STATE one-liner. Rewrote StateSyncer to accept only pooledState prop (no agentState). TypeScript compiles clean, Next.js build succeeds. Fixes "Maximum update depth exceeded" render loop.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -154,6 +155,9 @@ progress:
 - **Decision (20-01):** log_events uses model_dump(mode='json') to serialize EventType Enum as plain string, not Python Enum object.
 - **Decision (20-01):** Only new_events (fresh batch per callback) are persisted — not full events_history (truncated to 200).
 - **Decision (20-01):** OSError caught silently in session_logger — write failures must never crash the agent callback.
+- **Decision (21-01):** useCoAgent removed entirely — agentState was always empty at runtime (data flows via ADK callbacks, not CopilotKit streaming); pooledState is now the sole source of truth for combinedState.
+- **Decision (21-01):** DEFAULT_AGENT_STATE is a module-level constant (not created inside component) to provide a stable reference that never causes re-renders.
+- **Decision (21-01):** StateSyncer simplified to single-source sync — no array merging, no agentRest, no adkData; early return when pooledState is null eliminates spurious context updates.
 
 ## Roadmap Evolution
 

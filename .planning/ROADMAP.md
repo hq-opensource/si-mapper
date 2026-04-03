@@ -371,7 +371,7 @@ Plans:
 **Goal:** Remove `useCoAgent` from the frontend entirely and rely exclusively on `useAgentPolling` (polling-based state), fixing a "Maximum update depth exceeded" React render loop caused by `agentState` being a new object reference on every render.
 **Requirements**: [P21-01, P21-02, P21-03, P21-04, P21-05]
 **Depends on:** Phase 20
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 21-01-PLAN.md — Remove useCoAgent, simplify combinedState and StateSyncer to polling-only
