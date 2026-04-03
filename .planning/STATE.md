@@ -136,3 +136,6 @@ progress:
 - Phase 13 added: Migrate OntologyGenerator and OntologyValidator sub-agents to master agent skills
 - Phase 14 added: Write comprehensive research report on SI-Mapper development
 - Phase 15 added: Refactor coding skills and standardize agent architecture
+
+### Roadmap Evolution
+- Phase 16 added: optimize ontology skills
