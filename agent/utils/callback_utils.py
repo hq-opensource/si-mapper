@@ -8,6 +8,7 @@ import logging
 from .string_utils import format_agent_name
 from .events import AgentEvent, EventType
 from .event_processor import EventProcessor
+from .session_logger import log_events
 
 logger = logging.getLogger(__name__)
 
@@ -406,6 +407,8 @@ async def shared_model_callback(
         events_history.append(ne.model_dump())
     
     state["events"] = events_history[-200:] # Keep more history for complex loops
+    # Persist new events to per-session JSONL log (best-effort, non-blocking)
+    log_events(session_id, [ne.model_dump(mode="json") for ne in new_events])
 
     # ... (Step 3: backward compatibility fields simplified for length)
     thoughts_list = []

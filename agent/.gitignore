@@ -12,3 +12,6 @@ __pycache__/
 .venv/
 venv/
 env/
+
+# Session logs (generated at runtime)
+logs/
