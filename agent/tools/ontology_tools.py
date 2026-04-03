@@ -11,8 +11,8 @@ Class mapping
   - ``search_class_mapping`` -- grep across classes_bob/scratch JSONL; returns abs_path per class
 
 Ontology (agent/223p/ontology.py)
-  - ``write_ontology``   -- overwrite ontology.py (three-write: scratch + session archive + uploads)
-  - ``execute_ontology`` -- run ontology.py and return stdout/stderr/TTL path (three-write for TTL)
+  - ``write_ontology``   -- overwrite ontology.py (two-write: primary + session archive); auto-increments iteration counter
+  - ``execute_ontology`` -- run ontology.py and return stdout/stderr/TTL path; Linux venv path checked first
   - ``extract_lessons``  -- read all session iteration files for LLM lesson extraction (HITL-gated)
 """
 
@@ -111,7 +111,7 @@ def read_python_files(paths: list[str]) -> str:
 # Tool: scan_python_folder
 # ---------------------------------------------------------------------------
 
-def scan_python_folder(path: str, keywords: list[str]) -> str:
+def scan_python_folder(path: str, keywords: list[str], force: bool = False) -> str:
     """Recursively scan a directory and return the full source of every
     ``.py`` file whose content contains at least one keyword
     (case-insensitive substring match).
@@ -123,6 +123,10 @@ def scan_python_folder(path: str, keywords: list[str]) -> str:
 
     Accepts absolute paths or paths relative to the project root.
 
+    If more than 10 files match and ``force`` is False, returns a message
+    asking the agent to narrow keywords instead of returning file contents.
+    Pass ``force=True`` to override the cap and return all matching files.
+
     Returns a JSON object::
 
         {
@@ -132,6 +136,15 @@ def scan_python_folder(path: str, keywords: list[str]) -> str:
             ...
           },
           "error": "<message>"   // only present on failure
+        }
+
+    Or when cap is exceeded::
+
+        {
+          "root": "<resolved absolute path>",
+          "message": "There are N files matching these keywords. Narrow your keywords and try again.",
+          "match_count": N,
+          "files": {}
         }
     """
     expanded = os.path.expanduser(path)
@@ -162,6 +175,15 @@ def scan_python_folder(path: str, keywords: list[str]) -> str:
                 continue
             if any(kw in content.lower() for kw in lower_keywords):
                 files[rel_path] = content
+
+    MAX_FILES = 10
+    if len(files) > MAX_FILES and not force:
+        return json.dumps({
+            "root": resolved,
+            "message": f"There are {len(files)} files matching these keywords. Narrow your keywords and try again.",
+            "match_count": len(files),
+            "files": {},
+        }, ensure_ascii=False, indent=2)
 
     return json.dumps({"root": resolved, "files": files}, ensure_ascii=False, indent=2)
 
@@ -233,6 +255,10 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
     1. Primary write: mapper/uploads/python/latest_ontology.py
     2. Session archive: agent/223p/python_iterations/session_N/ontology_NNN.py
 
+    Also auto-increments ``ontology_code_iteration_count`` and appends a snapshot
+    to ``python_code_snapshots`` in tool_context.state (replaces the former
+    standalone ``checkpoint_code`` tool).
+
     Returns a JSON object::
 
         {"path": "...", "success": true}
@@ -276,6 +302,10 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
         except OSError as exc:
             logger.warning("Failed to write session archive %s: %s", archive, exc)
 
+        # Auto-checkpoint: increment iteration counter (replaces standalone checkpoint_code tool)
+        iter_count = tool_context.state.get("ontology_code_iteration_count", 0)
+        tool_context.state["ontology_code_iteration_count"] = iter_count + 1
+
     return json.dumps({"path": ONTOLOGY_FILE, "success": True})
 
 
@@ -284,13 +314,14 @@ def write_ontology(content: str, tool_context: Optional[ToolContext] = None) -> 
 # ---------------------------------------------------------------------------
 
 def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
-    """Execute mapper/uploads/python/latest_ontology.py in a subprocess using the agent's virtual
-    environment Python interpreter.
+    """Execute ``mapper/uploads/python/latest_ontology.py`` in a subprocess.
 
-    Implements the three-write pattern for TTL on success:
-    1. Scratch: agent/223p/ontology.ttl (produced by the script)
-    2. Session archive: agent/223p/ttl_iterations/session_N/ontology_NNN.ttl
-    3. Uploads write: mapper/uploads/ttl/ (real-time frontend visibility)
+    Uses the agent's virtual environment Python interpreter (Linux path first,
+    then Windows, then sys.executable fallback).
+
+    The script writes ``latest_ontology.ttl`` directly to ``mapper/uploads/ttl/``
+    (its working directory). On success, a versioned copy is also written to
+    ``agent/223p/ttl_iterations/session_N/ontology_NNN.ttl``.
 
     Returns a JSON object::
 
@@ -302,7 +333,10 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
           "ttl_file": "<path>"   // only present when success == true
         }
     """
-    venv_python = os.path.join(_PROJECT_ROOT, "agent", ".venv", "Scripts", "python.exe")
+    _venv_base = os.path.join(_PROJECT_ROOT, "agent", ".venv")
+    venv_python = os.path.join(_venv_base, "bin", "python")   # Linux: bin/python
+    if not os.path.exists(venv_python):
+        venv_python = os.path.join(_venv_base, "Scripts", "python.exe")  # Windows: Scripts/python.exe
     if not os.path.exists(venv_python):
         venv_python = sys.executable
 
