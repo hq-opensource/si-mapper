@@ -20,6 +20,7 @@ from master_architecture.create_master_agent import create_master_agent
 from utils.logging_config import configure_logging
 from utils.callback_utils import GLOBAL_SESSION_STORE
 from utils.adk_patch import apply_adk_patches
+from utils.session_lookup import get_latest_session_by_thread_id_async
 # Apply patches for Gemini 3.1 compatibility (Runtime Fix)
 apply_adk_patches()
 
@@ -126,31 +127,35 @@ def create_app() -> FastAPI:
         app_name: str = "si_mapper",
         user_id: str = "demo_user"
     ):
-        """Expose the session state to the frontend."""
-        
-        sm = adk_agent._session_manager
-        tracked_ids = [k.split(":")[-1] for k in sm._session_keys]
+        """Persisted session state merged with real-time in-memory updates."""
         
         target_session_id = request_session_id or session_id
-        if target_session_id not in tracked_ids and tracked_ids:
-             target_session_id = tracked_ids[0]
-
-        # 1. Get base state from ADK SessionManager
+        sm = adk_agent._session_manager
         state = await sm.get_session_state(
             session_id=target_session_id,
             app_name=app_name,
             user_id=user_id
         )
-        base_state = state or {}
         
-        # 2. Layer on real-time updates from the Global Store
-        # We try to match by ID, but also fall back to 'latest' if in a single-session demo mode
+        # Session not found by id — retry treating the supplied id as a thread_id.
+        if not state and request_session_id:
+            if match := await get_latest_session_by_thread_id_async(request_session_id):
+                target_session_id = match.id
+                state = await sm.get_session_state(
+                    session_id=target_session_id,
+                    app_name=app_name,
+                    user_id=user_id
+                )
+        
+        base_state = state or {}
+
+        logger.debug(f"[/session_state] Resolved {target_session_id} — {len(base_state)} persisted keys.")
+
+        # Overlay real-time updates; fall back to "latest" in single-session mode.
         real_time_updates = GLOBAL_SESSION_STORE.get(target_session_id) or GLOBAL_SESSION_STORE.get("latest")
         
         if real_time_updates:
             logger.debug(f"[/session_state] Merging real-time updates from Global Store for {target_session_id}")
-            # Correctly handle merged lists (thoughts, tool_calls, tasks)
-            # and other metadata (active_agent, current_step, status)
             base_state.update(real_time_updates)
             
         # --- DEBUG LOGGING ---

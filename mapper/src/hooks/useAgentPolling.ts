@@ -1,5 +1,5 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useCopilotContext } from '@copilotkit/react-core';
 
 export interface PollingConfig {
     baseUrl: string;
@@ -8,7 +8,16 @@ export interface PollingConfig {
 }
 
 export function useAgentPolling<T = unknown>(config: PollingConfig) {
-    const { baseUrl, interval = 2000, enabled = true } = config;
+    const { baseUrl, interval = 3500, enabled = true } = config;
+    const { threadId } = useCopilotContext();
+
+    // Ref so the polling closure always reads the latest threadId
+    // without restarting the interval on every change
+    const threadIdRef = useRef(threadId);
+    useEffect(() => {
+        threadIdRef.current = threadId;
+    }, [threadId]);
+
     const [sessionInfo, setSessionInfo] = useState<{ session_id: string; app_name: string; user_id: string } | null>(null);
     const [pooledState, setPooledState] = useState<T | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -55,7 +64,7 @@ export function useAgentPolling<T = unknown>(config: PollingConfig) {
         const poll = async () => {
             try {
                 const params = new URLSearchParams({
-                    request_session_id: sessionInfo.session_id as string,
+                    request_session_id: threadIdRef.current as string,
                     app_name: sessionInfo.app_name as string,
                     user_id: sessionInfo.user_id as string,
                 });
@@ -88,5 +97,5 @@ export function useAgentPolling<T = unknown>(config: PollingConfig) {
         };
     }, [baseUrl, interval, enabled, sessionInfo]);
 
-    return { pooledState, sessionInfo, error };
+    return { pooledState, sessionInfo, error, threadId };
 }
