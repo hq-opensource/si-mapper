@@ -106,6 +106,15 @@
 | P17-05 | Phase 17 | Planned |
 | P17-06 | Phase 17 | Planned |
 | P17-07 | Phase 17 | Planned |
+| P19-01 | Phase 19 | Planned |
+| P19-02 | Phase 19 | Planned |
+| P19-03 | Phase 19 | Planned |
+| P19-04 | Phase 19 | Planned |
+| P19-05 | Phase 19 | Planned |
+| P19-06 | Phase 19 | Planned |
+| P19-07 | Phase 19 | Planned |
+| P19-08 | Phase 19 | Planned |
+| P19-09 | Phase 19 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -312,3 +321,15 @@ Plans:
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 18 to break down)
+
+### Phase 19: Standardize agent exit tools across all skills
+
+**Goal:** Replace 5 fragmented exit tools with 2 generic ones (`exit_with_success`, `exit_with_failure`), move TTL snapshot patching into `execute_ontology`, update all registrations, add exit steps to all 5 skills, and add one-task-at-a-time rule to master instruction.
+**Requirements**: [P19-01, P19-02, P19-03, P19-04, P19-05, P19-06, P19-07, P19-08, P19-09]
+**Depends on:** Phase 18
+**Plans:** 3 plans
+
+Plans:
+- [ ] 19-01-PLAN.md — Create exit_tools.py + move snapshot patching to execute_ontology + update registrations + delete old files
+- [ ] 19-02-PLAN.md — Update all 5 skills with exit_with_success/exit_with_failure + master instruction one-task-at-a-time rule
+- [ ] 19-03-PLAN.md — Update tests for new exit tools, snapshot patching, and wiring
