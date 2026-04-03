@@ -26,7 +26,6 @@ from tools.ontology_tools import (
     extract_lessons,
 )
 from tools.ontology_exit_tools import (
-    checkpoint_code,
     exit_generator_success,
     exit_generator_failure,
     exit_validator_success,
@@ -91,8 +90,7 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         write_ontology,
         execute_ontology,
         extract_lessons,
-        # Ontology exit/checkpoint tools
-        checkpoint_code,
+        # Ontology exit tools
         exit_generator_success,
         exit_generator_failure,
         exit_validator_success,
