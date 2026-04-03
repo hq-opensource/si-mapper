@@ -1,14 +1,19 @@
 """
-Unit tests for agent/tools/ontology_tools.py.
+Unit tests for agent/tools/ontology_tools.py and agent/tools/ontology_exit_tools.py.
 
 Covers:
 - Path constants pointing to agent/223p/
 - read_python_files: absolute path, project-relative path, missing file, multi-path
-- scan_python_folder: keyword filtering, missing dir error
-- Three-write pattern for write_ontology (scratch + session archive + uploads)
+- scan_python_folder: keyword filtering, missing dir error, cap at 10 files, force=True bypass
+- Two-write pattern for write_ontology (scratch + session archive)
+- write_ontology auto-increments ontology_code_iteration_count
 - Session ID auto-detection from disk
 - Zero-padded archive filename
-- Three-write pattern for execute_ontology TTL
+- Two-write pattern for execute_ontology TTL (session archive only)
+- execute_ontology Linux venv path checked before Windows path
+- execute_ontology auto-detects session from python_iterations
+- exit_generator_success: clean (tool_context, summary) signature — no code= parameter
+- exit_validator_success: reads TTL from disk, no ttl_content= parameter
 - extract_lessons function (returns session iteration files + current skill content)
 - create_master_agent.py wiring (read_python_files, scan_python_folder, extract_lessons)
 """
@@ -51,6 +56,10 @@ from tools.ontology_tools import (  # noqa: E402
     execute_ontology,
     extract_lessons,
 )
+from tools.ontology_exit_tools import (  # noqa: E402
+    exit_generator_success,
+    exit_validator_success,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -70,17 +79,17 @@ class MockToolContext:
 # Path constant tests
 # ---------------------------------------------------------------------------
 
-def test_ontology_file_path_ends_with_agent_223p():
-    """ONTOLOGY_FILE must point to agent/223p/ontology.py."""
-    assert ONTOLOGY_FILE.replace("\\", "/").endswith("agent/223p/ontology.py"), (
-        f"Expected ONTOLOGY_FILE to end with 'agent/223p/ontology.py', got: {ONTOLOGY_FILE}"
+def test_ontology_file_path_ends_with_uploads_latest():
+    """ONTOLOGY_FILE must point to mapper/uploads/python/latest_ontology.py."""
+    assert ONTOLOGY_FILE.replace("\\", "/").endswith("uploads/python/latest_ontology.py"), (
+        f"Expected ONTOLOGY_FILE to end with 'uploads/python/latest_ontology.py', got: {ONTOLOGY_FILE}"
     )
 
 
-def test_ttl_output_dir_ends_with_agent_223p():
-    """TTL_OUTPUT_DIR must point to agent/223p/."""
-    assert TTL_OUTPUT_DIR.replace("\\", "/").endswith("agent/223p"), (
-        f"Expected TTL_OUTPUT_DIR to end with 'agent/223p', got: {TTL_OUTPUT_DIR}"
+def test_ttl_output_dir_ends_with_uploads_ttl():
+    """TTL_OUTPUT_DIR must point to mapper/uploads/ttl."""
+    assert TTL_OUTPUT_DIR.replace("\\", "/").endswith("uploads/ttl"), (
+        f"Expected TTL_OUTPUT_DIR to end with 'uploads/ttl', got: {TTL_OUTPUT_DIR}"
     )
 
 
@@ -200,12 +209,32 @@ def test_scan_python_folder_rejects_file_path(tmp_path):
     assert "error" in result
 
 
+def test_scan_python_folder_caps_at_10_files(tmp_path):
+    """scan_python_folder returns message-only when > 10 files match."""
+    # Create 12 matching files
+    for i in range(12):
+        (tmp_path / f"fan_{i}.py").write_text("class Fan: pass", encoding="utf-8")
+    result = json.loads(scan_python_folder(str(tmp_path), ["fan"]))
+    assert "message" in result, "Expected message key when > 10 matches"
+    assert result["files"] == {}, "Expected empty files dict when > 10 matches"
+    assert "12" in result["message"], "Message should contain match count"
+
+
+def test_scan_python_folder_force_bypasses_cap(tmp_path):
+    """scan_python_folder returns all files when force=True even if > 10."""
+    for i in range(12):
+        (tmp_path / f"fan_{i}.py").write_text("class Fan: pass", encoding="utf-8")
+    result = json.loads(scan_python_folder(str(tmp_path), ["fan"], force=True))
+    assert "message" not in result, "force=True should bypass cap"
+    assert len(result["files"]) == 12
+
+
 # ---------------------------------------------------------------------------
-# write_ontology three-write pattern
+# write_ontology two-write pattern
 # ---------------------------------------------------------------------------
 
-def test_write_ontology_three_write_pattern(tmp_path):
-    """write_ontology writes to scratch + session archive + uploads (3 locations)."""
+def test_write_ontology_two_write_pattern(tmp_path):
+    """write_ontology writes to latest_ontology.py + session archive (2 locations)."""
     scratch_file = tmp_path / "ontology.py"
     py_iterations = tmp_path / "python_iterations"
 
@@ -214,15 +243,14 @@ def test_write_ontology_three_write_pattern(tmp_path):
     with (
         patch("tools.ontology_tools.ONTOLOGY_FILE", str(scratch_file)),
         patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(py_iterations)),
-        patch("tools.ontology_tools._persist_python") as mock_persist,
     ):
         result_json = write_ontology("test code", tool_context=ctx)
 
     result = json.loads(result_json)
     assert result["success"] is True
 
-    # 1. Scratch file written
-    assert scratch_file.exists(), "Scratch ontology.py not written"
+    # 1. Primary file written
+    assert scratch_file.exists(), "Primary latest_ontology.py not written"
     assert scratch_file.read_text() == "test code"
 
     # 2. Session archive written
@@ -231,8 +259,24 @@ def test_write_ontology_three_write_pattern(tmp_path):
     assert archive.exists(), f"Session archive not written: {archive}"
     assert archive.read_text() == "test code"
 
-    # 3. Uploads write called
-    mock_persist.assert_called_once_with("test code", "write_ontology")
+
+def test_write_ontology_auto_increments_iteration_count(tmp_path):
+    """write_ontology increments ontology_code_iteration_count on each call."""
+    scratch_file = tmp_path / "ontology.py"
+    py_iterations = tmp_path / "python_iterations"
+    ctx = MockToolContext(state={"ontology_session_id": 1, "ontology_code_iteration_count": 0})
+    with (
+        patch("tools.ontology_tools.ONTOLOGY_FILE", str(scratch_file)),
+        patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(py_iterations)),
+    ):
+        write_ontology("code v1", tool_context=ctx)
+    assert ctx.state["ontology_code_iteration_count"] == 1
+    with (
+        patch("tools.ontology_tools.ONTOLOGY_FILE", str(scratch_file)),
+        patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(py_iterations)),
+    ):
+        write_ontology("code v2", tool_context=ctx)
+    assert ctx.state["ontology_code_iteration_count"] == 2
 
 
 def test_write_ontology_auto_detects_session_id(tmp_path):
@@ -249,7 +293,6 @@ def test_write_ontology_auto_detects_session_id(tmp_path):
     with (
         patch("tools.ontology_tools.ONTOLOGY_FILE", str(scratch_file)),
         patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(py_iterations)),
-        patch("tools.ontology_tools._persist_python"),
     ):
         write_ontology("auto detect code", tool_context=ctx)
 
@@ -272,7 +315,6 @@ def test_write_ontology_zero_pads_iteration_filename(tmp_path):
     with (
         patch("tools.ontology_tools.ONTOLOGY_FILE", str(scratch_file)),
         patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(py_iterations)),
-        patch("tools.ontology_tools._persist_python"),
     ):
         write_ontology("iteration code", tool_context=ctx)
 
@@ -281,40 +323,123 @@ def test_write_ontology_zero_pads_iteration_filename(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# execute_ontology three-write for TTL
+# execute_ontology two-write for TTL
 # ---------------------------------------------------------------------------
 
-def test_execute_ontology_three_write_ttl(tmp_path):
-    """execute_ontology writes TTL to uploads + session archive on success."""
-    ttl_dir = tmp_path / "223p"
+def test_execute_ontology_two_write_ttl(tmp_path):
+    """execute_ontology reads latest_ontology.ttl and writes session archive only."""
+    ttl_dir = tmp_path / "uploads" / "ttl"
     ttl_dir.mkdir(parents=True)
-    ttl_file = ttl_dir / "ontology.ttl"
-    ttl_file.write_text("@prefix s223: <...> .", encoding="utf-8")
+    latest = ttl_dir / "latest_ontology.ttl"
+    latest.write_text("@prefix s223: <...> .", encoding="utf-8")
 
     ttl_iterations = tmp_path / "ttl_iterations"
+    py_iterations = tmp_path / "py_iterations"
 
     ctx = MockToolContext(state={
         "ontology_session_id": 1,
-        "ontology_code_iteration_count": 1,
+        "ontology_code_iteration_count": 1,  # iter_count=1 → archive name = 002
     })
 
     with (
         patch("tools.ontology_tools.TTL_OUTPUT_DIR", str(ttl_dir)),
         patch("tools.ontology_tools.TTL_ITERATIONS_DIR", str(ttl_iterations)),
-        patch("tools.ontology_tools._persist_ttl") as mock_persist_ttl,
+        patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(py_iterations)),
         patch("subprocess.run") as mock_run,
     ):
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
         execute_ontology(tool_context=ctx)
 
-    # _persist_ttl called once with the TTL content
-    mock_persist_ttl.assert_called_once()
-    call_args = mock_persist_ttl.call_args[0]
-    assert "@prefix s223:" in call_args[0], "TTL content not passed to _persist_ttl"
+    # TTL archive uses 1-based numbering matching Python: iter_count=1 → ontology_002.ttl
+    ttl_archive = ttl_iterations / "session_1" / "ontology_002.ttl"
+    assert ttl_archive.exists(), f"TTL session archive not written at expected path: {ttl_archive}"
 
-    # TTL session archive file written
+    # latest_ontology.ttl still exists — it IS the canonical file, not deleted
+    assert latest.exists(), "latest_ontology.ttl should not have been deleted"
+
+
+def test_execute_ontology_auto_detects_session_from_python_iterations(tmp_path):
+    """execute_ontology auto-detects session_id from python_iterations when missing from state."""
+    ttl_dir = tmp_path / "uploads" / "ttl"
+    ttl_dir.mkdir(parents=True)
+    (ttl_dir / "latest_ontology.ttl").write_text("@prefix s223: <...> .", encoding="utf-8")
+
+    ttl_iterations = tmp_path / "ttl_iterations"
+    py_iterations = tmp_path / "py_iterations"
+    # Pre-create session_1 in python_iterations to simulate an active session
+    (py_iterations / "session_1").mkdir(parents=True)
+
+    ctx = MockToolContext(state={})  # No session_id in state
+
+    with (
+        patch("tools.ontology_tools.TTL_OUTPUT_DIR", str(ttl_dir)),
+        patch("tools.ontology_tools.TTL_ITERATIONS_DIR", str(ttl_iterations)),
+        patch("tools.ontology_tools.PYTHON_ITERATIONS_DIR", str(py_iterations)),
+        patch("subprocess.run") as mock_run,
+    ):
+        mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+        execute_ontology(tool_context=ctx)
+
+    assert ctx.state["ontology_session_id"] == 1, (
+        f"Expected session_id=1 (auto-detected from 1 python session), got: {ctx.state.get('ontology_session_id')}"
+    )
     ttl_archive = ttl_iterations / "session_1" / "ontology_001.ttl"
-    assert ttl_archive.exists(), f"TTL session archive not written: {ttl_archive}"
+    assert ttl_archive.exists(), f"TTL archive not created under auto-detected session: {ttl_archive}"
+
+
+def test_execute_ontology_checks_linux_venv_first(tmp_path):
+    """execute_ontology checks Linux venv path before Windows path."""
+    src = open(os.path.join(os.path.dirname(__file__), "..", "tools", "ontology_tools.py")).read()
+    # Find the venv detection block in execute_ontology
+    exec_block = src.split("def execute_ontology")[1].split("def ")[0]
+    linux_pos = exec_block.index("bin/python")
+    windows_pos = exec_block.index("Scripts/python.exe")
+    assert linux_pos < windows_pos, "Linux venv path must be checked before Windows path"
+
+
+# ---------------------------------------------------------------------------
+# exit_generator_success signature
+# ---------------------------------------------------------------------------
+
+def test_exit_generator_success_no_code_param():
+    """exit_generator_success only accepts (tool_context, summary) — no code parameter."""
+    ctx = MockToolContext(state={})
+    # Should work with just summary
+    result = exit_generator_success(ctx, summary="test")
+    assert result["status"] == "signal_sent"
+    assert ctx.state["ONTOLOGY_GENERATION_SUCCESS"] is True
+    # Should NOT accept code= keyword
+    import inspect
+    sig = inspect.signature(exit_generator_success)
+    assert "code" not in sig.parameters, "exit_generator_success still accepts code= parameter"
+
+
+# ---------------------------------------------------------------------------
+# exit_validator_success reads TTL from disk
+# ---------------------------------------------------------------------------
+
+def test_exit_validator_success_reads_ttl_from_disk(tmp_path):
+    """exit_validator_success reads TTL from disk internally, no ttl_content param."""
+    ttl_file = tmp_path / "latest_ontology.ttl"
+    ttl_file.write_text("@prefix s223: <urn:test> .", encoding="utf-8")
+    ctx = MockToolContext(state={"python_code_snapshots": [{"label": "Fix 0", "code": "x", "iteration": 0, "status": "fix"}]})
+    with patch("tools.ontology_exit_tools._TTL_LATEST", ttl_file):
+        result = exit_validator_success(ctx, summary="validated")
+    assert result["status"] == "signal_sent"
+    assert ctx.state["ONTOLOGY_VALIDATION_SUCCESS"] is True
+    # TTL snapshot written from disk content
+    ttl_snaps = ctx.state.get("ttl_code_snapshots", [])
+    assert len(ttl_snaps) == 1
+    assert "@prefix s223:" in ttl_snaps[0]["code"]
+    # Python snapshot patched to Final
+    py_snaps = ctx.state["python_code_snapshots"]
+    assert py_snaps[-1]["label"] == "Final"
+    assert py_snaps[-1]["status"] == "validated"
+    # Verify no code= or ttl_content= param
+    import inspect
+    sig = inspect.signature(exit_validator_success)
+    assert "code" not in sig.parameters
+    assert "ttl_content" not in sig.parameters
 
 
 # ---------------------------------------------------------------------------
