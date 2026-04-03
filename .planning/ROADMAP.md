@@ -339,7 +339,7 @@ Plans:
 **Goal:** Replace 5 fragmented exit tools with 2 generic ones (`exit_with_success`, `exit_with_failure`), move TTL snapshot patching into `execute_ontology`, update all registrations, add exit steps to all 5 skills, and add one-task-at-a-time rule to master instruction.
 **Requirements**: [P19-01, P19-02, P19-03, P19-04, P19-05, P19-06, P19-07, P19-08, P19-09]
 **Depends on:** Phase 18
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 19-01-PLAN.md — Create exit_tools.py + move snapshot patching to execute_ontology + update registrations + delete old files

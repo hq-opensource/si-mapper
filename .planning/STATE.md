@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 19
 status: unknown
-last_updated: "2026-04-03T18:56:17.594Z"
+last_updated: "2026-04-03T19:00:05.018Z"
 progress:
   total_phases: 19
   completed_phases: 11
   total_plans: 39
-  completed_plans: 36
+  completed_plans: 37
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 19
-- **Overall Completion:** [█████████░] 92%
-- **Active Plan:** 19-01 (complete — plan 01 done)
-- **Last Completed:** 19-01 (replaced 5 fragmented exit tools with 2 generic ones; moved snapshot patching into execute_ontology; deleted loop_exit_tools.py and ontology_exit_tools.py)
+- **Overall Completion:** [██████████] 95%
+- **Active Plan:** 19-02 (complete — plan 02 done)
+- **Last Completed:** 19-02 (updated all 5 skills and master instruction to use exit_with_success/exit_with_failure; added one-task-at-a-time rule to master instruction)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -139,9 +139,13 @@ progress:
 - **2026-04-03:** Completed 17-01-PLAN.md. Created explode_bacnet_points helper in agent/utils/bacnet_helpers.py (6 unit tests all pass, TDD). Wired explosion calls into all 4 write-path functions: update_component_metadata, update_component_metadata_batch (internal_grid_tools.py), _apply_metadata (metadata_tools.py), MetadataManager.write_metadata + write_metadata_batch (mcp_server/graphivac/metadata_manager.py, inlined copy). Flat bacnet_N format guaranteed at every write site.
 - **2026-04-03:** Completed 17-02-PLAN.md. Verified EDN translator has zero hard-coded 'bacnet' logic (generic key iteration). Created test_grid_edn_translator.py (7 tests, all pass). Rewrote skill-bacnet-points/SKILL.md sections 3 and 4 and Rules to flat bacnet_N format. Updated live test SAMPLE_BACNET_POINTS to bacnet_1 through bacnet_5 with address fields, removed 'bacnet' wrapper from updates dict, rewrote verification logic per-key.
 - **2026-04-03:** Completed 19-01-PLAN.md. Replaced 5 fragmented exit tools with 2 generic ones (exit_with_success/exit_with_failure). Moved snapshot patching (python_code_snapshots Final/validated, ttl_code_snapshots TTL label) from exit_validator_success into execute_ontology. Updated MasterLlmAgent.default_tools. Removed ontology_exit_tools from create_master_agent.py. Deleted loop_exit_tools.py and ontology_exit_tools.py.
+- **2026-04-03:** Completed 19-02-PLAN.md. Updated all 5 skills to call exit_with_success/exit_with_failure with domain-specific summary requirements. Added one-task-at-a-time Task Execution Rule to master_instruction.md. Removed all old exit tool name references (exit_generator_success/failure, exit_validator_success/failure, checkpoint_code) from master instruction. Phase 19 complete.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
+- **Decision (19-02):** All 5 skills now instruct agents to call exit_with_success/exit_with_failure with domain-specific summary requirements (duct counts, equipment counts, BACnet points/matched/unmatched).
+- **Decision (19-02):** One-task-at-a-time rule added to master instruction — prevents unprompted skill chaining after exit tool fires.
+- **Decision (19-02):** checkpoint_code removed from master instruction ASHRAE Sequence step 3 tool list — no longer exists as a tool.
 
 ## Roadmap Evolution
 
