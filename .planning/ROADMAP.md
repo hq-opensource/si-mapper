@@ -86,6 +86,19 @@
 | P15-08 | Phase 15 | Planned |
 | P15-09 | Phase 15 | Planned |
 | P15-10 | Phase 15 | Planned |
+| P16-01 | Phase 16 | Planned |
+| P16-02 | Phase 16 | Planned |
+| P16-03 | Phase 16 | Planned |
+| P16-04 | Phase 16 | Planned |
+| P16-05 | Phase 16 | Planned |
+| P16-06 | Phase 16 | Planned |
+| P16-07 | Phase 16 | Planned |
+| P16-08 | Phase 16 | Planned |
+| P16-09 | Phase 16 | Planned |
+| P16-10 | Phase 16 | Planned |
+| P16-11 | Phase 16 | Planned |
+| P16-12 | Phase 16 | Planned |
+| P16-13 | Phase 16 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -258,3 +271,16 @@ Plans:
 - [ ] 15-01-PLAN.md — Delete sub_agents/ directory + clean up stale tests
 - [ ] 15-02-PLAN.md — Migrate 223p/ files + update path constants + three-write pattern + extract_lessons tool
 - [ ] 15-03-PLAN.md — Audit and enhance skill-ontology-generation and skill-ontology-validation
+
+### Phase 16: Optimize ontology skills
+
+**Goal:** Fix 21 identified issues across the ontology pipeline: delete redundant _persist helpers, clean exit tool signatures (remove code=/ttl_content= params), fold checkpoint_code into write_ontology, fix Linux venv detection, add scan_python_folder cap, and update all three SKILL.md files for accuracy.
+**Requirements**: [P16-01, P16-02, P16-03, P16-04, P16-05, P16-06, P16-07, P16-08, P16-09, P16-10, P16-11, P16-12, P16-13]
+**Depends on:** Phase 15
+**Plans:** 4 plans
+
+Plans:
+- [ ] 16-01-PLAN.md — Delete _persist_python and _persist_ttl helpers + remove all call sites
+- [ ] 16-02-PLAN.md — Clean exit signatures, fold checkpoint_code, fix venv path, add scan cap, update docstrings
+- [ ] 16-03-PLAN.md — Update generation, validation, and lessons SKILL.md files
+- [ ] 16-04-PLAN.md — Update tests for all changed behavior
