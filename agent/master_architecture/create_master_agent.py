@@ -25,12 +25,6 @@ from tools.ontology_tools import (
     execute_ontology,
     extract_lessons,
 )
-from tools.ontology_exit_tools import (
-    exit_generator_success,
-    exit_generator_failure,
-    exit_validator_success,
-    exit_validator_failure,
-)
 
 # --- Configuration ---
 load_dotenv()
@@ -90,11 +84,6 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         write_ontology,
         execute_ontology,
         extract_lessons,
-        # Ontology exit tools
-        exit_generator_success,
-        exit_generator_failure,
-        exit_validator_success,
-        exit_validator_failure,
     ]
 
     all_subagents = subagents or []
