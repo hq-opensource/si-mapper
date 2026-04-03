@@ -50,12 +50,12 @@ def test_no_ontology_subagents_list():
 
 
 def test_imports_adapted_exit_tools():
-    """create_master_agent.py imports adapted exit tools from master_architecture."""
+    """create_master_agent.py must NOT import old ontology_exit_tools (deleted in Phase 19)."""
     src = pathlib.Path("master_architecture/create_master_agent.py").read_text()
-    assert "from tools.ontology_exit_tools import" in src
-    for tool in ["exit_generator_success", "exit_generator_failure",
-                 "exit_validator_success", "exit_validator_failure"]:
-        assert tool in src, f"{tool} not found in create_master_agent.py"
+    assert "from tools.ontology_exit_tools import" not in src
+    for old_tool in ["exit_generator_success", "exit_generator_failure",
+                     "exit_validator_success", "exit_validator_failure"]:
+        assert old_tool not in src, f"{old_tool} still referenced in create_master_agent.py"
 
 
 def test_max_iterations_is_100():
