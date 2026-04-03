@@ -137,6 +137,9 @@
 | P21-03 | Phase 21 | Planned |
 | P21-04 | Phase 21 | Planned |
 | P21-05 | Phase 21 | Planned |
+| P22-01 | Phase 22 | Planned |
+| P22-02 | Phase 22 | Planned |
+| P22-03 | Phase 22 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -376,12 +379,14 @@ Plans:
 Plans:
 - [ ] 21-01-PLAN.md — Remove useCoAgent, simplify combinedState and StateSyncer to polling-only
 
-### Phase 22: enhance-bacnet-parsing
+### Phase 22: Enhance BACnet parsing
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Enrich the BACnet metadata dictionary at write-time so the ontology agent can use pre-computed fields (code, address URI, ref_type) instead of parsing addresses manually. Add enrich_bacnet_point helper, wire into all 4 write paths, mirror to MCP inlined copy, and update 3 ontology skill SKILL.md files.
+**Requirements**: [P22-01, P22-02, P22-03]
 **Depends on:** Phase 21
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 22 to break down)
+- [ ] 22-01-PLAN.md — TDD: enrich_bacnet_point + _parse_bacnet_address + enrich_flat_bacnet_points + tests
+- [ ] 22-02-PLAN.md — Wire enrichment into all 4 write paths + mirror to MCP metadata_manager.py
+- [ ] 22-03-PLAN.md — Update skill-ontology-generation, skill-ontology-validation, skill-ontology-lessons SKILL.md
