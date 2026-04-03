@@ -635,6 +635,15 @@ def execute_ontology(tool_context: Optional[ToolContext] = None) -> str:
             if ttl_content:
                 ttl_file = latest
 
+                # Dated copy: mapper/uploads/ttl/ontology_YYYYMMDD_HHMMSS.ttl (consumed by frontend)
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                dated_ttl_path = os.path.join(TTL_OUTPUT_DIR, f"ontology_{timestamp}.ttl")
+                try:
+                    with open(dated_ttl_path, "w", encoding="utf-8") as fh:
+                        fh.write(ttl_content)
+                except OSError as exc:
+                    logger.warning("Failed to write dated TTL archive %s: %s", dated_ttl_path, exc)
+
                 if tool_context:
                     # Snapshot behavior
                     snapshots = list(tool_context.state.get("ttl_code_snapshots", []))

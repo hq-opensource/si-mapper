@@ -32,6 +32,21 @@ Use the description of errors and the solutions that worked in the past to enhan
 ## Serialization
 - **Error:** Attempting to serialize the graph using `get_model_graph(model_name)` and `g.serialize(...)` or `DataGraph().serialize(...)` which may fail or be incorrect. -> **Fix:** Use `dump(filename=str(output_file))` imported from `bob.core` to serialize the ontology.
 
+## BACnet External References
+- **Error:** Storing BACnet points only as property comments (e.g., `add_property(Percent(label="TEMP. ALIM.", comment="BACnet: 2500.AI13"))`). -> **Fix:** Use `BACnetExternalReference` with the `@` operator. Import: `from bob.externalreference.bacnet import BACnetExternalReference`.
+- **Address parsing:** Convert `<device>.<TypeCode><instance>` to `bacnet://<device>/<object-type>,<instance>/present-value`. Suffix map: `AI`→`analog-input`, `AO`→`analog-output`, `AV`→`analog-value`, `BI`→`binary-input`, `BO`→`binary-output`, `BV`→`binary-value`, `SCH`→`schedule`. Skip `PG`, `CO`, `TL` — not valid types; keep as comments. Example: `"2500.AI13"` → `"bacnet://2500/analog-input,13/present-value"`.
+- **Pattern for sensors** — `@` works directly on a sensor (Sensor IS a Property):
+  ```python
+  t_alim @ BACnetExternalReference("bacnet://2500/analog-input,13/present-value")
+  ```
+- **Pattern for equipment control/actuator points** — capture the property variable first, then link (you cannot call `@` on the equipment node directly):
+  ```python
+  mod_drive = Percent(label="MOD. DRIVE ALM No.1A")
+  vfd_1_a.add_property(mod_drive)
+  mod_drive @ BACnetExternalReference("bacnet://2500/analog-output,6/present-value")
+  ```
+- **Validation rule:** if the ontology has `comment="BACnet: ..."` patterns but no `BACnetExternalReference` usages, treat this as a fixable issue and convert them using the patterns above.
+
 ## Structural approach
 - **Error:** Using `System("AHU-1")` and `ahu_system.contains(...)` or `Junction(...)` which might not be supported or correct in the current library version. -> **Fix:** Use a flat structure with `bind_model_namespace` and instantiate components directly without wrapping them in a `System` container (unless explicitly required, in which case use the `>` operator).
 - **Error:** Adding components to a `System` using the `.content()` method. -> **Fix:** Use the `>` operator to add components to a system (e.g., `hvac_system > fan`).

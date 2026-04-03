@@ -5,7 +5,6 @@ description: ASHRAE 223P ontology code validation and iterative fixing until cle
 
 # 223P Ontology Validator & Fixer Agent
 
-## Role
 You are a **code validator and fixer** for ASHRAE 223P ontologies.
 Read the generated `mapper/uploads/python/latest_ontology.py`, validate it, and iteratively fix all issues until it executes cleanly and produces a valid `.ttl` file. **Do not regenerate from scratch — repair what exists.**
 
@@ -97,6 +96,9 @@ When multiple root causes exist in the same execution result, fix the deepest de
 
 ## Operator Reference
 - `%` links a sensor to the equipment it monitors: `temp_sensor % fan`. Do NOT use `%` to attach a measurement property to a sensor — use `sensor.add_property(prop)` for that.
+
+## BACnet External References
+If the ontology contains `comment="BACnet: ..."` patterns but no `BACnetExternalReference` imports or usages, treat this as a fixable issue. See `skill-ontology-lessons` (section "BACnet External References") for the full address-parsing rules, type suffix map, and code patterns to apply.
 
 ## Stop Conditions -> `exit_with_failure(reason="VALIDATION_FAILED: ...")`
 - `skill-ontology-lessons` is unreadable and no error-resolution context is available — proceed with best-effort fixing but log the limitation.

@@ -1,6 +1,6 @@
 import logging
 
-from bob.core import bind_model_namespace, dump, UNIT, Junction
+from bob.core import bind_model_namespace, dump, UNIT
 from bob.properties.ratio import Percent
 from bob.properties.electricity import Amps
 
@@ -53,27 +53,21 @@ def main():
     filter_1 = Filter(label="Filter-1")
     valve_3wv = ThreeWayMixingActuatedProportionalValve(label="3WV-CC")
 
-    mix_junc_1 = Junction(label="Mix-Junction-1")
-    mix_junc_2 = Junction(label="Mix-Junction-2")
-
     # Wiring
     vfd_1_a.electricalOutlet >> fan_1_a.electricalInlet
     vfd_1_r.electricalOutlet >> fan_1_r.electricalInlet
     
-    paf_upper.airOutlet >> mix_junc_1
-    paf_lower.airOutlet >> mix_junc_1
-    melange.airOutlet >> mix_junc_1
-    
-    mix_junc_1 >> filter_1.airInlet
+    paf_upper.airOutlet >> filter_1.airInlet
+    paf_lower.airOutlet >> filter_1.airInlet
+    melange.airOutlet >> filter_1.airInlet
     
     filter_1.airOutlet >> cc_1.airInlet
     cc_1.airOutlet >> fan_1_a.airInlet
     fan_1_a.airOutlet >> hc_1.airInlet
     
-    fan_1_r.airOutlet >> mix_junc_2
-    mix_junc_2 >> melange.airInlet
-    mix_junc_2 >> evac.airInlet
-    mix_junc_2 >> rav.airInlet
+    fan_1_r.airOutlet >> melange.airInlet
+    fan_1_r.airOutlet >> evac.airInlet
+    fan_1_r.airOutlet >> rav.airInlet
     evac.airOutlet >> fan_1_e.airInlet
     
     # Sensors

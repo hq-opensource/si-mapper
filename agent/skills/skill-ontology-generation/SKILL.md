@@ -61,6 +61,9 @@ Fail immediately (no text response) if any of the following:
 - `%` links a sensor to the equipment it monitors: `temp_sensor % fan`. Do NOT use `%` to attach a measurement property to a sensor — use `sensor.add_property(prop)` for that. Do not also set `observes`.
 - Every sensor must have a `hasUnit` property from a `bob`/`scratch` enum.
 
+## BACnet External References
+When components have `custom_fields` with `bacnet_N` entries, **always create `BACnetExternalReference` objects** — do not store addresses only as comments. See `skill-ontology-lessons` (section "BACnet External References") for the full address-parsing rules, type suffix map, and code patterns.
+
 ## Spatial Context
 - Typical models are `System → Equipment`
 - Model `Building → Floor → Room → System → Equipment` only when grid data contains spatial evidence.
