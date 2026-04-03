@@ -7,6 +7,8 @@ description: Description of errors and common pitfalls when building the ontolog
 
 Use the description of errors and the solutions that worked in the past to enhance the creation of the python code for the ontology.
 
+> **Consultation note:** When re-consulting mid-loop, search by error category keyword (e.g., "Sensor API", "Connection wiring") — do not re-read the full file. Target the relevant category section only.
+
 ---
 
 # Error-to-Resolution Lessons
