@@ -16,52 +16,36 @@ const DEFAULT_AGENT_STATE: AgentState = {
   data: {} as Record<string, unknown>,
 };
 
-// Internal component to handle syncing to context
-function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | null, agentState: AgentState }) {
+// Internal component to handle syncing pooledState to ThoughtsContext
+function StateSyncer({ pooledState }: { pooledState: AgentState | null }) {
   const { syncThoughts, syncToolCalls, syncEvents, syncData } = useThoughts();
 
   useEffect(() => {
-    // 1. Merge sources (prioritize streaming agentState for real-time thoughts)
-    const combinedEvents = [
-      ...(agentState.events as Array<Record<string, unknown>> || []),
-      ...(pooledState?.events as Array<Record<string, unknown>> || [])
-    ];
-    const combinedThoughts = [
-      ...(agentState.thoughts as Array<Record<string, unknown>> || []),
-      ...(pooledState?.thoughts as Array<Record<string, unknown>> || [])
-    ];
-    const combinedToolCalls = [
-      ...(agentState.tool_calls as Array<Record<string, unknown>> || []),
-      ...(pooledState?.tool_calls as Array<Record<string, unknown>> || [])
-    ];
-    if (combinedThoughts.length > 0) syncThoughts(combinedThoughts as never[]);
-    if (combinedToolCalls.length > 0) syncToolCalls(combinedToolCalls as never[]);
-    if (combinedEvents.length > 0) syncEvents(combinedEvents as never[]);
+    if (!pooledState) return;
 
-    // 2. Sync Custom Data
-    const data = pooledState?.data as Record<string, unknown> | undefined;
-    const adkData = agentState.data as Record<string, unknown> | undefined;
+    // Sync array fields
+    const thoughts = pooledState.thoughts as Array<Record<string, unknown>> | undefined;
+    const toolCalls = pooledState.tool_calls as Array<Record<string, unknown>> | undefined;
+    const events = pooledState.events as Array<Record<string, unknown>> | undefined;
 
+    if (thoughts?.length) syncThoughts(thoughts as never[]);
+    if (toolCalls?.length) syncToolCalls(toolCalls as never[]);
+    if (events?.length) syncEvents(events as never[]);
+
+    // Sync custom data (everything except known scalar/array keys)
     const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'thoughts', 'tool_calls', 'events', 'data'];
-
-    // Filter rest from both sources
-    const pooledRest = pooledState ? Object.fromEntries(
+    const pooledRest = Object.fromEntries(
       Object.entries(pooledState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
-    ) : {};
-
-    const agentRest = Object.fromEntries(
-      Object.entries(agentState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
     );
 
-    const customData: Record<string, unknown> = { ...agentRest, ...pooledRest };
-
+    const customData: Record<string, unknown> = { ...pooledRest };
+    const data = pooledState.data as Record<string, unknown> | undefined;
     if (data && Object.keys(data).length > 0) customData.data = data;
-    if (adkData && Object.keys(adkData).length > 0) customData.adkData = adkData;
 
     if (Object.keys(customData).length > 0) {
       syncData(customData);
     }
-  }, [pooledState, agentState, syncThoughts, syncToolCalls, syncEvents, syncData]);
+  }, [pooledState, syncThoughts, syncToolCalls, syncEvents, syncData]);
 
   return null;
 }
@@ -99,7 +83,7 @@ export default function CopilotKitPage() {
   return (
     <main className="flex h-screen" style={{ "--copilot-kit-primary-color": themeColor, "--accent": themeColor } as React.CSSProperties}>
       <ThoughtsProvider currentAgentName={combinedState.active_agent || "SI-MAPPER"}>
-        <StateSyncer pooledState={pooledState} agentState={DEFAULT_AGENT_STATE} />
+        <StateSyncer pooledState={pooledState} />
         <SplitSidebar isEditMode={isEditMode} toggleEditMode={() => setIsEditMode(!isEditMode)} />
         <div className="flex-grow min-w-0 overflow-hidden">
           <YourMainContent
