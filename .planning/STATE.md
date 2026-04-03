@@ -177,3 +177,4 @@ progress:
 - Phase 17 added: Restructure BACnet custom fields to flat numbered entries
 - Phase 18 added: optimize skill for ontology validation
 - Phase 19 added: Standardize agent exit tools across all skills
+- Phase 21 added: delete-usecoagent-switch-to-polling-only
