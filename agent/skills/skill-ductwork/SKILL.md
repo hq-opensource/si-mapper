@@ -11,8 +11,8 @@ Identify and replicate all **horizontal and vertical ducts** in HVAC drawings as
 # Execution Flow
 
 ## 1. Ingest Context
-- Use `ingest_category_files(category='hvac')`.
-- Use `load_artifacts` to access drawing artifacts
+- Use `ingest_category_files(category='hvac')`. **Note the artifact names returned** — you will need them in the verification step.
+- Use `load_artifacts` to access drawing artifacts. **Remember which artifact names contain the reference drawings.**
 - Use `read_internal_grid` to retrieve existing components
 
 ## 2. Analyze
@@ -68,8 +68,9 @@ Call the tool `sync_agent_to_graphivac` to send the ductwork to the frontend.
 
 ## 5. Verify the ductwork
 After calling the tool `sync_agent_to_graphivac`, perform a **Duct Verification Checkpoint**:
-- Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
-- Compare the snapshot against the reference image. Verify that all horizontal and vertical ducts are present, correctly positioned, and flow directions are correct.
+- Call `capture_frontend_state()` to take the screenshot.
+- Then call `load_artifacts` passing **both** the snapshot and the original reference drawing artifact name(s) in a single call — for example: `load_artifacts(artifact_names=["verification/latest_snapshot.png", "hvac/<reference_drawing_filename>"])`. Use the artifact names you noted in Step 1.
+- Compare the snapshot against the reference image side-by-side. Verify that all horizontal and vertical ducts are present, correctly positioned, and flow directions are correct.
 - If discrepancies are found, correct them by calling the tool `add_components_batch` or `delete_components_batch`.
 - After all corrections are finished, call `sync_agent_to_graphivac` again and repeat the checkpoint instructions until the ducts match the reference.
 

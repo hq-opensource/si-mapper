@@ -12,7 +12,7 @@ Place HVAC equipment on the established duct system.
 
 # Execution Flow
 
-1. **Load context**: Use `load_artifacts` to view drawings.
+1. **Load context**: Use `load_artifacts` to view drawings. **Note the artifact names of the reference drawings** — you will need them in the verification step.
 2. **Read grid**: Use `read_internal_grid` to get duct coordinates.
 3. **Analyze**: For each equipment piece:
    - Identify type (from the list above) and position.
@@ -24,8 +24,9 @@ Place HVAC equipment on the established duct system.
    - Example: `add_component(component_type="variable_frequency_drive", name="VFD-1", coord=[15,6])`
 5. **Sync to frontend**: Use `sync_agent_to_graphivac` to sync the HVAC equipments to the frontend.
 6. **Verify**: After calling the tool `sync_agent_to_graphivac`, perform a **Equipment Verification Checkpoint**:
-   - Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
-   - Compare the snapshot against the reference image. Verify that all equipment components are present, correctly positioned, and correctly attached to the ducts.
+   - Call `capture_frontend_state()` to take the screenshot.
+   - Then call `load_artifacts` passing **both** the snapshot and the original reference drawing artifact name(s) in a single call — for example: `load_artifacts(artifact_names=["verification/latest_snapshot.png", "hvac/<reference_drawing_filename>"])`. Use the artifact names you noted in Step 1.
+   - Compare the snapshot against the reference image side-by-side. Verify that all equipment components are present, correctly positioned, and correctly attached to the ducts.
    - If discrepancies are found, correct them and repeat the workflow until the equipment matches the reference.
    - Only mark the task as finished after visual confirmation passes.
 7. **Exit**: Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
