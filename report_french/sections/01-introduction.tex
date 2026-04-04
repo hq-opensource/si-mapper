@@ -1,184 +1,138 @@
-\section{Introduction and Context}
+\section{Introduction et contexte}
 \label{sec:introduction}
 
-Every commercial building contains hundreds of sensors, actuators, and control points.
-A modern office block may have thousands of temperature sensors, pressure transducers, damper position
-indicators, and setpoint registers, each one a source of valuable operational data.
-Yet despite this wealth of instrumentation, the data is largely inaccessible to software that was
-not purpose-built for the specific building it operates in, i.e., software cannot be easily ported from one building to another.
+Chaque bâtiment commercial contient des centaines de capteurs, d'actionneurs et de points de contrôle.
+Un immeuble de bureaux moderne peut avoir des milliers de capteurs de température, de transducteurs de pression, d'indicateurs de position de registre et de registres de consignes, chacun étant une source de données opérationnelles précieuses.
+Pourtant, malgré cette richesse en instrumentation, les données sont largement inaccessibles aux logiciels qui n'ont pas été conçus spécifiquement pour le bâtiment dans lequel ils fonctionnent, c'est-à-dire que les logiciels ne peuvent pas être facilement portés d'un bâtiment à un autre.
 
-The reason is a fundamental naming problem.
-Each Building Management System (BMS) vendor uses its own proprietary conventions for labelling control points.
-A temperature sensor named \texttt{2500.AI11} in one system becomes \texttt{RTU-3/SA-T} in another.
-Neither label carries enough information for software to determine automatically what physical equipment
-the point belongs to, what role the measurement plays, or how that equipment connects to other components.
-Without that context, building software cannot be deployed without a building-specific customization step. 
-This means that ``building software is not `plug and play', technicians must manually map sensors and actuators 
-to software inputs through tedious point mapping processes that vary building-by-building.''
-Moreover, this manual mapping, a building-by-building effort, is error-prone and expensive, 
-often requiring weeks of expert labor for a single building.
+La raison est un problème fondamental de dénomination.
+Chaque fournisseur de Système de gestion technique du bâtiment (GTB/BMS) utilise ses propres conventions propriétaires pour étiqueter les points de contrôle.
+Un capteur de température nommé \texttt{2500.AI11} dans un système devient \texttt{RTU-3/SA-T} dans un autre.
+Aucune de ces étiquettes ne contient suffisamment d'informations pour que le logiciel puisse déterminer automatiquement à quel équipement physique appartient le point, quel rôle joue la mesure, ou comment cet équipement se connecte à d'autres composants.
+Sans ce contexte, les logiciels de bâtiment ne peuvent pas être déployés sans une étape de personnalisation propre au bâtiment.
+Cela signifie que \og les logiciels de bâtiment ne sont pas \fg{} \og prêts à l'emploi \fg{}, les techniciens doivent mapper manuellement les capteurs et les actionneurs aux entrées logicielles à travers des processus de mappage des points fastidieux qui varient de bâtiment en bâtiment.
+De plus, ce mappage manuel, un effort bâtiment par bâtiment, est sujet aux erreurs et coûteux, nécessitant souvent des semaines de travail d'expert pour un seul bâtiment.
 
-A promising solution for this problem is a \emph{standardized metadata layer}, a machine-readable description of what every
-sensor and actuator means, which equipment it belongs to, and how that equipment connects to the rest of the system.
-This is exactly what building ontologies provide.
+Une solution prometteuse à ce problème est une \emph{couche de métadonnées standardisée}, une description lisible par machine de ce que signifie chaque capteur et actionneur, à quel équipement il appartient, et comment cet équipement se connecte au reste du système.
+C'est exactement ce que fournissent les ontologies de bâtiments.
 
-\subsection{Building Ontologies: A Standardized Language for Buildings}
+\subsection{Les ontologies de bâtiments : un langage standardisé pour les bâtiments}
 \label{subsec:ontologies}
 
-A building ontology is a shared, machine-readable vocabulary that describes building systems, their
-components, and how they connect between each other.
-Think of it as a dictionary that any software application can consult: if a sensor is declared to be a
-supply air temperature measurement on the outlet of a fan coil unit, any compliant application (that understands the chosen ontology)
-can understand that without manual configuration.
+Une ontologie de bâtiment est un vocabulaire partagé et lisible par machine qui décrit les systèmes d'un bâtiment, leurs composants et comment ils se connectent entre eux.
+Considérez-la comme un dictionnaire que toute application logicielle peut consulter : si un capteur est déclaré comme étant une mesure de température de l'air soufflé à la sortie d'un ventilo-convecteur, toute application conforme (qui comprend l'ontologie choisie) peut le comprendre sans configuration manuelle.
 
-Four major building ontologies have emerged over the past decade.
-Each reflects different design priorities and is backed by a different community.
+Quatre grandes ontologies de bâtiments ont émergé au cours de la dernière décennie.
+Chacune reflète des priorités de conception différentes et est soutenue par une communauté différente.
 
 \begin{table}[htbp]
 \centering
-\caption{The four major building ontology standards.}
+\caption{Les quatre principales normes d'ontologies de bâtiments.}
 \label{tab:ontologies}
 \small
 \begin{tabular}{lllll}
 \toprule
-\textbf{Ontology} & \textbf{Governed By} & \textbf{Approach} & \textbf{Focus} & \textbf{Maturity} \\
+\textbf{Ontologie} & \textbf{Gouverné par} & \textbf{Approche} & \textbf{Domaine} & \textbf{Maturité} \\
 \midrule
-Project Haystack & Haystack Connect & Tag-based dictionary & Equipment types, sensor tags & Widely deployed, informal \\
-Brick Schema & Open consortium & RDF/OWL semantic graph & Equipment, sensors, spatial hierarchy & Production ready (v1.4) \\
-RealEstateCore & RealEstateCore Consortium & OWL ontology & Property management + technical systems & Production ready \\
-ASHRAE 223P & ASHRAE + DOE/NREL & Formal OWL ontology & Topology, connections, telemetry & Second advisory public review \\
+Project Haystack & Haystack Connect & Dictionnaire à base d'étiquettes & Types d'équipements, étiquettes de capteurs & Largement déployé, informel \\
+Brick Schema & Open consortium & Graphe sémantique RDF/OWL & Équipements, capteurs, hiérarchie spatiale & Prêt pour la production (v1.4) \\
+RealEstateCore & RealEstateCore Consortium & Ontologie OWL & Gestion immobilière + systèmes techniques & Prêt pour la production \\
+ASHRAE 223P & ASHRAE + DOE/NREL & Ontologie OWL formelle & Topologie, connexions, télémétrie & Deuxième examen public consultatif \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Project Haystack} is the oldest and most widely deployed approach.
-It uses a tag-based system where sensors are described by a set of keywords (e.g., \texttt{air temp sensor}).
-Its informality makes it easy to adopt but difficult to enforce consistently across projects.
+\textbf{Project Haystack} est l'approche la plus ancienne et la plus largement déployée.
+Il utilise un système basé sur des étiquettes où les capteurs sont décrits par un ensemble de mots-clés (p. ex., \texttt{air temp sensor}).
+Son informalité le rend facile à adopter mais difficile à appliquer de manière cohérente d'un projet à l'autre.
 
-\textbf{Brick Schema} builds formal semantic rules on top of a Haystack-compatible vocabulary.
-It uses the RDF/OWL knowledge representation standard, making it more consistent and machine-interpretable
-than Haystack.
-Brick is production-ready and in active deployment across research institutions and building operators.
+\textbf{Brick Schema} construit des règles sémantiques formelles au-dessus d'un vocabulaire compatible avec Haystack.
+Il utilise la norme de représentation des connaissances RDF/OWL, ce qui le rend plus cohérent et interprétable par machine que Haystack.
+Brick est prêt pour la production et est en déploiement actif dans les institutions de recherche et auprès des opérateurs de bâtiments.
 
-\textbf{RealEstateCore} focuses on the property management perspective, occupancy, asset management,
-and energy performance, with significant overlap into technical building systems.
-It is used mainly in the European commercial real estate sector.
+\textbf{RealEstateCore} se concentre sur la perspective de la gestion immobilière, l'occupation, la gestion des actifs et la performance énergétique, avec un chevauchement significatif dans les systèmes techniques du bâtiment.
+Il est principalement utilisé dans le secteur de l'immobilier commercial européen.
 
-\textbf{ASHRAE 223P} is the most rigorous of the four.
-It defines not just equipment types but full system topology: how equipment connects, what flows between
-components, and how those connections link to live sensor data.
-ASHRAE's BACnet committee, Project Haystack, and Brick Schema are actively collaborating to integrate
-their vocabularies into ASHRAE 223P as the unifying standard.
+\textbf{ASHRAE 223P} est le plus rigoureux des quatre.
+Il définit non seulement les types d'équipements, mais aussi la topologie complète du système : comment les équipements se connectent, ce qui circule entre les composants, et comment ces connexions sont liées aux données de capteurs en direct.
+Le comité BACnet de l'ASHRAE, Project Haystack et Brick Schema collaborent activement pour intégrer leurs vocabulaires dans ASHRAE 223P en tant que norme unificatrice.
 
-Nevertheless, no single standard covers all needs that can arise in practice when modeling complex building systems.
-A complete building model is expected to be ``a mix of ASHRAE 223P, Brick, QUDT, RealEstateCore, and
-possibly additional standards.'' ASHRAE 223P is designed as the semantic backbone that ties the others together.
+Néanmoins, aucune norme unique ne couvre tous les besoins qui peuvent surgir en pratique lors de la modélisation de systèmes de bâtiments complexes.
+Un modèle de bâtiment complet devrait être \og un mélange d'ASHRAE 223P, de Brick, de QUDT, de RealEstateCore et éventuellement de normes supplémentaires. \fg{} ASHRAE 223P est conçu comme l'épine dorsale sémantique qui relie les autres.
 
-\subsection{ASHRAE Standard 223P}
+\subsection{La norme ASHRAE 223P}
 \label{subsec:ashrae-223p}
 
-ASHRAE Standard 223P is a proposed ASHRAE standard that formally defines a knowledge representation
-framework for building systems.
-Its goal is to enable software applications to determine the meaning and context of building data
-without manual, building-specific configuration.
+La norme ASHRAE 223P est une norme ASHRAE proposée qui définit formellement un cadre de représentation des connaissances pour les systèmes de bâtiments.
+Son objectif est de permettre aux applications logicielles de déterminer la signification et le contexte des données d'un bâtiment sans configuration manuelle propre au bâtiment.
 
-\textbf{Current status:} The standard is in its second advisory public review as of 2025-2026.
-The project receives funding from the Department of Energy and is led by the National Renewable
-Energy Laboratory (NREL), with participation from Lawrence Berkeley National Lab, Pacific Northwest
-National Lab, NIST, Colorado School of Mines, and Cornell University.
+\textbf{État actuel :} La norme est en cours de son deuxième examen public consultatif à partir de 2025--2026.
+Le projet reçoit un financement du Département de l'Énergie et est dirigé par le Laboratoire national des énergies renouvelables (NREL), avec la participation du Laboratoire national Lawrence Berkeley, du Laboratoire national du Pacifique Nord-Ouest, du NIST, de l'École des Mines du Colorado et de l'Université Cornell.
 
-ASHRAE 223P organizes building system information around six core concepts, described in
-Table~\ref{tab:223p-concepts}.
+ASHRAE 223P organise les informations du système de bâtiment autour de six concepts fondamentaux, décrits dans le Tableau~\ref{tab:223p-concepts}.
 
 \begin{table}[htbp]
 \centering
-\caption{The six core concepts of ASHRAE 223P.}
+\caption{Les six concepts fondamentaux d'ASHRAE 223P.}
 \label{tab:223p-concepts}
 \small
 \begin{tabular}{lp{5.5cm}p{5cm}}
 \toprule
-\textbf{Concept} & \textbf{Definition} & \textbf{Example} \\
+\textbf{Concept} & \textbf{Définition} & \textbf{Exemple} \\
 \midrule
-Type & Well-defined classes with formal rules governing usage & Fan, Pump, CoolingCoil \\
-Topology & How equipment and spaces connect & Fan outlet $\to$ Duct $\to$ Coil inlet \\
-Composition & Hierarchical grouping of entities & AHU contains Fan, Coil, Damper \\
-Telemetry & Observable properties with external data references & Supply air temp $\to$ BACnet object 2500.AI11 \\
-Characteristics & Descriptive attributes with units & Rated airflow in m\textsuperscript{3}/s \\
-Medium & Substance conveyed through connections & Chilled water, Supply air, Electricity \\
+Type & Classes bien définies avec des règles formelles régissant l'utilisation & Fan, Pump, CoolingCoil \\
+Topologie & Comment les équipements et les espaces se connectent & Fan outlet $\to$ Duct $\to$ Coil inlet \\
+Composition & Regroupement hiérarchique des entités & AHU contains Fan, Coil, Damper \\
+Télémétrie & Propriétés observables avec des références de données externes & Supply air temp $\to$ BACnet object 2500.AI11 \\
+Caractéristiques & Attributs descriptifs avec unités & Débit d'air nominal en m\textsuperscript{3}/s \\
+Médium & Substance transportée à travers les connexions & Eau glacée, Air soufflé, Électricité \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Topology} is the most distinctive concept in ASHRAE 223P.
-Where other ontologies describe what equipment exists, 223P also describes how equipment connects.
-Every connection has a direction (inlet, outlet, or bidirectional), a physical path (duct, pipe, or
-wire), and a medium (air, water, electricity).
-This means an ASHRAE 223P model captures not just ``there is a fan and a coil'' but ``air flows from
-the fan outlet through a duct segment into the coil inlet, conveying Supply Air at design conditions.''
+\textbf{La topologie} est le concept le plus distinctif d'ASHRAE 223P.
+Là où d'autres ontologies décrivent les équipements existants, 223P décrit également comment les équipements se connectent.
+Chaque connexion a une direction (entrée, sortie ou bidirectionnelle), un chemin physique (conduit, tuyau ou câble), et un médium (air, eau, électricité).
+Cela signifie qu'un modèle ASHRAE 223P capture non seulement \og il y a un ventilateur et une bobine \fg{} mais \og l'air circule depuis la sortie du ventilateur à travers un segment de conduit jusqu'à l'entrée de la bobine, transportant l'Air soufflé dans les conditions de conception. \fg{}
 
-\textbf{Telemetry and external references} allow live BACnet sensor data to be explicitly linked to
-semantic properties in the model.
-A supply air temperature sensor in the model can declare that its value comes from
-\texttt{BACnet object 2500.AI11}, closing the loop between the abstract ontology and the live
-building management system.
+\textbf{La télémétrie et les références externes} permettent de lier explicitement les données de capteurs BACnet en direct aux propriétés sémantiques du modèle.
+Un capteur de température de l'air soufflé dans le modèle peut déclarer que sa valeur provient de \texttt{BACnet object 2500.AI11}, fermant la boucle entre l'ontologie abstraite et le système de gestion technique du bâtiment en direct.
 
-\subsection{Advantages and Barriers of Semantic Building Models}
+\subsection{Avantages et obstacles des modèles sémantiques de bâtiments}
 \label{subsec:advantages-barriers}
 
-Creating a semantic building model is not a trivial investment.
-Understanding why organizations would make that investment, and why they currently do not, 
-frames the business case for automation tools to build the ontology representation of a building.
+La création d'un modèle sémantique de bâtiment n'est pas un investissement trivial.
+Comprendre pourquoi les organisations feraient cet investissement, et pourquoi elles ne le font pas actuellement, fonde le cas d'affaires pour les outils d'automatisation permettant de construire la représentation ontologique d'un bâtiment.
 
-\textbf{Advantages of semantic building models:}
-
-\begin{itemize}[leftmargin=*, itemsep=2pt]
-  \item \textbf{Software portability:} applications built on a standard ontology can work across
-        buildings without building-specific customization, just as web browsers work across websites.
-  \item \textbf{Advanced analytics:} fault detection, automated commissioning, and predictive
-        maintenance all require knowing not just sensor values but what those values mean and how
-        equipment relates to each other.
-  \item \textbf{Grid services enablement:} Maximizing the contribution of the buildings to the grid services, it is required a deep understanding of the building composition, building mechanics, and owner preferences. 
-  A way to facilitate the extraction of that information for Virtual Power Plants or demand aggregators is by using standard ontologies at the building level.
-  \item \textbf{Reduced integration costs:} once a semantic model exists, any compliant application
-        can consume it without a custom integration project.
-  \item \textbf{Digital twin support:} the semantic layer is the connective tissue between physical
-        building systems and their digital representations.
-\end{itemize}
-
-\textbf{Barriers to adoption:}
+\textbf{Avantages des modèles sémantiques de bâtiments :}
 
 \begin{itemize}[leftmargin=*, itemsep=2pt]
-  \item \textbf{High creation cost:} building a semantic model today requires specialized domain
-        expertise and significant labor, often weeks of work by a qualified HVAC engineer.
-  \item \textbf{No automated tooling for existing buildings:} most available approaches are manual
-        or semi-manual, requiring expert knowledge of both HVAC systems and ontology standards.
-  \item \textbf{Fragmented standards landscape:} organizations must choose between partially
-        overlapping standards with no single dominant solution.
-  \item \textbf{Model maintenance:} models drift from reality as building systems are modified,
-        requiring ongoing expert effort to keep them current.
-  \item \textbf{Low industry adoption:} despite clear benefits, the broader industry has been slow
-        to adopt formal ontologies, creating a chicken-and-egg problem for software vendors.
+  \item \textbf{Portabilité des logiciels :} les applications construites sur une ontologie standard peuvent fonctionner dans différents bâtiments sans personnalisation propre au bâtiment, tout comme les navigateurs Web fonctionnent sur différents sites Web.
+  \item \textbf{Analytique avancée :} la détection des défauts, la mise en service automatisée et la maintenance prédictive nécessitent toutes de connaître non seulement les valeurs des capteurs, mais aussi ce que ces valeurs signifient et comment les équipements sont liés entre eux.
+  \item \textbf{Activation des services de réseau électrique :} pour maximiser la contribution des bâtiments aux services du réseau électrique, il est nécessaire d'avoir une compréhension approfondie de la composition du bâtiment, de sa mécanique et des préférences du propriétaire.
+  Une façon de faciliter l'extraction de ces informations pour les centrales électriques virtuelles ou les agrégateurs de demande est d'utiliser des ontologies standard au niveau du bâtiment.
+  \item \textbf{Réduction des coûts d'intégration :} une fois qu'un modèle sémantique existe, toute application conforme peut le consommer sans projet d'intégration personnalisé.
+  \item \textbf{Soutien au jumeau numérique :} la couche sémantique est le tissu conjonctif entre les systèmes physiques du bâtiment et leurs représentations numériques.
 \end{itemize}
 
-The high cost of \emph{creating} semantic models is the central barrier for adoption.
-A semantic model that would take a qualified engineer several weeks to create manually could enable
-years of automated analytics and facilitate control films to enable grid integration for the building.
-The investment is worthwhile; the bottleneck is the creation step.
-The creation step is, therefore, the central bottleneck blocking wider adoption of semantic building
-models and the benefits they enable.
+\textbf{Obstacles à l'adoption :}
 
-This work explores whether recent advances in artificial intelligence can meaningfully reduce that
-bottleneck.
-Modern large language models have demonstrated the ability to process heterogeneous, multi-modal
-data, including equipment schedules, control diagrams, point lists, and floor plans, and to reason
-over structured knowledge.
-\textbf{SI-Mapper} is a prototype tool that investigates this possibility: given the multi-modal
-data typically available in a real building project, can an AI-assisted pipeline generate an
-ASHRAE~223P-compliant ontology with sufficient accuracy and completeness to be practically useful?
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item \textbf{Coût élevé de création :} la construction d'un modèle sémantique aujourd'hui nécessite une expertise spécialisée dans le domaine et un travail considérable, souvent des semaines de travail par un ingénieur CVC (HVAC) qualifié.
+  \item \textbf{Absence d'outils automatisés pour les bâtiments existants :} la plupart des approches disponibles sont manuelles ou semi-manuelles, nécessitant une connaissance experte à la fois des systèmes CVC et des normes d'ontologie.
+  \item \textbf{Paysage de normes fragmenté :} les organisations doivent choisir entre des normes partiellement chevauchantes sans solution unique dominante.
+  \item \textbf{Maintenance du modèle :} les modèles s'éloignent de la réalité à mesure que les systèmes du bâtiment sont modifiés, nécessitant un effort expert continu pour les maintenir à jour.
+  \item \textbf{Faible adoption par l'industrie :} malgré des avantages évidents, le secteur plus large a été lent à adopter les ontologies formelles, créant un problème de poule et d'œuf pour les éditeurs de logiciels.
+\end{itemize}
 
-ASHRAE~223P is the target standard because it is the only building ontology that simultaneously
-captures full HVAC topology, links live BACnet telemetry to semantic equipment properties, and is
-explicitly designed for advanced building controls and grid-services applications.
-Its formal structure and institutional backing by DOE, NREL, and ASHRAE make it the most credible
-long-term foundation for interoperability, and its richness makes it the most demanding and
-informative test bed for evaluating AI-generated building models.
+Le coût élevé de la \emph{création} de modèles sémantiques est l'obstacle central à l'adoption.
+Un modèle sémantique qui prendrait à un ingénieur qualifié plusieurs semaines à créer manuellement pourrait permettre des années d'analytique automatisée et faciliter les films de contrôle pour activer l'intégration au réseau électrique du bâtiment.
+L'investissement en vaut la peine ; le goulot d'étranglement est l'étape de création.
+L'étape de création est donc le goulot d'étranglement central qui bloque une adoption plus large des modèles sémantiques de bâtiments et des avantages qu'ils permettent.
+
+Ce travail explore si les avancées récentes en intelligence artificielle peuvent réduire de manière significative ce goulot d'étranglement.
+Les grands modèles de langage modernes ont démontré leur capacité à traiter des données hétérogènes et multimodales, notamment les calendriers d'équipements, les schémas de contrôle, les listes de points et les plans d'étage, et à raisonner sur des connaissances structurées.
+\textbf{SI-Mapper} est un outil prototype qui explore cette possibilité : étant donné les données multimodales typiquement disponibles dans un projet de bâtiment réel, un pipeline assisté par l'IA peut-il générer une ontologie conforme à ASHRAE~223P avec une précision et une complétude suffisantes pour être pratiquement utile ?
+
+ASHRAE~223P est la norme cible parce qu'il est la seule ontologie de bâtiment qui capture simultanément la topologie CVC complète, relie la télémétrie BACnet en direct aux propriétés sémantiques des équipements, et est explicitement conçu pour les applications avancées de contrôle des bâtiments et de services au réseau électrique.
+Sa structure formelle et son soutien institutionnel par le DOE, le NREL et l'ASHRAE en font le fondement d'interopérabilité à long terme le plus crédible, et sa richesse en fait le banc d'essai le plus exigeant et le plus instructif pour évaluer les modèles de bâtiments générés par l'IA.
