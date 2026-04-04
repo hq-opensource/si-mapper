@@ -62,7 +62,16 @@ Fail immediately (no text response) if any of the following:
 - Every sensor must have a `hasUnit` property from a `bob`/`scratch` enum.
 
 ## BACnet External References
-When components have `custom_fields` with `bacnet_N` entries, **always create `BACnetExternalReference` objects** — do not store addresses only as comments. See `skill-ontology-lessons` (section "BACnet External References") for the full address-parsing rules, type suffix map, and code patterns.
+When components have `custom_fields` with `bacnet_N` entries, **always create `BACnetExternalReference` objects** — do not store addresses only as comments.
+
+Each `bacnet_N` entry contains pre-computed fields:
+- `code` — the original raw BACnet address (e.g. `"2500.AI13"`)
+- `address` — the fully-formed BACnet URI (e.g. `"bacnet://2500/analog-input,13/present-value"`) or `null` for skip types
+- `ref_type` — `"sensor"`, `"property"`, or `"skip"`
+
+Use `bacnet_N["address"]` directly when constructing `BACnetExternalReference`. Skip entries where `ref_type == "skip"` or `address` is `null`. No manual address parsing is needed.
+
+See `skill-ontology-lessons` (section "BACnet External References") for code patterns and the `@` operator usage.
 
 ## Spatial Context
 - Typical models are `System → Equipment`
