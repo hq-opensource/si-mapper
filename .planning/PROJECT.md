@@ -29,6 +29,6 @@ Engineers can upload a drawing and related technical files (Excel, BACnet, PDFs)
 
 ## Current State
 
-Phase 17 complete (2026-04-03) — BACnet custom_fields restructured to flat numbered format: `{"bacnet_1": {"address": "...", "unit": "...", "name": "..."}}` replaces `{"bacnet": {"ADDR": {...}}}`. `explode_bacnet_points` helper wired into all 4 write paths (internal_grid_tools, metadata_tools, metadata_manager). EDN translator verified key-agnostic. SKILL.md and live integration test updated. 13 new tests pass.
+Phase 23 complete (2026-04-04) — Master agent now has 4 Cypher query tools for live Neo4j exploration: `execute_cypher`, `execute_cypher_batch` (parallel via ThreadPoolExecutor), `get_graph_schema`, `search_graph_entities`. 15 unit tests pass. Neo4j Query Protocol added to master_instruction.md with write-gate safety rule.
 
-**Last updated:** 2026-04-03
+**Last updated:** 2026-04-04
