@@ -4,22 +4,22 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 23
 status: unknown
-last_updated: "2026-04-04T10:38:06.984Z"
+last_updated: "2026-04-04T11:54:19.041Z"
 progress:
   total_phases: 23
-  completed_phases: 17
+  completed_phases: 16
   total_plans: 46
-  completed_plans: 44
+  completed_plans: 45
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 22
-- **Overall Completion:** [██████████] 100%
-- **Active Plan:** 22-03 (complete — all 3 plans done)
-- **Last Completed:** 22-02 (wired enrich_flat_bacnet_points into all 4 write paths with component_type; MCP inlined copy added _parse_bacnet_address, _enrich_bacnet_point, _enrich_flat_bacnet_points + 3 constants)
+- **Current Phase:** 23
+- **Overall Completion:** [██████████] 98%
+- **Active Plan:** 23-01 (complete)
+- **Last Completed:** 23-01 (4 Cypher query tools: ExecuteCypherTool, ExecuteCypherBatchTool, GetGraphSchemaTool, SearchGraphEntitiesTool; 15 unit tests pass; ThreadPoolExecutor batch with ordered results)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -147,6 +147,7 @@ progress:
 - **2026-04-03:** Completed 22-01-PLAN.md. Added enrich_bacnet_point (converts raw BACnet address to bacnet:// URI, sets code/ref_type), _parse_bacnet_address, enrich_flat_bacnet_points (idempotent) to agent/utils/bacnet_helpers.py. Extended explode_bacnet_points with optional component_type param. 23 tests pass (17 new + 6 updated existing). TDD: RED (import error) → GREEN (all pass).
 - **2026-04-04:** Completed 22-02-PLAN.md. Wired enrich_flat_bacnet_points into all 4 write paths with component_type extraction. internal_grid_tools: moved explode inside for-loop + added enrichment at both write sites. metadata_tools: added enrichment in _apply_metadata via EDN Keyword('type'). metadata_manager: added import re, 3 constants (_BACNET_TYPE_MAP, _SKIP_TYPES, _SENSOR_COMPONENT_TYPES), 3 inlined functions (_parse_bacnet_address, _enrich_bacnet_point, _enrich_flat_bacnet_points), wired comp_type into both write methods. 87 tests pass.
 - **2026-04-03:** Completed 22-03-PLAN.md. Updated skill-ontology-generation, skill-ontology-validation, and skill-ontology-lessons SKILL.md files. Generation and validation skills document pre-computed bacnet_N fields (code, address, ref_type) and instruct agents to use address URI directly. Lessons skill adds Phase 22 update note at top of BACnet section while preserving all legacy parsing rules as fallback.
+- **2026-04-04:** Completed 23-01-PLAN.md. Created 4 Cypher query tools in agent/tools/neo4j_query_tools.py: ExecuteCypherTool (single query, 500-row cap), ExecuteCypherBatchTool (ThreadPoolExecutor parallel, ordered results, partial failure), GetGraphSchemaTool (labels/rel_types/prop_keys), SearchGraphEntitiesTool (case-insensitive substring). 15 unit tests pass.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -168,6 +169,10 @@ progress:
 - **Decision (22-02):** EDN Keyword('type') used to extract component type inside MetadataManager action closures where mutable value dict is available.
 - **Decision (22-03):** Pre-computed bacnet_N fields (code, address, ref_type) documented across all three ontology skills — agents consume address URI directly without manual parsing.
 - **Decision (22-03):** Lessons skill retains all existing address-parsing content as legacy fallback while Phase 22 update note is prepended at the top of the BACnet section.
+- **Decision (23-01):** _run_query is module-level (not a method) so ThreadPoolExecutor workers can call it without holding a class reference — avoids serialisation issues with bound methods.
+- **Decision (23-01):** ThreadPoolExecutor created INSIDE `with GraphDatabase.driver(...)` context to ensure driver stays open while threads execute queries.
+- **Decision (23-01):** future_to_index dict maps each Future to its original query index; as_completed fires in completion order, so index restores ordered batch results.
+- **Decision (23-01):** Batch mock uses side_effect function keyed on query string (not side_effect list) — side_effect list is not thread-safe across concurrent ThreadPoolExecutor workers.
 
 ## Roadmap Evolution
 
