@@ -17,6 +17,12 @@ from tools.internal_grid_tools import (
 )
 from tools.capture_frontend_state_tool import capture_frontend_state_tool
 from tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
+from tools.neo4j_query_tools import (
+    execute_cypher_tool,
+    execute_cypher_batch_tool,
+    get_graph_schema_tool,
+    search_graph_entities_tool,
+)
 from tools.ontology_tools import (
     read_python_files,
     scan_python_folder,
@@ -77,6 +83,11 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         update_component_metadata_batch,
         capture_frontend_state_tool,
         load_ttl_to_neo4j_tool,
+        # Neo4j query tools
+        execute_cypher_tool,
+        execute_cypher_batch_tool,
+        get_graph_schema_tool,
+        search_graph_entities_tool,
         # Ontology tools
         read_python_files,
         scan_python_folder,
