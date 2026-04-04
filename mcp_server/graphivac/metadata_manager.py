@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import json
 import asyncio
@@ -21,11 +22,71 @@ from mcp_server.graphivac.utils.grid_status import read_grid as read_grid_util
 logger = configure_logging()
 
 
-def _explode_bacnet_points(metadata: dict) -> dict:
+_BACNET_TYPE_MAP = {
+    "AI": "analog-input",
+    "AO": "analog-output",
+    "AV": "analog-value",
+    "BI": "binary-input",
+    "BO": "binary-output",
+    "BV": "binary-value",
+    "SCH": "schedule",
+}
+_SKIP_TYPES = {"PG", "CO", "TL"}
+_SENSOR_COMPONENT_TYPES = {
+    "duct_sensor_enthalpy", "duct_sensor_temperature",
+    "duct_sensor_differential_pressure", "duct_sensor_humidity",
+    "duct_sensor_flow", "duct_sensor_low_limit", "duct_sensor_static_pressure",
+    "pipe_sensor_temperature",
+}
+
+
+def _parse_bacnet_address(raw: str, component_type: str) -> tuple:
+    """Returns (uri, ref_type). Inlined copy of agent/utils/bacnet_helpers._parse_bacnet_address."""
+    if not raw or "." not in raw:
+        return None, "skip"
+    device, obj = raw.split(".", 1)
+    m = re.match(r"([A-Za-z]+)(\d+)", obj)
+    if not m:
+        return None, "skip"
+    type_code = m.group(1).upper()
+    instance = m.group(2)
+    if type_code in _SKIP_TYPES:
+        return None, "skip"
+    obj_type = _BACNET_TYPE_MAP.get(type_code)
+    if not obj_type:
+        return None, "skip"
+    uri = f"bacnet://{device}/{obj_type},{instance}/present-value"
+    ref_type = "sensor" if component_type in _SENSOR_COMPONENT_TYPES else "property"
+    return uri, ref_type
+
+
+def _enrich_bacnet_point(point: dict, component_type: str = "") -> dict:
+    """Inlined copy of agent/utils/bacnet_helpers.enrich_bacnet_point."""
+    raw = point.get("address", "")
+    enriched = dict(point)
+    enriched["code"] = raw
+    uri, ref_type = _parse_bacnet_address(raw, component_type)
+    enriched["address"] = uri
+    enriched["ref_type"] = ref_type
+    return enriched
+
+
+def _enrich_flat_bacnet_points(metadata: dict, component_type: str = "") -> dict:
+    """Inlined copy of agent/utils/bacnet_helpers.enrich_flat_bacnet_points."""
+    result = {}
+    for key, val in metadata.items():
+        if key.startswith("bacnet_") and isinstance(val, dict) and "address" in val and "code" not in val:
+            result[key] = _enrich_bacnet_point(val, component_type)
+        else:
+            result[key] = val
+    return result
+
+
+def _explode_bacnet_points(metadata: dict, component_type: str = "") -> dict:
     """Convert nested bacnet dict to flat bacnet_N entries.
 
     Converts {"bacnet": {"ADDR": {"name": ..., "unit": ...}}}
-    into     {"bacnet_1": {"address": "ADDR", "name": ..., "unit": ...}, ...}
+    into     {"bacnet_1": {"code": "ADDR", "address": <URI>, "ref_type": ..., "name": ..., "unit": ...}, ...}
     All other keys in metadata pass through unchanged.
 
     NOTE: This is an inlined copy of agent/utils/bacnet_helpers.explode_bacnet_points.
@@ -36,7 +97,8 @@ def _explode_bacnet_points(metadata: dict) -> dict:
         return metadata
     result = {k: v for k, v in metadata.items() if k != "bacnet"}
     for i, (address, point) in enumerate(metadata["bacnet"].items(), start=1):
-        result[f"bacnet_{i}"] = {"address": address, **point}
+        raw_point = {"address": address, **point}
+        result[f"bacnet_{i}"] = _enrich_bacnet_point(raw_point, component_type)
     return result
 
 
@@ -146,8 +208,11 @@ class MetadataManager:
                         logger.warning(f"Existing :custom-fields for {grid_name} is not a dict. Resetting.")
                         current_metadata = {}
 
-                    # Explode nested bacnet dict to flat bacnet_N entries
-                    metadata = _explode_bacnet_points(metadata)
+                    # Explode nested bacnet dict to flat bacnet_N entries, then enrich
+                    k_type = Keyword("type")
+                    comp_type = str(value.get(k_type, ""))
+                    metadata = _explode_bacnet_points(metadata, comp_type)
+                    metadata = _enrich_flat_bacnet_points(metadata, comp_type)
 
                     # Merge new metadata with technical cleanup
                     for m_key, m_val in metadata.items():
@@ -250,8 +315,11 @@ class MetadataManager:
                         logger.warning(f"Component {grid_name_str} is not a dictionary. Skipping.")
                         continue
 
-                    # Explode nested bacnet dict to flat bacnet_N entries
-                    target_metadata = _explode_bacnet_points(target_metadata)
+                    # Explode nested bacnet dict to flat bacnet_N entries, then enrich
+                    k_type = Keyword("type")
+                    comp_type = str(value.get(k_type, ""))
+                    target_metadata = _explode_bacnet_points(target_metadata, comp_type)
+                    target_metadata = _enrich_flat_bacnet_points(target_metadata, comp_type)
 
                     # Prepare custom fields
                     current_metadata = value.get(k_custom_fields, {})
