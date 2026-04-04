@@ -424,7 +424,7 @@ Plans:
 **Goal:** Translate the LaTeX research report from English to French. Create a new report_french/ folder at root replicating the entire report/ LaTeX structure with all content (body text, section headings, captions, tables, \todo markers, references.bib) translated to French. The existing report/ folder must not be modified.
 **Requirements**: [TBD-01, TBD-02, TBD-03, TBD-04, TBD-05, TBD-06]
 **Depends on:** Phase 24
-**Plans:** 1/4 plans executed
+**Plans:** 2/4 plans executed
 
 Plans:
 - [ ] 25-01-PLAN.md — Copy report/ to report_french/, translate main.tex (preamble/title/abstract) + references.bib

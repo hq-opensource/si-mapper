@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 25
 status: unknown
-last_updated: "2026-04-04T19:40:12.895Z"
+last_updated: "2026-04-04T19:47:30.249Z"
 progress:
   total_phases: 25
   completed_phases: 18
   total_plans: 51
-  completed_plans: 48
+  completed_plans: 49
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 25
-- **Overall Completion:** [█████████░] 94%
-- **Active Plan:** 25-01 (complete)
-- **Last Completed:** 25-01 (report_french/ created with full structure, main.tex translated to French with babel[french], all 19 bib entry titles translated in references.bib)
+- **Overall Completion:** [██████████] 96%
+- **Active Plan:** 25-02 (complete)
+- **Last Completed:** 25-02 (01-introduction.tex and 02-problem.tex fully translated to French; all LaTeX labels, cite keys, and code strings preserved; Virtual Power Plants -> centrales électriques virtuelles; GTB/BMS/GTB/BAS terminology used on first mention)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -184,6 +184,10 @@ progress:
 - **Decision (25-01):** report_french/ section files copied verbatim in plan 01 — each section translated independently in plans 25-02 through 25-05; isolation enables clean per-section commits.
 - **Decision (25-01):** All bib entry keys unchanged so \\cite{} commands in section files need no modification during translation — only title/note fields translated.
 - **Decision (25-01):** babel[french] placed immediately after \\usepackage[utf8]{inputenc} following standard LaTeX preamble ordering.
+- **2026-04-04:** Completed 25-02-PLAN.md. Translated 01-introduction.tex (138 lines) and 02-problem.tex (278 lines) to French. All section headings, subsection headings, tables, and prose translated. All \\label{}, \\ref{}, \\cite{}, \\texttt{} preserved verbatim. GTB/BMS/GTB/BAS used on first mention; CVC (HVAC) on first HVAC mention; centrales électriques virtuelles for Virtual Power Plants.
+- **Decision (25-02):** French guillemets written using \\og and \\fg macros (babel[french] convention) rather than English double-quote markup.
+- **Decision (25-02):** CVC (HVAC) used on first HVAC mention in 01-introduction.tex; GTB/BMS on first BMS mention; GTB/BAS on first BAS mention in 02-problem.tex.
+- **Decision (25-02):** Virtual Power Plants -> centrales électriques virtuelles on first use; centrales virtuelles acceptable for brevity in subsequent uses.
 
 ## Roadmap Evolution
 
