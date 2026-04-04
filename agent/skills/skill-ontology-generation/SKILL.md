@@ -18,7 +18,7 @@ The ONLY valid way to signal completion is to call `exit_with_success(summary=".
 4. **Read ontology examples** — Call `scan_python_folder("agent/223p/examples/pritoni", keywords=[<class names>])` to find relevant reference implementations across the sample library. The response contains `"files": [...]` — each entry has `"path"` and `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`. Read the `content` field of each section; the surrounding lines provide the full usage context.
 5. **Read lessons** — Load the skill `skill-ontology-lessons` and apply every error-to-resolution lesson listed there to your generation plan before writing any code. If the file is empty or absent, proceed without it.
 6. **Plan** — Outline entities, connections, and spatial hierarchy. Refer to the "Ontology Generation Principles" and "Modeling Guidelines" sections below for rules and best practices.
-7. **Generate** — Write a single Python file using `bob` and `scratch` libraries. Refer to the "Ontology Generation Principles" and "Modeling Guidelines" sections below for rules and best practices. Use the lessons from `skill-ontology-lessons` to avoid past pitfalls. Do not write TTL manually or use other ontology libraries.
+7. **Generate** — Write a single Python file using `bob` and `scratch` libraries. Use the lessons from `skill-ontology-lessons` to avoid past pitfalls. Do not write TTL manually or use other ontology libraries.
 8. **Validate** — Confirm output is valid, executable Python using `bob`/`scratch`.
 9. **Write** — Call `write_ontology` to save the file.
 10. **Exit** — Call `exit_with_success(summary="...")`. Summary must include: equipment count, connection types used, notable design decisions.

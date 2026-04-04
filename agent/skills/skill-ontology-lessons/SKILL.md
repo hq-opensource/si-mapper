@@ -33,21 +33,20 @@ Use the description of errors and the solutions that worked in the past to enhan
 - **Error:** Attempting to serialize the graph using `get_model_graph(model_name)` and `g.serialize(...)` or `DataGraph().serialize(...)` which may fail or be incorrect. -> **Fix:** Use `dump(filename=str(output_file))` imported from `bob.core` to serialize the ontology.
 
 ## BACnet External References
-> **Phase 22 update:** Each `bacnet_N` entry now contains pre-computed fields: `code` (original raw address), `address` (fully-formed BACnet URI or `null` for skip types), and `ref_type` (`"sensor"`, `"property"`, or `"skip"`). Use `bacnet_N["address"]` directly — the manual parsing rules below are retained as legacy fallback only.
-
-- **Error:** Storing BACnet points only as property comments (e.g., `add_property(Percent(label="TEMP. ALIM.", comment="BACnet: 2500.AI13"))`). -> **Fix:** Use `BACnetExternalReference` with the `@` operator. Import: `from bob.externalreference.bacnet import BACnetExternalReference`.
-- **Address parsing:** Convert `<device>.<TypeCode><instance>` to `bacnet://<device>/<object-type>,<instance>/present-value`. Suffix map: `AI`→`analog-input`, `AO`→`analog-output`, `AV`→`analog-value`, `BI`→`binary-input`, `BO`→`binary-output`, `BV`→`binary-value`, `SCH`→`schedule`. Skip `PG`, `CO`, `TL` — not valid types; keep as comments. Example: `"2500.AI13"` → `"bacnet://2500/analog-input,13/present-value"`.
+> **Structure:** Each `bacnet_N` entry now contains pre-computed fields: `code` (original raw address, e.g. `"2500.AI13"`), `address` (fully-formed BACnet URI or `null` for skip types, e.g. `"bacnet://2500/analog-input,13/present-value"`), and `ref_type` (`"sensor"`, `"property"`, or `"skip"`). Use `bacnet_N["address"]` directly.
 - **Pattern for sensors** — `@` works directly on a sensor (Sensor IS a Property):
   ```python
   t_alim @ BACnetExternalReference("bacnet://2500/analog-input,13/present-value")
   ```
-- **Pattern for equipment control/actuator points** — capture the property variable first, then link (you cannot call `@` on the equipment node directly):
+- **Pattern for equipment control/actuator points** — create the property variable first, then link to the external reference (you cannot call `@` on the equipment node directly):
   ```python
   mod_drive = Percent(label="MOD. DRIVE ALM No.1A")
   vfd_1_a.add_property(mod_drive)
   mod_drive @ BACnetExternalReference("bacnet://2500/analog-output,6/present-value")
   ```
-- **Validation rule:** if the ontology has `comment="BACnet: ..."` patterns but no `BACnetExternalReference` usages, treat this as a fixable issue and convert them using the patterns above.
+- **Validation rule:** if the ontology has `comment="BACnet: ..."` patterns but no `BACnetExternalReference` usages, treat this as an **error** (e.g., `add_property(Percent(label="TEMP. ALIM.", comment="BACnet: 2500.AI13"))`). -> **Fix:** Use `BACnetExternalReference` with the `@` operator. Import: `from bob.externalreference.bacnet import BACnetExternalReference`.
+- **Address parsing:** Convert `<device>.<TypeCode><instance>` to `bacnet://<device>/<object-type>,<instance>/present-value`. Suffix map: `AI`→`analog-input`, `AO`→`analog-output`, `AV`→`analog-value`, `BI`→`binary-input`, `BO`→`binary-output`, `BV`→`binary-value`, `SCH`→`schedule`. Skip `PG`, `CO`, `TL` — not valid types; keep as comments. Example: `"2500.AI13"` → `"bacnet://2500/analog-input,13/present-value"`.
+
 
 ## Structural approach
 - **Error:** Using `System("AHU-1")` and `ahu_system.contains(...)` or `Junction(...)` which might not be supported or correct in the current library version. -> **Fix:** Use a flat structure with `bind_model_namespace` and instantiate components directly without wrapping them in a `System` container (unless explicitly required, in which case use the `>` operator).
