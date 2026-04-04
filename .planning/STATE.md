@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 25
 status: unknown
-last_updated: "2026-04-04T19:47:30.249Z"
+last_updated: "2026-04-04T19:50:07.312Z"
 progress:
   total_phases: 25
   completed_phases: 18
   total_plans: 51
-  completed_plans: 49
+  completed_plans: 51
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 25
-- **Overall Completion:** [██████████] 96%
-- **Active Plan:** 25-02 (complete)
-- **Last Completed:** 25-02 (01-introduction.tex and 02-problem.tex fully translated to French; all LaTeX labels, cite keys, and code strings preserved; Virtual Power Plants -> centrales électriques virtuelles; GTB/BMS/GTB/BAS terminology used on first mention)
+- **Overall Completion:** [██████████] 98%
+- **Active Plan:** 25-03 (complete)
+- **Last Completed:** 25-03 (03-solution.tex, 04-experiment.tex, and 05-conclusions.tex fully translated to French; 15 \todo{} markers translated and preserved; labels added per plan spec for subsec:iterations, subsec:final-architecture, subsec:tools, subsec:technology-decisions; all LaTeX labels, cite keys, includegraphics paths, code identifiers preserved)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -151,6 +151,7 @@ progress:
 - **2026-04-04:** Completed 23-02-PLAN.md. Wired all 4 Cypher query tools into create_master_agent.py task_tools. Added Neo4j Query Protocol section to master_instruction.md with write-gate rule, recommended exploration sequence (schema -> search -> query -> batch), n10s namespace verbatim-preservation warning, and 500-row result cap documentation. 102 tests pass. Phase 23 complete.
 - **2026-04-04:** Completed 24-01-PLAN.md. Deleted capture_frontend_state_tool.py + 2 test files. Removed import/registration from create_master_agent.py. Removed playwright>=1.40.0 from pyproject.toml. Simplified skill-ductwork/SKILL.md (5 steps: no verification loop) and skill-hvac-equipments/SKILL.md (6 steps: no verification loop). Added regression guard test. 7 master agent tests pass. Phase 24 complete.
 - **2026-04-04:** Completed 25-01-PLAN.md. Created report_french/ (21 files: 5 sections, 11 figures, 3 diagrams, main.tex, references.bib). Added babel[french] to preamble; translated title, abstract, date in main.tex. Translated all 19 bib entry titles and notes in references.bib. All entry keys, structure, and section files preserved verbatim.
+- **2026-04-04:** Completed 25-03-PLAN.md. Translated 03-solution.tex (392 lines), 04-experiment.tex (267 lines), 05-conclusions.tex (156 lines) to French. All 15 \todo{} markers translated and preserved. Added 4 missing labels per plan spec. All LaTeX labels, cite keys, includegraphics paths, code identifiers preserved.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -188,6 +189,8 @@ progress:
 - **Decision (25-02):** French guillemets written using \\og and \\fg macros (babel[french] convention) rather than English double-quote markup.
 - **Decision (25-02):** CVC (HVAC) used on first HVAC mention in 01-introduction.tex; GTB/BMS on first BMS mention; GTB/BAS on first BAS mention in 02-problem.tex.
 - **Decision (25-02):** Virtual Power Plants -> centrales électriques virtuelles on first use; centrales virtuelles acceptable for brevity in subsequent uses.
+- **Decision (25-03):** Source 04-experiment.tex has 15 \todo{} markers (not 16 as plan estimated); all 15 translated and preserved faithfully — plan estimate was incorrect.
+- **Decision (25-03):** Labels subsec:iterations, subsec:final-architecture, subsec:tools, subsec:technology-decisions added to 03-solution.tex per plan spec; these labels were absent from the English source but required by the plan.
 
 ## Roadmap Evolution
 
