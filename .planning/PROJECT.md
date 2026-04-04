@@ -29,6 +29,6 @@ Engineers can upload a drawing and related technical files (Excel, BACnet, PDFs)
 
 ## Current State
 
-Phase 23 complete (2026-04-04) — Master agent now has 4 Cypher query tools for live Neo4j exploration: `execute_cypher`, `execute_cypher_batch` (parallel via ThreadPoolExecutor), `get_graph_schema`, `search_graph_entities`. 15 unit tests pass. Neo4j Query Protocol added to master_instruction.md with write-gate safety rule.
+Phase 24 complete (2026-04-04) — Playwright screenshot verification mechanism removed entirely. `capture_frontend_state_tool.py` and both test files deleted, `playwright>=1.40.0` removed from pyproject.toml, agent registration stripped from `create_master_agent.py`. Both `skill-ductwork` and `skill-hvac-equipments` SKILL.md simplified — exit summaries now require component count + sync confirmation only. Regression guard added to `test_create_master_agent.py`.
 
 **Last updated:** 2026-04-04
