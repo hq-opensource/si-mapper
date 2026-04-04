@@ -137,9 +137,9 @@
 | P21-03 | Phase 21 | Planned |
 | P21-04 | Phase 21 | Planned |
 | P21-05 | Phase 21 | Planned |
-| P22-01 | Phase 22 | Planned |
-| P22-02 | Phase 22 | Planned |
-| P22-03 | Phase 22 | Planned |
+| P22-01 | Phase 22 | Complete |
+| P22-02 | Phase 22 | Complete |
+| P22-03 | Phase 22 | Complete |
 | P23-01 | Phase 23 | Planned |
 | P23-02 | Phase 23 | Planned |
 | P23-03 | Phase 23 | Planned |
@@ -386,7 +386,7 @@ Plans:
 Plans:
 - [ ] 21-01-PLAN.md — Remove useCoAgent, simplify combinedState and StateSyncer to polling-only
 
-### Phase 22: Enhance BACnet parsing
+### Phase 22: Enhance BACnet parsing ✅ Complete (2026-04-04)
 
 **Goal:** Enrich the BACnet metadata dictionary at write-time so the ontology agent can use pre-computed fields (code, address URI, ref_type) instead of parsing addresses manually. Add enrich_bacnet_point helper, wire into all 4 write paths, mirror to MCP inlined copy, and update 3 ontology skill SKILL.md files.
 **Requirements**: [P22-01, P22-02, P22-03]
@@ -394,9 +394,9 @@ Plans:
 **Plans:** 3/3 plans complete
 
 Plans:
-- [ ] 22-01-PLAN.md — TDD: enrich_bacnet_point + _parse_bacnet_address + enrich_flat_bacnet_points + tests
-- [ ] 22-02-PLAN.md — Wire enrichment into all 4 write paths + mirror to MCP metadata_manager.py
-- [ ] 22-03-PLAN.md — Update skill-ontology-generation, skill-ontology-validation, skill-ontology-lessons SKILL.md
+- [x] 22-01-PLAN.md — TDD: enrich_bacnet_point + _parse_bacnet_address + enrich_flat_bacnet_points + tests
+- [x] 22-02-PLAN.md — Wire enrichment into all 4 write paths + mirror to MCP metadata_manager.py
+- [x] 22-03-PLAN.md — Update skill-ontology-generation, skill-ontology-validation, skill-ontology-lessons SKILL.md
 
 ### Phase 23: Add Cypher query tool for Neo4j agent exploration
 
