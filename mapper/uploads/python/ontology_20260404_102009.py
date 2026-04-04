@@ -1,4 +1,4 @@
-from bob.core import bind_model_namespace, dump, UNIT, Junction
+from bob.core import bind_model_namespace, dump, UNIT
 from bob.properties import Temperature, Pressure, RelativeHumidity, Amps, OnOffCommand, OnOffStatus
 from bob.properties.ratio import Percent, PercentCommand
 from scratch.hvac.damper import Damper
@@ -38,25 +38,21 @@ damper_rav = Damper(label="MD-RAV")
 fan_r = Fan(label="1-R")
 vfd_1r = VFD(label="VFD-1R")
 
-mix_plenum = Junction(label="MIX-PLENUM")
-
 # 2. Connections
 # Exhaust
 damper_evac.airOutlet >> fan_e.airInlet
 
 # Return
 fan_r.airOutlet >> damper_rav.airInlet
-
-# Mixing
-damper_melange.airOutlet >> mix_plenum
-damper_paf1.airOutlet >> mix_plenum
-damper_paf2.airOutlet >> mix_plenum
+damper_melange.airOutlet >> filter_1.airInlet  # Mixed air into filter
 
 # Supply
-mix_plenum >> filter_1.airInlet
+damper_paf1.airOutlet >> filter_1.airInlet
+damper_paf2.airOutlet >> filter_1.airInlet
 filter_1.airOutlet >> cc_1.airInlet
 cc_1.airOutlet >> fan_a.airInlet
 fan_a.airOutlet >> hc_1.airInlet
+hc_1.airOutlet >> hum_1.airInlet
 
 # Electrical
 vfd_1a.electricalOutlet >> fan_a.electricalInlet
@@ -65,27 +61,27 @@ vfd_1r.electricalOutlet >> fan_r.electricalInlet
 # 3. Sensors & BACnet
 temp_ret = AirTemperatureSensor(label="TEMP-RET")
 temp_ret % fan_r
-temp_ret.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,14/present-value")
+temp_ret @ BACnetExternalReference("bacnet://2500/analog-input,14/present-value")
 
 hum_ret = AirHumiditySensor(label="HUM-RET")
 hum_ret % fan_r
-hum_ret.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,16/present-value")
+hum_ret @ BACnetExternalReference("bacnet://2500/analog-input,16/present-value")
 
 temp_mix = AirTemperatureSensor(label="TEMP-MIX")
 temp_mix % filter_1
-temp_mix.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,15/present-value")
+temp_mix @ BACnetExternalReference("bacnet://2500/analog-input,15/present-value")
 
 dps_1 = AirDifferentialStaticPressureSensor(label="DPS-1")
 dps_1 % filter_1
-dps_1.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,18/present-value")
+dps_1 @ BACnetExternalReference("bacnet://2500/analog-input,18/present-value")
 
 temp_sup = AirTemperatureSensor(label="TEMP-SUP")
 temp_sup % hc_1
-temp_sup.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,13/present-value")
+temp_sup @ BACnetExternalReference("bacnet://2500/analog-input,13/present-value")
 
 sps_1 = PressureSensor(label="SPS-1", ofMedium=Air, hasUnit=UNIT["IN_H2O"])
 sps_1 % fan_a
-sps_1.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,17/present-value")
+sps_1 @ BACnetExternalReference("bacnet://2500/analog-input,17/present-value")
 
 sps_1_sp = Pressure(label="P.C. PRES STAT 1A", hasUnit=UNIT["IN_H2O"])
 sps_1.add_property(sps_1_sp)

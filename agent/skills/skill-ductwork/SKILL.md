@@ -70,7 +70,6 @@ Call the tool `sync_agent_to_graphivac` to send the ductwork to the frontend.
 Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
 - Number of ducts registered (horizontal and vertical counts)
 - Confirmation that `sync_agent_to_graphivac` succeeded
-
 Example: "5 ducts registered and synced to frontend (4 horizontal, 1 vertical)"
 
 

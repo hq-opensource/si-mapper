@@ -20,7 +20,7 @@ The ONLY valid way to signal completion is to call `exit_with_success(summary=".
 6. **Plan** — Outline entities, connections, and spatial hierarchy. Refer to the "Ontology Generation Principles" and "Modeling Guidelines" sections below for rules and best practices.
 7. **Generate** — Write a single Python file using `bob` and `scratch` libraries. Use the lessons from `skill-ontology-lessons` to avoid past pitfalls. Do not write TTL manually or use other ontology libraries.
 8. **Validate** — Confirm output is valid, executable Python using `bob`/`scratch`.
-9. **Write** — Call `write_ontology` to save the file.
+9. **Write** — Call `write_ontology(content=<code>)` to save the file. The `content` argument **must be a multi-line string with real newline characters** — not a single-line string with literal `\n` escape sequences. When constructing the tool call, write the code across multiple lines exactly as it would appear in a `.py` file.
 10. **Exit** — Call `exit_with_success(summary="...")`. Summary must include: equipment count, connection types used, notable design decisions.
 
 

@@ -26,7 +26,6 @@ Place HVAC equipment on the established duct system.
 6. **Exit**: Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
    - Number of equipment pieces placed
    - Confirmation that `sync_agent_to_graphivac` succeeded
-
    Example: "12 equipment pieces registered and synced to frontend (3 fans, 2 coils, 4 dampers, 1 filter, 2 sensors)"
 
 # Rules
