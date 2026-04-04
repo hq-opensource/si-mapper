@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 22
 status: unknown
-last_updated: "2026-04-04T10:31:49.098Z"
+last_updated: "2026-04-04T10:38:06.984Z"
 progress:
   total_phases: 23
-  completed_phases: 15
-  total_plans: 44
-  completed_plans: 43
+  completed_phases: 16
+  total_plans: 46
+  completed_plans: 44
 ---
 
 # State: HVAC Reconstruction Project
@@ -18,8 +18,8 @@ progress:
 
 - **Current Phase:** 22
 - **Overall Completion:** [██████████] 100%
-- **Active Plan:** 22-03 (complete — plan 03 done)
-- **Last Completed:** 22-03 (updated three ontology SKILL.md files to document pre-computed bacnet_N fields: code, address URI, ref_type — agents now use address directly, no manual parsing needed; lessons skill adds Phase 22 note while preserving legacy fallback)
+- **Active Plan:** 22-03 (complete — all 3 plans done)
+- **Last Completed:** 22-02 (wired enrich_flat_bacnet_points into all 4 write paths with component_type; MCP inlined copy added _parse_bacnet_address, _enrich_bacnet_point, _enrich_flat_bacnet_points + 3 constants)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -145,6 +145,7 @@ progress:
 - **2026-04-03:** Completed 20-01-PLAN.md. Created agent/utils/session_logger.py (log_events function, JSONL append, OSError silencing, lazy dir creation). Created agent/tests/test_session_logger.py (7 TDD tests, all pass). Wired log_events into shared_model_callback in callback_utils.py after state events update. Added logs/ to agent/.gitignore. 7 new tests pass + 59 existing pass.
 - **2026-04-03:** Completed 21-01-PLAN.md. Removed useCoAgent from mapper/src/app/page.tsx. Added DEFAULT_AGENT_STATE module-level constant. Simplified combinedState to pooledState ?? DEFAULT_AGENT_STATE one-liner. Rewrote StateSyncer to accept only pooledState prop (no agentState). TypeScript compiles clean, Next.js build succeeds. Fixes "Maximum update depth exceeded" render loop.
 - **2026-04-03:** Completed 22-01-PLAN.md. Added enrich_bacnet_point (converts raw BACnet address to bacnet:// URI, sets code/ref_type), _parse_bacnet_address, enrich_flat_bacnet_points (idempotent) to agent/utils/bacnet_helpers.py. Extended explode_bacnet_points with optional component_type param. 23 tests pass (17 new + 6 updated existing). TDD: RED (import error) → GREEN (all pass).
+- **2026-04-04:** Completed 22-02-PLAN.md. Wired enrich_flat_bacnet_points into all 4 write paths with component_type extraction. internal_grid_tools: moved explode inside for-loop + added enrichment at both write sites. metadata_tools: added enrichment in _apply_metadata via EDN Keyword('type'). metadata_manager: added import re, 3 constants (_BACNET_TYPE_MAP, _SKIP_TYPES, _SENSOR_COMPONENT_TYPES), 3 inlined functions (_parse_bacnet_address, _enrich_bacnet_point, _enrich_flat_bacnet_points), wired comp_type into both write methods. 87 tests pass.
 - **2026-04-03:** Completed 22-03-PLAN.md. Updated skill-ontology-generation, skill-ontology-validation, and skill-ontology-lessons SKILL.md files. Generation and validation skills document pre-computed bacnet_N fields (code, address, ref_type) and instruct agents to use address URI directly. Lessons skill adds Phase 22 update note at top of BACnet section while preserving all legacy parsing rules as fallback.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
@@ -162,6 +163,9 @@ progress:
 - **Decision (21-01):** StateSyncer simplified to single-source sync — no array merging, no agentRest, no adkData; early return when pooledState is null eliminates spurious context updates.
 - **Decision (22-01):** enrich_bacnet_point does NOT mutate input dict — shallow copy first; existing 6 tests updated to check code==raw_address and address==URI since explode_bacnet_points now enriches at explosion time.
 - **Decision (22-01):** explode_bacnet_points backward compatible via optional component_type="" — callers without arg receive ref_type="property" for all points.
+- **Decision (22-02):** explode_bacnet_points moved inside for-loop in update_component_metadata so component_type is available from the matched component before explosion — enrichment needs type to determine sensor vs property ref_type.
+- **Decision (22-02):** MCP inlined _explode_bacnet_points updated to accept component_type and delegate to _enrich_bacnet_point — explosion and enrichment handled atomically in one function call.
+- **Decision (22-02):** EDN Keyword('type') used to extract component type inside MetadataManager action closures where mutable value dict is available.
 - **Decision (22-03):** Pre-computed bacnet_N fields (code, address, ref_type) documented across all three ontology skills — agents consume address URI directly without manual parsing.
 - **Decision (22-03):** Lessons skill retains all existing address-parsing content as legacy fallback while Phase 22 update note is prepended at the top of the BACnet section.
 
