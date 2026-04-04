@@ -408,3 +408,4 @@ Plans:
 Plans:
 - [x] 23-01-PLAN.md — Create neo4j_query_tools.py (4 BaseTool subclasses) + unit tests (TDD)
 - [x] 23-02-PLAN.md — Register tools in create_master_agent.py + add Neo4j Query Protocol to master_instruction.md
+
