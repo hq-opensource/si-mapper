@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 23
+current_phase: 24
 status: unknown
-last_updated: "2026-04-04T11:59:35.814Z"
+last_updated: "2026-04-04T13:49:51.830Z"
 progress:
   total_phases: 23
   completed_phases: 17
@@ -16,10 +16,10 @@ progress:
 
 ## Project Progress
 
-- **Current Phase:** 23
+- **Current Phase:** 24
 - **Overall Completion:** [██████████] 100%
-- **Active Plan:** 23-02 (complete)
-- **Last Completed:** 23-02 (4 Cypher query tools wired into create_master_agent.py task_tools; Neo4j Query Protocol added to master_instruction.md with write-gate, exploration sequence, and n10s namespace warning)
+- **Active Plan:** 24-01 (complete)
+- **Last Completed:** 24-01 (capture_frontend_state_tool deleted, playwright dependency removed, ductwork and HVAC equipment skills simplified to 5/6-step place-sync-exit flows, regression guard test added)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -149,6 +149,7 @@ progress:
 - **2026-04-03:** Completed 22-03-PLAN.md. Updated skill-ontology-generation, skill-ontology-validation, and skill-ontology-lessons SKILL.md files. Generation and validation skills document pre-computed bacnet_N fields (code, address, ref_type) and instruct agents to use address URI directly. Lessons skill adds Phase 22 update note at top of BACnet section while preserving all legacy parsing rules as fallback.
 - **2026-04-04:** Completed 23-01-PLAN.md. Created 4 Cypher query tools in agent/tools/neo4j_query_tools.py: ExecuteCypherTool (single query, 500-row cap), ExecuteCypherBatchTool (ThreadPoolExecutor parallel, ordered results, partial failure), GetGraphSchemaTool (labels/rel_types/prop_keys), SearchGraphEntitiesTool (case-insensitive substring). 15 unit tests pass.
 - **2026-04-04:** Completed 23-02-PLAN.md. Wired all 4 Cypher query tools into create_master_agent.py task_tools. Added Neo4j Query Protocol section to master_instruction.md with write-gate rule, recommended exploration sequence (schema -> search -> query -> batch), n10s namespace verbatim-preservation warning, and 500-row result cap documentation. 102 tests pass. Phase 23 complete.
+- **2026-04-04:** Completed 24-01-PLAN.md. Deleted capture_frontend_state_tool.py + 2 test files. Removed import/registration from create_master_agent.py. Removed playwright>=1.40.0 from pyproject.toml. Simplified skill-ductwork/SKILL.md (5 steps: no verification loop) and skill-hvac-equipments/SKILL.md (6 steps: no verification loop). Added regression guard test. 7 master agent tests pass. Phase 24 complete.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -177,6 +178,8 @@ progress:
 - **Decision (23-02):** 4 Cypher tool singletons placed in task_tools after load_ttl_to_neo4j_tool with # Neo4j query tools comment — consistent with other Neo4j tooling grouping.
 - **Decision (23-02):** Neo4j Query Protocol section inserted immediately after Neo4j Import Protocol in master_instruction.md — logical grouping keeps all Neo4j guidance co-located.
 - **Decision (23-02):** Write-gate rule uses explicit list of write keywords (CREATE, MERGE, DELETE, SET, REMOVE) for clarity; n10s namespace warning uses concrete label examples so agent knows exact format from get_graph_schema output.
+- **Decision (24-01):** Playwright removed entirely — screenshot verification expensive and unreliable; new philosophy is place-sync-exit (human inspects manually).
+- **Decision (24-01):** Skill exit summaries simplified to component count + sync confirmation only (correction counts and verification pass/fail removed).
 
 ## Roadmap Evolution
 
