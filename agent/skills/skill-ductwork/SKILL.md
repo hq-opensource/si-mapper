@@ -11,7 +11,7 @@ Identify and replicate all **horizontal and vertical ducts** in HVAC drawings as
 # Execution Flow
 
 ## 1. Ingest Context
-- Use `ingest_category_files(category='hvac')`. **Note the artifact names returned** — you will need them in the verification step.
+- Use `ingest_category_files(category='hvac')`.
 - Use `load_artifacts` to access drawing artifacts. **Remember which artifact names contain the reference drawings.**
 - Use `read_internal_grid` to retrieve existing components
 
@@ -66,21 +66,12 @@ Ensure start_coord and end_coord reflect true airflow direction as explained in 
 
 Call the tool `sync_agent_to_graphivac` to send the ductwork to the frontend.
 
-## 5. Verify the ductwork
-After calling the tool `sync_agent_to_graphivac`, perform a **Duct Verification Checkpoint**:
-- Call `capture_frontend_state()` to take the screenshot.
-- Then call `load_artifacts` passing **both** the snapshot and the original reference drawing artifact name(s) in a single call — for example: `load_artifacts(artifact_names=["verification/latest_snapshot.png", "hvac/<reference_drawing_filename>"])`. Use the artifact names you noted in Step 1.
-- Compare the snapshot against the reference image side-by-side. Verify that all horizontal and vertical ducts are present, correctly positioned, and flow directions are correct.
-- If discrepancies are found, correct them by calling the tool `add_components_batch` or `delete_components_batch`.
-- After all corrections are finished, call `sync_agent_to_graphivac` again and repeat the checkpoint instructions until the ducts match the reference.
-
-## 6. Exit
+## 5. Exit
 Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
 - Number of ducts registered (horizontal and vertical counts)
-- Number of corrections made during verification
-- Final verification result (pass/fail)
+- Confirmation that `sync_agent_to_graphivac` succeeded
 
-**Failure path:** If verification cannot be resolved after 3 correction cycles, call `exit_with_failure(reason="...")` explaining the unresolvable discrepancies.
+Example: "5 ducts registered and synced to frontend (4 horizontal, 1 vertical)"
 
 
 # Rules

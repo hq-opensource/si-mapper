@@ -58,6 +58,12 @@ def test_imports_adapted_exit_tools():
         assert old_tool not in src, f"{old_tool} still referenced in create_master_agent.py"
 
 
+def test_no_capture_frontend_state_tool_import():
+    """create_master_agent.py must NOT import capture_frontend_state_tool (removed in Phase 24)."""
+    src = pathlib.Path("master_architecture/create_master_agent.py").read_text()
+    assert "capture_frontend_state_tool" not in src
+
+
 def test_max_iterations_is_100():
     """MasterMainLoopAgent default max_iterations must be 100."""
     src = pathlib.Path("master_architecture/level_2_master_main_loop.py").read_text()
