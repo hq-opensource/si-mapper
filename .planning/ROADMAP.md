@@ -140,6 +140,13 @@
 | P22-01 | Phase 22 | Planned |
 | P22-02 | Phase 22 | Planned |
 | P22-03 | Phase 22 | Planned |
+| P23-01 | Phase 23 | Planned |
+| P23-02 | Phase 23 | Planned |
+| P23-03 | Phase 23 | Planned |
+| P23-04 | Phase 23 | Planned |
+| P23-05 | Phase 23 | Planned |
+| P23-06 | Phase 23 | Planned |
+| P23-07 | Phase 23 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -384,7 +391,7 @@ Plans:
 **Goal:** Enrich the BACnet metadata dictionary at write-time so the ontology agent can use pre-computed fields (code, address URI, ref_type) instead of parsing addresses manually. Add enrich_bacnet_point helper, wire into all 4 write paths, mirror to MCP inlined copy, and update 3 ontology skill SKILL.md files.
 **Requirements**: [P22-01, P22-02, P22-03]
 **Depends on:** Phase 21
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 22-01-PLAN.md — TDD: enrich_bacnet_point + _parse_bacnet_address + enrich_flat_bacnet_points + tests
@@ -393,10 +400,11 @@ Plans:
 
 ### Phase 23: Add Cypher query tool for Neo4j agent exploration
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Give the master agent 4 Cypher query tools (execute_cypher, execute_cypher_batch, get_graph_schema, search_graph_entities) for read access to the live Neo4j graph, enabling self-directed exploration of the imported ASHRAE 223P ontology. Includes unit tests, master agent registration, and instruction update with write-gate safety rule.
+**Requirements**: [P23-01, P23-02, P23-03, P23-04, P23-05, P23-06, P23-07]
 **Depends on:** Phase 22
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 23 to break down)
+- [ ] 23-01-PLAN.md — Create neo4j_query_tools.py (4 BaseTool subclasses) + unit tests (TDD)
+- [ ] 23-02-PLAN.md — Register tools in create_master_agent.py + add Neo4j Query Protocol to master_instruction.md
