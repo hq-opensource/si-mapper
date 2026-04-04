@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 25
 status: unknown
-last_updated: "2026-04-04T19:22:18.166Z"
+last_updated: "2026-04-04T19:40:12.895Z"
 progress:
   total_phases: 25
   completed_phases: 18
   total_plans: 51
-  completed_plans: 47
+  completed_plans: 48
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 25
-- **Overall Completion:** [██████████] 100%
-- **Active Plan:** 24-01 (complete)
-- **Last Completed:** 24-01 (capture_frontend_state_tool deleted, playwright dependency removed, ductwork and HVAC equipment skills simplified to 5/6-step place-sync-exit flows, regression guard test added)
+- **Overall Completion:** [█████████░] 94%
+- **Active Plan:** 25-01 (complete)
+- **Last Completed:** 25-01 (report_french/ created with full structure, main.tex translated to French with babel[french], all 19 bib entry titles translated in references.bib)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -150,6 +150,7 @@ progress:
 - **2026-04-04:** Completed 23-01-PLAN.md. Created 4 Cypher query tools in agent/tools/neo4j_query_tools.py: ExecuteCypherTool (single query, 500-row cap), ExecuteCypherBatchTool (ThreadPoolExecutor parallel, ordered results, partial failure), GetGraphSchemaTool (labels/rel_types/prop_keys), SearchGraphEntitiesTool (case-insensitive substring). 15 unit tests pass.
 - **2026-04-04:** Completed 23-02-PLAN.md. Wired all 4 Cypher query tools into create_master_agent.py task_tools. Added Neo4j Query Protocol section to master_instruction.md with write-gate rule, recommended exploration sequence (schema -> search -> query -> batch), n10s namespace verbatim-preservation warning, and 500-row result cap documentation. 102 tests pass. Phase 23 complete.
 - **2026-04-04:** Completed 24-01-PLAN.md. Deleted capture_frontend_state_tool.py + 2 test files. Removed import/registration from create_master_agent.py. Removed playwright>=1.40.0 from pyproject.toml. Simplified skill-ductwork/SKILL.md (5 steps: no verification loop) and skill-hvac-equipments/SKILL.md (6 steps: no verification loop). Added regression guard test. 7 master agent tests pass. Phase 24 complete.
+- **2026-04-04:** Completed 25-01-PLAN.md. Created report_french/ (21 files: 5 sections, 11 figures, 3 diagrams, main.tex, references.bib). Added babel[french] to preamble; translated title, abstract, date in main.tex. Translated all 19 bib entry titles and notes in references.bib. All entry keys, structure, and section files preserved verbatim.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -180,6 +181,9 @@ progress:
 - **Decision (23-02):** Write-gate rule uses explicit list of write keywords (CREATE, MERGE, DELETE, SET, REMOVE) for clarity; n10s namespace warning uses concrete label examples so agent knows exact format from get_graph_schema output.
 - **Decision (24-01):** Playwright removed entirely — screenshot verification expensive and unreliable; new philosophy is place-sync-exit (human inspects manually).
 - **Decision (24-01):** Skill exit summaries simplified to component count + sync confirmation only (correction counts and verification pass/fail removed).
+- **Decision (25-01):** report_french/ section files copied verbatim in plan 01 — each section translated independently in plans 25-02 through 25-05; isolation enables clean per-section commits.
+- **Decision (25-01):** All bib entry keys unchanged so \\cite{} commands in section files need no modification during translation — only title/note fields translated.
+- **Decision (25-01):** babel[french] placed immediately after \\usepackage[utf8]{inputenc} following standard LaTeX preamble ordering.
 
 ## Roadmap Evolution
 
