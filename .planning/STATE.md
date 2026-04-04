@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 23
 status: unknown
-last_updated: "2026-04-04T11:54:19.041Z"
+last_updated: "2026-04-04T11:59:35.814Z"
 progress:
   total_phases: 23
-  completed_phases: 16
+  completed_phases: 17
   total_plans: 46
-  completed_plans: 45
+  completed_plans: 46
 ---
 
 # State: HVAC Reconstruction Project
@@ -17,9 +17,9 @@ progress:
 ## Project Progress
 
 - **Current Phase:** 23
-- **Overall Completion:** [██████████] 98%
-- **Active Plan:** 23-01 (complete)
-- **Last Completed:** 23-01 (4 Cypher query tools: ExecuteCypherTool, ExecuteCypherBatchTool, GetGraphSchemaTool, SearchGraphEntitiesTool; 15 unit tests pass; ThreadPoolExecutor batch with ordered results)
+- **Overall Completion:** [██████████] 100%
+- **Active Plan:** 23-02 (complete)
+- **Last Completed:** 23-02 (4 Cypher query tools wired into create_master_agent.py task_tools; Neo4j Query Protocol added to master_instruction.md with write-gate, exploration sequence, and n10s namespace warning)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -148,6 +148,7 @@ progress:
 - **2026-04-04:** Completed 22-02-PLAN.md. Wired enrich_flat_bacnet_points into all 4 write paths with component_type extraction. internal_grid_tools: moved explode inside for-loop + added enrichment at both write sites. metadata_tools: added enrichment in _apply_metadata via EDN Keyword('type'). metadata_manager: added import re, 3 constants (_BACNET_TYPE_MAP, _SKIP_TYPES, _SENSOR_COMPONENT_TYPES), 3 inlined functions (_parse_bacnet_address, _enrich_bacnet_point, _enrich_flat_bacnet_points), wired comp_type into both write methods. 87 tests pass.
 - **2026-04-03:** Completed 22-03-PLAN.md. Updated skill-ontology-generation, skill-ontology-validation, and skill-ontology-lessons SKILL.md files. Generation and validation skills document pre-computed bacnet_N fields (code, address, ref_type) and instruct agents to use address URI directly. Lessons skill adds Phase 22 update note at top of BACnet section while preserving all legacy parsing rules as fallback.
 - **2026-04-04:** Completed 23-01-PLAN.md. Created 4 Cypher query tools in agent/tools/neo4j_query_tools.py: ExecuteCypherTool (single query, 500-row cap), ExecuteCypherBatchTool (ThreadPoolExecutor parallel, ordered results, partial failure), GetGraphSchemaTool (labels/rel_types/prop_keys), SearchGraphEntitiesTool (case-insensitive substring). 15 unit tests pass.
+- **2026-04-04:** Completed 23-02-PLAN.md. Wired all 4 Cypher query tools into create_master_agent.py task_tools. Added Neo4j Query Protocol section to master_instruction.md with write-gate rule, recommended exploration sequence (schema -> search -> query -> batch), n10s namespace verbatim-preservation warning, and 500-row result cap documentation. 102 tests pass. Phase 23 complete.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -173,6 +174,9 @@ progress:
 - **Decision (23-01):** ThreadPoolExecutor created INSIDE `with GraphDatabase.driver(...)` context to ensure driver stays open while threads execute queries.
 - **Decision (23-01):** future_to_index dict maps each Future to its original query index; as_completed fires in completion order, so index restores ordered batch results.
 - **Decision (23-01):** Batch mock uses side_effect function keyed on query string (not side_effect list) — side_effect list is not thread-safe across concurrent ThreadPoolExecutor workers.
+- **Decision (23-02):** 4 Cypher tool singletons placed in task_tools after load_ttl_to_neo4j_tool with # Neo4j query tools comment — consistent with other Neo4j tooling grouping.
+- **Decision (23-02):** Neo4j Query Protocol section inserted immediately after Neo4j Import Protocol in master_instruction.md — logical grouping keeps all Neo4j guidance co-located.
+- **Decision (23-02):** Write-gate rule uses explicit list of write keywords (CREATE, MERGE, DELETE, SET, REMOVE) for clarity; n10s namespace warning uses concrete label examples so agent knows exact format from get_graph_schema output.
 
 ## Roadmap Evolution
 
