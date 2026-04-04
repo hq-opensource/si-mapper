@@ -402,10 +402,20 @@ async def shared_model_callback(
     
     # 2. Update local state history
     events_history = state.get("events", [])
+    # Dedup by (event_type, content) against recent history — ADK occasionally
+    # re-emits the same response parts (re-emission artifact), producing
+    # identical events with different IDs/trace_ids that bypass ID-based dedup.
+    recent_signatures = {
+        (e["event_type"], e["content"])
+        for e in events_history[-20:]
+    }
     for ne in new_events:
-        # Every chunk from a stream is treated as a new unique event to ensure history is preserved
+        sig = (ne.event_type, ne.content)
+        if sig in recent_signatures:
+            continue
         events_history.append(ne.model_dump())
-    
+        recent_signatures.add(sig)
+            
     state["events"] = events_history[-200:] # Keep more history for complex loops
     # Persist new events to per-session JSONL log (best-effort, non-blocking)
     log_events(session_id, [ne.model_dump(mode="json") for ne in new_events])

@@ -16,6 +16,7 @@ from typing import Any
 from google.adk.tools import BaseTool, ToolContext
 from google.genai import types
 from neo4j import GraphDatabase
+from neo4j.graph import Node, Relationship, Path
 from typing_extensions import override
 
 logger = logging.getLogger(__name__)
@@ -37,6 +38,21 @@ def _get_neo4j_config() -> tuple[str, str, str]:
     )
 
 
+def _serialize(value: Any) -> Any:
+    """Recursively convert Neo4j graph types to plain Python primitives."""
+    if isinstance(value, Node):
+        return {"_labels": list(value.labels), **{k: _serialize(v) for k, v in value.items()}}
+    if isinstance(value, Relationship):
+        return {"_type": value.type, "_start": value.start_node.element_id, "_end": value.end_node.element_id, **{k: _serialize(v) for k, v in value.items()}}
+    if isinstance(value, Path):
+        return {"_nodes": [_serialize(n) for n in value.nodes], "_relationships": [_serialize(r) for r in value.relationships]}
+    if isinstance(value, list):
+        return [_serialize(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _serialize(v) for k, v in value.items()}
+    return value
+
+
 def _run_query(driver: Any, query: str) -> dict:
     """Execute a single Cypher query and return a normalised result dict.
 
@@ -44,7 +60,7 @@ def _run_query(driver: Any, query: str) -> dict:
     """
     try:
         records, _, _ = driver.execute_query(query, database_="neo4j")
-        rows = [dict(r) for r in records]
+        rows = [_serialize(dict(r)) for r in records]
         truncated = len(rows) > ROW_LIMIT
         return {
             "query": query,
