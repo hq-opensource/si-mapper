@@ -3,7 +3,7 @@ import json
 from typing import List, Optional
 from google.adk.tools import ToolContext
 from utils.logging_config import configure_logging
-from utils.bacnet_helpers import explode_bacnet_points
+from utils.bacnet_helpers import explode_bacnet_points, enrich_flat_bacnet_points
 
 logger = configure_logging()
 
@@ -326,10 +326,12 @@ def update_component_metadata(
     if "internal_grid" not in tool_context.state:
         return ":::thought\n[System] Internal grid not initialized.\n:::"
 
-    metadata = explode_bacnet_points(metadata)
     components = tool_context.state["internal_grid"]["components"]
     for component in components:
         if component["name"] == component_name:
+            component_type = component.get("type", "")
+            metadata = explode_bacnet_points(metadata, component_type)
+            metadata = enrich_flat_bacnet_points(metadata, component_type)
             existing_cf = component.get("custom_fields", {})
             for key, val in metadata.items():
                 if key in existing_cf and isinstance(existing_cf[key], dict) and isinstance(val, dict):
@@ -380,7 +382,9 @@ def update_component_metadata_batch(
         if component is None:
             not_found.append(component_name)
             continue
-        metadata = explode_bacnet_points(metadata)
+        component_type = component.get("type", "")
+        metadata = explode_bacnet_points(metadata, component_type)
+        metadata = enrich_flat_bacnet_points(metadata, component_type)
         existing_cf = component.get("custom_fields", {})
         for key, val in metadata.items():
             if key in existing_cf and isinstance(existing_cf[key], dict) and isinstance(val, dict):
