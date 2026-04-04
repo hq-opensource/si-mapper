@@ -75,3 +75,21 @@ After the ontology validation skill has successfully validated and produced `ont
    - If `status` is `"error"`: report the error message. Common issues: Neo4j not running (tell human to run `docker compose --profile graph up -d neo4j`), or `ontology.ttl` not found (tell human to run the ASHRAE 223P Code Generation Protocol first).
 
 **Important:** Each call to `load_ttl_to_neo4j` performs a complete wipe-and-reimport. There is no incremental update. This is the intended behavior — the TTL file is the source of truth.
+
+## Neo4j Query Protocol
+
+The agent may query the Neo4j graph directly using four Cypher query tools. These tools provide read access to the imported ASHRAE 223P ontology graph.
+
+**Read queries** (`MATCH`, `CALL db.*`, schema queries): freely callable without asking the human.
+
+**Write queries** (`CREATE`, `MERGE`, `DELETE`, `SET`, `REMOVE`): **Do NOT execute write queries without explicit human confirmation.** If a query you are about to execute modifies the graph, stop and ask the human for permission before calling `execute_cypher` or `execute_cypher_batch`.
+
+**Recommended exploration sequence:**
+1. Call `get_graph_schema` to discover available labels, relationship types, and property keys.
+2. Call `search_graph_entities` with human-language terms (e.g., "fan", "temperature") to find relevant ASHRAE 223P labels.
+3. Call `execute_cypher` for individual analytical queries.
+4. Call `execute_cypher_batch` when you need to fire multiple queries in parallel (e.g., 4-5 queries at once).
+
+**Important:** n10s imports with `handleVocabUris: 'IGNORE'` — all namespace prefixes are preserved verbatim (e.g., `ashrae223__TemperatureSensor`, `ns0__hasValue`). Always use the exact label and property strings returned by `get_graph_schema` in your Cypher queries. Do not guess label names.
+
+**Result format:** All query tools return `{"query": "...", "result": [...], "error": null}` on success and `{"query": "...", "result": null, "error": "..."}` on failure. Large results are capped at 500 rows with a `truncated` flag. If truncated, refine your query with `LIMIT` or `WHERE` clauses.
