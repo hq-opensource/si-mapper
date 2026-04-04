@@ -390,3 +390,13 @@ Plans:
 - [ ] 22-01-PLAN.md — TDD: enrich_bacnet_point + _parse_bacnet_address + enrich_flat_bacnet_points + tests
 - [ ] 22-02-PLAN.md — Wire enrichment into all 4 write paths + mirror to MCP metadata_manager.py
 - [ ] 22-03-PLAN.md — Update skill-ontology-generation, skill-ontology-validation, skill-ontology-lessons SKILL.md
+
+### Phase 23: Add Cypher query tool for Neo4j agent exploration
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 22
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 23 to break down)
