@@ -16,7 +16,6 @@ dependencies = [
     "httpx>=0.28.1",
     "mcp>=1.25.0",
     "neo4j>=5.0.0",
-    "playwright>=1.40.0",
     "psycopg>=3.3.2",
     "psycopg-binary>=3.3.2",
     "pydantic>=2.12.5",

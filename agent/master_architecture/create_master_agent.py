@@ -15,7 +15,6 @@ from tools.internal_grid_tools import (
     delete_components_batch, read_internal_grid,
     update_component_metadata, update_component_metadata_batch
 )
-from tools.capture_frontend_state_tool import capture_frontend_state_tool
 from tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
 from tools.neo4j_query_tools import (
     execute_cypher_tool,
@@ -81,7 +80,6 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         read_internal_grid,
         update_component_metadata,
         update_component_metadata_batch,
-        capture_frontend_state_tool,
         load_ttl_to_neo4j_tool,
         # Neo4j query tools
         execute_cypher_tool,
