@@ -203,3 +203,4 @@ progress:
 - Phase 21 added: delete-usecoagent-switch-to-polling-only
 - Phase 22 added: enhance-bacnet-parsing
 - Phase 23 added: Add Cypher query tool for Neo4j agent exploration
+- Phase 24 added: remove screenshots to the front end
