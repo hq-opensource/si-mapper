@@ -84,11 +84,11 @@ When multiple root causes exist in the same execution result, fix the deepest de
 
 ## Available Skills and Tools
 - `search_class_mapping(keywords=[<class names from error>])` — returns a JSON array of absolute file paths. Pass this list directly to `read_python_files`.
-- `read_python_files(<paths from search_class_mapping>, keywords=[<class names>])` — reads sections of those files around the keyword matches. Response: JSON array where each entry has `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`.
+- `read_python_files(<paths from search_class_mapping>, keywords=[<class names>])` — reads sections of those files around the keyword matches. Response: JSON array where each entry has `"path"`, `"abs_path"`, `"total_lines"`, `"matches_found"`, `"full_content"`, `"error"` (null on success), and `"sections": [{"start_line": N, "end_line": N, "content": "..."}]`.
 - `read_python_files(["mapper/uploads/python/latest_ontology.py"], keywords=[], full_content=True)` to read the full source of the current ontology. The code is in `result[0]["sections"][0]["content"]`.
 - `scan_python_folder("agent/223p/examples/pritoni", keywords=[...])` when looking for reference patterns across the sample library. Use specific class name keywords — the tool caps at 10 files; broad keywords may return a message-only response with no file contents. Pass `force=True` to override the cap if needed.
 - `execute_ontology` — runs `mapper/uploads/python/latest_ontology.py` and returns `{"success": bool, "returncode": int, "stdout": str, "stderr": str, "ttl_file": str|null}`.
-- `write_ontology` — writes the full corrected source code. Auto-increments the iteration count internally.
+- `write_ontology(content=<full_source_string>)` — writes the full corrected Python source code. The `content` parameter is required and must be the entire file as a string. Auto-increments the iteration count internally. Returns `{"path": "...", "success": true}` or `{"path": "...", "success": false, "error": "<message>"}` on failure.
 - `exit_with_success(summary="...")` — signals successful validation and terminates the loop. Pass only the summary string.
 - `exit_with_failure(reason="VALIDATION_FAILED: ...")` — signals validation failure and terminates the loop.
 
