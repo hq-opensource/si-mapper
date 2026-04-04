@@ -409,3 +409,12 @@ Plans:
 - [x] 23-01-PLAN.md — Create neo4j_query_tools.py (4 BaseTool subclasses) + unit tests (TDD)
 - [x] 23-02-PLAN.md — Register tools in create_master_agent.py + add Neo4j Query Protocol to master_instruction.md
 
+### Phase 24: Remove Screenshots to the Front End ✅ Complete (2026-04-04)
+
+**Goal:** Remove the Playwright/screenshot verification mechanism entirely — delete the capture_frontend_state tool and its tests, remove playwright dependency, remove agent registration, and simplify both skill-ductwork and skill-hvac-equipments SKILL.md files to trust first-shot output without verification loops.
+**Depends on:** Phase 23
+**Plans:** 1/1 plans complete
+
+Plans:
+- [x] 24-01-PLAN.md — Delete tool + tests, remove dep + registration, simplify both skills, add regression guard
+
