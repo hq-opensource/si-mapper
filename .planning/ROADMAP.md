@@ -384,7 +384,7 @@ Plans:
 **Goal:** Enrich the BACnet metadata dictionary at write-time so the ontology agent can use pre-computed fields (code, address URI, ref_type) instead of parsing addresses manually. Add enrich_bacnet_point helper, wire into all 4 write paths, mirror to MCP inlined copy, and update 3 ontology skill SKILL.md files.
 **Requirements**: [P22-01, P22-02, P22-03]
 **Depends on:** Phase 21
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 22-01-PLAN.md — TDD: enrich_bacnet_point + _parse_bacnet_address + enrich_flat_bacnet_points + tests
