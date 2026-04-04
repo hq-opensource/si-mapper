@@ -11,6 +11,7 @@ Identify and replicate all **horizontal and vertical ducts** in HVAC drawings as
 # Execution Flow
 
 ## 1. Ingest Context
+- Use `sync_graphivac_to_agent` to synchronize the agent's internal state with the current frontend grid. This ensures any changes the user made on the frontend are captured before analysis begins.
 - Use `ingest_category_files(category='hvac')`.
 - Use `load_artifacts` to access drawing artifacts. **Remember which artifact names contain the reference drawings.**
 - Use `read_internal_grid` to retrieve existing components

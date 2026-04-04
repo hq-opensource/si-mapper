@@ -12,18 +12,19 @@ Place HVAC equipment on the established duct system.
 
 # Execution Flow
 
-1. **Load context**: Use `load_artifacts` to view drawings.
-2. **Read grid**: Use `read_internal_grid` to get duct coordinates.
-3. **Analyze**: For each equipment piece:
+1. **Sync frontend state**: Use `sync_graphivac_to_agent` to synchronize the agent's internal state with the current frontend grid. This ensures any changes the user made on the frontend are captured before analysis begins.
+2. **Load context**: Use `load_artifacts` to view drawings.
+3. **Read grid**: Use `read_internal_grid` to get duct coordinates.
+4. **Analyze**: For each equipment piece:
    - Identify type (from the list above) and position.
    - Find parent duct and snap coordinates.
    - Determine rotation (if `fan` or `damper`).
-4. **Register internally**: Use `add_component` for single items or `add_components_batch` for multiple.
+5. **Register internally**: Use `add_component` for single items or `add_components_batch` for multiple.
    - Example: `add_component(component_type="fan", name="SF-1", coord=[10,5], rotation=180)`
    - Example: `add_component(component_type="damper", name="MD-1", coord=[12,5], rotation=90)`
    - Example: `add_component(component_type="variable_frequency_drive", name="VFD-1", coord=[15,6])`
-5. **Sync to frontend**: Use `sync_agent_to_graphivac` to sync the HVAC equipments to the frontend.
-6. **Exit**: Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
+6. **Sync to frontend**: Use `sync_agent_to_graphivac` to sync the HVAC equipments to the frontend.
+7. **Exit**: Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
    - Number of equipment pieces placed
    - Confirmation that `sync_agent_to_graphivac` succeeded
    Example: "12 equipment pieces registered and synced to frontend (3 fans, 2 coils, 4 dampers, 1 filter, 2 sensors)"
