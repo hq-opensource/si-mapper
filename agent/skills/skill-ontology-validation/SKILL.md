@@ -98,7 +98,16 @@ When multiple root causes exist in the same execution result, fix the deepest de
 - `%` links a sensor to the equipment it monitors: `temp_sensor % fan`. Do NOT use `%` to attach a measurement property to a sensor — use `sensor.add_property(prop)` for that.
 
 ## BACnet External References
-If the ontology contains `comment="BACnet: ..."` patterns but no `BACnetExternalReference` imports or usages, treat this as a fixable issue. See `skill-ontology-lessons` (section "BACnet External References") for the full address-parsing rules, type suffix map, and code patterns to apply.
+If the ontology contains `comment="BACnet: ..."` patterns but no `BACnetExternalReference` imports or usages, treat this as a fixable issue.
+
+Each `bacnet_N` entry in `custom_fields` contains pre-computed fields:
+- `code` — the original raw BACnet address (e.g. `"2500.AI13"`)
+- `address` — the fully-formed BACnet URI (e.g. `"bacnet://2500/analog-input,13/present-value"`) or `null` for skip types
+- `ref_type` — `"sensor"`, `"property"`, or `"skip"`
+
+Use `bacnet_N["address"]` directly when constructing `BACnetExternalReference`. Skip entries where `ref_type == "skip"` or `address` is `null`. No manual address parsing is needed.
+
+See `skill-ontology-lessons` (section "BACnet External References") for the `@` operator patterns.
 
 ## Stop Conditions -> `exit_with_failure(reason="VALIDATION_FAILED: ...")`
 - `skill-ontology-lessons` is unreadable and no error-resolution context is available — proceed with best-effort fixing but log the limitation.

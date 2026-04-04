@@ -33,6 +33,8 @@ Use the description of errors and the solutions that worked in the past to enhan
 - **Error:** Attempting to serialize the graph using `get_model_graph(model_name)` and `g.serialize(...)` or `DataGraph().serialize(...)` which may fail or be incorrect. -> **Fix:** Use `dump(filename=str(output_file))` imported from `bob.core` to serialize the ontology.
 
 ## BACnet External References
+> **Phase 22 update:** Each `bacnet_N` entry now contains pre-computed fields: `code` (original raw address), `address` (fully-formed BACnet URI or `null` for skip types), and `ref_type` (`"sensor"`, `"property"`, or `"skip"`). Use `bacnet_N["address"]` directly — the manual parsing rules below are retained as legacy fallback only.
+
 - **Error:** Storing BACnet points only as property comments (e.g., `add_property(Percent(label="TEMP. ALIM.", comment="BACnet: 2500.AI13"))`). -> **Fix:** Use `BACnetExternalReference` with the `@` operator. Import: `from bob.externalreference.bacnet import BACnetExternalReference`.
 - **Address parsing:** Convert `<device>.<TypeCode><instance>` to `bacnet://<device>/<object-type>,<instance>/present-value`. Suffix map: `AI`→`analog-input`, `AO`→`analog-output`, `AV`→`analog-value`, `BI`→`binary-input`, `BO`→`binary-output`, `BV`→`binary-value`, `SCH`→`schedule`. Skip `PG`, `CO`, `TL` — not valid types; keep as comments. Example: `"2500.AI13"` → `"bacnet://2500/analog-input,13/present-value"`.
 - **Pattern for sensors** — `@` works directly on a sensor (Sensor IS a Property):
