@@ -1,281 +1,278 @@
-\section{Description of the Problem}
+\section{Description du problème}
 \label{sec:problem}
 
-Section~\ref{sec:introduction} established that building semantic models unlock significant value
-but are costly to create.
-This section examines the cost problem in concrete terms.
-We describe what BACnet points are, quantify the labor required to map them, and identify the research
-gap that has prevented an automated solution.
+La section~\ref{sec:introduction} a établi que les modèles sémantiques de bâtiments libèrent une valeur significative
+mais sont coûteux à créer.
+Cette section examine le problème des coûts en termes concrets.
+Nous décrivons ce que sont les points BACnet, quantifions le travail requis pour les mapper, et identifions le fossé de recherche qui a empêché une solution automatisée.
 
-\subsection{The BACnet Point Mapping Problem}
+\subsection{Le problème du mappage des points BACnet}
 \label{subsec:bacnet-problem}
 
-A Building Automation System (BAS) exposes operational data through a hierarchy of \emph{points}, 
-individual sensors, actuators, setpoints, alarms, and status flags.
-In BACnet (the dominant open protocol for commercial building controls), each point is a typed object
-(Analog Inputs, Binary Outputs, Analog Values, etc.)\ with a unique address on the network.
-A typical commercial office building has between 500 and 5{,}000 BACnet points; a large hospital or
-campus facility may have tens of thousands~\cite{Trenbath2022}.
+Un Système d'automatisation du bâtiment (GTB/BAS) expose les données opérationnelles à travers une hiérarchie de \emph{points},
+des capteurs individuels, des actionneurs, des consignes, des alarmes et des indicateurs d'état.
+Dans BACnet (le protocole ouvert dominant pour les contrôles des bâtiments commerciaux), chaque point est un objet typé
+(Entrées analogiques, Sorties binaires, Valeurs analogiques, etc.)\ avec une adresse unique sur le réseau.
+Un immeuble de bureaux commercial typique possède entre 500 et 5{,}000 points BACnet ; un grand hôpital ou
+une installation de campus peut en avoir des dizaines de milliers~\cite{Trenbath2022}.
 
-The \emph{mapping problem} is this: a raw list of BACnet points contains no standard information about
-what physical equipment each point belongs to, what role it plays in the system, or how that equipment
-connects to other components.
-A point named AHU-1.SA-T tells a human engineer ``probably supply air temperature on
-Air Handling Unit 1,'' but only if the engineer already knows the naming convention used by that
-particular BMS installer.
-It is common to find conventions that differ between contractors, between projects, and even between
-systems within the same building.
+Le \emph{problème de mappage} est le suivant : une liste brute de points BACnet ne contient aucune information standard sur
+l'équipement physique auquel chaque point appartient, le rôle qu'il joue dans le système, ou comment cet équipement
+se connecte à d'autres composants.
+Un point nommé AHU-1.SA-T indique à un ingénieur humain \og probablement la température de l'air soufflé de
+l'Unité de traitement d'air 1 \fg{}, mais seulement si l'ingénieur connaît déjà la convention de dénomination utilisée par ce
+particular installateur GTB.
+Il est courant de trouver des conventions qui diffèrent entre les entrepreneurs, entre les projets, et même entre
+les systèmes au sein d'un même bâtiment.
 
-Reconstructing the full picture of the building, which points belong to which equipment, what each
-point means, and how the equipment connects into a complete HVAC system, requires reading as-built
-HVAC drawings, interrogating BMS programming, and applying expert engineering judgment.
-This process is manual, time-consuming, and dependent on domain expertise.
+Reconstituer le tableau complet du bâtiment --- quels points appartiennent à quel équipement, ce que signifie chaque
+point, et comment l'équipement se connecte en un système CVC complet --- nécessite la lecture des plans CVC tels que
+construits, l'interrogation de la programmation GTB et l'application d'un jugement d'ingénierie expert.
+Ce processus est manuel, chronophage et dépendant de l'expertise du domaine.
 
-Modbus, an even older and simpler protocol used in legacy HVAC controllers, meters, and industrial
-equipment, exposes data as bare numbered registers with no descriptive metadata at all, making the
-mapping challenge even more difficult than BACnet.
+Modbus, un protocole encore plus ancien et plus simple utilisé dans les contrôleurs CVC hérités, les compteurs et le matériel industriel,
+expose les données sous forme de registres numérotés sans aucune métadonnée descriptive, rendant
+le défi de mappage encore plus difficile que BACnet.
 
-\subsection{The Cost of Manual Mapping}
+\subsection{Le coût du mappage manuel}
 \label{subsec:cost}
 
-Manual BACnet point mapping and BAS commissioning are widely documented as major cost drivers in
-building construction and retrofit projects.
-Table~\ref{tab:commissioning-costs} summarizes the key figures from industry research and published
-case studies.
+Le mappage manuel des points BACnet et la mise en service du GTB sont largement documentés comme des facteurs de coût majeurs dans
+les projets de construction et de rénovation de bâtiments.
+Le Tableau~\ref{tab:commissioning-costs} résume les chiffres clés issus de la recherche industrielle et des
+études de cas publiées.
 
 \begin{table}[htbp]
 \centering
-\caption{Key cost and effort data for manual BAS commissioning and point mapping.}
+\caption{Données clés de coûts et d'efforts pour la mise en service manuelle des systèmes GTB et le mappage des points.}
 \label{tab:commissioning-costs}
 \small
 \begin{tabular}{p{5.5cm}p{3.5cm}p{4cm}}
 \toprule
-\textbf{Cost Item} & \textbf{Figures} & \textbf{Source} \\
+\textbf{Poste de coût} & \textbf{Chiffres} & \textbf{Source} \\
 \midrule
-BAS commissioning as \% of construction & 0.5\%--1.5\% of total; 8\%--15\% of BAS project value
+Mise en service GTB en \% de la construction & 0.5\%--1.5\% du total ; 8\%--15\% de la valeur du projet GTB
   & \cite{BCA2024} \\
 \addlinespace
-Case study: 150{,}000\,sq\,ft school
-  & \$225{,}000 commissioning (\$1.50/sq\,ft)
+Étude de cas : école de 150\,000\,pi\textsuperscript{2}
+  & \$225{,}000 de mise en service (\$1.50/pi\textsuperscript{2})
   & \cite{PingCx2024} \\
 \addlinespace
-Complete BAS installation average
-  & \$7.76/sq\,ft (range: \$5.20--\$14.18)
+Installation GTB complète moyenne
+  & \$7.76/pi\textsuperscript{2} (plage : \$5.20--\$14.18)
   & \cite{Trenbath2022} \\
 \addlinespace
-Legacy BMS integration premium
-  & +20\%--40\% over base cost
+Surcoût d'intégration de GTB existant
+  & +20\%--40\% par rapport au coût de base
   & \cite{Envigilance2023} \\
 \addlinespace
-Additional service calls from poor mapping
-  & 12--15 extra calls/year; +30\%--45\% troubleshooting time
+Appels de service supplémentaires liés à un mauvais mappage
+  & 12--15 appels supplémentaires/an ; +30\%--45\% de temps de dépannage
   & \cite{PingCx2024} \\
 \addlinespace
-Energy performance drift from poor commissioning
-  & 15\%--30\% energy waste in first 3 years; \$0.20--\$0.50/sq\,ft/year
+Dérive de performance énergétique due à une mauvaise mise en service
+  & 15\%--30\% de gaspillage énergétique dans les 3 premières années ; \$0.20--\$0.50/pi\textsuperscript{2}/an
   & \cite{PingCx2024} \\
 \addlinespace
-First-year unplanned expenses (case study school)
-  & \$175{,}000, nearly equal to original commissioning cost
+Dépenses imprévues la première année (étude de cas école)
+  & \$175{,}000, presque égal au coût de mise en service initial
   & \cite{PingCx2024} \\
 \addlinespace
-HVAC technician shortage (2024--2025)
-  & 110{,}000 unfilled positions
+Pénurie de techniciens CVC (2024--2025)
+  & 110{,}000 postes non pourvus
   & \cite{AccessCoins2025} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-To illustrate the compounding nature of these costs: the 150{,}000\,sq\,ft school in the case study
-paid \$225{,}000 for commissioning up front, then incurred approximately \$175{,}000 in unplanned
-first-year expenses due to inadequate point documentation, nearly doubling the effective cost of the
-commissioning phase~\cite{PingCx2024}.
-According to NREL~\cite{Trenbath2022}, complete BAS installation averages \$7.76 per square foot
-across the United States, with the legacy systems integration premium adding a further 20 to 40
-percent on retrofit projects~\cite{Envigilance2023} (data from 2022 and 2023).
+Pour illustrer la nature cumulée de ces coûts : l'école de 150{,}000\,pi\textsuperscript{2} dans l'étude de cas
+a payé \$225{,}000 pour la mise en service au départ, puis a engagé environ \$175{,}000 en dépenses imprévues
+au cours de la première année en raison d'une documentation insuffisante des points, doublant presque le coût effectif de la
+phase de mise en service~\cite{PingCx2024}.
+Selon le NREL~\cite{Trenbath2022}, l'installation GTB complète coûte en moyenne \$7.76 par pied carré
+aux États-Unis, avec la prime d'intégration des systèmes hérités ajoutant encore 20 à 40
+pour cent sur les projets de rénovation~\cite{Envigilance2023} (données de 2022 et 2023).
 
-Manual approaches are also incomplete by design.
-Industry practice typically tests only 10 to 20 percent of terminal units during commissioning~\cite{PingCx2024};
-every 10 percent reduction in testing coverage correlates to approximately a 6 to 8 percent increase
-in post-occupancy issues.
-The result is a pervasive, chronic problem: buildings begin their operational life with
-under-documented, partially verified control systems, and the cost of correction grows over time. 
-Wang et al.~\cite{Wang2017} describe manual point mapping as ``labor intensive and costly, presenting
-a major impediment to innovations in building control'', validating the scale of the problem even
-where precise figures are contractor-dependent.
+Les approches manuelles sont également incomplètes par conception.
+La pratique industrielle teste généralement seulement 10 à 20 pour cent des unités terminales lors de la mise en service~\cite{PingCx2024} ;
+chaque réduction de 10 pour cent de la couverture des tests est corrélée à une augmentation d'environ 6 à 8 pour cent
+des problèmes post-occupation.
+Le résultat est un problème omniprésent et chronique : les bâtiments commencent leur vie opérationnelle avec
+des systèmes de contrôle sous-documentés et partiellement vérifiés, et le coût de correction augmente avec le temps.
+Wang et al.~\cite{Wang2017} décrivent le mappage manuel des points comme \og laborieux et coûteux, présentant
+un obstacle majeur aux innovations dans le contrôle des bâtiments \fg{}, validant l'ampleur du problème même
+là où les chiffres précis dépendent de l'entrepreneur.
 
-\subsection{The Research Gap and Emerging Solutions}
+\subsection{Le fossé de recherche et les solutions émergentes}
 \label{subsec:research-gap}
 
-Despite the scale and economic impact of the manual mapping problem, no widely-deployed end-to-end
-automated solution existed as of Wang et al.'s 2017 systematic review~\cite{Wang2017}, which found
-the field lacked:
+Malgré l'ampleur et l'impact économique du problème de mappage manuel, il n'existait pas de solution automatisée
+de bout en bout largement déployée au moment de la revue systématique de 2017 de Wang et al.~\cite{Wang2017}, qui a constaté
+que le domaine manquait :
 \begin{itemize}[leftmargin=*, itemsep=2pt]
-  \item a complete problem formulation with integrated solution approaches,
-  \item standardized test datasets and performance metrics, and
-  \item methods well-aligned with real-world mapping requirements.
+  \item d'une formulation complète du problème avec des approches de solution intégrées,
+  \item de jeux de données de test standardisés et de métriques de performance, et
+  \item de méthodes bien alignées avec les exigences de mappage du monde réel.
 \end{itemize}
 
-The AI wave of 2023 onwards has catalyzed a new generation of attempts to close this gap.
-Table~\ref{tab:landscape} surveys the most relevant commercial and academic efforts and positions
-SI-Mapper within the landscape.
-The Building Commissioning Association's published guidance~\cite{BCA2024} confirms that
-point-to-point verification remains a mandated step on every new BAS project, underscoring that the
-problem persists even as partial solutions emerge.
+La vague d'IA à partir de 2023 a catalysé une nouvelle génération de tentatives pour combler ce fossé.
+Le Tableau~\ref{tab:landscape} passe en revue les efforts commerciaux et académiques les plus pertinents et positionne
+SI-Mapper dans le paysage.
+Les orientations publiées par la Building Commissioning Association~\cite{BCA2024} confirment que
+la vérification point à point reste une étape obligatoire sur chaque nouveau projet GTB, soulignant que le
+problème persiste même lorsque des solutions partielles émergent.
 
 \begin{table}[htbp]
 \centering
-\caption{Competitive landscape for automated BAS point mapping and semantic model generation (2024--2026).}
+\caption{Paysage concurrentiel pour le mappage automatisé des points GTB et la génération de modèles sémantiques (2024--2026).}
 \label{tab:landscape}
 \small
 \begin{tabular}{p{3cm}p{3cm}p{3cm}p{4cm}}
 \toprule
-\textbf{Solution} & \textbf{Category} & \textbf{Input} & \textbf{Gap vs.\ SI-Mapper} \\
+\textbf{Solution} & \textbf{Catégorie} & \textbf{Entrée} & \textbf{Écart par rapport à SI-Mapper} \\
 \midrule
 
 PingCx~\cite{PingCx2024}
-  & Automated functional commissioning \& point-to-point testing
-  & Live BACnet connection
-  & Tests whether points respond correctly; does \emph{not} build a semantic model or identify equipment topology \\
+  & Mise en service fonctionnelle automatisée et tests point à point
+  & Connexion BACnet en direct
+  & Teste si les points répondent correctement ; ne construit \emph{pas} de modèle sémantique ni n'identifie la topologie des équipements \\
 \addlinespace
 
 BrickLLM~\cite{Perini2025}
-  & AI-driven Brick ontology generation
-  & Free-text building description
-  & Requires accurate natural-language input; does not parse BACnet CSV exports, HVAC drawings, or produce 223P \\
+  & Génération d'ontologie Brick pilotée par l'IA
+  & Description du bâtiment en texte libre
+  & Nécessite une saisie en langage naturel précise ; ne traite pas les exports BACnet CSV, les plans CVC, ni ne produit du 223P \\
 \addlinespace
 
 BuildingMOTIF~\cite{BuildingMOTIF_NREL}
-  & DOE open-source SDK for 223P / Brick / Haystack model creation and validation
-  & Expert-authored RDF; BACnet point lists (manual)
-  & Developer toolkit, not an AI inference engine; requires domain expert to drive model creation \\
+  & SDK open-source du DOE pour la création et validation de modèles 223P / Brick / Haystack
+  & RDF rédigé par des experts ; listes de points BACnet (manuel)
+  & Boîte à outils de développeur, pas un moteur d'inférence par IA ; nécessite un expert du domaine pour piloter la création du modèle \\
 \addlinespace
 
 BIM2RDF / Open223~\cite{Open223}
-  & BIM-to-223P conversion
-  & Revit / IFC BIM file
-  & Requires a complete, accurate BIM as input; does not handle buildings where only as-built drawings and BACnet CSVs exist \\
+  & Conversion BIM vers 223P
+  & Fichier BIM Revit / IFC
+  & Nécessite un BIM complet et précis en entrée ; ne traite pas les bâtiments où seuls les plans tels que construits et les CSV BACnet existent \\
 \addlinespace
 
 Willow~\cite{Willow2025}
-  & AI digital twin platform with ML device classification
-  & Live BMS / IoT feeds
-  & Uses proprietary DTDL ontology, not 223P; requires live data connection and human-guided onboarding; \$110M-funded commercial platform \\
+  & Plateforme de jumeau numérique IA avec classification ML des équipements
+  & Flux GTB / IoT en direct
+  & Utilise l'ontologie propriétaire DTDL, pas 223P ; nécessite une connexion de données en direct et une intégration guidée par un humain ; plateforme commerciale financée à \$110M \\
 \addlinespace
 
 SkySpark / Project Haystack~\cite{SkySpark}
-  & Analytics platform with semantic tagging
-  & Engineer-applied Haystack tags
-  & Tagging is manual; provides analytics engine once tagged, not an automated mapping tool \\
+  & Plateforme d'analytique avec étiquetage sémantique
+  & Étiquettes Haystack appliquées par un ingénieur
+  & L'étiquetage est manuel ; fournit un moteur d'analytique une fois étiqueté, pas un outil de mappage automatisé \\
 \addlinespace
 
-\textbf{SI-Mapper (this work)}
-  & \textbf{End-to-end AI pipeline for 223P model generation}
-  & \textbf{BACnet CSV point exports + as-built HVAC drawings}
-  & \textbf{No comparable system} addresses the full pipeline from raw BACnet exports and engineering drawings to a validated ASHRAE 223P graph \\
+\textbf{SI-Mapper (ce travail)}
+  & \textbf{Pipeline IA de bout en bout pour la génération de modèles 223P}
+  & \textbf{Exports CSV de points BACnet + plans CVC tels que construits}
+  & \textbf{Aucun système comparable} ne traite le pipeline complet, des exports BACnet bruts et des plans d'ingénierie jusqu'à un graphe ASHRAE 223P validé \\
 
 \bottomrule
 \end{tabular}
 \end{table}
 
-The table reveals a clear structural gap.
-Existing solutions either stop short of semantic modeling (PingCx automates testing but produces no
-ontology), require clean inputs that do not exist in practice (BrickLLM needs accurate text;
-BIM2RDF needs a complete BIM file), or are expert-facing development toolkits rather than turnkey
-automation (BuildingMOTIF).
-Commercial platforms such as Willow approach the problem from the opposite direction, top-down,
-starting from live data in large portfolios, using a proprietary ontology that is not aligned with
-ASHRAE 223P or the emerging interoperability standards required for Virtual Power Plants integration.
+Le tableau révèle un fossé structurel clair.
+Les solutions existantes soit s'arrêtent avant la modélisation sémantique (PingCx automatise les tests mais ne produit aucune
+ontologie), exigent des entrées propres qui n'existent pas en pratique (BrickLLM a besoin d'un texte précis ;
+BIM2RDF a besoin d'un fichier BIM complet), ou sont des boîtes à outils de développement destinées aux experts plutôt que de
+l'automatisation clé en main (BuildingMOTIF).
+Les plateformes commerciales comme Willow abordent le problème dans la direction opposée, de haut en bas,
+en commençant par les données en direct dans de grands portefeuilles, en utilisant une ontologie propriétaire qui n'est pas alignée avec
+ASHRAE 223P ou les normes d'interopérabilité émergentes requises pour l'intégration des centrales électriques virtuelles.
 
-National laboratory programs (NREL, LBNL, PNNL, NIST) have made significant progress in defining
-the 223P standard and associated tooling through BuildingMOTIF~\cite{BuildingMOTIF_NREL,DOE_BuildingMOTIF},
-but the explicit DOE framing acknowledges the goal is still to ``lower costs and reduce installation
-time'', an admission that the current tooling does not yet achieve this without substantial expert
-involvement.
+Les programmes des laboratoires nationaux (NREL, LBNL, PNNL, NIST) ont réalisé des progrès significatifs dans la définition
+de la norme 223P et des outils associés à travers BuildingMOTIF~\cite{BuildingMOTIF_NREL,DOE_BuildingMOTIF},
+mais le cadrage explicite du DOE reconnaît que l'objectif est toujours de \og réduire les coûts et le temps d'installation \fg{},
+une admission que l'outillage actuel n'atteint pas encore cela sans une implication substantielle d'experts.
 
-The gap SI-Mapper addresses is therefore specific and narrow:
-\emph{automated end-to-end generation of ASHRAE 223P semantic models from the artifacts that
-actually exist on the ground}, BACnet CSV exports and as-built engineering drawings, without
-requiring a pre-existing BIM file, clean natural-language descriptions, or an expert semanticist.
+Le fossé que SI-Mapper comble est donc spécifique et étroit :
+\emph{génération automatisée de bout en bout de modèles sémantiques ASHRAE 223P à partir des artefacts qui
+existent réellement sur le terrain}, exports CSV BACnet et plans d'ingénierie tels que construits, sans
+nécessiter un fichier BIM préexistant, des descriptions en langage naturel propres, ou un sémanticien expert.
 
-\subsection{Why This Matters for the Energy Grid}
+\subsection{Pourquoi cela importe pour le réseau électrique}
 \label{subsec:grid-relevance}
 
-The point mapping problem is not only a building operations challenge.
-It is a direct barrier to the energy transition.
+Le problème du mappage des points n'est pas seulement un défi opérationnel des bâtiments.
+C'est une barrière directe à la transition énergétique.
 
-\textbf{Non-Wire Alternatives} and \textbf{Virtual Power Plants} aggregate distributed
-energy resources, including commercial building HVAC loads, to provide grid services equivalent to
-building new power plants or transmission lines.
-HVAC systems consume approximately 40 percent of total commercial building energy and can be
-modulated to respond to grid signals, shifting load away from peak demand periods.
-In aggregate, this flexibility represents enormous potential grid capacity.
+\textbf{Les alternatives non filaires} et les \textbf{centrales électriques virtuelles} agrègent les ressources énergétiques
+distribuées, notamment les charges CVC des bâtiments commerciaux, pour fournir des services de réseau électrique équivalents à
+la construction de nouvelles centrales électriques ou de lignes de transport.
+Les systèmes CVC consomment environ 40 pour cent de l'énergie totale des bâtiments commerciaux et peuvent être
+modulés pour répondre aux signaux du réseau, déplaçant la charge loin des périodes de pointe de demande.
+Globalement, cette flexibilité représente une capacité de réseau électrique potentielle énorme.
 
-The Virtual Power Plants market is growing rapidly.
-North American Virtual Power Plants programs totaled 37.5\,GW of flexible behind-the-meter capacity
-as of 2025, up approximately 14 percent from 2024, with active deployments rising more than 33
-percent in the same period~\cite{WoodMac2025}.
-Policy support is accelerating: ten state legislatures introduced Virtual Power Plants bills in
-2024~\cite{RMI_VP3_2025,SEPA_NCCETC2025}; Massachusetts utilities are implementing a
-\$50\,million Grid Services Compensation Fund to promote non-wire alternatives~\cite{RMI_VP3_2025};
-and the California Energy Commission awarded a \$2\,million EPRI grant specifically to demonstrate
-Virtual Power Plants for commercial buildings including HVAC controls~\cite{CEC_EPRI2024}.
+Le marché des centrales électriques virtuelles croît rapidement.
+Les programmes nord-américains de centrales électriques virtuelles totalisaient 37.5\,GW de capacité flexible derrière le compteur
+en 2025, soit environ 14 pour cent de plus qu'en 2024, avec des déploiements actifs en hausse de plus de 33
+pour cent dans la même période~\cite{WoodMac2025}.
+Le soutien politique s'accélère : dix législatures d'États ont introduit des projets de loi sur les centrales électriques virtuelles en
+2024~\cite{RMI_VP3_2025,SEPA_NCCETC2025} ; les services publics du Massachusetts mettent en œuvre un
+Fonds de compensation des services de réseau de \$50\,millions pour promouvoir les alternatives non filaires~\cite{RMI_VP3_2025} ;
+et la Commission de l'énergie de Californie a accordé une subvention EPRI de \$2\,millions spécifiquement pour démontrer
+les centrales électriques virtuelles pour les bâtiments commerciaux incluant les contrôles CVC~\cite{CEC_EPRI2024}.
 
-\textbf{How aggregators operate today.}
-Two types of aggregators participate in these programs.
-\emph{Hardware aggregators} manufacture controllable devices (smart thermostats, batteries, EV
-chargers) and aggregate their own installed base into a dispatchable resource portfolio.
-\emph{Software aggregators} act as protocol proxies, connecting heterogeneous devices from
-multiple vendors under a single management layer.
-Both types sell capacity and demand response services to utilities and grid operators, who dispatch
-them using standardized signals such as OpenADR or IEEE~2030.5.
-This model works efficiently for residential assets and fleets of identical devices because the
-aggregator controls the endpoint hardware and already knows its capabilities.
+\textbf{Comment les agrégateurs fonctionnent aujourd'hui.}
+Deux types d'agrégateurs participent à ces programmes.
+Les \emph{agrégateurs matériels} fabriquent des appareils contrôlables (thermostats intelligents, batteries, chargeurs VE)
+et agrègent leur propre parc installé en un portefeuille de ressources distribuables.
+Les \emph{agrégateurs logiciels} agissent comme des proxys de protocole, connectant des appareils hétérogènes de
+plusieurs fournisseurs sous une couche de gestion unique.
+Les deux types vendent des services de capacité et de réponse à la demande aux services publics et aux opérateurs de réseau, qui les envoient
+en utilisant des signaux standardisés tels qu'OpenADR ou IEEE~2030.5.
+Ce modèle fonctionne efficacement pour les actifs résidentiels et les flottes d'appareils identiques car
+l'agrégateur contrôle le matériel d'extrémité et connaît déjà ses capacités.
 
-\textbf{Commercial buildings are structurally different.}
-A commercial building's HVAC system is not a device the aggregator manufactured.
-It was designed by an engineering firm, installed by a mechanical contractor, and programmed by a
-BMS provider (Siemens, Johnson Controls, ABB, Niagara, or equivalent).
-Each of these parties has a legitimate interest in protecting the reliability of the system: the BMS
-provider guarantees uptime; the commissioning engineer designed the control sequences; the building
-operator is legally responsible for occupant comfort.
-None of them will willingly allow an external party to write arbitrary setpoints to their system
-without a formal agreement and a clear technical boundary.
-The result is that every commercial building enrollment today requires a custom, building-by-building
-negotiation and integration project \cite{DOE_VPP2025}.
-The DOE Virtual Power Plants Liftoff report identifies that no industry standardization
-exists. Virtual Power Plants vendors have been building their solutions from the ground up, then
-working on a case-by-case basis with utilities to develop customized solutions, resulting in rigid
-systems that can't easily be replicated in new areas~\cite{DOE_VPP2025}.
+\textbf{Les bâtiments commerciaux sont structurellement différents.}
+Le système CVC d'un bâtiment commercial n'est pas un appareil que l'agrégateur a fabriqué.
+Il a été conçu par un bureau d'études, installé par un entrepreneur en génie mécanique, et programmé par un
+fournisseur GTB (Siemens, Johnson Controls, ABB, Niagara, ou équivalent).
+Chacune de ces parties a un intérêt légitime à protéger la fiabilité du système : le fournisseur GTB
+garantit le temps de fonctionnement ; l'ingénieur de mise en service a conçu les séquences de contrôle ; l'opérateur du bâtiment
+est légalement responsable du confort des occupants.
+Aucun d'entre eux n'autorisera volontiers une partie externe à écrire des consignes arbitraires dans leur système
+sans un accord formel et une frontière technique claire.
+Il en résulte que chaque inscription d'un bâtiment commercial aujourd'hui nécessite un projet de négociation et d'intégration
+personnalisé, bâtiment par bâtiment \cite{DOE_VPP2025}.
+Le rapport Liftoff des centrales électriques virtuelles du DOE identifie qu'il n'existe aucune standardisation industrielle.
+Les fournisseurs de centrales électriques virtuelles ont construit leurs solutions de zéro, puis
+ont travaillé au cas par cas avec les services publics pour développer des solutions personnalisées, résultant en des systèmes rigides
+qui ne peuvent pas être facilement répliqués dans de nouveaux domaines~\cite{DOE_VPP2025}.
 
-\textbf{How an ASHRAE 223P ontology changes the logistics.}
-An ASHRAE 223P semantic model of a building is not a control system replacement, it is a
-machine-readable contract that describes what is controllable, how to reach it, and under what
+\textbf{Comment une ontologie ASHRAE 223P change la logistique.}
+Un modèle sémantique ASHRAE 223P d'un bâtiment n'est pas un remplacement du système de contrôle, c'est un
+contrat lisible par machine qui décrit ce qui est contrôlable, comment y accéder, et dans quelles
 conditions.
-Consider the operational chain it enables:
+Considérez la chaîne opérationnelle qu'il permet :
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
-  \item \textbf{Asset discovery.} The ontology declares every controllable component (fans, coils,
-        VAV boxes, dampers) as a typed entity with its position in the HVAC topology.
-        An aggregator can query it to answer ``what loads does this building contain and what are
-        their nominal capacities?'' without a site visit or manual documentation review.
-  \item \textbf{Live telemetry access.} ASHRAE 223P's \emph{external reference} mechanism links
-        each semantic property directly to its BACnet object address.
-        A supply air temperature sensor in the model carries the address of the physical BACnet
-        point that reports its value.
-        The aggregator reads live sensor data by following those references, with no custom
-        integration code per building.
-  \item \textbf{Flexibility estimation.} With topology and live telemetry available, an 
-        algorithm can compute how much load the building can shed, for how long, and with what
-        thermal lag, before comfort constraints are violated.
-        This estimate feeds directly into the aggregator's dispatch optimization.
-  \item \textbf{Controlled dispatch.} The ontology also identifies the BACnet addresses of
-        controllable setpoints (supply air temperature setpoint, fan speed command, cooling
-        setpoint).
-        When the grid operator sends an OpenADR curtailment signal, the aggregator translates it
-        into targeted BACnet writes at precisely the addresses the ontology specifies, within
-        the boundaries agreed contractually with the building owner.
-        The BMS continues to run its reliability logic; the aggregator adjusts only the setpoints
-        that were explicitly licensed under the agreement.
+  \item \textbf{Découverte des actifs.} L'ontologie déclare chaque composant contrôlable (ventilateurs, bobines,
+        boîtes VAV, registres) comme une entité typée avec sa position dans la topologie CVC.
+        Un agrégateur peut l'interroger pour répondre à \og quelles charges ce bâtiment contient et quelles sont
+        leurs capacités nominales ? \fg{} sans visite sur site ni révision manuelle de la documentation.
+  \item \textbf{Accès à la télémétrie en direct.} Le mécanisme de \emph{référence externe} d'ASHRAE 223P relie
+        chaque propriété sémantique directement à son adresse d'objet BACnet.
+        Un capteur de température de l'air soufflé dans le modèle porte l'adresse du point BACnet physique
+        qui signale sa valeur.
+        L'agrégateur lit les données de capteurs en direct en suivant ces références, sans code d'intégration
+        personnalisé par bâtiment.
+  \item \textbf{Estimation de la flexibilité.} Avec la topologie et la télémétrie en direct disponibles, un
+        algorithme peut calculer combien de charge le bâtiment peut délester, pendant combien de temps, et avec quel
+        décalage thermique, avant que les contraintes de confort ne soient violées.
+        Cette estimation alimente directement l'optimisation de la répartition de l'agrégateur.
+  \item \textbf{Répartition contrôlée.} L'ontologie identifie également les adresses BACnet des
+        consignes contrôlables (consigne de température de l'air soufflé, commande de vitesse du ventilateur, consigne de refroidissement).
+        Lorsque l'opérateur de réseau envoie un signal de délestage OpenADR, l'agrégateur le traduit
+        en écritures BACnet ciblées précisément aux adresses que spécifie l'ontologie, dans
+        les limites convenues contractuellement avec le propriétaire du bâtiment.
+        Le GTB continue d'exécuter sa logique de fiabilité ; l'agrégateur ajuste uniquement les consignes
+        qui ont été explicitement autorisées dans le cadre de l'accord.
 \end{enumerate}
 
