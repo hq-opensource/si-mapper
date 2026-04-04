@@ -1,0 +1,47 @@
+flowchart TB
+    subgraph Frontend["CopilotKit Frontend (Next.js)"]
+        UI["Agent HUD\n+ Chat Interface"]
+        GV["Graphivac\nCAD Canvas"]
+        GW["Graph\nVisualization\n(Sigma.js)"]
+        CW["Code Viewer\n(TTL / Python)"]
+    end
+
+    subgraph Agent["Master Agent (Google ADK)"]
+        MA["MasterLlmAgent\n(Gemini 3.1 / Claude Sonnet 4.6)"]
+        subgraph Skills["Skills (Inline Instructions)"]
+            S1["skill-ductwork"]
+            S2["skill-hvac-equipments"]
+            S3["skill-bacnet-points"]
+            S4["skill-ontology-generation"]
+            S5["skill-ontology-validation"]
+            S6["skill-read-code"]
+        end
+        subgraph Tools["Tools (~25)"]
+            T1["Grid CRUD"]
+            T2["Metadata"]
+            T3["Ontology R/W/Execute"]
+            T4["Neo4j Import"]
+            T5["Screenshot Capture"]
+            T6["File Ingestion"]
+        end
+    end
+
+    subgraph External["External Services"]
+        NEO["Neo4j + n10s"]
+        GVC["Graphivac REST API"]
+    end
+
+    MA --> Skills
+    MA --> Tools
+    UI <--> MA
+    T1 <--> GVC
+    T4 --> NEO
+    NEO --> GW
+    T5 --> GV
+    T6 --> UI
+
+    style MA fill:#4A90D9,color:#fff,stroke:#2C5F8A
+    style Skills fill:#E8F4E8,stroke:#338A4E
+    style Tools fill:#FFF3E0,stroke:#B07E20
+    style Frontend fill:#F0F4FF,stroke:#4A90D9
+    style External fill:#FFF0F0,stroke:#CC5555

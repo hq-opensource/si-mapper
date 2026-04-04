@@ -1,0 +1,363 @@
+\section{SI-Mapper: An Agentic Approach to Building Semantic Modeling}
+\label{sec:implementation}
+
+The previous section established that manual BACnet point mapping is costly, labor-intensive,
+and resistant to automation with existing tools.
+This section introduces the proposed solution of this report, agentic AI for automated HVAC semantic
+modeling, and traces its full development from initial concept through nine experimental
+iterations to the final architecture.
+
+\subsection{Overview of the Approach}
+\label{subsec:si-mapper-overview}
+
+SI-Mapper takes raw building data inputs, like HVAC engineering drawings (PNG or PDF) and BACnet
+point exports (CSV files), and produces an ASHRAE 223P semantic model in Turtle (TTL)
+format. The entire pipeline is orchestrated by an AI agent application guided by domain-specific skill instructions.
+Figure~\ref{fig:pipeline} illustrates the data flow.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{pipeline.png}
+\caption{SI-Mapper data pipeline --- from raw building data to semantic model and graph visualization.}
+\label{fig:pipeline}
+\end{figure}
+
+The key enabler is multimodal AI.
+Recent large language models like Gemini 3.1 and Claude Sonnet 4.6 can analyze engineering
+drawings directly, identifying equipment symbols, ductwork connections, and spatial relationships from
+visual inputs.
+HVAC schematic diagrams, with their regular symbol vocabulary and consistent layout conventions, are
+more tractable for AI recognition than general architectural floor plans.
+The insight from SI-Mapper's development is that standard models underperform on domain-specific
+drawing recognition until guided by detailed, domain-specific instructions, the \emph{skills}
+architecture described in Section~\ref{subsec:skills}.
+
+SI-Mapper's novelty lies in combining four capabilities that no prior system integrates:
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+  \item \textbf{Multimodal drawing recognition:} AI analysis of HVAC engineering drawings to extract
+        equipment and ductwork topology.
+  \item \textbf{BACnet mapping:} automated assignment of BACnet point data to the equipment
+        identified in the drawings.
+  \item \textbf{ASHRAE 223P generation:} production of a formally valid ASHRAE 223P ontology
+        including ConnectionPoints, Connections, mediums, and telemetry links.
+  \item \textbf{Iterative self-correction:} the agent compares its generated model against validation
+        rules, identifies errors, and corrects them autonomously --- looping until the model is valid.
+\end{enumerate}
+
+This approach replaces weeks of expert engineering effort with an automated pipeline that runs in
+minutes, producing a machine-readable semantic model that unlocks software portability, advanced
+analytics, and grid integration for the building.
+
+% -----------------------------------------------------------------------
+\subsection{Development Methodology: Nine Experimental Iterations}
+% -----------------------------------------------------------------------
+
+The development of SI-Mapper followed an iterative experimental methodology.
+Over nine distinct iterations, the system architecture evolved from simple function-calling
+scripts to a sophisticated skills-based agentic AI system. Each iteration was driven by
+the failures and limitations of the previous one.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{experiment-progression.png}
+  \caption{Evolution of SI-Mapper architecture across nine experimental iterations.}
+  \label{fig:experiment-progression}
+\end{figure}
+
+\textbf{Iteration 1: LLMs as Function Providers (Gemini 1.5 Flash).}
+The first approach used LLMs as providers of intelligence embedded inside conventional
+Python functions: the model was called for specific tasks such as image recognition or
+text generation, while all business logic remained hardcoded by the developer.
+This approach was straightforward but fundamentally limited, the LLM had no awareness
+of the application context and could not make autonomous decisions. Every new capability
+required writing new code around it. LangChain was used as the integration library at
+this stage.
+
+\textbf{Iteration 2: Workflow-Based Agents (Gemini 1.5 Flash).}
+The second iteration introduced workflows to define agent behavior as a sequence of
+ordered steps, making it possible to better exploit the LLM's capabilities. However,
+the business logic was still hardcoded inside the workflow definitions, and the agent
+remained unable to adapt to unexpected situations. LangGraph was evaluated at this stage
+but was abandoned. 
+
+\textbf{Iteration 3: ADK Workflows (Gemini 2.0 Flash).}
+The third iteration migrated to Google's Agent Development Kit (ADK) while retaining
+the workflow-based execution model. A local RAG system was introduced to provide agents
+with on-demand access to documentation for HVAC equipment classification. ADK had been
+very recently released at this point, with limited documentation and community examples,
+meaning AI coding assistants could not reliably help with the library, a concrete
+limitation that slowed development velocity.
+
+\textbf{Iteration 4: Agentic Master Agent (Gemini 2.5 Flash).}
+The fourth iteration represented the first agentic attempt: a single master agent
+given full autonomy to plan and execute all tasks. This introduced genuine decision-making
+capability but exposed a critical failure mode, the prompts required to express the
+full HVAC pipeline were too long and complex for the model to follow reliably. A simple
+while loop was not sufficient to keep the agent on track. This iteration also introduced
+the CopilotKit frontend, the Agent-to-UI protocol for real-time agent observability, and
+MCP tools for external tool management.
+
+\textbf{Iteration 5: Plan-Act-Review Architecture (Gemini 2.5 Flash).}
+Inspired by established multi-agent design patterns, the fifth iteration decomposed
+execution into three sequential sub-agents: Planner, Actor, and Reviewer. This improved
+output quality but the agent consistently terminated tasks before completing the full
+pipeline. Adding a loop agent on top of the PAR structure improved results further but
+was still insufficient, the agent could not reliably complete all stages in a single
+run.
+
+\textbf{Iteration 6: Master Agent with PAR Sub-Agent (Gemini 2.5 Flash).}
+The sixth iteration added a master agent that could choose to act directly or delegate to
+the PAR structure as a sub-agent. Both the master and the sub-agent were given full
+autonomy. Despite this added flexibility, the PAR sub-agent still could not produce
+results of sufficient quality. Frontend tooling was extended with tool call and state
+variable tracking to provide better visibility into the agent's reasoning.
+
+\textbf{Iteration 7: Master Agent with Hybrid Workflows (Gemini 2.5 Flash).}
+The seventh iteration replaced the PAR agent with a hybrid approach: specialized image
+recognition workflows for the drawing analysis stage, combined with an agentic planner
+for task orchestration. This created an architecture that was neither fully workflow-based
+nor fully agentic. The recognition quality was not good enough, and the architectural
+hybrid added complexity without proportional benefit. The entire drawing sequence was
+ultimately converted back to a workflow, but results remained insufficient.
+
+\textbf{Iteration 8: Parallel Agents (Gemini 2.5 Flash, then Gemini 3.0 Flash).}
+The eighth iteration introduced parallel execution: one specialized agent per equipment
+type running simultaneously, replacing the sequential recognition agents. This
+significantly improved processing speed. A model upgrade to Gemini 3.0 Flash delivered
+a meaningful accuracy improvement. Gemini 3.0 Pro was also tested and produced higher
+quality results but required considerably more time.
+
+\textbf{Iteration 9: Skills-Based Master Agent (Gemini 3.1 / Claude Sonnet 4.6).}
+The ninth and final iteration converted all sub-agents into skills, specialized
+instruction sets executed inline within the master agent's context. This architectural
+simplification was made possible by the dramatically improved instruction-following
+capability of the latest models. The agent was also given the ability to visit the
+frontend via headless browser, capture a screenshot of the HVAC canvas, and compare
+it against the source drawing for visual self-correction. The architecture became
+dramatically simpler, easier to maintain, and produced better results than any previous
+iteration. Additionally, two subagents executed in sequence were maintained 
+just to create the Python code and the TTL code of the graph. The reason to keep them as 
+sub-agents instead of skills is because of the complexity of the task that they need to execute. 
+Isolating the context for the execution of the creation of the code in sub-agents was the best alternative. 
+
+The key insight from this progression is that advances in foundation model capability made
+simpler architectures viable. The skills-based approach became possible only when models
+like Gemini 3.1 and Claude Sonnet 4.6 reached sufficient instruction-following capability
+to execute complex, multi-step domain tasks within a single agent context.
+
+% -----------------------------------------------------------------------
+\subsection{Final Architecture}
+% -----------------------------------------------------------------------
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{architecture.png}
+  \caption{SI-Mapper final architecture --- skills-based single master agent.}
+  \label{fig:architecture}
+\end{figure}
+
+The final architecture organizes SI-Mapper into three main layers that together implement
+the full pipeline from raw Multi-modal data to a validated ASHRAE 223P semantic model stored
+in a graph database.
+
+\textbf{Frontend (CopilotKit + Next.js).}
+The frontend serves as a real-time operations dashboard. A CopilotKit Agent acts as the chat interface. 
+The middleware in ADK (before and after model callbacks) are used to stream the agent's thoughts, actions and state modifications as they occur into the front end, giving operators full visibility into what the agent is doing and why. 
+A Graphivac canvas renders the internal HVAC grid in real time as the agent places ducts and equipment using its tools. 
+A code viewer shows the generated ASHRAE 223P Python code and the resulting TTL file. 
+A Sigma.js graph viewer displays the final semantic model after it is loaded into Neo4j. 
+
+\textbf{Master Agent (Google ADK).}
+The core of the system is a master \textit{LlmAgent} wrapped inside a loop Agent, built on Google's Agent Development
+Kit, running on Gemini 3.1 or Claude Sonnet 4.6. The agent has access to a sequential sub-agent, approximately 25 tools and six skills. 
+It maintains full context while extracting the data, drawing the HVAC system and BACnet metadata mapping. 
+The master agent delegates the creation of the Python code and the generation of the TTL for the ontology to the sequential sub-agent.
+
+\textbf{External Services.}
+Two external services underpin the system: Neo4j and Graphivac. Neo4j with the Neosemantics (n10s) plugin
+stores the ASHRAE 223P ontology as a native RDF graph and provides Cypher query access
+for graph traversal. The Graphivac REST API manages the CAD canvas, allowing the agent
+to read and write the visual grid state bidirectionally.
+
+\medskip
+\noindent
+The choice of a single-agent architecture with a single sequential sub-agent was driven by several compounding advantages.
+Skills provide domain expertise inline, making the agent's behavior fully observable in a
+single context window without the opacity of delegated sub-agent calls.
+The agent naturally maintains full context across all pipeline stages, which is critical
+for operations such as visual self-correction, where the agent must compare a live
+screenshot of the canvas against the source drawing and determine what to fix.
+Finally, the architecture is dramatically simpler to maintain, debug, and extend: adding
+a new capability means writing a new skill or tool, not redesigning an agent coordination
+protocol.
+
+% -----------------------------------------------------------------------
+\subsection{Skills}
+\label{subsec:skills}
+% -----------------------------------------------------------------------
+
+Skills are specialized instruction sets that the master agent or the sequential agent can activate as needed.
+They are not separate agents, they act like a dynamic prompt. 
+Each skill provides domain-specific knowledge for one stage of the pipeline, encoding
+expert-level HVAC drawing reading conventions and ontology generation rules that a general
+purpose language model would not apply consistently on its own.
+
+\begin{table}[htbp]
+  \caption{Master agent skills and their roles in the pipeline.}
+  \label{tab:skills}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Skill} & \textbf{Purpose} \\
+    \midrule
+    skill-ductwork            & Identify and place all ductwork from HVAC drawings as the spatial foundation \\
+    skill-hvac-equipments     & Place HVAC equipment (fans, coils, dampers, sensors) onto the established duct system \\
+    skill-bacnet-points       & Extract BACnet point data from CSV exports and map points to grid equipment \\
+    skill-ontology-generation & Generate ASHRAE 223P Python code from the populated grid state \\
+    skill-ontology-validation & Iteratively fix and validate ontology code to produce a clean TTL file \\
+    skill-read-code           & Load error-resolution lessons from past coding sessions to avoid repeating mistakes \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The skills follow a strict dependency chain that mirrors the physical reality of HVAC
+commissioning. Ductwork is placed first: all equipment must be anchored to a duct segment,
+so the duct grid is the spatial foundation on which everything else is built. Equipment
+placement follows, positioning fans, coils, dampers, and sensors onto the duct coordinates
+established in the previous step. BACnet mapping then attaches live point metadata to each
+piece of equipment on the grid. Each of these three stages concludes with a human
+verification step, allowing the operator to review and correct the agent's work before the
+pipeline advances. Ontology generation reads the fully verified grid and produces Python
+code that models the system in ASHRAE 223P. Finally, ontology validation enters an
+iterative self-correction loop, executing and fixing the generated code until it produces a
+clean TTL file with no runtime errors. Each skill assumes the previous one has completed
+successfully; the master agent is responsible for detecting failures and deciding whether
+to retry or escalate.
+
+% -----------------------------------------------------------------------
+\subsection{Tools}
+% -----------------------------------------------------------------------
+
+The master agent has access to approximately 25 tools organized into ten categories.
+Tools handle all interactions with external systems, data storage, and the agent's own
+operational state, the skills provide the reasoning; the tools provide the execution.
+
+\begin{table}[htbp]
+  \caption{Master agent tools grouped by category.}
+  \label{tab:tools}
+  \centering
+  \small
+  \begin{tabular}{p{3.2cm}p{4.5cm}p{6.5cm}}
+    \toprule
+    \textbf{Category} & \textbf{Tools} & \textbf{Description} \\
+    \midrule
+    Grid Sync
+      & \texttt{sync\_graphivac\_to\_agent},
+        \texttt{sync\_agent\_to\_graphivac}
+      & Bidirectional sync between agent state and Graphivac canvas \\
+    \addlinespace
+    Grid CRUD
+      & \texttt{add\_component},
+        \texttt{add\_components\_batch},
+        \texttt{delete\_component},
+        \texttt{delete\_components\_batch},
+        \texttt{read\_internal\_grid}
+      & Create, read, and delete components in the internal grid \\
+    \addlinespace
+    Metadata
+      & \texttt{write\_metadata},
+        \texttt{write\_metadata\_batch}
+      & Attach BACnet point data to grid equipment \\
+    \addlinespace
+    Ontology
+      & \texttt{search\_class\_mapping},
+        \texttt{scan\_python\_files\_filtered},
+        \texttt{read\_ontology},
+        \texttt{write\_ontology},
+        \texttt{execute\_ontology},
+        \texttt{read\_prompt}
+      & ASHRAE 223P library lookup, code read/write/execute \\
+    \addlinespace
+    Ontology Signals
+      & \texttt{checkpoint\_code},
+        \texttt{exit\_generator\_success},
+        \texttt{exit\_generator\_failure},
+        \texttt{exit\_validator\_success},
+        \texttt{exit\_validator\_failure}
+      & Snapshot versioning and ontology task completion signaling \\
+    \addlinespace
+    Neo4j
+      & \texttt{load\_ttl\_to\_neo4j}
+      & Import validated TTL semantic model into Neo4j graph database \\
+    \addlinespace
+    Frontend
+      & \texttt{capture\_frontend\_state}
+      & Screenshot the live canvas for visual self-correction \\
+    \addlinespace
+    Ingestion
+      & \texttt{ingest\_category\_files}
+      & Load user-uploaded files (drawings, CSVs, PDFs) into session \\
+    \addlinespace
+    State / Progress
+      & \texttt{save\_agent\_state},
+        \texttt{get\_agent\_state},
+        \texttt{update\_step},
+        \texttt{update\_status}
+      & Track processing progress and persist state across turns \\
+    \addlinespace
+    Loop Control
+      & \texttt{exit\_loop\_level\_2}
+      & Terminate the master agent session \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% -----------------------------------------------------------------------
+\subsection{Key Technology Decisions}
+% -----------------------------------------------------------------------
+
+Several technology choices were made deliberately based on lessons from the iterative
+development process. Each decision reflects a tradeoff between capability, cost, and
+integration complexity.
+
+\textbf{Google ADK.}
+Google's Agent Development Kit was chosen as the agent runtime for its native Gemini
+integration and its built-in support for agent lifecycle management, tool registration,
+session state, and artifact handling. Earlier iterations used LangChain, but the tests were 
+carried out at the early stages of the development of LangChain, and at the time the library still had many problems.
+ADK provided since its inception the necessary infrastructure to make the required tests. 
+However, at the time of writing this report, new alternatives appear and others improve. 
+Thus, at this time, considering the usage of LangChain, it will be comparable alternative to ADK. 
+Moreover, the introduction of deep agents in LangChain might be even a better alternative. 
+Additionally, testing new capabilities inside of the Claude code framework is something that 
+must be executed in the future to have an overall picture of what could be the best choice for the agent framework for continuing the development.
+
+
+\textbf{CopilotKit.}
+CopilotKit implements the Agent-to-UI protocol, enabling the Python ADK backend to stream
+agent thoughts and actions to the Next.js frontend. Without this library,
+building the chat interface would have required extra development with no
+research value. CopilotKit handles this concern, allowing development to focus
+on the agent pipeline itself. Nevertheless, its usage could be questioned for future iterations. 
+Especially if future iterations focus on developing on top of Claude code, in which having a user interface could be built in a completely different manner.
+
+\textbf{Neo4j with Neosemantics (n10s).}
+ASHRAE 223P is an RDF ontology; its natural storage format is a graph database with
+native RDF import capabilities. Neo4j with the Neosemantics (n10s) plugin satisfies both
+requirements: it stores the TTL file as a native graph, and it provides Cypher, a
+mature, expressive query language, for graph traversal and analysis. Alternative
+approaches such as storing TTL as flat files or using a triple store were considered, but
+Neo4j's combination of graph-native storage and strong ecosystem tooling made it the
+pragmatic choice. Neo4j has a disadvantage in that it requires converting the TTL into an ATTIC graph, and some information might be lost in that conversion.
+The information lost was not analyzed in this iteration due to limitations in time. However, it is important to analyze it in the future to have a better understanding of the implications of information lost.
+GraphDB does not have the same problem because it doesn't require a conversion from the TTL. 
+However, GraphDB works using SPARQL instead of Cypher. 
+Recent works have demonstrated that LLMs achieve higher accuracy when writing Cypher than when writing SPARQL queries~\cite{Sivasubramaniam2024}.
+
+
+\textbf{Sigma.js for Graph Visualization.}
+Sigma.js renders large graphs using WebGL, providing smooth performance on semantic models
+with hundreds of nodes and relationships. Heavier alternatives such as D3 or Gephi were
+considered, but both introduce unnecessary complexity for a browser-native visualization
+requirement. Sigma.js integrates cleanly with the Next.js frontend and requires no
+additional server-side rendering accommodations beyond a standard dynamic import guard.

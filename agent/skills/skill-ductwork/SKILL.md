@@ -42,26 +42,28 @@ Register ALL ducts (horizontal and vertical) in a **single call** to `add_compon
 - Horizontal ducts: `HD-1`, `HD-2`, ..., numbered from top to bottom.
 - Vertical ducts: `VD-1`, `VD-2`, ..., numbered from left to right.
 
-### JSON Structure
-Use "duct" as the type for all entries
-Ensure start_coord and end_coord reflect true airflow direction as explained in the "Duct Continuity Rules" section.
+### How to call `add_components_batch`
 
+Even though the parameter is named `components_json`, **write the value as a plain JSON array in your tool call — do not manually escape or stringify it**. The framework handles serialization automatically.
+
+Correct tool call:
 ```json
-[
-  {
-    "type": "duct",
-    "name": "HD-1",
-    "start_coord": [5, 5],
-    "end_coord": [15, 5]
-  },
-  {
-    "type": "duct",
-    "name": "VD-1",
-    "start_coord": [15, 5],
-    "end_coord": [15, 10]
-  }
-]
+{
+  "components_json": [
+    {"type": "duct", "name": "HD-1", "start_coord": [5, 5], "end_coord": [15, 5]},
+    {"type": "duct", "name": "VD-1", "start_coord": [15, 5], "end_coord": [15, 10]}
+  ]
+}
 ```
+
+❌ Wrong — do NOT manually escape it into a string:
+```json
+{
+  "components_json": "[{\"type\": \"duct\", \"name\": \"HD-1\", ...}]"
+}
+```
+
+Use "duct" as the type for all entries. Ensure `start_coord` and `end_coord` reflect true airflow direction as explained in the "Duct Continuity Rules" section.
 
 ## 4. Send ductwork to the frontend
 

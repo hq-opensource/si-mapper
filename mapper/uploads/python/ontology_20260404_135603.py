@@ -116,7 +116,7 @@ dmp_3.add_property(dmp_3_mod)
 dmp_3_mod @ BACnetExternalReference("bacnet://1000/analog-output,23/present-value")
 
 # SPS-4
-sps_4.observes @ BACnetExternalReference("bacnet://1000/analog-input,28/present-value")
+sps_4 @ BACnetExternalReference("bacnet://1000/analog-input,28/present-value")
 
 # HC-3
 hc_3_mod = PercentCommand(label="SERP. ELECT. No.3A")
@@ -135,7 +135,7 @@ fan_3_E_speed @ BACnetExternalReference("bacnet://1000/analog-input,25/present-v
 fan_3_E_cmd @ BACnetExternalReference("bacnet://1000/binary-output,24/present-value")
 
 # TS-1
-ts_1.observes @ BACnetExternalReference("bacnet://1000/analog-input,22/present-value")
+ts_1 @ BACnetExternalReference("bacnet://1000/analog-input,22/present-value")
 
 # CC-1
 cc_1_mod = PercentCommand(label="SERP. REF. No.3A")
@@ -156,7 +156,7 @@ vfd_3_A.add_property(vfd_3_a_mod)
 vfd_3_a_mod @ BACnetExternalReference("bacnet://1000/analog-output,18/present-value")
 
 # SPS-2 (has 2 points, we'll map one to the sensor directly, and add another property)
-sps_2.observes @ BACnetExternalReference("bacnet://1000/analog-input,29/present-value")
+sps_2 @ BACnetExternalReference("bacnet://1000/analog-input,29/present-value")
 sps_2_rdc = Pressure(label="PRES. STAT. RDC 3A")
 sps_2.add_property(sps_2_rdc)
 sps_2_rdc @ BACnetExternalReference("bacnet://1000/analog-input,30/present-value")
@@ -205,7 +205,7 @@ hum_1_perm @ BACnetExternalReference("bacnet://1000/binary-value,4/present-value
 hum_1_status @ BACnetExternalReference("bacnet://1000/analog-input,3/present-value")
 
 # HS-2
-hs_2.observes @ BACnetExternalReference("bacnet://1000/analog-input,61/present-value")
+hs_2 @ BACnetExternalReference("bacnet://1000/analog-input,61/present-value")
 
 # 3-R
 fan_3_R_fault = OnOffStatus(label="FAUTE VENT. RET. 3R")
@@ -222,7 +222,7 @@ fan_3_R_cmd @ BACnetExternalReference("bacnet://1000/binary-output,21/present-va
 fan_3_R_state @ BACnetExternalReference("bacnet://1000/binary-value,223/present-value")
 
 # HS-1
-hs_1.observes @ BACnetExternalReference("bacnet://1000/analog-input,60/present-value")
+hs_1 @ BACnetExternalReference("bacnet://1000/analog-input,60/present-value")
 hs_1_temp = Temperature(label="HUMIDITE EVAC.")
 hs_1.add_property(hs_1_temp)
 hs_1_temp @ BACnetExternalReference("bacnet://1000/analog-input,47/present-value")

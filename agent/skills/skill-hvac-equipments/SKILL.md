@@ -23,6 +23,15 @@ Place HVAC equipment on the established duct system.
    - Example: `add_component(component_type="fan", name="SF-1", coord=[10,5], rotation=180)`
    - Example: `add_component(component_type="damper", name="MD-1", coord=[12,5], rotation=90)`
    - Example: `add_component(component_type="variable_frequency_drive", name="VFD-1", coord=[15,6])`
+   - When using `add_components_batch`, even though the parameter is named `components_json`, write the value as a **plain JSON array in your tool call** — do not manually escape or stringify it. The framework handles serialization automatically.
+     Correct:
+     ```json
+     {"components_json": [{"type": "fan", "name": "SF-1", "coord": [10,5], "rotation": 180}, ...]}
+     ```
+     ❌ Wrong — do NOT manually escape it into a string:
+     ```json
+     {"components_json": "[{\"type\": \"fan\", \"name\": \"SF-1\", ...}]"}
+     ```
 6. **Sync to frontend**: Use `sync_agent_to_graphivac` to sync the HVAC equipments to the frontend.
 7. **Exit**: Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
    - Number of equipment pieces placed

@@ -141,12 +141,15 @@ def add_components_batch(
 
     Example: '[{"type":"fan","name":"SF-1","coord":[5,5]},{"type":"duct","name":"D-1","start_coord":[0,0],"end_coord":[10,0]}]'
     """
-    try:
-        components = json.loads(components_json)
-        if not isinstance(components, list):
-            return ":::thought\n[System] Error: components_json must be a JSON array.\n:::"
-    except json.JSONDecodeError as e:
-        return f":::thought\n[System] Error: Invalid JSON in components_json: {e}\n:::"
+    if isinstance(components_json, list):
+        components = components_json
+    else:
+        try:
+            components = json.loads(components_json)
+        except (json.JSONDecodeError, TypeError) as e:
+            return f":::thought\n[System] Error: Invalid JSON in components_json: {e}\n:::"
+    if not isinstance(components, list):
+        return ":::thought\n[System] Error: components_json must be a JSON array.\n:::"
 
     _ensure_internal_grid(tool_context)
 

@@ -2,21 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 24
+current_phase: 25
 status: unknown
-last_updated: "2026-04-04T13:49:51.830Z"
+last_updated: "2026-04-04T19:22:18.166Z"
 progress:
-  total_phases: 23
-  completed_phases: 17
-  total_plans: 46
-  completed_plans: 46
+  total_phases: 25
+  completed_phases: 18
+  total_plans: 51
+  completed_plans: 47
 ---
 
 # State: HVAC Reconstruction Project
 
 ## Project Progress
 
-- **Current Phase:** 24
+- **Current Phase:** 25
 - **Overall Completion:** [██████████] 100%
 - **Active Plan:** 24-01 (complete)
 - **Last Completed:** 24-01 (capture_frontend_state_tool deleted, playwright dependency removed, ductwork and HVAC equipment skills simplified to 5/6-step place-sync-exit flows, regression guard test added)
@@ -207,3 +207,4 @@ progress:
 - Phase 22 added: enhance-bacnet-parsing
 - Phase 23 added: Add Cypher query tool for Neo4j agent exploration
 - Phase 24 added: remove screenshots to the front end
+- Phase 25 added: Translate report to French
