@@ -108,15 +108,13 @@ hc_1_ao @ BACnetExternalReference("bacnet://2500/analog-output,13/present-value"
 hc_1_av @ BACnetExternalReference("bacnet://2500/analog-value,248/present-value")
 
 # DP-F1
-dp_f1.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,18/present-value")
+dp_f1 @ BACnetExternalReference("bacnet://2500/analog-input,18/present-value")
 
 # TE-Mel
-te_mel.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,15/present-value")
+te_mel @ BACnetExternalReference("bacnet://2500/analog-input,15/present-value")
 
 # LL-1
-ll_1_bv = OnOffStatus(label="ARRET BAS LIM GEL 1A")
-ll_1.add_property(ll_1_bv)
-ll_1_bv @ BACnetExternalReference("bacnet://2500/binary-value,254/present-value")
+ll_1 @ BACnetExternalReference("bacnet://2500/binary-value,254/present-value")
 
 # D-PAF1
 d_paf1_ao = Percent(label="VOLET P.A.F.1A", hasUnit=UNIT.PERCENT)
@@ -154,10 +152,10 @@ d_mel_ao @ BACnetExternalReference("bacnet://2500/analog-output,10/present-value
 d_mel_av @ BACnetExternalReference("bacnet://2500/analog-value,251/present-value")
 
 # TE-Ret
-te_ret.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,14/present-value")
+te_ret @ BACnetExternalReference("bacnet://2500/analog-input,14/present-value")
 
 # SP-1
-sp_1.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,17/present-value")
+sp_1 @ BACnetExternalReference("bacnet://2500/analog-input,17/present-value")
 sp_1_av = Pressure(label="P.C. PRES STAT 1A", hasUnit=UNIT.IN_H2O)
 sp_1.add_property(sp_1_av)
 sp_1_av @ BACnetExternalReference("bacnet://2500/analog-value,250/present-value")
@@ -199,7 +197,7 @@ fan_1a_bv @ BACnetExternalReference("bacnet://2500/binary-value,255/present-valu
 fan_1a_sch @ BACnetExternalReference("bacnet://2500/schedule,1/present-value")
 
 # HE-Ret
-he_ret.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,16/present-value")
+he_ret @ BACnetExternalReference("bacnet://2500/analog-input,16/present-value")
 
 # VFD-1A
 vfd_1a_ao = Percent(label="MOD. DRIVE ALM No.1A", hasUnit=UNIT.PERCENT)

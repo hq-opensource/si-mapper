@@ -1,5 +1,5 @@
 import logging
-from bob.core import bind_model_namespace, dump, UNIT, Equipment, S223, Junction
+from bob.core import bind_model_namespace, dump, UNIT, Equipment, S223
 from bob.externalreference.bacnet import BACnetExternalReference
 from bob.properties.electricity import ElectricPower, Amps
 from bob.properties.ratio import Percent
@@ -18,8 +18,7 @@ from bob.equipment.hvac.filter import Filter
 from bob.equipment.hvac.coil import ChilledWaterCoil, HotWaterCoil
 from scratch.hvac.humidifier import ElectricalHumidifier
 from scratch.electricity.vfd import VFD
-from bob.enum import Air, Fluid
-from bob.connections.air import AirInletConnectionPoint, AirOutletConnectionPoint
+from bob.enum import Air
 
 model_name, global_ns = model_namespace(__file__)
 _namespace = bind_model_namespace(model_name, f"urn:{global_ns}:{model_name}/")
@@ -57,32 +56,13 @@ sp_1 = PressureSensor(label="SP-1", hasUnit=UNIT.IN_H2O, ofMedium=Air)
 dp_f1 = AirDifferentialStaticPressureSensor(label="DP-F1", hasUnit=UNIT.IN_H2O)
 ll_1 = Sensor(label="LL-1")
 
-# Mixed Air Duct Junction to handle merging multiple streams
-mixed_air_duct = Junction(label="MixedAirDuct", hasMedium=Fluid.Air)
-mixed_air_duct.fromReturnAir = AirInletConnectionPoint(thing=mixed_air_duct)
-mixed_air_duct.fromOutdoorAir1 = AirInletConnectionPoint(thing=mixed_air_duct)
-mixed_air_duct.fromOutdoorAir2 = AirInletConnectionPoint(thing=mixed_air_duct)
-mixed_air_duct.toFilter = AirOutletConnectionPoint(thing=mixed_air_duct)
-
-# Return Exhaust Split Junction
-return_exhaust_duct = Junction(label="ReturnExhaustDuct", hasMedium=Fluid.Air)
-return_exhaust_duct.fromReturn = AirInletConnectionPoint(thing=return_exhaust_duct)
-return_exhaust_duct.toMixedAirDamper = AirOutletConnectionPoint(thing=return_exhaust_duct)
-return_exhaust_duct.toExhaustDamper = AirOutletConnectionPoint(thing=return_exhaust_duct)
-return_exhaust_duct.toExhaust2 = AirOutletConnectionPoint(thing=return_exhaust_duct)
-
 # Connections (Airflow & Electricity)
 fan_1e.airOutlet >> d_1e.airInlet
-
-fan_1r.airOutlet >> return_exhaust_duct.fromReturn
-return_exhaust_duct.toMixedAirDamper >> d_mel.airInlet
-return_exhaust_duct.toExhaustDamper >> d_rav.airInlet
-
-d_paf1.airOutlet >> mixed_air_duct.fromOutdoorAir1
-d_paf2.airOutlet >> mixed_air_duct.fromOutdoorAir2
-d_mel.airOutlet >> mixed_air_duct.fromReturnAir
-
-mixed_air_duct.toFilter >> f_1.airInlet
+fan_1r.airOutlet >> d_rav.airInlet
+fan_1r.airOutlet >> d_mel.airInlet
+d_paf1.airOutlet >> f_1.airInlet
+d_paf2.airOutlet >> f_1.airInlet
+d_mel.airOutlet >> f_1.airInlet
 f_1.airOutlet >> cc_1.airInlet
 cc_1.airOutlet >> fan_1a.airInlet
 fan_1a.airOutlet >> hc_1.airInlet
@@ -108,15 +88,13 @@ hc_1_ao @ BACnetExternalReference("bacnet://2500/analog-output,13/present-value"
 hc_1_av @ BACnetExternalReference("bacnet://2500/analog-value,248/present-value")
 
 # DP-F1
-dp_f1.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,18/present-value")
+dp_f1 @ BACnetExternalReference("bacnet://2500/analog-input,18/present-value")
 
 # TE-Mel
-te_mel.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,15/present-value")
+te_mel @ BACnetExternalReference("bacnet://2500/analog-input,15/present-value")
 
 # LL-1
-ll_1_bv = OnOffStatus(label="ARRET BAS LIM GEL 1A")
-ll_1.add_property(ll_1_bv)
-ll_1_bv @ BACnetExternalReference("bacnet://2500/binary-value,254/present-value")
+ll_1 @ BACnetExternalReference("bacnet://2500/binary-value,254/present-value")
 
 # D-PAF1
 d_paf1_ao = Percent(label="VOLET P.A.F.1A", hasUnit=UNIT.PERCENT)
@@ -154,10 +132,10 @@ d_mel_ao @ BACnetExternalReference("bacnet://2500/analog-output,10/present-value
 d_mel_av @ BACnetExternalReference("bacnet://2500/analog-value,251/present-value")
 
 # TE-Ret
-te_ret.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,14/present-value")
+te_ret @ BACnetExternalReference("bacnet://2500/analog-input,14/present-value")
 
 # SP-1
-sp_1.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,17/present-value")
+sp_1 @ BACnetExternalReference("bacnet://2500/analog-input,17/present-value")
 sp_1_av = Pressure(label="P.C. PRES STAT 1A", hasUnit=UNIT.IN_H2O)
 sp_1.add_property(sp_1_av)
 sp_1_av @ BACnetExternalReference("bacnet://2500/analog-value,250/present-value")
@@ -199,7 +177,7 @@ fan_1a_bv @ BACnetExternalReference("bacnet://2500/binary-value,255/present-valu
 fan_1a_sch @ BACnetExternalReference("bacnet://2500/schedule,1/present-value")
 
 # HE-Ret
-he_ret.observedProperty @ BACnetExternalReference("bacnet://2500/analog-input,16/present-value")
+he_ret @ BACnetExternalReference("bacnet://2500/analog-input,16/present-value")
 
 # VFD-1A
 vfd_1a_ao = Percent(label="MOD. DRIVE ALM No.1A", hasUnit=UNIT.PERCENT)

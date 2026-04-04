@@ -1,6 +1,10 @@
 """Per-session compact JSONL event logger for offline analysis.
 
-Each line written is {"t": "<type>", "c": "<content>"}.
+Each line written is {"t": "<type>", "c": "<content>", "ts": <unix_s>, "tok": <tokens>}.
+  t   - event type label
+  c   - cleaned content
+  ts  - unix timestamp in seconds (always present)
+  tok - total tokens consumed by the model call (omitted when zero)
 TEXT_RESPONSE (streaming output chunks) are dropped entirely.
 Consecutive identical BRAINSTORM entries are deduplicated.
 Markdown formatting is stripped from content.
@@ -65,7 +69,7 @@ def _format_tool_call(event: dict) -> str:
 
 
 def _format_event(event: dict, session_id: str) -> dict | None:
-    """Return a compact {"t": ..., "c": ...} dict, or None to skip."""
+    """Return a compact {"t": ..., "c": ..., "ts": ..., "tok": ...} dict, or None to skip."""
     etype = event.get("event_type", "")
 
     if etype in _SKIP_TYPES:
@@ -87,7 +91,20 @@ def _format_event(event: dict, session_id: str) -> dict | None:
             return None
         _last_brainstorm[session_id] = content
 
-    return {"t": label, "c": content}
+    entry: dict = {"t": label, "c": content}
+
+    # Compact timestamp: unix seconds (integer) — ms epoch divided by 1000
+    ts_ms = event.get("timestamp")
+    if ts_ms:
+        entry["ts"] = int(ts_ms) // 1000
+
+    # Token usage: only when non-zero (present on model-generated events)
+    meta = event.get("metadata") or {}
+    total_tokens = meta.get("total_tokens") or 0
+    if total_tokens > 0:
+        entry["tok"] = total_tokens
+
+    return entry
 
 
 def log_events(session_id: str, events: list[dict]) -> None:
