@@ -183,3 +183,4 @@ progress:
 - Phase 19 added: Standardize agent exit tools across all skills
 - Phase 21 added: delete-usecoagent-switch-to-polling-only
 - Phase 22 added: enhance-bacnet-parsing
+- Phase 23 added: Add Cypher query tool for Neo4j agent exploration
