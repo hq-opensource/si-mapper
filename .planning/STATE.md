@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 22
 status: unknown
-last_updated: "2026-04-03T21:10:02.018Z"
+last_updated: "2026-04-04T10:30:32.496Z"
 progress:
-  total_phases: 22
+  total_phases: 23
   completed_phases: 15
-  total_plans: 41
-  completed_plans: 41
+  total_plans: 44
+  completed_plans: 42
 ---
 
 # State: HVAC Reconstruction Project
@@ -18,8 +18,8 @@ progress:
 
 - **Current Phase:** 22
 - **Overall Completion:** [██████████] 100%
-- **Active Plan:** 21-01 (complete — plan 01 done)
-- **Last Completed:** 21-01 (removed useCoAgent from page.tsx; combinedState now derives from pooledState ?? DEFAULT_AGENT_STATE; StateSyncer simplified to single-source sync from pooledState only — fixes "Maximum update depth exceeded" render loop)
+- **Active Plan:** 22-03 (complete — plan 03 done)
+- **Last Completed:** 22-03 (updated three ontology SKILL.md files to document pre-computed bacnet_N fields: code, address URI, ref_type — agents now use address directly, no manual parsing needed; lessons skill adds Phase 22 note while preserving legacy fallback)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -144,6 +144,7 @@ progress:
 - **2026-04-03:** Completed 18-01-PLAN.md (executed after phase 19). Rewrote skill-ontology-validation/SKILL.md with all 11 optimizations: Exit Protocol elevated to line 12, sub-steps 4a-4d for class lookup, Retry Escalation 3/5/10 tiers, inline error classification, minimum-change constraint, root-cause ordering, pre-write advisory, mid-loop lessons trigger, scan_python_folder in Step 0. Added targeted consultation note to skill-ontology-lessons/SKILL.md. Zero deprecated references. No new test failures.
 - **2026-04-03:** Completed 20-01-PLAN.md. Created agent/utils/session_logger.py (log_events function, JSONL append, OSError silencing, lazy dir creation). Created agent/tests/test_session_logger.py (7 TDD tests, all pass). Wired log_events into shared_model_callback in callback_utils.py after state events update. Added logs/ to agent/.gitignore. 7 new tests pass + 59 existing pass.
 - **2026-04-03:** Completed 21-01-PLAN.md. Removed useCoAgent from mapper/src/app/page.tsx. Added DEFAULT_AGENT_STATE module-level constant. Simplified combinedState to pooledState ?? DEFAULT_AGENT_STATE one-liner. Rewrote StateSyncer to accept only pooledState prop (no agentState). TypeScript compiles clean, Next.js build succeeds. Fixes "Maximum update depth exceeded" render loop.
+- **2026-04-03:** Completed 22-03-PLAN.md. Updated skill-ontology-generation, skill-ontology-validation, and skill-ontology-lessons SKILL.md files. Generation and validation skills document pre-computed bacnet_N fields (code, address, ref_type) and instruct agents to use address URI directly. Lessons skill adds Phase 22 update note at top of BACnet section while preserving all legacy parsing rules as fallback.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -158,6 +159,8 @@ progress:
 - **Decision (21-01):** useCoAgent removed entirely — agentState was always empty at runtime (data flows via ADK callbacks, not CopilotKit streaming); pooledState is now the sole source of truth for combinedState.
 - **Decision (21-01):** DEFAULT_AGENT_STATE is a module-level constant (not created inside component) to provide a stable reference that never causes re-renders.
 - **Decision (21-01):** StateSyncer simplified to single-source sync — no array merging, no agentRest, no adkData; early return when pooledState is null eliminates spurious context updates.
+- **Decision (22-03):** Pre-computed bacnet_N fields (code, address, ref_type) documented across all three ontology skills — agents consume address URI directly without manual parsing.
+- **Decision (22-03):** Lessons skill retains all existing address-parsing content as legacy fallback while Phase 22 update note is prepended at the top of the BACnet section.
 
 ## Roadmap Evolution
 
