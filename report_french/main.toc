@@ -1,0 +1,33 @@
+\babel@toc {french}{}\relax 
+\contentsline {section}{\numberline {1}Introduction et contexte}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Les ontologies de bâtiments : un langage standardisé pour les bâtiments}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}La norme ASHRAE 223P}{4}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Avantages et obstacles des modèles sémantiques de bâtiments}{5}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Description du problème}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Le problème du mappage des points BACnet}{6}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Le coût du mappage manuel}{7}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Le fossé de recherche et les solutions émergentes}{8}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Pourquoi cela importe pour le réseau électrique}{8}{subsection.2.4}%
+\contentsline {section}{\numberline {3}SI-Mapper : une approche agentique de la modélisation sémantique des bâtiments}{11}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Vue d'ensemble de l'approche}{11}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Méthodologie de développement : neuf itérations expérimentales}{12}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Architecture finale}{14}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Compétences}{15}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Outils}{15}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Décisions technologiques clés}{15}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Description des expériences, analyse et résultats}{17}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Configuration expérimentale}{17}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Système 1 : unité de traitement d'air}{18}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Matériaux d'entrée}{18}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Métriques de performance}{18}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Évaluation de la qualité du graphe}{18}{subsubsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.3}Système 3 : unité de traitement d'air}{19}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Matériaux d'entrée}{19}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Métriques de performance}{21}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}Évaluation de la qualité du graphe}{21}{subsubsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.4}Référence humaine : ingénieur}{21}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Comparaison : agent IA vs ingénieur humain}{21}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Conclusions}{22}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Résumé des contributions}{22}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Limitations}{23}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Travaux futurs}{24}{subsection.5.3}%
