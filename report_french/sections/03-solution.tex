@@ -258,10 +258,9 @@ que la précédente s'est terminée avec succès ; l'agent maître est responsab
 \label{subsec:tools}
 % -----------------------------------------------------------------------
 
-L'agent maître a accès à environ 25 outils organisés en dix catégories.
-Les outils gèrent toutes les interactions avec les systèmes externes, le stockage des données et l'état
-opérationnel propre de l'agent, les compétences fournissent le raisonnement ; les outils fournissent
-l'exécution.
+L'agent maître a accès à 27~outils répartis en sept catégories.
+Les compétences fournissent le raisonnement domaine ; les outils assurent toutes les interactions avec
+les systèmes externes, la gestion de la grille interne et le contrôle du cycle d'exécution.
 
 \begin{table}[htbp]
   \caption{Outils de l'agent maître regroupés par catégorie.}
@@ -272,63 +271,53 @@ l'exécution.
     \toprule
     \textbf{Catégorie} & \textbf{Outils} & \textbf{Fonction} \\
     \midrule
-    Synchronisation grille
+    Synchronisation\newline GraphiVAC
       & \texttt{sync\_graphivac\_to\_agent},
         \texttt{sync\_agent\_to\_graphivac}
-      & Synchronisation bidirectionnelle entre l'état de l'agent et le canevas Graphivac \\
+      & Synchronisation bidirectionnelle entre la grille interne de l'agent et le canevas GraphiVAC (format EDN) \\
     \addlinespace
-    CRUD grille
+    Grille interne
       & \texttt{add\_component},
         \texttt{add\_components\_batch},
         \texttt{delete\_component},
         \texttt{delete\_components\_batch},
-        \texttt{read\_internal\_grid}
-      & Créer, lire et supprimer des composants dans la grille interne \\
-    \addlinespace
-    Métadonnées
-      & \texttt{write\_metadata},
-        \texttt{write\_metadata\_batch}
-      & Attacher les données de points BACnet aux équipements de la grille \\
-    \addlinespace
-    Ontologie
-      & \texttt{search\_class\_mapping},
-        \texttt{scan\_python\_files\_filtered},
-        \texttt{read\_ontology},
-        \texttt{write\_ontology},
-        \texttt{execute\_ontology},
-        \texttt{read\_prompt}
-      & Recherche dans la bibliothèque ASHRAE 223P, lecture/écriture/exécution de code \\
-    \addlinespace
-    Signaux d'ontologie
-      & \texttt{checkpoint\_code},
-        \texttt{exit\_generator\_success},
-        \texttt{exit\_generator\_failure},
-        \texttt{exit\_validator\_success},
-        \texttt{exit\_validator\_failure}
-      & Versionnage des instantanés et signalisation de l'achèvement des tâches d'ontologie \\
+        \texttt{read\_internal\_grid},
+        \texttt{update\_component\_metadata},
+        \texttt{update\_component\_metadata\_batch}
+      & Créer, lire, supprimer et annoter des composants dans la représentation interne de la grille CVC \\
     \addlinespace
     Neo4j
-      & \texttt{load\_ttl\_to\_neo4j}
-      & Importer le modèle sémantique TTL validé dans la base de données de graphes Neo4j \\
+      & \texttt{execute\_cypher},
+        \texttt{execute\_cypher\_batch},
+        \texttt{get\_graph\_schema},
+        \texttt{search\_graph\_entities},
+        \texttt{load\_ttl\_to\_neo4j}
+      & Requêtes Cypher en lecture, introspection du schéma de graphe, et import du modèle TTL validé dans Neo4j via Neosemantics \\
     \addlinespace
-    Frontend
-      & \texttt{capture\_frontend\_state}
-      & Capturer une capture d'écran du canevas en direct pour l'autocorrection visuelle \\
+    Ontologie
+      & \texttt{read\_python\_files},
+        \texttt{scan\_python\_folder},
+        \texttt{search\_class\_mapping},
+        \texttt{write\_ontology},
+        \texttt{execute\_ontology},
+        \texttt{extract\_lessons}
+      & Navigation dans la bibliothèque ASHRAE~223P (bob/scratch), génération et exécution du code Python d'ontologie, extraction des leçons des erreurs passées \\
     \addlinespace
     Ingestion
       & \texttt{ingest\_category\_files}
-      & Charger les fichiers téléversés par l'utilisateur (plans, CSV, PDF) dans la session \\
+      & Charger les fichiers téléversés par l'utilisateur (plans CVC, CSV BACnet, PDF) dans la session de l'agent \\
     \addlinespace
-    État / Progression
+    État \& progression
       & \texttt{save\_agent\_state},
         \texttt{get\_agent\_state},
         \texttt{update\_step},
         \texttt{update\_status}
-      & Suivre la progression du traitement et persister l'état entre les tours \\
+      & Persister la progression du traitement entre les tours et diffuser le statut en temps réel vers l'interface CopilotKit \\
     \addlinespace
     Contrôle de boucle
-      & \texttt{exit\_loop\_level\_2}
-      & Terminer la session de l'agent maître \\
+      & \texttt{exit\_with\_success},
+        \texttt{exit\_with\_failure}
+      & Signaler la fin d'une compétence avec un résumé ou une raison d'échec, déclenchant la terminaison de la boucle principale \\
     \bottomrule
   \end{tabular}
 \end{table}

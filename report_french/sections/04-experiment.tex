@@ -30,25 +30,23 @@ L'agent a reçu trois artefacts d'entrée : un plan schématique d'ingénierie H
 un fichier CSV d'export de points BACnet contenant des données de points de contrôle bruts, et une
 documentation de contrôle en PDF. Aucun contexte supplémentaire n'a été fourni.
 
-La figure~\ref{fig:system1-comparison} montre le plan d'ingénierie original aux côtés de la
-réplication de grille générée par IA produite par l'agent avant la génération d'ontologie.
+La figure~\ref{fig:system1-original} montre le plan d'ingénierie original, et la
+figure~\ref{fig:system1-replicated} montre la réplication de grille générée par IA produite par
+l'agent avant la génération d'ontologie.
 
 \begin{figure}[htbp]
   \centering
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{system_one_original.png}
-    \caption*{(a) Plan d'ingénierie original}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{system_one_ia_replicated.jpg}
-    \caption*{(b) Réplication de grille générée par IA}
-  \end{minipage}
-  \caption{Système 1 : schéma HVAC original (gauche) et la réplication de l'agent sur la
-  grille Graphivac (droite), produite comme étape intermédiaire avant la génération ASHRAE 223P.}
-  \label{fig:system1-comparison}
+  \includegraphics[width=\textwidth]{system_one_original.png}
+  \caption{Système 1 : plan d'ingénierie HVAC original utilisé comme entrée pour l'agent.}
+  \label{fig:system1-original}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_one_ia_replicated.jpg}
+  \caption{Système 1 : réplication de la grille générée par l'agent sur le canevas GraphiVAC,
+  produite comme étape intermédiaire avant la génération ASHRAE 223P.}
+  \label{fig:system1-replicated}
 \end{figure}
 
 \subsubsection{Métriques de performance}
@@ -92,26 +90,23 @@ toutes les références externes BACnet, et la composition spatiale de l'assembl
 Des requêtes Cypher post-génération ont confirmé que les ventilateurs, les volets et les liens
 capteur-BACnet étaient tous correctement représentés dans la base de données Neo4j.
 
-La figure~\ref{fig:system1-graph} montre le graphe sémantique ASHRAE 223P généré tel que
-visualisé dans le frontend SI-Mapper.
+Les figures~\ref{fig:system1-graph-full} et~\ref{fig:system1-graph-detail} montrent le graphe
+sémantique ASHRAE 223P généré tel que visualisé dans le frontend SI-Mapper.
 
 \begin{figure}[htbp]
   \centering
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{system_one_graph_full.jpg}
-    \caption*{(a) Vue complète du graphe}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{system_one_graph_detail.jpg}
-    \caption*{(b) Vue détaillée de la topologie des équipements}
-  \end{minipage}
-  \caption{Système 1 : graphe sémantique ASHRAE 223P généré dans la visualisation Neo4j
-  de SI-Mapper (295 nœuds, 949 relations). La vue détaillée montre les nœuds d'équipements
+  \includegraphics[width=\textwidth]{system_one_graph_full.jpg}
+  \caption{Système 1 : vue complète du graphe sémantique ASHRAE 223P dans la visualisation
+  Neo4j de SI-Mapper (295 nœuds, 949 relations).}
+  \label{fig:system1-graph-full}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_one_graph_detail.jpg}
+  \caption{Système 1 : vue détaillée de la topologie des équipements, montrant les nœuds
   avec leurs points de connexion et les références externes BACnet.}
-  \label{fig:system1-graph}
+  \label{fig:system1-graph-detail}
 \end{figure}
 
 \subsection{Système 3 : unité de traitement d'air}
@@ -123,25 +118,21 @@ bâtiment différente, plus complexe que le Système 1. L'agent a reçu les mêm
 d'entrée : un schéma d'ingénierie HVAC (PNG), un CSV d'export de points BACnet, et la documentation
 de contrôle.
 
-La figure~\ref{fig:system3-comparison} montre le plan original et la réplication de grille générée
-par IA.
+La figure~\ref{fig:system3-original} montre le plan original et la figure~\ref{fig:system3-replicated}
+montre la réplication de grille générée par IA.
 
 \begin{figure}[htbp]
   \centering
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{system_three.png}
-    \caption*{(a) Plan d'ingénierie original}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{system_three_ia_replicated.jpg}
-    \caption*{(b) Réplication de grille générée par IA}
-  \end{minipage}
-  \caption{Système 3 : schéma HVAC original (gauche) et la réplication de l'agent sur la
-  grille Graphivac (droite).}
-  \label{fig:system3-comparison}
+  \includegraphics[width=\textwidth]{system_three.png}
+  \caption{Système 3 : plan d'ingénierie HVAC original utilisé comme entrée pour l'agent.}
+  \label{fig:system3-original}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_three_ia_replicated.jpg}
+  \caption{Système 3 : réplication de la grille générée par l'agent sur le canevas GraphiVAC.}
+  \label{fig:system3-replicated}
 \end{figure}
 
 \subsubsection{Métriques de performance}
@@ -183,26 +174,23 @@ d'API dans la syntaxe de cartographie capteur-BACnet (l'opérateur \texttt{@} n'
 directement sur les objets capteur de pression). L'agent a identifié le problème, appliqué le motif
 correct \texttt{.observes @}, et produit un fichier TTL propre sans intervention humaine.
 
-La figure~\ref{fig:system3-graph} montre le graphe sémantique ASHRAE 223P résultant dans le
-frontend SI-Mapper.
+Les figures~\ref{fig:system3-graph-full} et~\ref{fig:system3-graph-detail} montrent le graphe
+sémantique ASHRAE 223P résultant dans le frontend SI-Mapper.
 
 \begin{figure}[htbp]
   \centering
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{system_three_graph_full.jpg}
-    \caption*{(a) Vue complète du graphe}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{system_three_graph_detail.jpg}
-    \caption*{(b) Vue détaillée de la topologie des équipements}
-  \end{minipage}
-  \caption{Système 3 : graphe sémantique ASHRAE 223P généré dans la visualisation Neo4j
-  de SI-Mapper. La vue détaillée montre les nœuds d'équipements avec les points de connexion, les
-  types de médiums et les références externes BACnet.}
-  \label{fig:system3-graph}
+  \includegraphics[width=\textwidth]{system_three_graph_full.jpg}
+  \caption{Système 3 : vue complète du graphe sémantique ASHRAE 223P dans la visualisation
+  Neo4j de SI-Mapper.}
+  \label{fig:system3-graph-full}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_three_graph_detail.jpg}
+  \caption{Système 3 : vue détaillée de la topologie des équipements, montrant les nœuds avec
+  les points de connexion, les types de médiums et les références externes BACnet.}
+  \label{fig:system3-graph-detail}
 \end{figure}
 
 \subsection{Référence humaine : ingénieur}

@@ -238,9 +238,9 @@ to retry or escalate.
 \subsection{Tools}
 % -----------------------------------------------------------------------
 
-The master agent has access to approximately 25 tools organized into ten categories.
-Tools handle all interactions with external systems, data storage, and the agent's own
-operational state, the skills provide the reasoning; the tools provide the execution.
+The master agent has access to 27~tools organized into seven categories.
+Skills provide domain reasoning; tools handle all interactions with external systems,
+internal grid management, and execution lifecycle control.
 
 \begin{table}[htbp]
   \caption{Master agent tools grouped by category.}
@@ -251,63 +251,53 @@ operational state, the skills provide the reasoning; the tools provide the execu
     \toprule
     \textbf{Category} & \textbf{Tools} & \textbf{Description} \\
     \midrule
-    Grid Sync
+    GraphiVAC Sync
       & \texttt{sync\_graphivac\_to\_agent},
         \texttt{sync\_agent\_to\_graphivac}
-      & Bidirectional sync between agent state and Graphivac canvas \\
+      & Bidirectional sync between the agent's internal grid and the GraphiVAC canvas (EDN format) \\
     \addlinespace
-    Grid CRUD
+    Internal Grid
       & \texttt{add\_component},
         \texttt{add\_components\_batch},
         \texttt{delete\_component},
         \texttt{delete\_components\_batch},
-        \texttt{read\_internal\_grid}
-      & Create, read, and delete components in the internal grid \\
-    \addlinespace
-    Metadata
-      & \texttt{write\_metadata},
-        \texttt{write\_metadata\_batch}
-      & Attach BACnet point data to grid equipment \\
-    \addlinespace
-    Ontology
-      & \texttt{search\_class\_mapping},
-        \texttt{scan\_python\_files\_filtered},
-        \texttt{read\_ontology},
-        \texttt{write\_ontology},
-        \texttt{execute\_ontology},
-        \texttt{read\_prompt}
-      & ASHRAE 223P library lookup, code read/write/execute \\
-    \addlinespace
-    Ontology Signals
-      & \texttt{checkpoint\_code},
-        \texttt{exit\_generator\_success},
-        \texttt{exit\_generator\_failure},
-        \texttt{exit\_validator\_success},
-        \texttt{exit\_validator\_failure}
-      & Snapshot versioning and ontology task completion signaling \\
+        \texttt{read\_internal\_grid},
+        \texttt{update\_component\_metadata},
+        \texttt{update\_component\_metadata\_batch}
+      & Create, read, delete, and annotate components in the internal HVAC grid representation \\
     \addlinespace
     Neo4j
-      & \texttt{load\_ttl\_to\_neo4j}
-      & Import validated TTL semantic model into Neo4j graph database \\
+      & \texttt{execute\_cypher},
+        \texttt{execute\_cypher\_batch},
+        \texttt{get\_graph\_schema},
+        \texttt{search\_graph\_entities},
+        \texttt{load\_ttl\_to\_neo4j}
+      & Read-only Cypher queries, graph schema introspection, and import of the validated TTL model into Neo4j via Neosemantics \\
     \addlinespace
-    Frontend
-      & \texttt{capture\_frontend\_state}
-      & Screenshot the live canvas for visual self-correction \\
+    Ontology
+      & \texttt{read\_python\_files},
+        \texttt{scan\_python\_folder},
+        \texttt{search\_class\_mapping},
+        \texttt{write\_ontology},
+        \texttt{execute\_ontology},
+        \texttt{extract\_lessons}
+      & Navigate the ASHRAE~223P library (bob/scratch), generate and execute ontology Python code, extract lessons from past errors \\
     \addlinespace
     Ingestion
       & \texttt{ingest\_category\_files}
-      & Load user-uploaded files (drawings, CSVs, PDFs) into session \\
+      & Load user-uploaded files (HVAC drawings, BACnet CSVs, PDFs) into the agent session \\
     \addlinespace
-    State / Progress
+    State \& Progress
       & \texttt{save\_agent\_state},
         \texttt{get\_agent\_state},
         \texttt{update\_step},
         \texttt{update\_status}
-      & Track processing progress and persist state across turns \\
+      & Persist processing progress across turns and stream real-time status to the CopilotKit interface \\
     \addlinespace
     Loop Control
-      & \texttt{exit\_loop\_level\_2}
-      & Terminate the master agent session \\
+      & \texttt{exit\_with\_success},
+        \texttt{exit\_with\_failure}
+      & Signal skill completion with a summary or failure reason, triggering main loop termination \\
     \bottomrule
   \end{tabular}
 \end{table}
