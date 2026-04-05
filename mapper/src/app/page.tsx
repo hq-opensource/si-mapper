@@ -2,11 +2,17 @@
 
 import { useCopilotAction, useCoAgent, useCopilotContext } from "@copilotkit/react-core";
 import { useState, useEffect, useRef, useMemo } from "react";
+import { AlertTriangle, X } from "lucide-react";
 import { SplitSidebar } from "@/components/SplitSidebar";
-import { YourMainContent } from "@/app/page/components/YourMainContent";
+import { YourMainContent, type ActiveTab } from "@/app/page/components/YourMainContent";
 import { ThoughtsProvider, useThoughts, type Thought, type ToolCall, type AgentEvent } from "@/context/ThoughtsContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { useAgentPolling } from "@/hooks/useAgentPolling";
+import {
+  EXCLUDED_SYNC_KEYS,
+  FILTERED_STATE_KEY_PREFIXES,
+  ACTIVE_TURN_STATUSES,
+} from "@/constants/agentState";
 import type { System, Session } from "@/types";
 
 type AgentState = {
@@ -53,29 +59,35 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
     if (combinedToolCalls.length > 0) syncToolCalls(combinedToolCalls);
     if (combinedEvents.length > 0) syncEvents(combinedEvents);
 
-    const { data } = pooledState || {};
-    const adkData = agentState.data;
-
-    const excludedKeys = ['status', 'current_step', 'observed_steps', 'active_agent', 'thoughts', 'tool_calls', 'events'];
-
+    // adkData = ADK nested dict, copilotData = CopilotKit nested dict
     const pooledRest = pooledState ? Object.fromEntries(
-      Object.entries(pooledState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
+      Object.entries(pooledState).filter(([key]) =>
+        !FILTERED_STATE_KEY_PREFIXES.some(p => key.startsWith(p)) &&
+        !(EXCLUDED_SYNC_KEYS as readonly string[]).includes(key)
+      )
     ) : {};
 
     const agentRest = Object.fromEntries(
-      Object.entries(agentState).filter(([key]) => !key.startsWith('EXIT_') && !excludedKeys.includes(key))
+      Object.entries(agentState).filter(([key]) =>
+        !FILTERED_STATE_KEY_PREFIXES.some(p => key.startsWith(p)) &&
+        !(EXCLUDED_SYNC_KEYS as readonly string[]).includes(key)
+      )
     );
 
     const customData: Record<string, unknown> = { ...agentRest, ...pooledRest };
 
-    if (data && Object.keys(data).length > 0) customData.data = data;
-    if (adkData && Object.keys(adkData).length > 0) customData.adkData = adkData;
+    // pooledState.data → adkData, agentState.data → copilotData
+    if (pooledState?.data && Object.keys(pooledState.data).length > 0)
+      customData.adkData = pooledState.data;
+
+    if (agentState.data && Object.keys(agentState.data).length > 0)
+      customData.copilotData = agentState.data;
 
     if (Object.keys(customData).length > 0) {
-      syncData(customData);
+      // Pass snapshot so stale keys are pruned automatically
+      syncData(customData, Object.keys(customData));
     }
   }, [pooledState, agentState, syncThoughts, syncToolCalls, syncEvents, syncData]);
-
 
   return null;
 }
@@ -83,16 +95,13 @@ function StateSyncer({ pooledState, agentState }: { pooledState: AgentState | nu
 export default function CopilotKitPage() {
   const [themeColor, setThemeColor] = useState("#6366f1");
   const [isEditMode, setIsEditMode] = useState(false);
+  // Lifted above ThoughtsProvider so tab selection survives session switches (key remount).
+  const [activeTab, setActiveTab] = useState<ActiveTab>('view');
   const { activeProject, activeSystem, updateActiveSystem } = useWorkspace();
+  const [error, setError] = useState<string | null>(null);
 
-  const pollingConfig = useMemo(() => ({
-    baseUrl: process.env.NEXT_PUBLIC_AGENT_BACKEND_URL ?? "http://localhost:8001",
-    interval: 2000
-  }), []);
-
-  const { pooledState } = useAgentPolling<AgentState>(pollingConfig);
-
-  const { state: agentState, setState: setAgentState } = useCoAgent<AgentState>({
+  // Use `running` from useCoAgent as the canonical "turn active" flag
+  const { state: agentState, setState: setAgentState, running: isCopilotTurnActive } = useCoAgent<AgentState>({
     name: "my_agent",
     initialState: {
       status: "idle",
@@ -104,14 +113,49 @@ export default function CopilotKitPage() {
     },
   });
 
+  // Two-speed polling: slow when agent is at rest, fast during active turns
+  const pollingConfig = useMemo(() => ({
+    baseUrl: process.env.NEXT_PUBLIC_AGENT_BACKEND_URL ?? "http://localhost:8001",
+    interval: (agentState.status === "idle" || agentState.status === "complete")
+      ? 10_000
+      : 2_000,
+  }), [agentState.status]);
+
+  const { pooledState, error: pollingError } = useAgentPolling<AgentState>(pollingConfig);
+
+  // Track whether the user manually dismissed the banner so it doesn't flicker back
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+
+  // Re-show the banner whenever a new error appears
+  useEffect(() => {
+    if (pollingError) setBannerDismissed(false);
+  }, [pollingError]);
+
+  const showErrorBanner = !!pollingError && !bannerDismissed;
+
+  // Prefer `running` flag; fall back to status vocabulary check
+  const isActiveTurn = isCopilotTurnActive ??
+    (ACTIVE_TURN_STATUSES as readonly string[]).includes(agentState.status);
+
+  // combinedState with explicit ownership rules
+  const combinedState = {
+    ...agentState,
+    ...(pooledState || {}),
+    // Lifecycle keys: CopilotKit stream wins during active turns; poll wins at rest
+    status:       isActiveTurn ? agentState.status       : (pooledState?.status       ?? agentState.status),
+    current_step: isActiveTurn ? agentState.current_step : (pooledState?.current_step ?? agentState.current_step),
+    active_agent: isActiveTurn ? agentState.active_agent : (pooledState?.active_agent ?? agentState.active_agent),
+    // Frontend is always authoritative for workspace selection
+    active_project: agentState.active_project,
+    active_system:  agentState.active_system,
+  } as AgentState;
+
   // Keep refs so effects always see the latest values without triggering loops.
   const agentStateRef = useRef<AgentState>(agentState);
   agentStateRef.current = agentState;
 
   // Stabilize setAgentState via a ref — CopilotKit does NOT guarantee a stable
-  // function reference across renders, so including it in a useEffect dependency
-  // array causes an infinite loop (effect fires → state updates → new ref →
-  // effect fires again…). Accessing it through a ref breaks that cycle.
+  // function reference across renders.
   const setAgentStateRef = useRef(setAgentState);
   setAgentStateRef.current = setAgentState;
 
@@ -133,21 +177,8 @@ export default function CopilotKitPage() {
         graphivac_grid_id: activeSystem.graphivac_grid_id,
       } : null,
     });
-  }, [activeProject, activeSystem]); // setAgentState intentionally omitted — accessed via ref above
+  }, [activeProject, activeSystem]);
 
-  const combinedState = {
-    ...agentState,
-    ...(pooledState || {}),
-    status: pooledState?.status || agentState.status,
-    current_step: pooledState?.current_step || agentState.current_step,
-    active_agent: pooledState?.active_agent || agentState.active_agent,
-  } as AgentState;
-
-  useEffect(() => {
-    if (pooledState) {
-      console.log("DEBUG: Pooled State Update:", pooledState);
-    }
-  }, [pooledState]);
 
   useCopilotAction({
     name: "setThemeColor",
@@ -276,7 +307,9 @@ export default function CopilotKitPage() {
 
   return (
     <main className="flex h-screen" style={{ "--copilot-kit-primary-color": themeColor, "--accent": themeColor } as React.CSSProperties}>
-      <ThoughtsProvider currentAgentName={combinedState.active_agent || "SI-MAPPER"}>
+      {/* key={threadId} forces full unmount/remount on session switch,
+           resetting all four context slices (thoughts, toolCalls, events, data) */}
+      <ThoughtsProvider key={threadId} currentAgentName={combinedState.active_agent || "SI-MAPPER"}>
         <StateSyncer pooledState={pooledState} agentState={agentState} />
         <SplitSidebar
           isEditMode={isEditMode}
@@ -285,17 +318,36 @@ export default function CopilotKitPage() {
         />
         <div className="flex-grow min-w-0 overflow-hidden">
           <YourMainContent
-            isEditMode={isEditMode}
             agentState={combinedState}
             onUseSession={useSession}
             onNewSession={handleNewSession}
             onRemoveSession={handleRemoveSession}
             threadId={threadId}
             sessions={activeSystem?.sessions ?? []}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
           />
         </div>
       </ThoughtsProvider>
+
+      {/* Warning banner — shown when the agent backend is unreachable */}
+      {showErrorBanner && (
+        <div className="fixed bottom-0 left-0 right-0 z-[9999] flex items-center gap-3 px-5 py-3 bg-amber-500/95 backdrop-blur-sm text-amber-950 shadow-[0_-4px_24px_rgba(0,0,0,0.15)] animate-in slide-in-from-bottom-2 duration-300">
+          <AlertTriangle size={16} className="shrink-0" />
+          <div className="flex-1 min-w-0">
+            <span className="font-bold text-sm">Agent backend unreachable</span>
+            <span className="text-sm font-medium opacity-80 ml-2">— State panel may show stale data</span>
+            <span className="text-sm font-medium opacity-80 ml-2">::&nbsp;&nbsp;&nbsp;{pollingError}</span>
+          </div>
+          <button
+            onClick={() => setBannerDismissed(true)}
+            aria-label="Dismiss warning"
+            className="shrink-0 p-1 rounded-lg hover:bg-amber-600/30 transition-colors"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
     </main>
   );
 }
-

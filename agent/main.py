@@ -62,8 +62,7 @@ def create_app() -> FastAPI:
             "python_code_snapshots": [],
             "ttl_code_snapshots": []
         }
-    GLOBAL_SESSION_STORE["latest"] = GLOBAL_SESSION_STORE[session_id]
-    
+
     # 2. Create Master Agent
     # OntologyGeneratorAgent and OntologyValidatorAgent are instantiated
     # inside create_master_agent — no external subagents needed here.
@@ -113,10 +112,11 @@ def create_app() -> FastAPI:
 
     @app.get("/session_info")
     async def get_session_info():
-        """Expose the session info to the frontend."""
-        logger.debug(f"[/session_info] Returning session: {session_id}")
+        """Expose the ADK coordinates to the frontend polling hook.
+        session_id removed from response; polling is driven by threadId.
+        """
+        logger.debug(f"[/session_info] Serving ADK coordinates")
         return {
-            "session_id": session_id,
             "app_name": "si_mapper",
             "user_id": "demo_user"
         }
@@ -151,8 +151,7 @@ def create_app() -> FastAPI:
 
         logger.debug(f"[/session_state] Resolved {target_session_id} — {len(base_state)} persisted keys.")
 
-        # Overlay real-time updates; fall back to "latest" in single-session mode.
-        real_time_updates = GLOBAL_SESSION_STORE.get(target_session_id) or GLOBAL_SESSION_STORE.get("latest")
+        real_time_updates = GLOBAL_SESSION_STORE.get(target_session_id)
         
         if real_time_updates:
             logger.debug(f"[/session_state] Merging real-time updates from Global Store for {target_session_id}")
