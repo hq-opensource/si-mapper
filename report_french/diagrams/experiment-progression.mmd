@@ -1,12 +1,12 @@
 flowchart LR
-    V1["V1\nFunction\nCalling\n(Gemini 1.5)"] --> V2["V2\nWorkflows\n(LangChain)"]
-    V2 --> V3["V3\nADK\nWorkflows\n(Gemini 2.0)"]
-    V3 --> V4["V4\nMaster Agent\nAgentic\n(Gemini 2.5)"]
-    V4 --> V5["V5\nPAR\nArchitecture"]
-    V5 --> V6["V6\nMaster +\nPAR Sub-agent"]
-    V6 --> V7["V7\nMaster +\nHybrid\nWorkflows"]
-    V7 --> V8["V8\nParallel\nAgents\n(Gemini 3.0)"]
-    V8 --> V9["V9\nSkills-Based\nMaster Agent\n(Gemini 3.1)"]
+    V1["V1\nAppels de\nfonctions\n(Gemini 1.5)"] --> V2["V2\nWorkflows\n(LangChain)"]
+    V2 --> V3["V3\nWorkflows\nADK\n(Gemini 2.0)"]
+    V3 --> V4["V4\nAgent maître\nAgentique\n(Gemini 2.5)"]
+    V4 --> V5["V5\nArchitecture\nPAR"]
+    V5 --> V6["V6\nMaître +\nSous-agent PAR"]
+    V6 --> V7["V7\nMaître +\nWorkflows\nhybrides"]
+    V7 --> V8["V8\nAgents\nparallèles\n(Gemini 3.0)"]
+    V8 --> V9["V9\nAgent maître\nbasé compétences\n(Gemini 3.1)"]
 
     style V1 fill:#FFE0E0,stroke:#CC5555
     style V2 fill:#FFE0E0,stroke:#CC5555

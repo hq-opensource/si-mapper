@@ -1,14 +1,14 @@
 flowchart TB
-    subgraph Frontend["CopilotKit Frontend (Next.js)"]
-        UI["Agent HUD\n+ Chat Interface"]
+    subgraph Frontend["Interface CopilotKit (Next.js)"]
+        UI["HUD Agent\n+ Interface de chat"]
         GV["Graphivac\nCAD Canvas"]
-        GW["Graph\nVisualization\n(Sigma.js)"]
-        CW["Code Viewer\n(TTL / Python)"]
+        GW["Visualisation\nde graphe\n(Sigma.js)"]
+        CW["Visionneur de code\n(TTL / Python)"]
     end
 
-    subgraph Agent["Master Agent (Google ADK)"]
+    subgraph Agent["Agent maître (Google ADK)"]
         MA["MasterLlmAgent\n(Gemini 3.1 / Claude Sonnet 4.6)"]
-        subgraph Skills["Skills (Inline Instructions)"]
+        subgraph Skills["Compétences (Instructions intégrées)"]
             S1["skill-ductwork"]
             S2["skill-hvac-equipments"]
             S3["skill-bacnet-points"]
@@ -16,17 +16,17 @@ flowchart TB
             S5["skill-ontology-validation"]
             S6["skill-read-code"]
         end
-        subgraph Tools["Tools (~25)"]
-            T1["Grid CRUD"]
-            T2["Metadata"]
-            T3["Ontology R/W/Execute"]
-            T4["Neo4j Import"]
-            T5["Screenshot Capture"]
-            T6["File Ingestion"]
+        subgraph Tools["Outils (~25)"]
+            T1["Grille CRUD"]
+            T2["Métadonnées"]
+            T3["Ontologie R/É/Exéc."]
+            T4["Import Neo4j"]
+            T5["Capture d'écran"]
+            T6["Ingestion de fichiers"]
         end
     end
 
-    subgraph External["External Services"]
+    subgraph External["Services externes"]
         NEO["Neo4j + n10s"]
         GVC["Graphivac REST API"]
     end
