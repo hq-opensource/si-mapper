@@ -1,47 +1,124 @@
-flowchart TB
-    subgraph Frontend["CopilotKit Frontend (Next.js)"]
-        UI["Agent HUD\n+ Chat Interface"]
-        GV["Graphivac\nCAD Canvas"]
-        GW["Graph\nVisualization\n(Sigma.js)"]
-        CW["Code Viewer\n(TTL / Python)"]
-    end
+flowchart LR
 
-    subgraph Agent["Master Agent (Google ADK)"]
-        MA["MasterLlmAgent\n(Gemini 3.1 / Claude Sonnet 4.6)"]
-        subgraph Skills["Skills (Inline Instructions)"]
-            S1["skill-ductwork"]
-            S2["skill-hvac-equipments"]
-            S3["skill-bacnet-points"]
-            S4["skill-ontology-generation"]
-            S5["skill-ontology-validation"]
-            S6["skill-read-code"]
+    subgraph AGENT["AI Agent · Google ADK · FastAPI :8001"]
+        direction TB
+
+        MA["MasterLlmAgent\nGemini 3.1 Pro · T=1.0\nNative Thinking HIGH\nMasterMainLoopAgent · 100 iter. max"]
+
+        subgraph SKILLS["Skills — 7 Skills"]
+            direction TB
+            SK1["skill-ductwork — Identification & routing of HVAC ducts"]
+            SK2["skill-hvac-equipments — Equipment placement on the grid"]
+            SK3["skill-bacnet-points — BACnet CSV point extraction & mapping"]
+            SK4["skill-ontology-generation — ASHRAE 223P ontology generation (Python)"]
+            SK5["skill-ontology-validation — Iterative TTL validation & correction"]
+            SK6["skill-ontology-lessons — Knowledge base of past errors"]
+            SK7["skill-control-points — Control point extraction"]
         end
-        subgraph Tools["Tools (~25)"]
-            T1["Grid CRUD"]
-            T2["Metadata"]
-            T3["Ontology R/W/Execute"]
-            T4["Neo4j Import"]
-            T5["Screenshot Capture"]
-            T6["File Ingestion"]
+
+        subgraph TOOLS["Tools — 25 tools"]
+            direction TB
+            TGN["Internal Grid (7)\nadd_component · add_components_batch\ndelete_component · delete_components_batch\nread_internal_grid · update_component_metadata · _batch"]
+            TSN["GraphiVAC Sync (2)\nsync_graphivac_to_agent · sync_agent_to_graphivac"]
+            TNN["Neo4j (5)\nexecute_cypher · execute_cypher_batch\nget_graph_schema · search_graph_entities · load_ttl_to_neo4j"]
+            TON["Ontology (6)\nread_python_files · scan_python_folder · search_class_mapping\nwrite_ontology · execute_ontology · extract_lessons"]
+            TMN["Management (5)\ningest_category_files · update_step · update_status · update_state\nsave_agent_state · get_agent_state · exit_with_success · exit_with_failure"]
+        end
+
+        MA --> SKILLS
+        MA --> TOOLS
+    end
+
+    subgraph FRONTEND["Interface · CopilotKit + Next.js · Mapper"]
+        direction TB
+
+        FHU["CopilotKit Chat HUD\nSplitSidebar · Controls & Status"]
+
+        subgraph FTABS["Workspace Tabs"]
+            direction LR
+            FT1["Thoughts\n(LLM reasoning)"]
+            FT2["Files\n(HVAC/BACnet upload)"]
+            FT3["View\n(GraphiVAC canvas)"]
+            FT4["Graph\n(React Sigma / Neo4j)"]
+            FT5["Python / TTL\n(ontology code)"]
+            FT6["Debug / State\n(tool log & state)"]
+        end
+
+        subgraph FAPI["Next.js API Routes"]
+            direction TB
+            FAC["/api/copilotkit\n(proxy → FastAPI :8001)"]
+            FAG["/api/graph\n(Neo4j → Sigma.js)"]
+            FAF["/api/files\n(upload & read)"]
         end
     end
 
-    subgraph External["External Services"]
-        NEO["Neo4j + n10s"]
-        GVC["Graphivac REST API"]
+    subgraph EXT["External Services"]
+        direction TB
+
+        LLM["Google Gemini 3.1 Pro\nCloud LLM · Native ThinkingConfig\nHIGH reasoning"]
+
+        subgraph GVAC["GraphiVAC Platform"]
+            direction TB
+            GVR["REST API (EDN format)\nGET / PUT HVAC grid"]
+            GVV["Render Interface\n(visual HVAC canvas)"]
+        end
+
+        subgraph NEO4J["Neo4j + Neosemantics n10s"]
+            direction TB
+            NDB["Graph Database (Bolt :7687)\nASHRAE 223P Ontology"]
+            NIO["n10s.rdf.import.inline\n(TTL / Turtle import)"]
+        end
+
+        subgraph FFS["Local Files"]
+            direction TB
+            FFU["mapper/uploads/ hvac · bacnet · pdf"]
+            FFP["uploads/python/latest_ontology.py"]
+            FFT["uploads/ttl/latest_ontology.ttl"]
+        end
     end
 
-    MA --> Skills
-    MA --> Tools
-    UI <--> MA
-    T1 <--> GVC
-    T4 --> NEO
-    NEO --> GW
-    T5 --> GV
-    T6 --> UI
+    %% ── Agent ↔ Frontend ─────────────────────────────────────────────
+    MA <-->|"WebSocket streaming\nthoughts · events · state"| FAC
+    MA <-.->|"Polling fallback /session_state (2 s)"| FAC
 
-    style MA fill:#4A90D9,color:#fff,stroke:#2C5F8A
-    style Skills fill:#E8F4E8,stroke:#338A4E
-    style Tools fill:#FFF3E0,stroke:#B07E20
-    style Frontend fill:#F0F4FF,stroke:#4A90D9
-    style External fill:#FFF0F0,stroke:#CC5555
+    %% ── Agent → LLM ──────────────────────────────────────────────────
+    MA ==>|"Google ADK"| LLM
+
+    %% ── Agent ↔ GraphiVAC ────────────────────────────────────────────
+    TSN <-->|"GET / PUT EDN"| GVR
+
+    %% ── Agent → Neo4j ────────────────────────────────────────────────
+    TNN -->|"Cypher (read)"| NDB
+    TNN -->|"wipe + reimport"| NIO
+    NIO --> NDB
+
+    %% ── Agent → Local Files ──────────────────────────────────────────
+    TON -->|"write_ontology"| FFP
+    TON -->|"execute_ontology → TTL"| FFT
+    TMN -->|"ingest_category_files"| FFU
+
+    %% ── Frontend ↔ External Services ────────────────────────────────
+    FT3 -->|"iframe"| GVV
+    FAG <-->|"Cypher (Bolt)"| NDB
+    FAF <-->|"read / write"| FFU
+    FFT -->|"imported via n10s"| NIO
+
+    %% ── Styles ───────────────────────────────────────────────────────
+    style AGENT fill:#E3F2FD,stroke:#1565C0,color:#0D1B2A
+    style MA fill:#1565C0,color:#FFFFFF,stroke:#0D47A1
+    style SKILLS fill:#E8F5E9,stroke:#2E7D32,color:#0D1B2A
+    style TOOLS fill:#FFF8E1,stroke:#F57F17,color:#0D1B2A
+    style TGN fill:#FFFDE7,stroke:#F9A825,color:#0D1B2A
+    style TSN fill:#FFFDE7,stroke:#F9A825,color:#0D1B2A
+    style TNN fill:#FFFDE7,stroke:#F9A825,color:#0D1B2A
+    style TON fill:#FFFDE7,stroke:#F9A825,color:#0D1B2A
+    style TMN fill:#FFFDE7,stroke:#F9A825,color:#0D1B2A
+    style FRONTEND fill:#F3E5F5,stroke:#6A1B9A,color:#0D1B2A
+    style FHU fill:#7B1FA2,color:#FFFFFF,stroke:#4A148C
+    style FTABS fill:#EDE7F6,stroke:#7B1FA2,color:#0D1B2A
+    style FAPI fill:#EDE7F6,stroke:#7B1FA2,color:#0D1B2A
+    style EXT fill:#FCE4EC,stroke:#880E4F,color:#0D1B2A
+    style GVAC fill:#FFEEF1,stroke:#AD1457,color:#0D1B2A
+    style NEO4J fill:#FFEEF1,stroke:#AD1457,color:#0D1B2A
+    style FFS fill:#FBE9E7,stroke:#BF360C,color:#0D1B2A
+    style LLM fill:#4285F4,color:#FFFFFF,stroke:#0D47A1
