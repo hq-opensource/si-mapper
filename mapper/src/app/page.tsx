@@ -146,23 +146,29 @@ export default function CopilotKitPage() {
     current_step: isActiveTurn ? agentState.current_step : (pooledState?.current_step ?? agentState.current_step),
     active_agent: isActiveTurn ? agentState.active_agent : (pooledState?.active_agent ?? agentState.active_agent),
     // Frontend is always authoritative for workspace selection
-    active_project: agentState.active_project,
-    active_system:  agentState.active_system,
+    active_project: activeProject ? {
+        id: activeProject.id,
+        name: activeProject.name,
+        folder_path: activeProject.folder_path,
+        graphivac_project_id: activeProject.graphivac_project_id,
+      } : null,
+    active_system: activeSystem ? {
+        id: activeSystem.id,
+        name: activeSystem.name,
+        folder_path: activeSystem.folder_path,
+        graphivac_grid_id: activeSystem.graphivac_grid_id,
+      } : null,
   } as AgentState;
 
-  // Keep refs so effects always see the latest values without triggering loops.
+  // Keep a ref so the effect always sees the latest agent state without
+  // triggering extra re-runs.
   const agentStateRef = useRef<AgentState>(agentState);
   agentStateRef.current = agentState;
-
-  // Stabilize setAgentState via a ref — CopilotKit does NOT guarantee a stable
-  // function reference across renders.
-  const setAgentStateRef = useRef(setAgentState);
-  setAgentStateRef.current = setAgentState;
 
   // Sync active project / system into the CopilotKit agent state whenever
   // the workspace selection changes.
   useEffect(() => {
-    setAgentStateRef.current({
+    setAgentState({
       ...agentStateRef.current,
       active_project: activeProject ? {
         id: activeProject.id,
@@ -177,7 +183,7 @@ export default function CopilotKitPage() {
         graphivac_grid_id: activeSystem.graphivac_grid_id,
       } : null,
     });
-  }, [activeProject, activeSystem]);
+  }, [activeSystem]); // Only trigger on system change, not project change, to prevent race conditions where system lags behind project in the state update
 
 
   useCopilotAction({

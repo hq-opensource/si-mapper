@@ -45,3 +45,20 @@ def get_agent_state(
         return f":::thought\n[System] Status for {equipment_id}: {status}\n:::\n"
     
     return f":::thought\n[System] Persistent state (treated): {json.dumps(treated)}\n:::\n"
+
+def get_active_project(tool_context: ToolContext) -> str:
+    """
+    Returns the JSON of the active_project from the persistent state.
+    If not found, returns an empty JSON object {}.
+    """
+    active_project = tool_context.state.get("active_project", {})
+    return json.dumps(active_project)
+
+
+def get_active_system(tool_context: ToolContext) -> str:
+    """
+    Returns the JSON of the active_system from the persistent state.
+    If not found, returns an empty JSON object {}.
+    """
+    active_system = tool_context.state.get("active_system", {})
+    return json.dumps(active_system)
