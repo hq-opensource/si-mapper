@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 25
 status: unknown
-last_updated: "2026-04-04T19:53:51.834Z"
+last_updated: "2026-04-05T13:43:14.729Z"
 progress:
   total_phases: 25
   completed_phases: 19
@@ -18,8 +18,8 @@ progress:
 
 - **Current Phase:** 25
 - **Overall Completion:** [██████████] 100%
-- **Active Plan:** 25-04 (awaiting checkpoint:human-verify Task 2)
-- **Last Completed:** 25-04 Task 1 (4-pass pdflatex/bibtex compilation of French report; 0 LaTeX errors; 0 undefined citations; 0 undefined references; 26-page PDF at report_french/main.pdf; 15 \todo{} markers preserved; report/ folder unmodified)
+- **Active Plan:** 25-04 (COMPLETE)
+- **Last Completed:** 25-04 (full plan complete — 4-pass pdflatex/bibtex compilation of French report; Mermaid diagrams translated and re-rendered in French; 0 LaTeX errors; 0 undefined citations; 0 undefined references; 26-page PDF at report_french/main.pdf; 15 \todo{} markers preserved; human-verified; report/ folder unmodified)
 
 ## Milestone Status (v2.0: Raw Mapping)
 
@@ -152,6 +152,7 @@ progress:
 - **2026-04-04:** Completed 24-01-PLAN.md. Deleted capture_frontend_state_tool.py + 2 test files. Removed import/registration from create_master_agent.py. Removed playwright>=1.40.0 from pyproject.toml. Simplified skill-ductwork/SKILL.md (5 steps: no verification loop) and skill-hvac-equipments/SKILL.md (6 steps: no verification loop). Added regression guard test. 7 master agent tests pass. Phase 24 complete.
 - **2026-04-04:** Completed 25-01-PLAN.md. Created report_french/ (21 files: 5 sections, 11 figures, 3 diagrams, main.tex, references.bib). Added babel[french] to preamble; translated title, abstract, date in main.tex. Translated all 19 bib entry titles and notes in references.bib. All entry keys, structure, and section files preserved verbatim.
 - **2026-04-04:** Completed 25-03-PLAN.md. Translated 03-solution.tex (392 lines), 04-experiment.tex (267 lines), 05-conclusions.tex (156 lines) to French. All 15 \todo{} markers translated and preserved. Added 4 missing labels per plan spec. All LaTeX labels, cite keys, includegraphics paths, code identifiers preserved.
+- **2026-04-04:** Completed 25-04-PLAN.md. 4-pass pdflatex/bibtex compilation of French report (0 errors, 0 undefined citations, 0 undefined references). Translated 3 Mermaid .mmd diagram sources to French and re-rendered as PNGs (ffb95c1). 26-page PDF at report_french/main.pdf. Human-verified: French title page, Table des matières, Références, paragraph quality, accented characters, tables, figures all approved. Phase 25 complete.
 - **Decision (19-01):** exit_with_success and exit_with_failure are fully generic — no domain state keys; EXIT_LEVEL_2 + actions.escalate only.
 - **Decision (19-01):** Snapshot patching moved from exit_validator_success into execute_ontology — domain logic belongs in the artifact-generating tool.
 - **Decision (19-01):** Exit tools come through MasterLlmAgent default_tools only, not task_tools.
@@ -191,6 +192,7 @@ progress:
 - **Decision (25-02):** Virtual Power Plants -> centrales électriques virtuelles on first use; centrales virtuelles acceptable for brevity in subsequent uses.
 - **Decision (25-03):** Source 04-experiment.tex has 15 \todo{} markers (not 16 as plan estimated); all 15 translated and preserved faithfully — plan estimate was incorrect.
 - **Decision (25-03):** Labels subsec:iterations, subsec:final-architecture, subsec:tools, subsec:technology-decisions added to 03-solution.tex per plan spec; these labels were absent from the English source but required by the plan.
+- **Decision (25-04):** Mermaid diagram .mmd source files must be translated separately and re-rendered as PNGs before LaTeX compilation — they are pre-generated assets not covered by LaTeX source translation. French PDF compiled with 0 errors; human-verified.
 
 ## Roadmap Evolution
 
