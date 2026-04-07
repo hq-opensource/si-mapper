@@ -46,6 +46,7 @@ from sub_agents._223p.tool import (
     skills_toolset,
 )
 from tools.internal_grid_tools import read_internal_grid
+from tools.state_tools import get_active_project, get_active_system
 from sub_agents.ontology_generator.exit_tools import (
     exit_generator_success,
     exit_generator_failure,
@@ -125,6 +126,8 @@ class OntologyGeneratorInternal(LlmAgent):
             write_ontology,
             exit_generator_success,
             exit_generator_failure,
+            get_active_project,
+            get_active_system,
         ]
 
         # Merge with any additional tools forwarded by the caller

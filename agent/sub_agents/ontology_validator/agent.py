@@ -64,6 +64,7 @@ from sub_agents.loop_agents.loop_wrapper import LoopWrapper
 from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
 from utils.models import get_adk_model
 from utils.prompt_utils import load_prompt_instruction
+from tools.state_tools import get_active_project, get_active_system
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Constants
@@ -144,6 +145,8 @@ class OntologyValidatorInternal(LlmAgent):
             checkpoint_code,
             exit_validator_success,
             exit_validator_failure,
+            get_active_project,
+            get_active_system,
         ]
 
         # Merge with any additional tools forwarded by the caller

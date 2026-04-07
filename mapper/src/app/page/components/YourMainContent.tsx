@@ -137,26 +137,34 @@ function ZeroSystemState() {
   );
 }
 
+// ── Tab type (exported so page.tsx can own the state above the key boundary) ──
+export type ActiveTab = 'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl';
+
 // ── YourMainContent ───────────────────────────────────────────────────────────
 
 function YourMainContent({
-  isEditMode,
   agentState,
   onUseSession,
   onNewSession,
   onRemoveSession,
   threadId,
   sessions,
+  activeTab,
+  onTabChange,
 }: {
-  isEditMode: boolean,
   agentState: AgentState,
   onUseSession: (sessionId: string) => void,
   onNewSession: (name: string) => void,
   onRemoveSession: (sessionId: string) => void,
   threadId?: string | null,
   sessions?: import('@/types').Session[],
+  /** Lifted above ThoughtsProvider so tab selection survives session switches. */
+  activeTab: ActiveTab,
+  onTabChange: (tab: ActiveTab) => void,
 }) {
-  const [activeTab, setActiveTab] = useState<'thoughts' | 'files' | 'view' | 'edit' | 'graph' | 'debug' | 'tools' | 'state' | 'performance' | 'artifacts' | 'python' | 'ttl'>(isEditMode ? 'edit' : 'view');
+  // activeTab is now owned by page.tsx (above the ThoughtsProvider key boundary).
+  // Alias onTabChange so nothing else in this function body needs to change.
+  const setActiveTab = onTabChange;
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [graphivacConfig, setGraphivacConfig] = useState<GraphivacConfig | null>(null);
 

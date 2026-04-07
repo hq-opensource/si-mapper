@@ -6,6 +6,7 @@ from sub_agents.tools.ingest_category_tool import ingest_category_files_tool
 from sub_agents.tools.loop_exit_tools import exit_loop_level_4
 from sub_agents.loop_agents.loop_wrapper import LoopWrapper
 from tools.progress_tool import update_step, update_status, update_state
+from tools.state_tools import get_active_project, get_active_system
 from utils.callback_utils import shared_model_callback as model_callback, shared_before_model_callback as before_model_callback
 from utils.prompt_utils import load_prompt_instruction
 from utils.models import get_adk_model
@@ -40,7 +41,7 @@ class EquipmentLlmAgentInternal(LlmAgent):
         
         instruction = load_prompt_instruction("sub_agents/equipment/prompt.md")
 
-        default_tools = [ingest_category_files_tool, load_artifacts, update_step, update_status, update_state, exit_loop_level_4]
+        default_tools = [ingest_category_files_tool, load_artifacts, update_step, update_status, update_state, exit_loop_level_4, get_active_project, get_active_system]
         all_tools = default_tools + (tools or [])
         unique_tools = list({t.__name__ if hasattr(t, '__name__') else str(t): t for t in all_tools}.values())
 

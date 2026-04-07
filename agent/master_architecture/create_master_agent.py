@@ -1,4 +1,3 @@
-
 import pathlib
 from typing import List
 from google.adk.agents import LoopAgent
@@ -9,7 +8,7 @@ from google.adk.agents import LlmAgent
 from google.adk.skills import load_skill_from_dir
 from google.adk.tools import skill_toolset
 from utils.logging_config import configure_logging
-from tools.state_tools import save_agent_state, get_agent_state
+from tools.state_tools import save_agent_state, get_agent_state, get_active_project, get_active_system
 from tools.internal_grid_tools import (
     add_component, add_components_batch, delete_component,
     delete_components_batch, read_internal_grid
@@ -61,6 +60,8 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
     task_tools = [
         save_agent_state,
         get_agent_state,
+        get_active_project,
+        get_active_system,
         # Internal grid tools
         add_component,
         add_components_batch,

@@ -27,7 +27,8 @@ export function ThinkingMessage(props: AssistantMessageProps) {
         }
 
         if (thoughtContent.trim()) {
-            addThought(message.id, thoughtContent.trim());
+            // Prefix with 'chat:' to namespace IDs from CopilotKit messages
+            addThought(`chat:${message.id}`, thoughtContent.trim());
         }
     }, [content, message?.id, addThought]);
 
@@ -46,7 +47,8 @@ export function ThinkingMessage(props: AssistantMessageProps) {
         }
 
         if (toolCallContent.trim()) {
-            addToolCall(message.id, toolCallContent.trim());
+            // Prefix with 'chat:' to namespace IDs from CopilotKit messages
+            addToolCall(`chat:${message.id}`, toolCallContent.trim());
         }
     }, [content, message?.id, addToolCall]);
 

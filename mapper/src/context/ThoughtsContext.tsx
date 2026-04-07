@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { deepEqual } from '@/utils/deepEqual';
 
 export interface Thought {
     id: string; // Unique ID for the thought stream (e.g. message ID)
@@ -36,7 +37,12 @@ interface ThoughtsContextType {
     events: AgentEvent[];
     syncEvents: (newEvents: AgentEvent[]) => void;
     data: Record<string, unknown>;
-    syncData: (newData: Record<string, unknown>) => void;
+    /**
+     * Merge newData into the context data bag.
+     * @param snapshot - When provided, keys NOT present in snapshot are pruned from data.
+     *                   Pass Object.keys(newData) to keep data in sync with the source.
+     */
+    syncData: (newData: Record<string, unknown>, snapshot?: string[]) => void;
 }
 
 const ThoughtsContext = createContext<ThoughtsContextType | undefined>(undefined);
@@ -95,7 +101,7 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
             thoughtsArray.forEach(nt => {
                 const idx = merged.findIndex(t => t.id === nt.id);
                 if (idx >= 0) {
-                    if (JSON.stringify(merged[idx]) !== JSON.stringify(nt)) {
+                    if (!deepEqual(merged[idx], nt)) {
                         merged[idx] = nt;
                         changed = true;
                     }
@@ -144,7 +150,7 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
             callsArray.forEach(nc => {
                 const idx = merged.findIndex(c => c.id === nc.id);
                 if (idx >= 0) {
-                    if (JSON.stringify(merged[idx]) !== JSON.stringify(nc)) {
+                    if (!deepEqual(merged[idx], nc)) {
                         merged[idx] = nc;
                         changed = true;
                     }
@@ -172,7 +178,7 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
                 );
 
                 if (idx >= 0) {
-                    if (JSON.stringify(merged[idx]) !== JSON.stringify(ne)) {
+                    if (!deepEqual(merged[idx], ne)) {
                         merged[idx] = ne;
                         changed = true;
                     }
@@ -186,13 +192,23 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
         });
     }, []);
 
-    const syncData = useCallback((newData: Record<string, unknown>) => {
+    const syncData = useCallback((newData: Record<string, unknown>, snapshot?: string[]) => {
         setData(prev => {
-            const hasChange = Object.entries(newData).some(([key, value]) => {
-                return JSON.stringify(prev[key]) !== JSON.stringify(value);
-            });
-            if (!hasChange) return prev;
-            return { ...prev, ...newData };
+            const next = { ...prev, ...newData };
+
+            // Prune keys that are no longer in the snapshot (stale key removal).
+            if (snapshot) {
+                for (const key of Object.keys(next)) {
+                    if (!snapshot.includes(key)) delete next[key];
+                }
+            }
+
+            // Avoid re-render if nothing changed (value equality + key removal check).
+            const hasChange =
+                Object.entries(next).some(([k, v]) => !deepEqual(prev[k], v)) ||
+                Object.keys(prev).some(k => !(k in next));
+
+            return hasChange ? next : prev;
         });
     }, []);
 
@@ -207,4 +223,3 @@ export function ThoughtsProvider({ children, currentAgentName }: ThoughtsProvide
         </ThoughtsContext.Provider>
     );
 }
-
