@@ -114,3 +114,22 @@ The agent may query the Neo4j graph directly using four Cypher query tools. Thes
 **Important:** n10s imports with `handleVocabUris: 'IGNORE'` — all namespace prefixes are preserved verbatim (e.g., `ashrae223__TemperatureSensor`, `ns0__hasValue`). Always use the exact label and property strings returned by `get_graph_schema` in your Cypher queries. Do not guess label names.
 
 **Result format:** All query tools return `{"query": "...", "result": [...], "error": null}` on success and `{"query": "...", "result": null, "error": "..."}` on failure. Large results are capped at 500 rows with a `truncated` flag. If truncated, refine your query with `LIMIT` or `WHERE` clauses.
+
+### neo4j_prefix Mode — Namespace Filtering Rule
+
+When `get_graph_schema` returns `"graph_backend": "neo4j_prefix"`, all
+systems share a single `"neo4j"` database.  Each system's nodes carry a
+`_graph_ns` property equal to the system ID returned in `"graph_namespace"`.
+
+**Mandatory rule:** When `get_graph_schema` returns `"graph_backend": "neo4j_prefix"`, every Cypher `MATCH` clause you write **must** include
+a `_graph_ns` filter:
+```cypher
+MATCH (n {_graph_ns: "<graph_namespace>"})
+-- or --
+MATCH (n) WHERE n._graph_ns = "<graph_namespace>"
+```
+
+When `get_graph_schema` returns `"graph_backend": "neo4j_prefix"`, failure to add this filter will return nodes from all systems, not just
+the active one.  Always call `get_graph_schema` first to confirm the
+current `graph_namespace` value before writing Cypher queries.
+

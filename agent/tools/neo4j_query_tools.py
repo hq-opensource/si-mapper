@@ -19,7 +19,7 @@ from neo4j import GraphDatabase
 from neo4j.graph import Node, Relationship, Path
 from typing_extensions import override
 
-from utils.project_utils import get_neo4j_db_name
+from utils.project_utils import get_neo4j_db_name, get_graph_backend, get_graph_namespace
 
 logger = logging.getLogger(__name__)
 
@@ -240,11 +240,17 @@ class GetGraphSchemaTool(BaseTool):
             rel_types = rel_records[0]["relationship_types"] if rel_records else []
             prop_keys = prop_records[0]["property_keys"] if prop_records else []
 
+            backend = get_graph_backend()
+            ns = get_graph_namespace(tool_context)
+
             return {
                 "status": "success",
                 "labels": labels,
                 "relationship_types": rel_types,
                 "property_keys": prop_keys,
+                # informational — agent uses these to apply namespace filters
+                "graph_backend": backend,
+                "graph_namespace": ns,  # None unless neo4j_prefix mode
             }
         except Exception as e:
             logger.error(f"get_graph_schema failed: {e}")

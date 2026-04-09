@@ -112,19 +112,20 @@ export function GraphWindow() {
   const [stabilizationProgress, setStabilizationProgress] = useState<{current: number, total: number} | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch data — re-runs whenever the active system's Neo4j database changes
+  // Fetch data — re-runs whenever the active system changes
   useEffect(() => {
     let cancelled = false;
     const db = encodeURIComponent(activeSystem?.neo4j_db_name ?? 'neo4j');
+    const ns = encodeURIComponent(activeSystem?.id ?? '');
     setData(null);
     setLoading(true);
     setError(null);
-    fetch(`/api/graph?db=${db}`)
+    fetch(`/api/graph?db=${db}&ns=${ns}`)
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() as Promise<GraphData>; })
       .then((json) => { if (!cancelled) { setData(json); setLoading(false); } })
       .catch((err: Error) => { if (!cancelled) { setError(err.message); setLoading(false); } });
     return () => { cancelled = true; };
-  }, [activeSystem?.neo4j_db_name]);
+  }, [activeSystem?.id]);
 
   // Initialize Network
   useEffect(() => {

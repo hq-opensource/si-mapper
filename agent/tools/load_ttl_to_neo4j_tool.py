@@ -10,7 +10,7 @@ from google.adk.tools import BaseTool, ToolContext
 from google.genai import types
 from neo4j import GraphDatabase
 
-from utils.project_utils import get_system_path, get_neo4j_db_name, get_graph_backend
+from utils.project_utils import get_system_path, get_neo4j_db_name, get_graph_backend, get_graph_namespace
 
 logger = logging.getLogger(__name__)
 
@@ -54,14 +54,15 @@ class LoadTtlToNeo4jTool(BaseTool):
         user = os.getenv("NEO4J_USER", "neo4j")
         password = os.getenv("NEO4J_PASSWORD", "neo4j_password")
         db_name = get_neo4j_db_name(tool_context)
-        logger.info(f"Using Neo4j database: {db_name}")
+        ns = get_graph_namespace(tool_context)  # None unless neo4j_prefix mode
+        logger.info(f"Using Neo4j database: {db_name}" + (f" (namespace: {ns})" if ns else ""))
 
         try:
             backend = get_graph_backend()
 
             with GraphDatabase.driver(uri, auth=(user, password)) as driver:
                 if backend not in ("neo4j_single", "neo4j_prefix"):
-                    # --- Enterprise / future modes: create DB if missing ---
+                    # --- Enterprise mode: create DB if missing ---
                     existing, _, _ = driver.execute_query(
                         "SHOW DATABASES YIELD name WHERE name = $name RETURN name",
                         {"name": db_name},
@@ -81,24 +82,53 @@ class LoadTtlToNeo4jTool(BaseTool):
                         driver.execute_query("CALL n10s.graphconfig.drop()", database_=db_name)
                         driver.execute_query("DROP CONSTRAINT n10s_unique_uri IF EXISTS", database_=db_name)
                 else:
-                    # --- Community Edition modes: wipe single shared DB ---
-                    driver.execute_query("MATCH (n) DETACH DELETE n", database_=db_name)
+                    # --- Community Edition modes ---
+                    if ns:
+                        # neo4j_prefix: only delete this system's nodes
+                        driver.execute_query(
+                            "MATCH (n {_graph_ns: $ns}) DETACH DELETE n",
+                            {"ns": ns}, database_=db_name,
+                        )
+                    else:
+                        # neo4j_single: wipe entire database
+                        driver.execute_query("MATCH (n) DETACH DELETE n", database_=db_name)
+
+                    # n10s config drop — only touch when no namespace isolation is active
+                    if not ns:
+                        try:
+                            driver.execute_query("CALL n10s.graphconfig.drop()", database_=db_name)
+                        except Exception:
+                            pass  # config may not exist yet on first run
+                        driver.execute_query(
+                            "DROP CONSTRAINT n10s_unique_uri IF EXISTS", database_=db_name
+                        )
+
+                # Step 5: n10s constraint + init
+                if not ns:
+                    # neo4j_single / enterprise: safe to reinit every time
+                    driver.execute_query(
+                        "CREATE CONSTRAINT n10s_unique_uri IF NOT EXISTS "
+                        "FOR (r:Resource) REQUIRE r.uri IS UNIQUE",
+                        database_=db_name,
+                    )
+                    driver.execute_query(
+                        "CALL n10s.graphconfig.init({handleVocabUris: 'IGNORE'})",
+                        database_=db_name,
+                    )
+                else:
+                    # neo4j_prefix: ensure constraint + config exist; skip if already set
                     try:
-                        driver.execute_query("CALL n10s.graphconfig.drop()", database_=db_name)
+                        driver.execute_query(
+                            "CREATE CONSTRAINT n10s_unique_uri IF NOT EXISTS "
+                            "FOR (r:Resource) REQUIRE r.uri IS UNIQUE",
+                            database_=db_name,
+                        )
+                        driver.execute_query(
+                            "CALL n10s.graphconfig.init({handleVocabUris: 'IGNORE'})",
+                            database_=db_name,
+                        )
                     except Exception:
-                        pass  # config may not exist yet on first run
-                    driver.execute_query("DROP CONSTRAINT n10s_unique_uri IF EXISTS", database_=db_name)
-
-                driver.execute_query(
-                    "CREATE CONSTRAINT n10s_unique_uri FOR (r:Resource) REQUIRE r.uri IS UNIQUE",
-                    database_=db_name,
-                )
-
-                # Step 5: Initialize n10s graph config
-                driver.execute_query(
-                    "CALL n10s.graphconfig.init({handleVocabUris: 'IGNORE'})",
-                    database_=db_name,
-                )
+                        pass  # already initialised
 
                 # Step 6: Import TTL inline
                 records, _, _ = driver.execute_query(
@@ -111,6 +141,14 @@ class LoadTtlToNeo4jTool(BaseTool):
                 triples_loaded = records[0]["triplesLoaded"] if records else 0
                 termination = records[0]["terminationStatus"] if records else "unknown"
 
+                # Step 6b (prefix mode only): stamp newly-imported nodes with the namespace
+                if ns:
+                    driver.execute_query(
+                        "MATCH (n) WHERE n._graph_ns IS NULL SET n._graph_ns = $ns",
+                        {"ns": ns}, database_=db_name,
+                    )
+                    logger.info("Stamped imported nodes with _graph_ns='%s'", ns)
+
                 # Step 7: Count nodes and relationships for the return value
                 node_records, _, _ = driver.execute_query(
                     "MATCH (n) RETURN count(n) AS cnt", database_=db_name
@@ -121,7 +159,8 @@ class LoadTtlToNeo4jTool(BaseTool):
                 node_count = node_records[0]["cnt"] if node_records else 0
                 rel_count = rel_records[0]["cnt"] if rel_records else 0
 
-            logger.info(f"Neo4j import complete: {triples_loaded} triples, {node_count} nodes, {rel_count} relationships")
+            ns_suffix = f" (namespace: {ns})" if ns else ""
+            logger.info(f"Neo4j import complete: {triples_loaded} triples, {node_count} nodes, {rel_count} relationships{ns_suffix}")
             return {
                 "status": "success",
                 "triples_loaded": triples_loaded,

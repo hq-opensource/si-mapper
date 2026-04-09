@@ -38,18 +38,32 @@ export async function GET(request: Request) {
       ? "neo4j"
       : (searchParams.get("db") ?? "neo4j");
 
+  // In neo4j_prefix mode the frontend passes ?ns=<system_id> and all
+  // Cypher queries are filtered to that namespace.
+  const ns = graphBackend === "neo4j_prefix"
+    ? (searchParams.get("ns") ?? null)
+    : null;
+
   try {
-    // Query all nodes — use coalesce for blank nodes that may lack uri
+    // Node query — filtered by namespace when in prefix mode
+    const nodeQuery = ns
+      ? "MATCH (n {_graph_ns: $ns}) RETURN coalesce(n.uri, toString(id(n))) AS uri, labels(n) AS labels, properties(n) AS props"
+      : "MATCH (n) RETURN coalesce(n.uri, toString(id(n))) AS uri, labels(n) AS labels, properties(n) AS props";
+
     const { records: nodeRecords } = await driver.executeQuery(
-      "MATCH (n) RETURN coalesce(n.uri, toString(id(n))) AS uri, labels(n) AS labels, properties(n) AS props",
-      {},
+      nodeQuery,
+      ns ? { ns } : {},
       { database: db }
     );
 
-    // Query all relationships
+    // Edge query — filtered by namespace when in prefix mode
+    const edgeQuery = ns
+      ? "MATCH (a {_graph_ns: $ns})-[r]->(b {_graph_ns: $ns}) RETURN coalesce(a.uri, toString(id(a))) AS source, coalesce(b.uri, toString(id(b))) AS target, type(r) AS label, coalesce(r.uri, toString(id(r))) AS id"
+      : "MATCH (a)-[r]->(b) RETURN coalesce(a.uri, toString(id(a))) AS source, coalesce(b.uri, toString(id(b))) AS target, type(r) AS label, coalesce(r.uri, toString(id(r))) AS id";
+
     const { records: edgeRecords } = await driver.executeQuery(
-      "MATCH (a)-[r]->(b) RETURN coalesce(a.uri, toString(id(a))) AS source, coalesce(b.uri, toString(id(b))) AS target, type(r) AS label, coalesce(r.uri, toString(id(r))) AS id",
-      {},
+      edgeQuery,
+      ns ? { ns } : {},
       { database: db }
     );
 

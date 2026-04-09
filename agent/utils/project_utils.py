@@ -114,6 +114,32 @@ def get_neo4j_db_name(tool_context) -> str:
     )
 
 
+def get_graph_namespace(tool_context) -> str | None:
+    """
+    Returns the graph namespace (= system ID) used to tag nodes in
+    neo4j_prefix mode.
+
+    - neo4j_prefix mode: returns active_system.id (never empty string).
+    - All other modes: returns None (namespacing not applicable).
+
+    Raises ValueError if backend is neo4j_prefix but no system ID is
+    available in the tool context.
+    """
+    backend = get_graph_backend()
+    if backend != "neo4j_prefix":
+        return None
+    if tool_context is not None:
+        active_system = tool_context.state.get("active_system") or {}
+        sys_id = active_system.get("id", "").strip()
+        if sys_id:
+            return sys_id
+    raise ValueError(
+        "Graph namespace not found. "
+        "Ensure 'id' is set on the active_system in the tool context "
+        "when using GRAPH_BACKEND=neo4j_prefix."
+    )
+
+
 # ── Path helpers ──────────────────────────────────────────────────────────────
 
 
