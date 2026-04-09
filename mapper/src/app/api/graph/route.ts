@@ -43,12 +43,23 @@ export async function GET() {
       { database: "neo4j" }
     );
 
-    const nodes = nodeRecords.map((r) => ({
-      id: r.get("uri") as string,
-      label: localName(r.get("uri") as string),
-      type: ((r.get("labels") as string[]) ?? []).find((l) => l !== "Resource") ?? "Resource",
-      properties: r.get("props") as Record<string, unknown>,
-    }));
+    const GENERIC_LABELS = new Set(["Resource", "owl__Class", "owl__NamedIndividual", "owl__Ontology"]);
+    const nodes = nodeRecords.map((r) => {
+      const props = r.get("props") as Record<string, unknown>;
+      const labels = (r.get("labels") as string[]) ?? [];
+      const uri = r.get("uri") as string;
+
+      const rdfsLabel = props["rdfs__label"] as string | undefined;
+      const classLabel = labels.find((l) => !GENERIC_LABELS.has(l) && !l.startsWith("n10s"));
+      const label = rdfsLabel ?? classLabel ?? localName(uri);
+
+      return {
+        id: uri,
+        label,
+        type: labels.find((l) => l !== "Resource") ?? "Resource",
+        properties: props,
+      };
+    });
 
     const edges = edgeRecords.map((r, i) => ({
       id: (r.get("id") as string) ?? `edge-${i}`,

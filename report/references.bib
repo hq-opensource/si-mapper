@@ -1,0 +1,245 @@
+% ============================================================
+% references.bib
+% All citations verified via web search for SI-Mapper report
+% ============================================================
+
+% --- Core BAS / BACnet cost studies -------------------------
+
+@techreport{Trenbath2022,
+  author      = {Trenbath, Kim and Meyer, Ryan and Woldekidan, Korbaga and Maisha, Kristi and Harris, Morgan},
+  title       = {Commercial Building Sensors and Controls Systems: {Barriers, Drivers, and Costs}},
+  institution = {National Renewable Energy Laboratory},
+  year        = {2022},
+  month       = aug,
+  number      = {NREL/TP-6A50-82117},
+  address     = {Golden, CO},
+  url         = {https://docs.nrel.gov/docs/fy22osti/82117.pdf},
+  note        = {Prepared for the U.S. Department of Energy Building Technologies Office}
+}
+
+% PingCx blog — case study source for school commissioning figures,
+% service-call overhead, and energy-performance-drift statistics.
+@misc{PingCx2024,
+  author       = {{PingCx}},
+  title        = {The Hidden Costs of Manual Commissioning in Today's Complex Buildings},
+  year         = {2024},
+  howpublished = {Blog post},
+  url          = {https://www.pingcx.com/blog/the-hidden-costs-of-manual-commissioning-in-todays-complex-buildings}
+}
+
+% Envigilance blog — legacy BMS integration premium (+20–40%)
+@misc{Envigilance2023,
+  author       = {{Envigilance}},
+  title        = {Building Energy Monitoring Cost},
+  year         = {2023},
+  howpublished = {Blog post},
+  url          = {https://envigilance.com/blog/building-energy-monitoring-cost/}
+}
+
+% Access Coins / SMACNA — HVAC technician shortage (110,000 unfilled positions)
+@misc{AccessCoins2025,
+  author       = {{Access Coins}},
+  title        = {Beat the {HVAC} Technician Shortage},
+  year         = {2025},
+  howpublished = {Industry article, republished by {SMACNA}},
+  url          = {https://www.smacna.org/news/products-and-services-updates/article/2025/10/09/beat-the-hvac-technician-shortage}
+}
+
+% Building Commissioning Association — commissioning cost benchmarks.
+% NOTE: The BCA figure (0.5–1.5% of construction / 8–15% of BAS project
+% value) appears widely in industry sources as attributed to the BCA.
+% Readers should confirm against the current BCA Body of Knowledge or
+% published cost guidelines at https://www.bcxa.org.
+@misc{BCA2024,
+  author       = {{Building Commissioning Association}},
+  title        = {Building Commissioning: {Costs and Benefits} (Industry Guidance)},
+  year         = {2024},
+  howpublished = {Industry guidance document},
+  url          = {https://www.bcxa.org}
+}
+
+% --- Automated point-mapping systematic review ---------------
+
+% This is the paper quoted in the report as "labor intensive and costly,
+% presenting a major impediment to innovations in building control."
+% NOTE: The report text incorrectly attributed this to a "DOE and ACEEE
+% 2024 conference paper." The quote originates from this 2017 peer-reviewed
+% article in Automation in Construction. The text has been corrected below.
+@article{Wang2017,
+  author    = {Wang, Weimin and Brambley, Michael R. and Kim, Woohyun and Somasundaram, Sriram and Stevens, Andrew J.},
+  title     = {Automated point mapping for building control systems: {Recent} advances and future research needs},
+  journal   = {Automation in Construction},
+  volume    = {84},
+  pages     = {107--124},
+  year      = {2017},
+  doi       = {10.1016/j.autcon.2017.09.013},
+  note      = {Available via OSTI ID 1495345}
+}
+
+% --- BrickLLM (closest academic work) ------------------------
+
+@article{Perini2025,
+  author    = {Perini, Marco and Antonucci, Daniele and Giudice, Rocco},
+  title     = {{BrickLLM}: A {Python} library for generating {Brick}-compliant {RDF} graphs using {LLMs}},
+  journal   = {SoftwareX},
+  year      = {2025},
+  doi       = {10.1016/j.softx.2025.102083},
+  url       = {https://www.sciencedirect.com/science/article/pii/S2352711025000883}
+}
+
+% --- VPP / grid-relevance sources ----------------------------
+
+% Wood Mackenzie 2025 North America VPP Market Report.
+% Source for: 37.5 GW capacity, 13.7% (≈14%) year-over-year growth,
+% and >33% growth in active deployments.
+@techreport{WoodMac2025,
+  author      = {{Wood Mackenzie}},
+  title       = {2025 {North America} Virtual Power Plant Market Report},
+  institution = {Wood Mackenzie},
+  year        = {2025},
+  month       = sep,
+  url         = {https://www.woodmac.com/press-releases/virtual-power-plant-capacity-expands-13.7-year-over-year-to-reach-37.5-gw}
+}
+
+% DOE VPP Liftoff 2025 Update — released January 2025.
+% Confirms 33 GW North American VPP capacity; references standardization
+% challenges. Note: the 37.5 GW figure in the report body comes from
+% Wood Mackenzie (September 2025), not from this DOE document.
+@techreport{DOE_VPP2025,
+  author      = {{U.S. Department of Energy}},
+  title       = {Pathways to Commercial Liftoff: {Virtual Power Plants} 2025 Update},
+  institution = {U.S. Department of Energy, Office of Technology Transitions},
+  year        = {2025},
+  month       = jan,
+  url         = {https://climateprogramportal.org/wp-content/uploads/2025/06/LIFTOFF_DOE_VPP_2025_Update.pdf}
+}
+
+% California Energy Commission — $2M EPRI grant for commercial-building VPP
+% demonstration (GFO-23-309, awarded October 2024).
+@misc{CEC_EPRI2024,
+  author       = {{California Energy Commission}},
+  title        = {Virtual Power Plant Approaches for Demand Flexibility ({VPP-FLEX}), Grant {GFO-23-309}},
+  year         = {2024},
+  howpublished = {Grant award announcement},
+  url          = {https://www.energy.ca.gov/solicitations/2024-03/gfo-23-309-virtual-power-plant-approaches-demand-flexibility-vpp-flex}
+}
+
+% RMI VP3 Progress Report (April 2025) — primary source for BOTH:
+%   (a) "ten state legislatures introduced VPP bills in 2024"
+%   (b) "Massachusetts utilities will implement a $50 million Grid
+%        Services Compensation Fund to promote non-wires alternatives"
+@techreport{RMI_VP3_2025,
+  author      = {{RMI (Rocky Mountain Institute)}},
+  title       = {{VP3} Progress Report: From Awareness to Action},
+  institution = {Rocky Mountain Institute / Virtual Power Plant Partnership},
+  year        = {2025},
+  month       = apr,
+  url         = {https://rmi.org/insight/vp3-progress-report-from-awareness-to-action/}
+}
+
+% SEPA/NCCETC 2024 State Policy Snapshot — corroborating source
+% for VPP legislative activity across 38 states in 2024.
+@techreport{SEPA_NCCETC2025,
+  author      = {{Smart Electric Power Alliance (SEPA)} and {NC Clean Energy Technology Center}},
+  title       = {50 States of Virtual Power Plants and Supporting Distributed Energy Resources: 2024 State Policy Snapshot},
+  institution = {SEPA / NC Clean Energy Technology Center},
+  year        = {2025},
+  month       = feb,
+  url         = {https://sepapower.org/resource/50-states-of-virtual-power-plant-and-supporting-distributed-energy-resources-2024-state-policy-snapshot/}
+}
+
+% =============================================================
+% Competitive landscape entries (added for research gap section)
+% =============================================================
+
+% BuildingMOTIF — NREL open-source SDK for 223P / Brick / Haystack
+% model creation, storage, validation, and translation.
+% DOE-funded: $5M+ across FY20-FY24; performers: NIST, NREL, LBNL, PNNL, Cornell.
+@misc{BuildingMOTIF_NREL,
+  author       = {{National Renewable Energy Laboratory (NREL)} and {NIST} and {LBNL} and {PNNL}},
+  title        = {{BuildingMOTIF}: Building Metadata {OnTology} Interoperability Framework},
+  year         = {2023},
+  howpublished = {Open-source software (GitHub)},
+  url          = {https://github.com/NREL/BuildingMOTIF}
+}
+
+% DOE program page — Semantic Modeling and Interoperability project
+@misc{DOE_BuildingMOTIF,
+  author       = {{U.S. Department of Energy}},
+  title        = {Semantic Modeling and Interoperability},
+  year         = {2024},
+  howpublished = {DOE Buildings program page},
+  url          = {https://www.energy.gov/eere/buildings/semantic-modeling-and-interoperability}
+}
+
+% Open223 — reference model repository and validator for ASHRAE 223P
+@misc{Open223,
+  author       = {{Open223 Project Contributors}},
+  title        = {{Open223} {ASHRAE} 223P Reference Models},
+  year         = {2025},
+  howpublished = {Open-source model repository},
+  url          = {https://models.open223.info/}
+}
+
+% Willow — AI-driven digital twin platform; $110M raised;
+% "AI Startup of the Year" 2025; DTDL/knowledge-graph-based ontology.
+@misc{Willow2025,
+  author       = {{Willow Technology Corporation}},
+  title        = {Willow {AI}-Driven Digital Twin Platform},
+  year         = {2025},
+  howpublished = {Company website and press release (AI Breakthrough Awards, June 2025)},
+  url          = {https://willowinc.com/willow-named-ai-startup-of-the-year-in-8th-annual-ai-breakthrough-awards-program/2548}
+}
+
+% SkySpark / Project Haystack — analytics platform using semantic tagging
+@misc{SkySpark,
+  author       = {{SkyFoundry}},
+  title        = {{SkySpark} Analytics Platform},
+  year         = {2024},
+  howpublished = {Product website},
+  url          = {https://skyfoundry.com/product}
+}
+
+% -----------------------------------------------------------------
+% LBNL: Building Energy Information Systems cost study
+% Source for per-point cost ranges.
+%
+% NOTE TO AUTHOR: The original text cited "$50--$200 per point"
+% for manual mapping labor costs.  No primary source confirming
+% this exact range was located.  The closest published benchmark
+% is this LBNL study, which reports *software-only* up-front costs
+% of $100--$500/pt (median across 26 organizations).  The table
+% entry has been updated to "$100--$500 per point (software costs
+% alone)" and cites this report.  If an internal industry estimate
+% or project-specific source underpins the $50--$200 figure,
+% please add it as a separate entry and restore the original range.
+% -----------------------------------------------------------------
+@techreport{mathew2015eis,
+  author      = {Mathew, Paul A. and
+                 Dunn, Laurel N. and
+                 Sohn, Michael D. and
+                 Mercado, Alecia and
+                 Custodio, Claudine and
+                 Walter, Travis},
+  title       = {Big-Data for Building Energy Performance: Lessons from
+                 Assembling a Very Large National Database of Building
+                 Energy Use},
+  institution = {Lawrence Berkeley National Laboratory},
+  year        = {2015},
+  number      = {LBNL-188795},
+  url         = {https://www.osti.gov/servlets/purl/1363638},
+  note        = {Reports EIS up-front per-point costs of \$100--\$500
+                 across 26 organizations},
+}
+
+% --- Query language benchmarks -----------------------------
+
+@article{Sivasubramaniam2024,
+  author      = {Sivasubramaniam, Sithursan and Osei-Akoto, Cedric and Zhang, Yi and Stockinger, Kurt and Fuerst, Jonathan},
+  title       = {{SM3-Text-to-Query}: Synthetic Multi-Model Medical Text-to-Query Benchmark},
+  journal     = {arXiv preprint arXiv:2411.05521},
+  year        = {2024},
+  month       = nov,
+  url         = {https://arxiv.org/abs/2411.05521},
+  note        = {Benchmarks LLM text-to-query performance across Cypher, SPARQL, and SQL; finds LLMs achieve higher accuracy on Cypher than SPARQL},
+}

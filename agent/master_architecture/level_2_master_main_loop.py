@@ -14,7 +14,7 @@ class MasterMainLoopAgent(LoopAgent):
     If it decides that more thorough planning and review is needed, then it delegates to the PARSequentialAgent.
     """
 
-    def __init__(self, master_llm: MasterLlmAgent, session_id: str, max_iterations: int = 10):
+    def __init__(self, master_llm: MasterLlmAgent, session_id: str, max_iterations: int = 100):
         super().__init__(
             name="MasterMainLoopAgent",
             sub_agents=[master_llm],

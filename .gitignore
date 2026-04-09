@@ -34,3 +34,7 @@ node_modules/
 /223p/src/
 /223p/ttl/
 
+report/main.aux
+report/main.out
+report/main.toc
+report/main.log

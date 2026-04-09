@@ -8,6 +8,7 @@ import logging
 from .string_utils import format_agent_name
 from .events import AgentEvent, EventType
 from .event_processor import EventProcessor
+from .session_logger import log_events
 
 logger = logging.getLogger(__name__)
 
@@ -393,9 +394,23 @@ def _process_and_update_events(
     logger.debug(f"[{agent_name}] Extracted {len(new_events)} new events")
 
     events_history = state.get("events", [])
+    # Dedup by (event_type, content) against recent history — ADK occasionally
+    # re-emits the same response parts (re-emission artifact), producing
+    # identical events with different IDs/trace_ids that bypass ID-based dedup.
+    recent_signatures = {
+        (e["event_type"], e["content"])
+        for e in events_history[-20:]
+    }
     for ne in new_events:
+        sig = (ne.event_type, ne.content)
+        if sig in recent_signatures:
+            continue
         events_history.append(ne.model_dump())
-    state["events"] = events_history[-200:]
+        recent_signatures.add(sig)
+
+    state["events"] = events_history[-200:] # Keep more history for complex loops
+    # Persist new events to per-session JSONL log (best-effort, non-blocking)
+    log_events(callback_context.session.id, [ne.model_dump(mode="json") for ne in new_events])
 
     thoughts_list: List[Dict] = []
     tools_list: List[Dict] = []
@@ -465,7 +480,7 @@ def _update_global_store(callback_context: CallbackContext, session_id: str) -> 
 
         target_store = GLOBAL_SESSION_STORE[session_id]
         list_keys = ["events", "thoughts", "tool_calls"]
-
+        
         for key, value in current_state_dict.items():
             if key in list_keys and isinstance(value, list):
                 existing_list = target_store.get(key, [])

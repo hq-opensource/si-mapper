@@ -1,0 +1,11 @@
+flowchart LR
+    A["HVAC Engineering\nDrawings\n(PNG/PDF)"] --> B["SI-Mapper\nAgentic AI\nPipeline"]
+    C["BACnet Point\nExports\n(CSV)"] --> B
+    D["Control\nDocumentation\n(PDF)"] --> B
+    B --> E["ASHRAE 223P\nSemantic Model\n(TTL)"]
+    E --> F["Neo4j\nGraph Database"]
+    F --> G["Interactive\nGraph Visualization"]
+
+    style B fill:#4A90D9,color:#fff,stroke:#2C5F8A
+    style E fill:#50B86C,color:#fff,stroke:#338A4E
+    style F fill:#E8A838,color:#fff,stroke:#B07E20

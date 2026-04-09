@@ -121,6 +121,17 @@ def create_app() -> FastAPI:
             "user_id": "demo_user"
         }
 
+    @app.post("/stop")
+    async def stop_agent():
+        """Cancel all active agent executions."""
+        cancelled = 0
+        for execution in list(adk_agent._active_executions.values()):
+            await execution.cancel()
+            cancelled += 1
+        adk_agent._active_executions.clear()
+        logger.info(f"Stop requested — cancelled {cancelled} execution(s).")
+        return {"status": "stopped", "cancelled": cancelled}
+
     @app.get("/session_state")
     async def get_session_state(
         request_session_id: str = None,

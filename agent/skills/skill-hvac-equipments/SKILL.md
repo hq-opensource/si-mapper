@@ -12,23 +12,31 @@ Place HVAC equipment on the established duct system.
 
 # Execution Flow
 
-1. **Load context**: Use `load_artifacts` to view drawings.
-2. **Read grid**: Use `read_internal_grid` to get duct coordinates.
-3. **Analyze**: For each equipment piece:
+1. **Sync frontend state**: Use `sync_graphivac_to_agent` to synchronize the agent's internal state with the current frontend grid. This ensures any changes the user made on the frontend are captured before analysis begins.
+2. **Load context**: Use `load_artifacts` to view drawings.
+3. **Read grid**: Use `read_internal_grid` to get duct coordinates.
+4. **Analyze**: For each equipment piece:
    - Identify type (from the list above) and position.
    - Find parent duct and snap coordinates.
    - Determine rotation (if `fan` or `damper`).
-4. **Register internally**: Use `add_component` for single items or `add_components_batch` for multiple.
+5. **Register internally**: Use `add_component` for single items or `add_components_batch` for multiple.
    - Example: `add_component(component_type="fan", name="SF-1", coord=[10,5], rotation=180)`
    - Example: `add_component(component_type="damper", name="MD-1", coord=[12,5], rotation=90)`
    - Example: `add_component(component_type="variable_frequency_drive", name="VFD-1", coord=[15,6])`
-5. **Sync to frontend**: Use `sync_agent_to_graphivac` to sync the HVAC equipments to the frontend.
-6. **Verify**: After calling the tool `sync_agent_to_graphivac`, perform a **Equipment Verification Checkpoint**:
-   - Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
-   - Compare the snapshot against the reference image. Verify that all equipment components are present, correctly positioned, and correctly attached to the ducts.
-   - If discrepancies are found, correct them and repeat the workflow until the equipment matches the reference.
-   - Only mark the task as finished after visual confirmation passes.
-7. **Exit**: Summarize your actions.
+   - When using `add_components_batch`, even though the parameter is named `components_json`, write the value as a **plain JSON array in your tool call** — do not manually escape or stringify it. The framework handles serialization automatically.
+     Correct:
+     ```json
+     {"components_json": [{"type": "fan", "name": "SF-1", "coord": [10,5], "rotation": 180}, ...]}
+     ```
+     ❌ Wrong — do NOT manually escape it into a string:
+     ```json
+     {"components_json": "[{\"type\": \"fan\", \"name\": \"SF-1\", ...}]"}
+     ```
+6. **Sync to frontend**: Use `sync_agent_to_graphivac` to sync the HVAC equipments to the frontend.
+7. **Exit**: Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
+   - Number of equipment pieces placed
+   - Confirmation that `sync_agent_to_graphivac` succeeded
+   Example: "12 equipment pieces registered and synced to frontend (3 fans, 2 coils, 4 dampers, 1 filter, 2 sensors)"
 
 # Rules
 
@@ -46,7 +54,7 @@ Use these exact type strings from `internal_grid_tools.py`:
 - **Air Handling**: `fan`, `filter`, `damper`, `thermal_wheel`, `humidifier`
 - **Piping**: `pump`, `valve_three_way`, `valve_two_way`, `pipe_chiller`
 - **Room**: `room_baseboard`
-- **Sensors**: 
+- **Sensors**:
     - Duct: `duct_sensor_enthalpy`, `duct_sensor_temperature`, `duct_sensor_differential_pressure`, `duct_sensor_humidity`, `duct_sensor_flow`, `duct_sensor_low_limit`, `duct_sensor_static_pressure`
     - Pipe: `pipe_sensor_temperature`
 - **Electric**: `variable_frequency_drive`
@@ -83,8 +91,6 @@ Some equipment sits outside the duct (below its parent component):
 
 ## Naming convention
 Name the equipmens as they are named in the original multimodal data. If the equipment is not named, then create a name for it following the format: `TYPE-ID` where TYPE is the type of the equipment and ID is a unique identifier.
-
-
 
 
 

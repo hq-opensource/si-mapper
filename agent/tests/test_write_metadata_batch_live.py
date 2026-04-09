@@ -30,11 +30,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Sample BACnet points — mimics what the skill would extract from the CSV
 SAMPLE_BACNET_POINTS = {
-    "2500.AI11": {"name": "VITESSE RET. No.1A", "unit": "Amperes"},
-    "2500.AI13": {"name": "TEMP. ALIM. No.1A", "unit": "Celsius"},
-    "2500.BI3":  {"name": "STATUT DIG. 1A", "unit": ""},
-    "2500.BO1":  {"name": "A/D VENT. 1A", "unit": ""},
-    "2500.AO5":  {"name": "MOD. VFD 1A", "unit": "%"},
+    "bacnet_1": {"address": "2500.AI11", "name": "VITESSE RET. No.1A", "unit": "Amperes"},
+    "bacnet_2": {"address": "2500.AI13", "name": "TEMP. ALIM. No.1A", "unit": "Celsius"},
+    "bacnet_3": {"address": "2500.BI3",  "name": "STATUT DIG. 1A", "unit": ""},
+    "bacnet_4": {"address": "2500.BO1",  "name": "A/D VENT. 1A", "unit": ""},
+    "bacnet_5": {"address": "2500.AO5",  "name": "MOD. VFD 1A", "unit": "%"},
 }
 
 
@@ -105,7 +105,7 @@ async def run():
 
     # ── Step 2: write_metadata_batch ─────────────────────────────────────────
     print("\n[2/3] Calling write_metadata_batch with sample BACnet points...")
-    updates = {target: {"bacnet": SAMPLE_BACNET_POINTS}}
+    updates = {target: SAMPLE_BACNET_POINTS}
     t2 = time.perf_counter()
     mock_ctx = type("TC", (), {})()  # write_metadata_batch only uses tool_context for logging
     result = await write_metadata_batch(tool_context=mock_ctx, updates=updates)
@@ -135,28 +135,24 @@ async def run():
         print(f"  ✗ Could not find :custom-fields for '{target}'")
         return
 
-    bacnet_raw = cf.get("bacnet")
-    if bacnet_raw is None:
-        print(f"  ✗ 'bacnet' key missing from :custom-fields of '{target}'")
-        print(f"  Custom-fields content: {cf}")
-        return
-
-    # The value is stored as a JSON string
-    if isinstance(bacnet_raw, str):
-        bacnet_data = json.loads(bacnet_raw)
-    else:
-        bacnet_data = bacnet_raw
-
     errors = []
-    for point_id, expected in SAMPLE_BACNET_POINTS.items():
-        if point_id not in bacnet_data:
-            errors.append(f"  ✗ Missing point: {point_id}")
+    for key, expected in SAMPLE_BACNET_POINTS.items():
+        # key is "bacnet_1", "bacnet_2", etc.
+        raw = cf.get(key)
+        if raw is None:
+            errors.append(f"  ✗ Missing key: {key}")
+            continue
+        # Value may be stored as JSON string
+        if isinstance(raw, str):
+            stored = json.loads(raw)
         else:
-            stored = bacnet_data[point_id]
-            if stored.get("name") != expected["name"]:
-                errors.append(f"  ✗ {point_id} name mismatch: got '{stored.get('name')}', expected '{expected['name']}'")
-            if stored.get("unit") != expected["unit"]:
-                errors.append(f"  ✗ {point_id} unit mismatch: got '{stored.get('unit')}', expected '{expected['unit']}'")
+            stored = raw
+        if stored.get("address") != expected["address"]:
+            errors.append(f"  ✗ {key} address mismatch: got '{stored.get('address')}', expected '{expected['address']}'")
+        if stored.get("name") != expected["name"]:
+            errors.append(f"  ✗ {key} name mismatch: got '{stored.get('name')}', expected '{expected['name']}'")
+        if stored.get("unit") != expected["unit"]:
+            errors.append(f"  ✗ {key} unit mismatch: got '{stored.get('unit')}', expected '{expected['unit']}'")
 
     total = time.perf_counter() - t0
 

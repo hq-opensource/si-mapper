@@ -3,6 +3,7 @@ import json
 from typing import List, Optional
 from google.adk.tools import ToolContext
 from utils.logging_config import configure_logging
+from utils.bacnet_helpers import explode_bacnet_points, enrich_flat_bacnet_points
 
 logger = configure_logging()
 
@@ -152,12 +153,15 @@ def add_components_batch(
 
     Example: '[{"type":"fan","name":"SF-1","coord":[5,5],"custom_fields":{"bacnet":"..."}},{"type":"duct","name":"D-1","start_coord":[0,0],"end_coord":[10,0]}]'
     """
-    try:
-        components = json.loads(components_json)
-        if not isinstance(components, list):
-            return ":::thought\n[System] Error: components_json must be a JSON array.\n:::"
-    except json.JSONDecodeError as e:
-        return f":::thought\n[System] Error: Invalid JSON in components_json: {e}\n:::"
+    if isinstance(components_json, list):
+        components = components_json
+    else:
+        try:
+            components = json.loads(components_json)
+        except (json.JSONDecodeError, TypeError) as e:
+            return f":::thought\n[System] Error: Invalid JSON in components_json: {e}\n:::"
+    if not isinstance(components, list):
+        return ":::thought\n[System] Error: components_json must be a JSON array.\n:::"
 
     _ensure_internal_grid(tool_context)
 
@@ -323,6 +327,105 @@ def delete_components_batch(tool_context: ToolContext, names: List[str]) -> str:
     )
 
 
+def update_component_metadata(
+    tool_context: ToolContext,
+    component_name: str,
+    metadata: dict,
+) -> str:
+    """
+    Merges metadata into a component's custom_fields in the internal grid.
+    Use this to store BACnet points or other metadata before syncing to GraphyVAC.
+
+    Args:
+        component_name: The name of the component to update (e.g. "AHU-1").
+        metadata: Key-value pairs to merge (e.g. {"bacnet_1": {"address": "2500.AI11", "name": "...", "unit": "..."}}).
+                  If a "bacnet" key with nested points is provided, it will be automatically
+                  exploded into flat bacnet_N entries before storing.
+    """
+    if "internal_grid" not in tool_context.state:
+        return ":::thought\n[System] Internal grid not initialized.\n:::"
+
+    components = tool_context.state["internal_grid"]["components"]
+    for component in components:
+        if component["name"] == component_name:
+            component_type = component.get("type", "")
+            metadata = explode_bacnet_points(metadata, component_type)
+            metadata = enrich_flat_bacnet_points(metadata, component_type)
+            existing_cf = component.get("custom_fields", {})
+            for key, val in metadata.items():
+                if key in existing_cf and isinstance(existing_cf[key], dict) and isinstance(val, dict):
+                    existing_cf[key].update(val)
+                else:
+                    existing_cf[key] = val
+            component["custom_fields"] = existing_cf
+            tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
+            tool_context.state["_updated_grid"] = True
+            keys = list(metadata.keys())
+            print(f"[GRID] METADATA '{component_name}' ← {keys}", flush=True)
+            return (
+                f":::thought\n[System] Metadata merged into '{component_name}': "
+                f"keys={keys}\n:::"
+            )
+
+    return f":::thought\n[System] Error: Component '{component_name}' not found in internal grid.\n:::"
+
+
+def update_component_metadata_batch(
+    tool_context: ToolContext,
+    updates: dict,
+) -> str:
+    """
+    Merges metadata into multiple components' custom_fields in a single operation.
+    Use this to store BACnet points or other metadata before syncing to GraphyVAC.
+
+    Args:
+        updates: Dict where each key is a component name and the value is its metadata dict.
+                 Example: {
+                   "AHU-1": {"bacnet_1": {"address": "2500.AI11", "name": "VITESSE RET.", "unit": "A"}},
+                   "VAV-101": {"bacnet_1": {"address": "2501.BI3", "name": "STATUT", "unit": ""}}
+                 }
+                 If a "bacnet" key with nested points is provided for any component, it will be
+                 automatically exploded into flat bacnet_N entries before storing.
+    """
+    if "internal_grid" not in tool_context.state:
+        return ":::thought\n[System] Internal grid not initialized.\n:::"
+
+    components = tool_context.state["internal_grid"]["components"]
+    name_index = {c["name"]: c for c in components}
+
+    processed = 0
+    not_found = []
+
+    for component_name, metadata in updates.items():
+        component = name_index.get(component_name)
+        if component is None:
+            not_found.append(component_name)
+            continue
+        component_type = component.get("type", "")
+        metadata = explode_bacnet_points(metadata, component_type)
+        metadata = enrich_flat_bacnet_points(metadata, component_type)
+        existing_cf = component.get("custom_fields", {})
+        for key, val in metadata.items():
+            if key in existing_cf and isinstance(existing_cf[key], dict) and isinstance(val, dict):
+                existing_cf[key].update(val)
+            else:
+                existing_cf[key] = val
+        component["custom_fields"] = existing_cf
+        processed += 1
+
+    if processed > 0:
+        tool_context.state["internal_grid"] = tool_context.state["internal_grid"]
+        tool_context.state["_updated_grid"] = True
+
+    n_total = len(updates)
+    detail = f" Not found: {not_found}." if not_found else ""
+    print(f"[GRID] METADATA BATCH {processed}/{n_total} components updated", flush=True)
+    return (
+        f":::thought\n[System] Metadata batch: {processed}/{n_total} components updated."
+        f"{detail}\n:::"
+    )
+
+
 def read_internal_grid(
     tool_context: ToolContext,
     component_type: Optional[str] = None,
@@ -344,4 +447,5 @@ def read_internal_grid(
     n = len(components)
     data = json.dumps(components, indent=2)
 
+    print(f"[GRID] READ internal_grid → {n} component(s)" + (f" (filtered: {component_type})" if component_type else ""), flush=True)
     return f":::thought\n[System] Internal grid ({n} components): {data}\n:::"

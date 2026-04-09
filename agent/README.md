@@ -160,9 +160,9 @@ docker compose build si-mapper-agent
 
 The image uses a two-stage build:
 - **Stage 1 (builder):** installs all Python dependencies via `uv sync --frozen --no-dev` into a virtual environment.
-- **Stage 2 (runner):** copies the venv, installs Playwright/Chromium system binaries, then copies the application source. Test files are stripped out.
+- **Stage 2 (runner):** copies the venv, then copies the application source. Test files are stripped out.
 
-Final image size: ~811 MB (includes Chromium for the `capture_frontend_state` tool).
+Final image size: ~811 MB.
 
 ##### 3. Run
 

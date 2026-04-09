@@ -5,8 +5,8 @@ from google.adk.planners import BuiltInPlanner
 from google.genai import types
 from google.adk.tools import load_artifacts
 
-from master_architecture.tools.loop_exit_tools import exit_loop_level_2
-from master_architecture.tools.ingest_category_tool import ingest_category_files_tool
+from tools.exit_tools import exit_with_success, exit_with_failure
+from tools.ingest_category_tool import ingest_category_files_tool
 from tools.progress_tool import update_step, update_status
 from tools.sync_graphivac_tool import sync_agent_to_graphivac
 from tools.sync_graphivac_to_agent_tool import sync_graphivac_to_agent
@@ -38,7 +38,7 @@ class MasterLlmAgent(LlmAgent):
             instruction = load_prompt_instruction("master_architecture/prompts/master_instruction.md")
 
 
-        default_tools = [ingest_category_files_tool, load_artifacts, update_step, update_status, exit_loop_level_2, sync_agent_to_graphivac, sync_graphivac_to_agent]
+        default_tools = [ingest_category_files_tool, load_artifacts, update_step, update_status, exit_with_success, exit_with_failure, sync_agent_to_graphivac, sync_graphivac_to_agent]
         agent_tools = [AgentTool(agent=sa) for sa in (subagents or [])]
         final_tools = default_tools + (tools or []) + agent_tools
 

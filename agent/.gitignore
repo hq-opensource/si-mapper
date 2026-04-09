@@ -18,3 +18,6 @@ env/
 
 # Data folder
 data/
+
+# Session logs (generated at runtime)
+logs/

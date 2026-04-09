@@ -5,7 +5,6 @@ set -e
 echo "[1/3] Setting up Agent..."
 pushd "$(dirname "$0")/../../agent"
 uv sync
-uv run playwright install chromium
 popd
 
 # Setup MCP Server

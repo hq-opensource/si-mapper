@@ -1,0 +1,65 @@
+\documentclass[11pt, a4paper]{article}
+
+% Typography and layout
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+
+% Figures
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+
+% Colors and links
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=true, linkcolor=NavyBlue, citecolor=ForestGreen, urlcolor=NavyBlue]{hyperref}
+
+% Bibliography
+\usepackage[numbers,sort&compress]{natbib}
+
+% Lists
+\usepackage{enumitem}
+
+% Captions
+\usepackage[font=small, labelfont=bf]{caption}
+
+% Section styling
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+
+% Custom TODO command (visible red markers for placeholder data)
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+\title{SI-Mapper: Agentic AI for Automated HVAC Semantic Modeling\\[0.5em]
+\large From BACnet Data and Engineering Drawings to ASHRAE 223P Ontologies}
+\author{Juan [Last Name] \\ \textit{[Affiliation]}}
+\date{March 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents SI-Mapper, an agentic AI system that automates the creation of ASHRAE 223P semantic building models from HVAC engineering drawings and BACnet point data. We describe the problem of manual BACnet point mapping --- a costly, labor-intensive process that blocks building software interoperability and grid integration --- and present an AI-driven solution that replaces weeks of expert engineering work. The report traces the development through nine experimental iterations, from simple function-calling approaches to the final skills-based single master agent architecture. Two experiments on real air handling unit installations demonstrate the system's effectiveness: System 1 (21 HVAC components, 44 BACnet points) produced a validated ASHRAE 223P model in 17 minutes at an estimated cost of \$11.30 USD; System 3 (27 components, 34 BACnet points) completed in 12 minutes at \$10.85 USD. In both cases the agent corrected its own ontology errors without human intervention. A human engineer baseline comparison is pending.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\input{sections/01-introduction}
+\input{sections/02-problem}
+\input{sections/03-solution}
+\input{sections/04-experiment}
+\input{sections/05-conclusions}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

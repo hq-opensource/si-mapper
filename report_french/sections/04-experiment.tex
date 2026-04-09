@@ -1,0 +1,255 @@
+\section{Description des expériences, analyse et résultats}
+\label{sec:results}
+
+\subsection{Configuration expérimentale}
+
+Deux systèmes HVAC ont été sélectionnés pour l'évaluation : le Système 1 (Unité de traitement d'air) et
+le Système 3 (Unité de traitement d'air). Les deux systèmes proviennent de bâtiments réels avec des
+exportations de points BACnet existantes et des plans d'ingénierie disponibles pour l'ingestion. Les deux
+systèmes sont installés sur un site de bâtiment réel, des plans réels d'unités de traitement d'air avec
+une documentation HVAC du monde réel, et non des cas de test synthétiques.
+
+Quatre métriques sont enregistrées pour chaque exécution de l'agent IA : la consommation totale de tokens
+LLM (taille cumulée de la fenêtre de contexte sur tous les appels de modèle dans la session), le coût
+estimé des tokens en USD au tarif applicable du modèle, le temps réel depuis le début de la session
+jusqu'à la sortie TTL validée, et une évaluation qualitative du graphe ASHRAE 223P généré basée sur
+l'exhaustivité (tous les équipements et capteurs présents), la précision (topologie correcte et références
+BACnet), et l'interprétabilité (graphe lisible par les applications en aval).
+
+Le modèle utilisé pour les deux expériences est \textbf{Gemini 3.1 Pro Preview}, facturé à
+\$2.00/M tokens pour les prompts jusqu'à 200\,000 tokens et \$12.00/M pour les tokens de sortie et de
+réflexion (même niveau de taille de prompt).
+
+\subsection{Système 1 : unité de traitement d'air}
+
+\subsubsection{Matériaux d'entrée}
+
+Le Système 1 est une Unité de Traitement d'Air (UTA) du monde réel provenant d'une installation de
+bâtiment existante.
+L'agent a reçu trois artefacts d'entrée : un plan schématique d'ingénierie HVAC (PNG),
+un fichier CSV d'export de points BACnet contenant des données de points de contrôle bruts, et une
+documentation de contrôle en PDF. Aucun contexte supplémentaire n'a été fourni.
+
+La figure~\ref{fig:system1-original} montre le plan d'ingénierie original, et la
+figure~\ref{fig:system1-replicated} montre la réplication de grille générée par IA produite par
+l'agent avant la génération d'ontologie.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_one_original.png}
+  \caption{Système 1 : plan d'ingénierie HVAC original utilisé comme entrée pour l'agent.}
+  \label{fig:system1-original}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_one_ia_replicated.jpg}
+  \caption{Système 1 : réplication de la grille générée par l'agent sur le canevas GraphiVAC,
+  produite comme étape intermédiaire avant la génération ASHRAE 223P.}
+  \label{fig:system1-replicated}
+\end{figure}
+
+\subsubsection{Métriques de performance}
+
+\begin{table}[htbp]
+  \caption{Système 1 (UTA) : Performance de l'agent IA}
+  \label{tab:system1-ai}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Métrique} & \textbf{Valeur} \\
+    \midrule
+    Modèle utilisé                & Gemini 3.1 Pro Preview \\
+    Temps réel                    & 17 min 11 s \\
+    Fenêtre de contexte maximale  & 185{,}735 tokens \\
+    Coût estimé des tokens        & \$11.30 USD \\
+    Composants HVAC placés        & 21 (3 ventilateurs, 2 serpentins, 5 volets, 6 capteurs, \\
+                                  & \quad 1 filtre, 1 humidificateur, 2 VFDs, 1 vanne) \\
+    Points BACnet cartographiés   & 44 points $\to$ 17 instances d'équipements \\
+    Itérations de validation      & 3 (autocorrigées par l'agent) \\
+    Graphe ASHRAE 223P            & 295 nœuds, 949 relations \\
+    Résultat de la session        & Succès \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Évaluation de la qualité du graphe}
+
+L'agent a identifié et placé avec succès les 21 composants HVAC du plan d'ingénierie,
+incluant les ventilateurs, les volets, les serpentins et chaque capteur instrumenté. Les 44 points de
+données BACnet du CSV de contrôle ont été extraits et correctement associés à 17 instances d'équipements,
+couvrant les températures d'alimentation/retour, les positions des volets, les vitesses des ventilateurs,
+la pression statique et l'humidité. Trois erreurs mineures de code ont émergé pendant la validation
+d'ontologie, des noms d'import incorrects, un paramètre de constructeur manquant et un problème de
+syntaxe d'opérateur Python, tous détectés et corrigés de manière autonome par l'agent dans la même
+session, sans intervention humaine requise.
+
+Le graphe ASHRAE 223P résultant contient 295 nœuds et 949 relations, encodant la topologie complète
+des équipements (points de connexion entrée et sortie, segments de gaines, types de médiums),
+toutes les références externes BACnet, et la composition spatiale de l'assemblage UTA.
+Des requêtes Cypher post-génération ont confirmé que les ventilateurs, les volets et les liens
+capteur-BACnet étaient tous correctement représentés dans la base de données Neo4j.
+
+Les figures~\ref{fig:system1-graph-full} et~\ref{fig:system1-graph-detail} montrent le graphe
+sémantique ASHRAE 223P généré tel que visualisé dans le frontend SI-Mapper.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_one_graph_full.jpg}
+  \caption{Système 1 : vue complète du graphe sémantique ASHRAE 223P dans la visualisation
+  Neo4j de SI-Mapper (295 nœuds, 949 relations).}
+  \label{fig:system1-graph-full}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_one_graph_detail.jpg}
+  \caption{Système 1 : vue détaillée de la topologie des équipements, montrant les nœuds
+  avec leurs points de connexion et les références externes BACnet.}
+  \label{fig:system1-graph-detail}
+\end{figure}
+
+\subsection{Système 3 : unité de traitement d'air}
+
+\subsubsection{Matériaux d'entrée}
+
+Le Système 3 est une deuxième Unité de Traitement d'Air du monde réel provenant d'une installation de
+bâtiment différente, plus complexe que le Système 1. L'agent a reçu les mêmes trois types d'artefacts
+d'entrée : un schéma d'ingénierie HVAC (PNG), un CSV d'export de points BACnet, et la documentation
+de contrôle.
+
+La figure~\ref{fig:system3-original} montre le plan original et la figure~\ref{fig:system3-replicated}
+montre la réplication de grille générée par IA.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_three.png}
+  \caption{Système 3 : plan d'ingénierie HVAC original utilisé comme entrée pour l'agent.}
+  \label{fig:system3-original}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_three_ia_replicated.jpg}
+  \caption{Système 3 : réplication de la grille générée par l'agent sur le canevas GraphiVAC.}
+  \label{fig:system3-replicated}
+\end{figure}
+
+\subsubsection{Métriques de performance}
+
+\begin{table}[htbp]
+  \caption{Système 3 (UTA) : Performance de l'agent IA}
+  \label{tab:system3-ai}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Métrique} & \textbf{Valeur} \\
+    \midrule
+    Modèle utilisé                & Gemini 3.1 Pro Preview \\
+    Temps réel                    & 12 min 24 s \\
+    Fenêtre de contexte maximale  & 121{,}962 tokens \\
+    Coût estimé des tokens        & \$10.85 USD \\
+    Composants HVAC placés        & 27 (3 ventilateurs, 3 VFDs, 3 serpentins de chauffage, 1 serpentin de refroidissement, \\
+                                  & \quad 2 filtres, 3 volets, 1 humidificateur, 1 pompe, \\
+                                  & \quad 1 vanne, 9 capteurs, 2 jonctions) \\
+    Points BACnet cartographiés   & 34 points $\to$ 18 instances d'équipements \\
+    Itérations de validation      & 1 (autocorrigée par l'agent) \\
+    Résultat de la session        & Succès \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Évaluation de la qualité du graphe}
+
+Le Système 3 est une UTA plus complexe que le Système 1, comportant une boucle de récupération de
+chaleur (3 serpentins de chauffage, une pompe et une vanne 3 voies) en plus des circuits standard de
+refroidissement et de ventilation. L'agent a correctement cartographié les quatre boucles de flux d'air,
+alimentation, retour, extraction et eau de récupération de chaleur, et a placé les 27 composants sur la
+grille. Les 34 points de contrôle BACnet du CSV ont été associés à 18 instances d'équipements, couvrant
+les vitesses des ventilateurs, les températures des serpentins, les positions des volets, la pression
+différentielle du filtre et l'humidité.
+
+Une seule erreur de validation s'est produite pendant la génération d'ontologie : une incompatibilité
+d'API dans la syntaxe de cartographie capteur-BACnet (l'opérateur \texttt{@} n'était pas supporté
+directement sur les objets capteur de pression). L'agent a identifié le problème, appliqué le motif
+correct \texttt{.observes @}, et produit un fichier TTL propre sans intervention humaine.
+
+Les figures~\ref{fig:system3-graph-full} et~\ref{fig:system3-graph-detail} montrent le graphe
+sémantique ASHRAE 223P résultant dans le frontend SI-Mapper.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_three_graph_full.jpg}
+  \caption{Système 3 : vue complète du graphe sémantique ASHRAE 223P dans la visualisation
+  Neo4j de SI-Mapper.}
+  \label{fig:system3-graph-full}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{system_three_graph_detail.jpg}
+  \caption{Système 3 : vue détaillée de la topologie des équipements, montrant les nœuds avec
+  les points de connexion, les types de médiums et les références externes BACnet.}
+  \label{fig:system3-graph-detail}
+\end{figure}
+
+\subsection{Référence humaine : ingénieur}
+
+Pour comparaison, un ingénieur HVAC expérimenté effectuera la même tâche manuellement : lire les mêmes
+plans d'ingénierie et les fichiers CSV d'export de points BACnet, et produire un modèle sémantique
+ASHRAE 223P équivalent à la main en utilisant ses connaissances du domaine et les outils d'ontologie
+disponibles. L'ingénieur humain reçoit les mêmes entrées que l'agent IA, sans contexte supplémentaire,
+pour assurer une comparaison équitable de l'effort et de la qualité de sortie.
+
+\begin{table}[htbp]
+  \caption{Référence humaine : ingénieur}
+  \label{tab:human-baseline}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Métrique} & \textbf{Système 1} & \textbf{Système 3} \\
+    \midrule
+    Temps d'achèvement
+      & \todo{À compléter après l'essai humain}
+      & \todo{À compléter après l'essai humain} \\
+    Coût de main-d'œuvre estimé (USD)
+      & \todo{À compléter après l'essai humain}
+      & \todo{À compléter après l'essai humain} \\
+    Qualité du graphe ASHRAE 223P
+      & \todo{À compléter après l'essai humain}
+      & \todo{À compléter après l'essai humain} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Comparaison : agent IA vs ingénieur humain}
+
+\begin{table}[htbp]
+  \caption{Agent IA vs Ingénieur humain : Système 1 et Système 3}
+  \label{tab:comparison}
+  \centering
+  \begin{tabular}{llll}
+    \toprule
+    & \textbf{Agent IA} & \textbf{Ingénieur humain} & \textbf{Ratio} \\
+    \midrule
+    Système 1 : Temps
+      & 17 min 11 s
+      & \todo{Temps humain}
+      & \todo{Nx plus rapide} \\
+    Système 1 : Coût
+      & \$11.30 USD
+      & \todo{Coût humain}
+      & \todo{Nx moins cher} \\
+    Système 3 : Temps
+      & 12 min 24 s
+      & \todo{Temps humain}
+      & \todo{Nx plus rapide} \\
+    Système 3 : Coût
+      & \$10.85 USD
+      & \todo{Coût humain}
+      & \todo{Nx moins cher} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\todo{Rédiger l'analyse comparative une fois les expériences IA du Système 3 et les essais de référence humaine terminés. Discuter des ratios de temps et de coût, de la comparaison de la qualité du graphe (exhaustivité et précision des cartographies BACnet), des cas où l'IA a eu des difficultés (par exemple, des symboles de plan ambigus), et des implications pour le déploiement en production à grande échelle.}

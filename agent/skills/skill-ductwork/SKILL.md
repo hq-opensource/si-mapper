@@ -11,8 +11,9 @@ Identify and replicate all **horizontal and vertical ducts** in HVAC drawings as
 # Execution Flow
 
 ## 1. Ingest Context
+- Use `sync_graphivac_to_agent` to synchronize the agent's internal state with the current frontend grid. This ensures any changes the user made on the frontend are captured before analysis begins.
 - Use `ingest_category_files(category='hvac')`.
-- Use `load_artifacts` to access drawing artifacts
+- Use `load_artifacts` to access drawing artifacts. **Remember which artifact names contain the reference drawings.**
 - Use `read_internal_grid` to retrieve existing components
 
 ## 2. Analyze
@@ -41,40 +42,38 @@ Register ALL ducts (horizontal and vertical) in a **single call** to `add_compon
 - Horizontal ducts: `HD-1`, `HD-2`, ..., numbered from top to bottom.
 - Vertical ducts: `VD-1`, `VD-2`, ..., numbered from left to right.
 
-### JSON Structure
-Use "duct" as the type for all entries
-Ensure start_coord and end_coord reflect true airflow direction as explained in the "Duct Continuity Rules" section.
+### How to call `add_components_batch`
 
+Even though the parameter is named `components_json`, **write the value as a plain JSON array in your tool call — do not manually escape or stringify it**. The framework handles serialization automatically.
+
+Correct tool call:
 ```json
-[
-  {
-    "type": "duct",
-    "name": "HD-1",
-    "start_coord": [5, 5],
-    "end_coord": [15, 5]
-  },
-  {
-    "type": "duct",
-    "name": "VD-1",
-    "start_coord": [15, 5],
-    "end_coord": [15, 10]
-  }
-]
+{
+  "components_json": [
+    {"type": "duct", "name": "HD-1", "start_coord": [5, 5], "end_coord": [15, 5]},
+    {"type": "duct", "name": "VD-1", "start_coord": [15, 5], "end_coord": [15, 10]}
+  ]
+}
 ```
+
+❌ Wrong — do NOT manually escape it into a string:
+```json
+{
+  "components_json": "[{\"type\": \"duct\", \"name\": \"HD-1\", ...}]"
+}
+```
+
+Use "duct" as the type for all entries. Ensure `start_coord` and `end_coord` reflect true airflow direction as explained in the "Duct Continuity Rules" section.
 
 ## 4. Send ductwork to the frontend
 
 Call the tool `sync_agent_to_graphivac` to send the ductwork to the frontend.
 
-## 5. Verify the ductwork
-After calling the tool `sync_agent_to_graphivac`, perform a **Duct Verification Checkpoint**:
-- Call `capture_frontend_state()` then `load_artifacts(artifact_names=["verification/latest_snapshot.png"])`.
-- Compare the snapshot against the reference image. Verify that all horizontal and vertical ducts are present, correctly positioned, and flow directions are correct.
-- If discrepancies are found, correct them by calling the tool `add_components_batch` or `delete_components_batch`.
-- After all corrections are finished, call `sync_agent_to_graphivac` again and repeat the checkpoint instructions until the ducts match the reference.
-
-## 6. Exit
-Summarize your actions.
+## 5. Exit
+Call `exit_with_success(summary="...")` to signal completion. The summary **must** include:
+- Number of ducts registered (horizontal and vertical counts)
+- Confirmation that `sync_agent_to_graphivac` succeeded
+Example: "5 ducts registered and synced to frontend (4 horizontal, 1 vertical)"
 
 
 # Rules

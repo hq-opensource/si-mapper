@@ -98,27 +98,17 @@ export default function CopilotKitPage() {
   // Lifted above ThoughtsProvider so tab selection survives session switches (key remount).
   const [activeTab, setActiveTab] = useState<ActiveTab>('view');
   const { activeProject, activeSystem, updateActiveSystem } = useWorkspace();
-  const [error, setError] = useState<string | null>(null);
+  const { threadId, setThreadId } = useCopilotContext();
 
   // Use `running` from useCoAgent as the canonical "turn active" flag
-  const { state: agentState, setState: setAgentState, running: isCopilotTurnActive } = useCoAgent<AgentState>({
-    name: "my_agent",
-    initialState: {
-      status: "idle",
-      current_step: "",
-      observed_steps: [],
-      data: {},
-      active_project: null,
-      active_system: null,
-    },
-  });
+  const { state: agentState, setState: setAgentState, running: isCopilotTurnActive } = useCoAgent<AgentState>({name: "my_agent"});
 
   // Two-speed polling: slow when agent is at rest, fast during active turns
   const pollingConfig = useMemo(() => ({
     baseUrl: process.env.NEXT_PUBLIC_AGENT_BACKEND_URL ?? "http://localhost:8001",
     interval: (agentState.status === "idle" || agentState.status === "complete")
-      ? 10_000
-      : 2_000,
+      ? 60_000
+      : 30_000,
   }), [agentState.status]);
 
   const { pooledState, error: pollingError } = useAgentPolling<AgentState>(pollingConfig);
@@ -164,12 +154,11 @@ export default function CopilotKitPage() {
   // triggering extra re-runs.
   const agentStateRef = useRef<AgentState>(agentState);
   agentStateRef.current = agentState;
-
   // Sync active project / system into the CopilotKit agent state whenever
   // the workspace selection changes.
   useEffect(() => {
     setAgentState({
-      ...agentStateRef.current,
+      ...agentState,
       active_project: activeProject ? {
         id: activeProject.id,
         name: activeProject.name,
@@ -183,8 +172,18 @@ export default function CopilotKitPage() {
         graphivac_grid_id: activeSystem.graphivac_grid_id,
       } : null,
     });
-  }, [activeSystem]); // Only trigger on system change, not project change, to prevent race conditions where system lags behind project in the state update
+    console.log("agentState", agentState)
+    console.log("setAgentState:", activeSystem);
+  }, [activeSystem]); // Re-stamp after CopilotKit resets agentState on thread switch
 
+  const prevActiveSystemRef = useRef(agentState.active_system);
+  useEffect(() => {
+    console.log("Agent state updated - active_system changed:", {
+      prev: prevActiveSystemRef.current,
+      next: agentState.active_system,
+    });
+    prevActiveSystemRef.current = agentState.active_system;
+  }, [agentState.active_system]);
 
   useCopilotAction({
     name: "setThemeColor",
@@ -197,8 +196,6 @@ export default function CopilotKitPage() {
       setThemeColor(themeColor);
     },
   });
-
-  const { threadId, setThreadId } = useCopilotContext();
 
   // Receives a threadId (from the dropdown or backend) and applies it
   const useSession = (newId: string) => {

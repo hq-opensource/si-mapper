@@ -18,6 +18,7 @@ from edn_format import Keyword
 from google.adk.tools import ToolContext
 
 from utils.edn_to_mutable import edn_to_mutable
+from utils.bacnet_helpers import explode_bacnet_points, enrich_flat_bacnet_points
 
 
 # ── HTTP helpers ───────────────────────────────────────────────────────────────
@@ -87,6 +88,9 @@ def _extract_grid_name(key: Any, value: Any, k_obj: Keyword, k_name: Keyword) ->
 
 def _apply_metadata(value: dict, metadata: Dict[str, Any], k_cf: Keyword) -> None:
     """Merge new metadata into a component's :custom-fields in-place."""
+    metadata = explode_bacnet_points(metadata)
+    component_type = str(value.get(Keyword("type"), ""))
+    metadata = enrich_flat_bacnet_points(metadata, component_type)
     current = value.get(k_cf, {})
     if not isinstance(current, dict):
         current = {}

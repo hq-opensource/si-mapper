@@ -1,0 +1,266 @@
+\section{Experiment description, analysis, and results}
+\label{sec:results}
+
+\subsection{Experimental Setup}
+
+Two HVAC systems were selected for evaluation: System 1 (Air Handling Unit) and System 3
+(Air Handling Unit). Both systems are drawn from real buildings with existing BACnet point
+exports and engineering drawings available for ingestion. Both systems are installed on a real building site,
+actual drawings of air handling units with real-world HVAC documentation, not synthetic test cases.
+
+Four metrics are recorded for each AI agent run: total LLM token consumption (cumulative
+context window size across all model calls in the session), estimated token cost in USD at
+the applicable model pricing, wall-clock time from session start to validated TTL output,
+and a qualitative assessment of the generated ASHRAE 223P graph based on completeness
+(all equipment and sensors present), accuracy (correct topology and BACnet references),
+and interpretability (graph readable by downstream applications).
+
+The model used for both experiments is \textbf{Gemini 3.1 Pro Preview}, billed at
+\$2.00/M tokens for prompts up to 200\,000 tokens and \$12.00/M for output and thinking
+tokens (same prompt size tier).
+
+\subsection{System 1: Air Handling Unit}
+
+\subsubsection{Input Materials}
+
+System 1 is a real-world Air Handling Unit (AHU) from an existing building installation.
+The agent was provided three input artifacts: an HVAC engineering schematic drawing (PNG),
+a BACnet point export CSV file containing raw control point data, and a control
+documentation PDF. No additional context was given.
+
+Figure~\ref{fig:system1-comparison} shows the original engineering drawing alongside the
+AI-generated grid replication produced by the agent before ontology generation.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{system_one_original.png}
+    \caption*{(a) Original engineering drawing}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{system_one_ia_replicated.jpg}
+    \caption*{(b) AI-generated grid replication}
+  \end{minipage}
+  \caption{System 1: original HVAC schematic (left) and the agent's replication on the
+  Graphivac grid (right), produced as an intermediate step before ASHRAE 223P generation.}
+  \label{fig:system1-comparison}
+\end{figure}
+
+\subsubsection{Performance Metrics}
+
+\begin{table}[htbp]
+  \caption{System 1 (AHU): AI Agent Performance}
+  \label{tab:system1-ai}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Metric} & \textbf{Value} \\
+    \midrule
+    Model used             & Gemini 3.1 Pro Preview \\
+    Wall-clock time        & 17 min 11 s \\
+    Peak context window    & 185{,}735 tokens \\
+    Estimated token cost   & \$11.30 USD \\
+    HVAC components placed & 21 (3 fans, 2 coils, 5 dampers, 6 sensors, \\
+                           & \quad 1 filter, 1 humidifier, 2 VFDs, 1 valve) \\
+    BACnet points mapped   & 44 points $\to$ 17 equipment instances \\
+    Validation iterations  & 3 (auto-corrected by the agent) \\
+    ASHRAE 223P graph      & 295 nodes, 949 relationships \\
+    Session outcome        & Success \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Graph Quality Assessment}
+
+The agent successfully identified and placed all 21 HVAC components from the engineering
+drawing, including fans, dampers, coils, and every instrumented sensor. The 44 BACnet
+data points from the controls CSV were extracted and correctly associated with 17 equipment
+instances, covering supply/return temperatures, damper positions, fan speeds, static
+pressure, and humidity. Three minor code errors surfaced during ontology validation,
+incorrect import names, a missing constructor parameter, and a Python operator syntax
+issue, all of which the agent detected and corrected autonomously within the same
+session, requiring no human intervention.
+
+The resulting ASHRAE 223P graph contains 295 nodes and 949 relationships, encoding the
+full equipment topology (inlet and outlet connection points, duct segments, medium types),
+all BACnet external references, and the spatial composition of the AHU assembly.
+Post-generation Cypher queries confirmed that fans, dampers, and sensor-to-BACnet
+linkages were all correctly represented in the Neo4j database.
+
+Figure~\ref{fig:system1-graph} shows the generated ASHRAE 223P semantic graph as
+visualized in the SI-Mapper frontend.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{system_one_graph_full.jpg}
+    \caption*{(a) Full graph view}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{system_one_graph_detail.jpg}
+    \caption*{(b) Detailed view of equipment topology}
+  \end{minipage}
+  \caption{System 1: generated ASHRAE 223P semantic graph in the SI-Mapper Neo4j
+  visualization (295 nodes, 949 relationships). The detailed view shows equipment nodes
+  with their connection points and BACnet external references.}
+  \label{fig:system1-graph}
+\end{figure}
+
+\subsection{System 3: Air Handling Unit}
+
+\subsubsection{Input Materials}
+
+System 3 is a second real-world Air Handling Unit from a different building installation,
+more complex than System 1. The agent received the same three input artifact types:
+an HVAC engineering schematic (PNG), a BACnet point export CSV, and control documentation.
+
+Figure~\ref{fig:system3-comparison} shows the original drawing and the AI-generated
+grid replication.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{system_three.png}
+    \caption*{(a) Original engineering drawing}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{system_three_ia_replicated.jpg}
+    \caption*{(b) AI-generated grid replication}
+  \end{minipage}
+  \caption{System 3: original HVAC schematic (left) and the agent's replication on the
+  Graphivac grid (right).}
+  \label{fig:system3-comparison}
+\end{figure}
+
+\subsubsection{Performance Metrics}
+
+\begin{table}[htbp]
+  \caption{System 3 (AHU): AI Agent Performance}
+  \label{tab:system3-ai}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Metric} & \textbf{Value} \\
+    \midrule
+    Model used             & Gemini 3.1 Pro Preview \\
+    Wall-clock time        & 12 min 24 s \\
+    Peak context window    & 121{,}962 tokens \\
+    Estimated token cost   & \$10.85 USD \\
+    HVAC components placed & 27 (3 fans, 3 VFDs, 3 heating coils, 1 cooling coil, \\
+                           & \quad 2 filters, 3 dampers, 1 humidifier, 1 pump, \\
+                           & \quad 1 valve, 9 sensors, 2 junctions) \\
+    BACnet points mapped   & 34 points $\to$ 18 equipment instances \\
+    Validation iterations  & 1 (auto-corrected by the agent) \\
+    Session outcome        & Success \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Graph Quality Assessment}
+
+System 3 is a more complex AHU than System 1, featuring a heat recovery loop (3 heating
+coils, a pump, and a 3-way valve) in addition to the standard cooling and ventilation
+circuits. The agent correctly mapped all four air flow loops, supply, return, exhaust,
+and heat recovery water, and placed all 27 components on the grid. The 34 BACnet
+control points from the CSV were associated with 18 equipment instances, covering fan
+speeds, coil temperatures, damper positions, filter differential pressure, and humidity.
+
+Only one validation error arose during ontology generation: an API incompatibility in the
+sensor-to-BACnet mapping syntax (the \texttt{@} operator was not supported directly on
+pressure sensor objects). The agent identified the issue, applied the correct
+\texttt{.observes @} pattern, and produced a clean TTL file without human intervention.
+
+Figure~\ref{fig:system3-graph} shows the resulting ASHRAE 223P semantic graph in the
+SI-Mapper frontend.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{system_three_graph_full.jpg}
+    \caption*{(a) Full graph view}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{system_three_graph_detail.jpg}
+    \caption*{(b) Detailed view of equipment topology}
+  \end{minipage}
+  \caption{System 3: generated ASHRAE 223P semantic graph in the SI-Mapper Neo4j
+  visualization. The detailed view shows equipment nodes with connection points, medium
+  types, and BACnet external references.}
+  \label{fig:system3-graph}
+\end{figure}
+
+\subsection{Human Engineer Baseline}
+
+For comparison, an experienced HVAC engineer will perform the same task manually: reading
+the same engineering drawings and BACnet point export CSV files, and producing an
+equivalent ASHRAE 223P semantic model by hand using domain knowledge and available
+ontology tooling. The human engineer is given the same inputs as the AI agent, no
+additional context, to ensure a fair comparison of effort and output quality.
+
+\begin{table}[htbp]
+  \caption{Human Engineer Baseline}
+  \label{tab:human-baseline}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Metric} & \textbf{System 1} & \textbf{System 3} \\
+    \midrule
+    Time to complete
+      & \todo{Fill after human trial}
+      & \todo{Fill after human trial} \\
+    Estimated labor cost (USD)
+      & \todo{Fill after human trial}
+      & \todo{Fill after human trial} \\
+    ASHRAE 223P graph quality
+      & \todo{Fill after human trial}
+      & \todo{Fill after human trial} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Comparison: AI Agent vs.\ Human Engineer}
+
+\begin{table}[htbp]
+  \caption{AI Agent vs.\ Human Engineer: System 1 and System 3}
+  \label{tab:comparison}
+  \centering
+  \begin{tabular}{llll}
+    \toprule
+    & \textbf{AI Agent} & \textbf{Human Engineer} & \textbf{Ratio} \\
+    \midrule
+    System 1: Time
+      & 17 min 11 s
+      & \todo{Human time}
+      & \todo{Nx faster} \\
+    System 1: Cost
+      & \$11.30 USD
+      & \todo{Human cost}
+      & \todo{Nx cheaper} \\
+    System 3: Time
+      & 12 min 24 s
+      & \todo{Human time}
+      & \todo{Nx faster} \\
+    System 3: Cost
+      & \$10.85 USD
+      & \todo{Human cost}
+      & \todo{Nx cheaper} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\todo{Write comparative analysis once both System 3 AI experiment and human baseline trials
+are complete. Discuss time and cost ratios, graph quality comparison (completeness and
+accuracy of BACnet mappings), cases where the AI struggled (e.g.\ ambiguous drawing
+symbols), and implications for production deployment at scale.}

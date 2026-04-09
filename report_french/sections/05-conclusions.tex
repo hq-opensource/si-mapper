@@ -1,0 +1,156 @@
+\section{Conclusions}
+\label{sec:conclusions}
+
+\subsection{Résumé des contributions}
+\label{subsec:contributions}
+
+Ce rapport a abordé un problème documenté et économiquement significatif dans l'industrie du bâtiment :
+la cartographie manuelle des points BACnet coûte 0,5 à 1,5\% de la valeur de construction par bâtiment,
+bloque l'interopérabilité logicielle, et est identifiée dans la littérature évaluée par les pairs et les
+rapports de politique du DOE comme un obstacle majeur à l'innovation dans l'automatisation des bâtiments.
+Le même problème empêche directement l'inscription à grande échelle des bâtiments commerciaux dans les
+programmes de Centrale électrique virtuelle et d'Alternative non filaire, car chaque bâtiment nécessite
+un effort d'intégration personnalisé, par projet, avant de pouvoir participer aux services réseau.
+Aucune solution automatisée largement déployée pour ce problème n'existait avant ce travail.
+
+SI-Mapper démontre que l'IA agentique peut automatiser la création de modèles sémantiques de bâtiment
+ASHRAE 223P à partir des entrées brutes disponibles sur tout projet de bâtiment réel : plans d'ingénierie
+HVAC et exportations de points BACnet.
+Le système combine la reconnaissance multimodale de plans, utilisant des modèles de fondation capables
+d'interpréter directement les symboles schématiques HVAC à partir d'images, avec la cartographie
+automatisée des points BACnet vers les équipements et la génération d'ontologie ASHRAE 223P formelle dans
+un pipeline unique de bout en bout.
+L'agent valide sa propre sortie d'ontologie par autocorrection itérative, en bouclant jusqu'à ce que le
+fichier Turtle (TTL) généré s'exécute sans erreurs et que le graphe résultant se charge proprement dans
+le magasin sémantique Neo4j.
+Ce pipeline remplace un flux de travail qui nécessitait auparavant des jours de travail d'ingénierie HVAC
+expert.
+Deux expériences sur des installations réelles d'unités de traitement d'air confirment la viabilité de
+bout en bout du pipeline : le Système 1 (21 composants, 44 points BACnet, 295 nœuds et 949 relations dans
+le graphe résultant) a été complété en 17 minutes 11 secondes à un coût estimé de \$11.30 USD ; le
+Système 3 (27 composants, 34 points BACnet, boucle de récupération de chaleur plus complexe) a été
+complété en 12 minutes 24 secondes à \$10.85 USD.
+Dans les deux exécutions, l'agent a identifié et corrigé de manière autonome les erreurs de code
+d'ontologie, trois itérations pour le Système 1, une pour le Système 3, sans intervention humaine requise.
+Les deux sessions ont utilisé Gemini 3.1 Pro Preview et sont restées bien dans la fenêtre de contexte
+du modèle tout au long.
+
+Le processus de développement lui-même est une contribution.
+Neuf itérations expérimentales, des simples appels de fonctions LangChain en 2025 jusqu'à l'architecture
+finale basée sur les compétences sur Gemini 3.1 et Claude Sonnet 4.6 en 2026, constituent un registre
+systématique de la façon dont les architectures d'IA agentique pour les tâches techniques spécifiques
+à un domaine ont évolué avec l'amélioration des capacités des modèles de fondation.
+La progression révèle une leçon architecturale contre-intuitive : les architectures plus simples sont
+devenues plus viables, et non moins, à mesure que les modèles s'amélioraient.
+Les conceptions multi-agents avec des sous-agents dédiés Planificateur, Acteur et Réviseur, initialement
+nécessaires pour maintenir le pipeline sur la bonne voie, sont devenues inutiles une fois que les modèles
+ont atteint une capacité suffisante de suivi d'instructions.
+L'agent maître unique final basé sur les compétences a surpassé chaque architecture multi-agents testée
+tout en étant considérablement plus simple à maintenir, déboguer et étendre.
+
+La pile technologique assemblée pour SI-Mapper, Google ADK, CopilotKit, Neo4j avec Neosemantics
+(n10s), et Sigma.js, fournit une architecture de référence réutilisable pour les applications d'IA
+agentique nécessitant une observabilité en temps réel par l'opérateur, un stockage de graphes sémantiques,
+et une visualisation interactive de graphes.
+La combinaison d'ADK pour l'orchestration d'agents, de CopilotKit pour le protocole de streaming
+Agent-to-UI, et de Neo4j pour le stockage natif de graphes RDF n'est pas une combinaison évidente ;
+les décisions de conception qui y ont conduit sont documentées dans la section~\ref{sec:implementation}
+comme guide pratique pour les futurs implémenteurs.
+
+\subsection{Limitations}
+\label{subsec:limitations}
+
+\textbf{Dépendance aux modèles.}
+La performance du système est directement couplée aux capacités et à la disponibilité de modèles de
+fondation spécifiques, Gemini 3.1 et Claude Sonnet 4.6 au moment de la rédaction.
+Les changements d'API de modèle, les changements de tarification ou les régressions de capacité dans
+les futures versions de modèle pourraient affecter la fiabilité du pipeline sans aucun changement dans
+le code source de SI-Mapper.
+L'architecture des compétences atténue quelque peu ce risque en encapsulant les connaissances de domaine
+dans des ensembles d'instructions en texte brut qui peuvent être mis à jour indépendamment des versions
+de modèle, mais la dépendance sous-jacente aux fournisseurs de modèles externes demeure.
+
+\textbf{Portée de validation limitée.}
+La portée expérimentale actuelle couvre deux systèmes HVAC réels (Système 1 et Système 3), deux unités
+de traitement d'air tirées du même contexte de projet et suivant les mêmes conventions de dénomination
+BACnet en français québécois.
+Les deux expériences ont réussi, l'agent a produit un fichier Turtle ASHRAE 223P valide en une seule
+session dans chaque cas, mais deux systèmes d'un seul entrepreneur et d'une seule région sont insuffisants
+pour établir une confiance statistique dans la précision ou la généralisabilité.
+Aucune exécution échouée n'a été observée, bien que des erreurs mineures de code d'ontologie (imports
+incorrects, paramètres de constructeur manquants, syntaxe d'opérateur) se soient produites et aient été
+corrigées de manière autonome dans tous les cas.
+Si ces erreurs seraient récupérables sur des systèmes avec des styles de plans significativement
+différents, des listes de points plus denses ou des topologies d'équipements plus inhabituelles n'est
+pas encore connu.
+
+\textbf{Spécificité de domaine.}
+L'ensemble actuel de compétences et d'outils est adapté aux unités de traitement d'air HVAC avec des
+points BACnet dans des conventions de dénomination en langue française, reflétant le contexte
+d'installation québécois où ce travail a été développé.
+Étendre SI-Mapper à d'autres types de systèmes de bâtiment (boîtes VAV, installations de refroidisseurs,
+installations de chaudières), d'autres protocoles de contrôle (Modbus, KNX, BACnet/IP vs.\ BACnet MSTP),
+ou des conventions de dénomination de points BACnet d'autres régions et entrepreneurs nécessiterait un
+développement et une validation supplémentaires des compétences.
+L'architecture supporte cette extension naturellement, les nouvelles compétences sont des ensembles
+d'instructions en texte brut, mais les connaissances de domaine nécessaires pour écrire des compétences
+précises sont non triviales.
+
+\textbf{Maturité d'ASHRAE 223P.}
+La norme est actuellement en deuxième examen public consultatif et n'est pas encore ratifiée.
+La logique de génération d'ontologie dans SI-Mapper est calibrée par rapport au projet consultatif actuel.
+Des modifications de la norme lors de la ratification, en particulier pour les types de points de
+connexion, les définitions de médiums ou la syntaxe de liaison de télémétrie, pourraient nécessiter des
+mises à jour des compétences de génération d'ontologie et de la bibliothèque Python ASHRAE 223P sous-jacente
+utilisée pour produire la sortie TTL.
+
+\subsection{Travaux futurs}
+\label{subsec:future-work}
+
+\textbf{Validation en production à grande échelle.}
+L'étape suivante la plus importante est de continuer à développer SI-Mapper et de tester le modèle sur
+un corpus plus large de bâtiments réels, avec une cible de 20 à 50 systèmes HVAC couvrant plusieurs types
+de systèmes, entrepreneurs et conventions de dénomination.
+Cela établirait une confiance statistique dans la précision et les économies de coûts, identifierait les
+cas limites non rencontrés dans l'ensemble de développement actuel, et produirait les données de
+référence nécessaires pour une publication évaluée par les pairs.
+
+\textbf{Support multi-systèmes.}
+Les compétences actuelles couvrent les unités de traitement d'air.
+Un système viable en production aurait besoin de compétences pour les boîtes terminales VAV, les
+installations de refroidisseurs, les installations de chaudières, les systèmes de pompe à chaleur et
+les unités de ventilation mécanique.
+Chaque type de système a ses propres conventions de plans, ses schémas de dénomination de points et ses
+règles de topologie ASHRAE 223P.
+L'architecture des compétences rend cette extension gérable : chaque type de système nécessite un nouveau
+fichier de compétence plutôt qu'un nouvel agent ou une refonte du pipeline.
+
+\textbf{Métriques de qualité automatisées.}
+L'évaluation actuelle des modèles ASHRAE 223P générés est qualitative.
+Un cadre d'évaluation en production inclurait des outils de comparaison automatisés : différenciation de
+graphes par rapport à un modèle de référence créé par un humain, scores quantitatifs pour l'exhaustivité
+(fraction des nœuds d'équipements attendus présents), la précision (fraction des références BACnet
+correctement assignées), et la correction de topologie (fraction des connexions dirigées correspondant
+au plan source).
+Ces métriques rendraient possible le suivi des régressions à travers les mises à jour de modèles et
+les révisions de compétences sans inspection manuelle.
+
+\textbf{Support multi-langues.}
+Adapter les compétences de cartographie des points BACnet pour reconnaître les conventions de dénomination
+anglaises, espagnoles et autres au-delà du français élargirait significativement la géographie applicable
+de SI-Mapper.
+Les compétences de cartographie sont le lieu principal où les connaissances sur les conventions de
+dénomination sont encodées ; l'ajout de variantes de langues est une tâche d'écriture de compétences
+plutôt qu'un changement architectural.
+
+\textbf{Projet pilote de démonstration en bâtiment réel.}
+L'étape de validation à court terme ayant le plus grand impact est de connecter un modèle ASHRAE 223P
+généré à des points BACnet en direct sur un bâtiment réel et d'opérer sur des données réelles.
+Le projet pilote se déroulerait en deux étapes : premièrement, lier les nœuds d'ontologie à leurs
+homologues physiques et vérifier que le graphe sémantique peut être utilisé pour interroger des lectures
+de capteurs en direct, confirmant que l'interface d'ontologie ASHRAE 223P est suffisante pour la
+surveillance des bâtiments ; deuxièmement, émettre de simples commandes de contrôle superviseur via
+la même interface.
+Cela validerait l'hypothèse centrale de SI-Mapper : que le modèle sémantique généré est une interface
+opérationnelle utilisable pour surveiller et contrôler les bâtiments, et non simplement un artefact de
+documentation amélioré.

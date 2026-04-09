@@ -11,13 +11,24 @@ from utils.logging_config import configure_logging
 from tools.state_tools import save_agent_state, get_agent_state, get_active_project, get_active_system
 from tools.internal_grid_tools import (
     add_component, add_components_batch, delete_component,
-    delete_components_batch, read_internal_grid
+    delete_components_batch, read_internal_grid,
+    update_component_metadata, update_component_metadata_batch
 )
-from tools.metadata_tools import write_metadata, write_metadata_batch
-from master_architecture.tools.capture_frontend_state_tool import capture_frontend_state_tool
-from master_architecture.tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
-from sub_agents.ontology_generator.agent import OntologyGeneratorAgent
-from sub_agents.ontology_validator.agent import OntologyValidatorAgent
+from tools.load_ttl_to_neo4j_tool import load_ttl_to_neo4j_tool
+from tools.neo4j_query_tools import (
+    execute_cypher_tool,
+    execute_cypher_batch_tool,
+    get_graph_schema_tool,
+    search_graph_entities_tool,
+)
+from tools.ontology_tools import (
+    read_python_files,
+    scan_python_folder,
+    search_class_mapping,
+    write_ontology,
+    execute_ontology,
+    extract_lessons,
+)
 
 # --- Configuration ---
 load_dotenv()
@@ -68,19 +79,24 @@ def create_master_agent(session_id: str, model_name: str, subagents: List[LoopAg
         delete_component,
         delete_components_batch,
         read_internal_grid,
-        # Metadata tools (write BACnet/control data to GraphyVAC custom-fields)
-        write_metadata,
-        write_metadata_batch,
-        capture_frontend_state_tool,
+        update_component_metadata,
+        update_component_metadata_batch,
         load_ttl_to_neo4j_tool,
+        # Neo4j query tools
+        execute_cypher_tool,
+        execute_cypher_batch_tool,
+        get_graph_schema_tool,
+        search_graph_entities_tool,
+        # Ontology tools
+        read_python_files,
+        scan_python_folder,
+        search_class_mapping,
+        write_ontology,
+        execute_ontology,
+        extract_lessons,
     ]
-    
-    # --- Ontology sub-agents (flat, master sequences them) ---
-    ontology_subagents = [
-        OntologyGeneratorAgent(model_name=model_name),
-        OntologyValidatorAgent(model_name=model_name),
-    ]
-    all_subagents = (subagents or []) + ontology_subagents
+
+    all_subagents = subagents or []
 
     master_agent = MasterLlmAgent(
         model_name=model_name,

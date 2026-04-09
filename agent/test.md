@@ -37,7 +37,7 @@ Please be aware that there are only 2 vertical ducts on the image. And there are
 ## 💻 Code Generation
 
 ```
-I want that you create the code for the grid that exists here in the front end. Create the Python code.
+I want that you create the code for the grid that exists here in the front end. Create the ontology Python code.
 ```
 
 ---

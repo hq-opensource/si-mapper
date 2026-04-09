@@ -26,6 +26,7 @@ services:
     volumes:
       - neo4j_data:/data
     profiles:
+      - deploy
       - graph
 
 

@@ -52,19 +52,12 @@ def get_system_path(tool_context, relative: str) -> str:
     Returns:
         Absolute path string, or *relative* when context is unavailable.
     """
-    projects_root = os.getenv("PROJECTS_FOLDER", "")
-    active_project: dict = {}
-    active_system: dict = {}
-
     if tool_context is not None:
-        active_project = tool_context.state.get("active_project") or {}
-        active_system = tool_context.state.get("active_system") or {}
-
-    proj_folder = active_project.get("folder_path", "")
-    sys_folder = active_system.get("folder_path", "")
-
-    if projects_root and proj_folder and sys_folder:
-        return str(pathlib.Path(projects_root) / proj_folder / sys_folder / relative)
+        active_system = tool_context.state.get("active_system") or None
+        if active_system is not None:
+            sys_folder = active_system.get("folder_path", "")
+            if sys_folder:
+                return get_project_path(tool_context, str(pathlib.Path(sys_folder) / relative))
 
     # Fallback: caller should detect this via os.path.isabs() returning False
     return relative
@@ -87,16 +80,13 @@ def get_project_path(tool_context, relative: str) -> str:
     Returns:
         Absolute path string, or *relative* when context is unavailable.
     """
-    projects_root = os.getenv("PROJECTS_FOLDER", "")
-    active_project: dict = {}
-
     if tool_context is not None:
-        active_project = tool_context.state.get("active_project") or {}
-
-    proj_folder = active_project.get("folder_path", "")
-
-    if projects_root and proj_folder:
-        return str(pathlib.Path(projects_root) / proj_folder / relative)
+        active_project = tool_context.state.get("active_project") or None
+        if active_project is not None:
+            projects_root = os.getenv("PROJECTS_FOLDER", "")
+            proj_folder = active_project.get("folder_path", "")
+            if projects_root and proj_folder:
+                return str(pathlib.Path(projects_root) / proj_folder / relative)
 
     # Fallback: caller should detect this via os.path.isabs() returning False
     return relative

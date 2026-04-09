@@ -8,8 +8,9 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 
-# Copy local binary packages (referenced as ../223p/bin/* in pyproject.toml)
-COPY 223p/bin/ ./223p/bin/
+# Copy local binary packages (referenced as 223p/bin/* in pyproject.toml / uv.lock,
+# resolved relative to the agent/ directory at /app/agent/223p/bin/)
+COPY agent/223p/bin/ ./agent/223p/bin/
 
 # Copy dependency manifests
 COPY agent/pyproject.toml agent/uv.lock ./agent/
@@ -32,15 +33,11 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 # Copy 223p binary packages (required by the bob / scratch packages at import time)
-COPY 223p/bin/ ./223p/bin/
+COPY agent/223p/bin/ ./agent/223p/bin/
 
 # Copy the virtual environment produced by the builder stage
 COPY --from=builder /app/agent/.venv ./agent/.venv
 
-# Install Playwright browser binaries + required system libraries.
-# playwright is used in production (capture_frontend_state_tool.py), so Chromium
-# must be present at runtime. --with-deps runs apt-get inside this stage.
-RUN /app/agent/.venv/bin/playwright install --with-deps chromium
 
 # Copy all agent source code
 COPY agent/ ./agent/

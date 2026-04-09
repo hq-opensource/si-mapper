@@ -62,6 +62,91 @@
 | P11-02 | Phase 11 | Planned |
 | P11-03 | Phase 11 | Planned |
 | P11-04 | Phase 11 | Planned |
+| P13-01 | Phase 13 | Planned |
+| P13-02 | Phase 13 | Planned |
+| P13-03 | Phase 13 | Planned |
+| P13-04 | Phase 13 | Planned |
+| P13-05 | Phase 13 | Planned |
+| P13-06 | Phase 13 | Planned |
+| P13-07 | Phase 13 | Planned |
+| R14-01 | Phase 14 | Planned |
+| R14-02 | Phase 14 | Planned |
+| R14-03 | Phase 14 | Planned |
+| R14-04 | Phase 14 | Planned |
+| R14-05 | Phase 14 | Planned |
+| R14-06 | Phase 14 | Planned |
+| R14-07 | Phase 14 | Planned |
+| P15-01 | Phase 15 | Planned |
+| P15-02 | Phase 15 | Planned |
+| P15-03 | Phase 15 | Planned |
+| P15-04 | Phase 15 | Planned |
+| P15-05 | Phase 15 | Planned |
+| P15-06 | Phase 15 | Planned |
+| P15-07 | Phase 15 | Planned |
+| P15-08 | Phase 15 | Planned |
+| P15-09 | Phase 15 | Planned |
+| P15-10 | Phase 15 | Planned |
+| P16-01 | Phase 16 | Planned |
+| P16-02 | Phase 16 | Planned |
+| P16-03 | Phase 16 | Planned |
+| P16-04 | Phase 16 | Planned |
+| P16-05 | Phase 16 | Planned |
+| P16-06 | Phase 16 | Planned |
+| P16-07 | Phase 16 | Planned |
+| P16-08 | Phase 16 | Planned |
+| P16-09 | Phase 16 | Planned |
+| P16-10 | Phase 16 | Planned |
+| P16-11 | Phase 16 | Planned |
+| P16-12 | Phase 16 | Planned |
+| P16-13 | Phase 16 | Planned |
+| P17-01 | Phase 17 | Planned |
+| P17-02 | Phase 17 | Planned |
+| P17-03 | Phase 17 | Planned |
+| P17-04 | Phase 17 | Planned |
+| P17-05 | Phase 17 | Planned |
+| P17-06 | Phase 17 | Planned |
+| P17-07 | Phase 17 | Planned |
+| P18-01 | Phase 18 | Planned |
+| P18-02 | Phase 18 | Planned |
+| P18-03 | Phase 18 | Planned |
+| P18-04 | Phase 18 | Planned |
+| P18-05 | Phase 18 | Planned |
+| P18-06 | Phase 18 | Planned |
+| P18-07 | Phase 18 | Planned |
+| P18-08 | Phase 18 | Planned |
+| P18-09 | Phase 18 | Planned |
+| P18-10 | Phase 18 | Planned |
+| P18-11 | Phase 18 | Planned |
+| P18-12 | Phase 18 | Planned |
+| P19-01 | Phase 19 | Planned |
+| P19-02 | Phase 19 | Planned |
+| P19-03 | Phase 19 | Planned |
+| P19-04 | Phase 19 | Planned |
+| P19-05 | Phase 19 | Planned |
+| P19-06 | Phase 19 | Planned |
+| P19-07 | Phase 19 | Planned |
+| P19-08 | Phase 19 | Planned |
+| P19-09 | Phase 19 | Planned |
+| P20-01 | Phase 20 | Planned |
+| P20-02 | Phase 20 | Planned |
+| P20-03 | Phase 20 | Planned |
+| P20-04 | Phase 20 | Planned |
+| P20-05 | Phase 20 | Planned |
+| P21-01 | Phase 21 | Planned |
+| P21-02 | Phase 21 | Planned |
+| P21-03 | Phase 21 | Planned |
+| P21-04 | Phase 21 | Planned |
+| P21-05 | Phase 21 | Planned |
+| P22-01 | Phase 22 | Complete |
+| P22-02 | Phase 22 | Complete |
+| P22-03 | Phase 22 | Complete |
+| P23-01 | Phase 23 | Planned |
+| P23-02 | Phase 23 | Planned |
+| P23-03 | Phase 23 | Planned |
+| P23-04 | Phase 23 | Planned |
+| P23-05 | Phase 23 | Planned |
+| P23-06 | Phase 23 | Planned |
+| P23-07 | Phase 23 | Planned |
 
 ## Phase 4: Dependency Modernization & UI Optimization (SVAR Migration)
 **Goal:** Remove legacy dependencies (Chonky, Material UI v4) and replace with SVAR React File Manager to ensure compatibility with React 19 and Next.js 16.
@@ -198,3 +283,151 @@ Plans:
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 12 to break down)
+
+### Phase 13: Migrate OntologyGenerator and OntologyValidator sub-agents to master agent skills
+
+**Goal:** Remove OntologyGeneratorAgent and OntologyValidatorAgent as AgentTool-wrapped sub-agents, give all ontology tools directly to MasterLlmAgent, and convert sub-agent prompts into two ADK skills (skill-ontology-generation and skill-ontology-validation) so the master runs generation and validation in its own loop, fixing sub-agent event streaming issues.
+**Requirements**: [P13-01, P13-02, P13-03, P13-04, P13-05, P13-06, P13-07]
+**Depends on:** Phase 12
+**Plans:** 2/2 plans complete
+
+Plans:
+- [ ] 13-01-PLAN.md — Adapted exit tools (EXIT_LEVEL_2) + two new SKILL.md files
+- [ ] 13-02-PLAN.md — Rewire create_master_agent.py + max_iterations=100 + master_instruction.md update + tests
+
+### Phase 14: Write comprehensive research report on SI-Mapper development
+
+**Goal:** Produce a complete LaTeX research report documenting the SI-Mapper project from theoretical background (building ontologies, ASHRAE 223P) through the BACnet mapping problem, the agentic AI solution, nine experimental iterations, and the final skills-based architecture, with placeholder tables for experiment results comparing AI vs human engineer performance.
+**Requirements**: [R14-01, R14-02, R14-03, R14-04, R14-05, R14-06, R14-07]
+**Depends on:** Phase 13
+**Plans:** 4/4 plans complete
+
+Plans:
+- [ ] 14-01-PLAN.md — LaTeX skeleton (main.tex + 6 section stubs) + 3 Mermaid diagrams rendered to PNG
+- [ ] 14-02-PLAN.md — Sections 1 (Introduction), 2 (Problem), 3 (Solution)
+- [ ] 14-03-PLAN.md — Section 4 (Implementation) + Section 5 (Results placeholder)
+- [ ] 14-04-PLAN.md — Section 6 (Conclusions) + final compilation verification
+
+### Phase 15: Refactor coding skills and standardize agent architecture
+
+**Goal:** Delete dead sub_agents/ code, migrate root 223p/ into agent/223p/ with session-scoped archives, implement three-write pattern for real-time CodeWindow visibility, add extract_lessons tool, and audit both ontology skills for correct paths and enhanced workflows.
+**Requirements**: [P15-01, P15-02, P15-03, P15-04, P15-05, P15-06, P15-07, P15-08, P15-09, P15-10]
+**Depends on:** Phase 14
+**Plans:** 3/3 plans complete
+
+Plans:
+- [ ] 15-01-PLAN.md — Delete sub_agents/ directory + clean up stale tests
+- [ ] 15-02-PLAN.md — Migrate 223p/ files + update path constants + three-write pattern + extract_lessons tool
+- [ ] 15-03-PLAN.md — Audit and enhance skill-ontology-generation and skill-ontology-validation
+
+### Phase 16: Optimize ontology skills
+
+**Goal:** Fix 21 identified issues across the ontology pipeline: delete redundant _persist helpers, clean exit tool signatures (remove code=/ttl_content= params), fold checkpoint_code into write_ontology, fix Linux venv detection, add scan_python_folder cap, and update all three SKILL.md files for accuracy.
+**Requirements**: [P16-01, P16-02, P16-03, P16-04, P16-05, P16-06, P16-07, P16-08, P16-09, P16-10, P16-11, P16-12, P16-13]
+**Depends on:** Phase 15
+**Plans:** 4/5 plans complete
+
+Plans:
+- [ ] 16-01-PLAN.md — Delete _persist_python and _persist_ttl helpers + remove all call sites
+- [ ] 16-02-PLAN.md — Clean exit signatures, fold checkpoint_code, fix venv path, add scan cap, update docstrings
+- [ ] 16-03-PLAN.md — Update generation, validation, and lessons SKILL.md files
+- [ ] 16-04-PLAN.md — Update tests for all changed behavior
+
+### Phase 17: Restructure BACnet custom fields to flat numbered entries
+
+**Goal:** Replace the `{"bacnet": {"ADDR": {...}}}` custom_fields structure with a flat numbered format `{"bacnet_1": {"address": "ADDR", ...}, "bacnet_2": {...}}` across all write paths (internal grid tools, ADK metadata tools, MCP metadata manager), the EDN translator, the BACnet skill documentation, and the live integration test.
+**Requirements**: [P17-01, P17-02, P17-03, P17-04, P17-05, P17-06, P17-07]
+**Depends on:** Phase 16
+**Plans:** 2/2 plans complete
+
+Plans:
+- [ ] 17-01-PLAN.md — Create explode_bacnet_points helper + wire into all 4 write-path files
+- [ ] 17-02-PLAN.md — Update EDN translator verification + SKILL.md + live integration test
+
+### Phase 18: Optimize skill for ontology validation
+
+**Goal:** Rewrite the ontology validation skill (SKILL.md) to implement 11 optimizations: structured sub-steps 4a-4d for class lookup, conditional scan_python_folder, re-read before fix, minimum-change constraint, graduated retry escalation (3/5/10), mid-loop lessons re-consultation, root-cause ordering, pre-write verification advisory, Exit Protocol elevated to top, and inline error classification. Update lessons skill with targeted consultation note.
+**Requirements**: [P18-01, P18-02, P18-03, P18-04, P18-05, P18-06, P18-07, P18-08, P18-09, P18-10, P18-11, P18-12]
+**Depends on:** Phase 17
+**Plans:** 1/1 plans complete
+
+Plans:
+- [ ] 18-01-PLAN.md — Full rewrite of validation SKILL.md (11 optimizations) + lessons consultation note
+
+### Phase 19: Standardize agent exit tools across all skills
+
+**Goal:** Replace 5 fragmented exit tools with 2 generic ones (`exit_with_success`, `exit_with_failure`), move TTL snapshot patching into `execute_ontology`, update all registrations, add exit steps to all 5 skills, and add one-task-at-a-time rule to master instruction.
+**Requirements**: [P19-01, P19-02, P19-03, P19-04, P19-05, P19-06, P19-07, P19-08, P19-09]
+**Depends on:** Phase 18
+**Plans:** 3/3 plans complete
+
+Plans:
+- [ ] 19-01-PLAN.md — Create exit_tools.py + move snapshot patching to execute_ontology + update registrations + delete old files
+- [ ] 19-02-PLAN.md — Update all 5 skills with exit_with_success/exit_with_failure + master instruction one-task-at-a-time rule
+- [ ] 19-03-PLAN.md — Update tests for new exit tools, snapshot patching, and wiring
+
+### Phase 20: Agent Session Logging
+
+**Goal:** Persist every agent execution event — thinking traces, tool calls, tool results, state mutations, and artifact operations — to a per-session JSONL log file on disk so that thinking traces can be analyzed offline to optimize prompts and agent behavior. Each event line includes the full `AgentEvent` payload (timestamp, agent_name, event_type, content, metadata with latency and token counts).
+**Requirements**: [P20-01, P20-02, P20-03, P20-04, P20-05]
+**Depends on:** Phase 19
+**Plans:** 1/1 plans complete
+
+Plans:
+- [ ] 20-01-PLAN.md — session_logger.py module (TDD) + callback_utils.py wiring + .gitignore
+
+### Phase 21: Remove useCoAgent and switch to polling-only state
+
+**Goal:** Remove `useCoAgent` from the frontend entirely and rely exclusively on `useAgentPolling` (polling-based state), fixing a "Maximum update depth exceeded" React render loop caused by `agentState` being a new object reference on every render.
+**Requirements**: [P21-01, P21-02, P21-03, P21-04, P21-05]
+**Depends on:** Phase 20
+**Plans:** 1/1 plans complete
+
+Plans:
+- [ ] 21-01-PLAN.md — Remove useCoAgent, simplify combinedState and StateSyncer to polling-only
+
+### Phase 22: Enhance BACnet parsing ✅ Complete (2026-04-04)
+
+**Goal:** Enrich the BACnet metadata dictionary at write-time so the ontology agent can use pre-computed fields (code, address URI, ref_type) instead of parsing addresses manually. Add enrich_bacnet_point helper, wire into all 4 write paths, mirror to MCP inlined copy, and update 3 ontology skill SKILL.md files.
+**Requirements**: [P22-01, P22-02, P22-03]
+**Depends on:** Phase 21
+**Plans:** 3/3 plans complete
+
+Plans:
+- [x] 22-01-PLAN.md — TDD: enrich_bacnet_point + _parse_bacnet_address + enrich_flat_bacnet_points + tests
+- [x] 22-02-PLAN.md — Wire enrichment into all 4 write paths + mirror to MCP metadata_manager.py
+- [x] 22-03-PLAN.md — Update skill-ontology-generation, skill-ontology-validation, skill-ontology-lessons SKILL.md
+
+### Phase 23: Add Cypher query tool for Neo4j agent exploration
+
+**Goal:** Give the master agent 4 Cypher query tools (execute_cypher, execute_cypher_batch, get_graph_schema, search_graph_entities) for read access to the live Neo4j graph, enabling self-directed exploration of the imported ASHRAE 223P ontology. Includes unit tests, master agent registration, and instruction update with write-gate safety rule.
+**Requirements**: [P23-01, P23-02, P23-03, P23-04, P23-05, P23-06, P23-07]
+**Depends on:** Phase 22
+**Plans:** 2/2 plans complete
+
+Plans:
+- [x] 23-01-PLAN.md — Create neo4j_query_tools.py (4 BaseTool subclasses) + unit tests (TDD)
+- [x] 23-02-PLAN.md — Register tools in create_master_agent.py + add Neo4j Query Protocol to master_instruction.md
+
+### Phase 24: Remove Screenshots to the Front End ✅ Complete (2026-04-04)
+
+**Goal:** Remove the Playwright/screenshot verification mechanism entirely — delete the capture_frontend_state tool and its tests, remove playwright dependency, remove agent registration, and simplify both skill-ductwork and skill-hvac-equipments SKILL.md files to trust first-shot output without verification loops.
+**Depends on:** Phase 23
+**Plans:** 1/1 plans complete
+
+Plans:
+- [x] 24-01-PLAN.md — Delete tool + tests, remove dep + registration, simplify both skills, add regression guard
+
+
+### Phase 25: Translate report to French
+
+**Goal:** Translate the LaTeX research report from English to French. Create a new report_french/ folder at root replicating the entire report/ LaTeX structure with all content (body text, section headings, captions, tables, \todo markers, references.bib) translated to French. The existing report/ folder must not be modified.
+**Requirements**: [TBD-01, TBD-02, TBD-03, TBD-04, TBD-05, TBD-06]
+**Depends on:** Phase 24
+**Plans:** 4/4 plans complete
+
+Plans:
+- [ ] 25-01-PLAN.md — Copy report/ to report_french/, translate main.tex (preamble/title/abstract) + references.bib
+- [ ] 25-02-PLAN.md — Translate sections 01-introduction and 02-problem to French
+- [ ] 25-03-PLAN.md — Translate sections 03-solution, 04-experiment, and 05-conclusions to French
+- [ ] 25-04-PLAN.md — Full 4-pass compilation verification + human visual check

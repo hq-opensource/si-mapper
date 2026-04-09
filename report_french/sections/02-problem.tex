@@ -1,0 +1,278 @@
+\section{Description du problème}
+\label{sec:problem}
+
+La section~\ref{sec:introduction} a établi que les modèles sémantiques de bâtiments libèrent une valeur significative
+mais sont coûteux à créer.
+Cette section examine le problème des coûts en termes concrets.
+Nous décrivons ce que sont les points BACnet, quantifions le travail requis pour les mapper, et identifions le fossé de recherche qui a empêché une solution automatisée.
+
+\subsection{Le problème du mappage des points BACnet}
+\label{subsec:bacnet-problem}
+
+Un Système d'automatisation du bâtiment (GTB/BAS) expose les données opérationnelles à travers une hiérarchie de \emph{points},
+des capteurs individuels, des actionneurs, des consignes, des alarmes et des indicateurs d'état.
+Dans BACnet (le protocole ouvert dominant pour les contrôles des bâtiments commerciaux), chaque point est un objet typé
+(Entrées analogiques, Sorties binaires, Valeurs analogiques, etc.)\ avec une adresse unique sur le réseau.
+Un immeuble de bureaux commercial typique possède entre 500 et 5{,}000 points BACnet ; un grand hôpital ou
+une installation de campus peut en avoir des dizaines de milliers~\cite{Trenbath2022}.
+
+Le \emph{problème de mappage} est le suivant : une liste brute de points BACnet ne contient aucune information standard sur
+l'équipement physique auquel chaque point appartient, le rôle qu'il joue dans le système, ou comment cet équipement
+se connecte à d'autres composants.
+Un point nommé AHU-1.SA-T indique à un ingénieur humain \og probablement la température de l'air soufflé de
+l'Unité de traitement d'air 1 \fg{}, mais seulement si l'ingénieur connaît déjà la convention de dénomination utilisée par ce
+particular installateur GTB.
+Il est courant de trouver des conventions qui diffèrent entre les entrepreneurs, entre les projets, et même entre
+les systèmes au sein d'un même bâtiment.
+
+Reconstituer le tableau complet du bâtiment --- quels points appartiennent à quel équipement, ce que signifie chaque
+point, et comment l'équipement se connecte en un système CVC complet --- nécessite la lecture des plans CVC tels que
+construits, l'interrogation de la programmation GTB et l'application d'un jugement d'ingénierie expert.
+Ce processus est manuel, chronophage et dépendant de l'expertise du domaine.
+
+Modbus, un protocole encore plus ancien et plus simple utilisé dans les contrôleurs CVC hérités, les compteurs et le matériel industriel,
+expose les données sous forme de registres numérotés sans aucune métadonnée descriptive, rendant
+le défi de mappage encore plus difficile que BACnet.
+
+\subsection{Le coût du mappage manuel}
+\label{subsec:cost}
+
+Le mappage manuel des points BACnet et la mise en service du GTB sont largement documentés comme des facteurs de coût majeurs dans
+les projets de construction et de rénovation de bâtiments.
+Le Tableau~\ref{tab:commissioning-costs} résume les chiffres clés issus de la recherche industrielle et des
+études de cas publiées.
+
+\begin{table}[htbp]
+\centering
+\caption{Données clés de coûts et d'efforts pour la mise en service manuelle des systèmes GTB et le mappage des points.}
+\label{tab:commissioning-costs}
+\small
+\begin{tabular}{p{5.5cm}p{3.5cm}p{4cm}}
+\toprule
+\textbf{Poste de coût} & \textbf{Chiffres} & \textbf{Source} \\
+\midrule
+Mise en service GTB en \% de la construction & 0.5\%--1.5\% du total ; 8\%--15\% de la valeur du projet GTB
+  & \cite{BCA2024} \\
+\addlinespace
+Étude de cas : école de 150\,000\,pi\textsuperscript{2}
+  & \$225{,}000 de mise en service (\$1.50/pi\textsuperscript{2})
+  & \cite{PingCx2024} \\
+\addlinespace
+Installation GTB complète moyenne
+  & \$7.76/pi\textsuperscript{2} (plage : \$5.20--\$14.18)
+  & \cite{Trenbath2022} \\
+\addlinespace
+Surcoût d'intégration de GTB existant
+  & +20\%--40\% par rapport au coût de base
+  & \cite{Envigilance2023} \\
+\addlinespace
+Appels de service supplémentaires liés à un mauvais mappage
+  & 12--15 appels supplémentaires/an ; +30\%--45\% de temps de dépannage
+  & \cite{PingCx2024} \\
+\addlinespace
+Dérive de performance énergétique due à une mauvaise mise en service
+  & 15\%--30\% de gaspillage énergétique dans les 3 premières années ; \$0.20--\$0.50/pi\textsuperscript{2}/an
+  & \cite{PingCx2024} \\
+\addlinespace
+Dépenses imprévues la première année (étude de cas école)
+  & \$175{,}000, presque égal au coût de mise en service initial
+  & \cite{PingCx2024} \\
+\addlinespace
+Pénurie de techniciens CVC (2024--2025)
+  & 110{,}000 postes non pourvus
+  & \cite{AccessCoins2025} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Pour illustrer la nature cumulée de ces coûts : l'école de 150{,}000\,pi\textsuperscript{2} dans l'étude de cas
+a payé \$225{,}000 pour la mise en service au départ, puis a engagé environ \$175{,}000 en dépenses imprévues
+au cours de la première année en raison d'une documentation insuffisante des points, doublant presque le coût effectif de la
+phase de mise en service~\cite{PingCx2024}.
+Selon le NREL~\cite{Trenbath2022}, l'installation GTB complète coûte en moyenne \$7.76 par pied carré
+aux États-Unis, avec la prime d'intégration des systèmes hérités ajoutant encore 20 à 40
+pour cent sur les projets de rénovation~\cite{Envigilance2023} (données de 2022 et 2023).
+
+Les approches manuelles sont également incomplètes par conception.
+La pratique industrielle teste généralement seulement 10 à 20 pour cent des unités terminales lors de la mise en service~\cite{PingCx2024} ;
+chaque réduction de 10 pour cent de la couverture des tests est corrélée à une augmentation d'environ 6 à 8 pour cent
+des problèmes post-occupation.
+Le résultat est un problème omniprésent et chronique : les bâtiments commencent leur vie opérationnelle avec
+des systèmes de contrôle sous-documentés et partiellement vérifiés, et le coût de correction augmente avec le temps.
+Wang et al.~\cite{Wang2017} décrivent le mappage manuel des points comme \og laborieux et coûteux, présentant
+un obstacle majeur aux innovations dans le contrôle des bâtiments \fg{}, validant l'ampleur du problème même
+là où les chiffres précis dépendent de l'entrepreneur.
+
+\subsection{Le fossé de recherche et les solutions émergentes}
+\label{subsec:research-gap}
+
+Malgré l'ampleur et l'impact économique du problème de mappage manuel, il n'existait pas de solution automatisée
+de bout en bout largement déployée au moment de la revue systématique de 2017 de Wang et al.~\cite{Wang2017}, qui a constaté
+que le domaine manquait :
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item d'une formulation complète du problème avec des approches de solution intégrées,
+  \item de jeux de données de test standardisés et de métriques de performance, et
+  \item de méthodes bien alignées avec les exigences de mappage du monde réel.
+\end{itemize}
+
+La vague d'IA à partir de 2023 a catalysé une nouvelle génération de tentatives pour combler ce fossé.
+Le Tableau~\ref{tab:landscape} passe en revue les efforts commerciaux et académiques les plus pertinents et positionne
+SI-Mapper dans le paysage.
+Les orientations publiées par la Building Commissioning Association~\cite{BCA2024} confirment que
+la vérification point à point reste une étape obligatoire sur chaque nouveau projet GTB, soulignant que le
+problème persiste même lorsque des solutions partielles émergent.
+
+\begin{table}[htbp]
+\centering
+\caption{Paysage concurrentiel pour le mappage automatisé des points GTB et la génération de modèles sémantiques (2024--2026).}
+\label{tab:landscape}
+\small
+\begin{tabular}{p{3cm}p{3cm}p{3cm}p{4cm}}
+\toprule
+\textbf{Solution} & \textbf{Catégorie} & \textbf{Entrée} & \textbf{Écart par rapport à SI-Mapper} \\
+\midrule
+
+PingCx~\cite{PingCx2024}
+  & Mise en service fonctionnelle automatisée et tests point à point
+  & Connexion BACnet en direct
+  & Teste si les points répondent correctement ; ne construit \emph{pas} de modèle sémantique ni n'identifie la topologie des équipements \\
+\addlinespace
+
+BrickLLM~\cite{Perini2025}
+  & Génération d'ontologie Brick pilotée par l'IA
+  & Description du bâtiment en texte libre
+  & Nécessite une saisie en langage naturel précise ; ne traite pas les exports BACnet CSV, les plans CVC, ni ne produit du 223P \\
+\addlinespace
+
+BuildingMOTIF~\cite{BuildingMOTIF_NREL}
+  & SDK open-source du DOE pour la création et validation de modèles 223P / Brick / Haystack
+  & RDF rédigé par des experts ; listes de points BACnet (manuel)
+  & Boîte à outils de développeur, pas un moteur d'inférence par IA ; nécessite un expert du domaine pour piloter la création du modèle \\
+\addlinespace
+
+BIM2RDF / Open223~\cite{Open223}
+  & Conversion BIM vers 223P
+  & Fichier BIM Revit / IFC
+  & Nécessite un BIM complet et précis en entrée ; ne traite pas les bâtiments où seuls les plans tels que construits et les CSV BACnet existent \\
+\addlinespace
+
+Willow~\cite{Willow2025}
+  & Plateforme de jumeau numérique IA avec classification ML des équipements
+  & Flux GTB / IoT en direct
+  & Utilise l'ontologie propriétaire DTDL, pas 223P ; nécessite une connexion de données en direct et une intégration guidée par un humain ; plateforme commerciale financée à \$110M \\
+\addlinespace
+
+SkySpark / Project Haystack~\cite{SkySpark}
+  & Plateforme d'analytique avec étiquetage sémantique
+  & Étiquettes Haystack appliquées par un ingénieur
+  & L'étiquetage est manuel ; fournit un moteur d'analytique une fois étiqueté, pas un outil de mappage automatisé \\
+\addlinespace
+
+\textbf{SI-Mapper (ce travail)}
+  & \textbf{Pipeline IA de bout en bout pour la génération de modèles 223P}
+  & \textbf{Exports CSV de points BACnet + plans CVC tels que construits}
+  & \textbf{Aucun système comparable} ne traite le pipeline complet, des exports BACnet bruts et des plans d'ingénierie jusqu'à un graphe ASHRAE 223P validé \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+Le tableau révèle un fossé structurel clair.
+Les solutions existantes soit s'arrêtent avant la modélisation sémantique (PingCx automatise les tests mais ne produit aucune
+ontologie), exigent des entrées propres qui n'existent pas en pratique (BrickLLM a besoin d'un texte précis ;
+BIM2RDF a besoin d'un fichier BIM complet), ou sont des boîtes à outils de développement destinées aux experts plutôt que de
+l'automatisation clé en main (BuildingMOTIF).
+Les plateformes commerciales comme Willow abordent le problème dans la direction opposée, de haut en bas,
+en commençant par les données en direct dans de grands portefeuilles, en utilisant une ontologie propriétaire qui n'est pas alignée avec
+ASHRAE 223P ou les normes d'interopérabilité émergentes requises pour l'intégration des centrales électriques virtuelles.
+
+Les programmes des laboratoires nationaux (NREL, LBNL, PNNL, NIST) ont réalisé des progrès significatifs dans la définition
+de la norme 223P et des outils associés à travers BuildingMOTIF~\cite{BuildingMOTIF_NREL,DOE_BuildingMOTIF},
+mais le cadrage explicite du DOE reconnaît que l'objectif est toujours de \og réduire les coûts et le temps d'installation \fg{},
+une admission que l'outillage actuel n'atteint pas encore cela sans une implication substantielle d'experts.
+
+Le fossé que SI-Mapper comble est donc spécifique et étroit :
+\emph{génération automatisée de bout en bout de modèles sémantiques ASHRAE 223P à partir des artefacts qui
+existent réellement sur le terrain}, exports CSV BACnet et plans d'ingénierie tels que construits, sans
+nécessiter un fichier BIM préexistant, des descriptions en langage naturel propres, ou un sémanticien expert.
+
+\subsection{Pourquoi cela importe pour le réseau électrique}
+\label{subsec:grid-relevance}
+
+Le problème du mappage des points n'est pas seulement un défi opérationnel des bâtiments.
+C'est une barrière directe à la transition énergétique.
+
+\textbf{Les alternatives non filaires} et les \textbf{centrales électriques virtuelles} agrègent les ressources énergétiques
+distribuées, notamment les charges CVC des bâtiments commerciaux, pour fournir des services de réseau électrique équivalents à
+la construction de nouvelles centrales électriques ou de lignes de transport.
+Les systèmes CVC consomment environ 40 pour cent de l'énergie totale des bâtiments commerciaux et peuvent être
+modulés pour répondre aux signaux du réseau, déplaçant la charge loin des périodes de pointe de demande.
+Globalement, cette flexibilité représente une capacité de réseau électrique potentielle énorme.
+
+Le marché des centrales électriques virtuelles croît rapidement.
+Les programmes nord-américains de centrales électriques virtuelles totalisaient 37.5\,GW de capacité flexible derrière le compteur
+en 2025, soit environ 14 pour cent de plus qu'en 2024, avec des déploiements actifs en hausse de plus de 33
+pour cent dans la même période~\cite{WoodMac2025}.
+Le soutien politique s'accélère : dix législatures d'États ont introduit des projets de loi sur les centrales électriques virtuelles en
+2024~\cite{RMI_VP3_2025,SEPA_NCCETC2025} ; les services publics du Massachusetts mettent en œuvre un
+Fonds de compensation des services de réseau de \$50\,millions pour promouvoir les alternatives non filaires~\cite{RMI_VP3_2025} ;
+et la Commission de l'énergie de Californie a accordé une subvention EPRI de \$2\,millions spécifiquement pour démontrer
+les centrales électriques virtuelles pour les bâtiments commerciaux incluant les contrôles CVC~\cite{CEC_EPRI2024}.
+
+\textbf{Comment les agrégateurs fonctionnent aujourd'hui.}
+Deux types d'agrégateurs participent à ces programmes.
+Les \emph{agrégateurs matériels} fabriquent des appareils contrôlables (thermostats intelligents, batteries, chargeurs VE)
+et agrègent leur propre parc installé en un portefeuille de ressources distribuables.
+Les \emph{agrégateurs logiciels} agissent comme des proxys de protocole, connectant des appareils hétérogènes de
+plusieurs fournisseurs sous une couche de gestion unique.
+Les deux types vendent des services de capacité et de réponse à la demande aux services publics et aux opérateurs de réseau, qui les envoient
+en utilisant des signaux standardisés tels qu'OpenADR ou IEEE~2030.5.
+Ce modèle fonctionne efficacement pour les actifs résidentiels et les flottes d'appareils identiques car
+l'agrégateur contrôle le matériel d'extrémité et connaît déjà ses capacités.
+
+\textbf{Les bâtiments commerciaux sont structurellement différents.}
+Le système CVC d'un bâtiment commercial n'est pas un appareil que l'agrégateur a fabriqué.
+Il a été conçu par un bureau d'études, installé par un entrepreneur en génie mécanique, et programmé par un
+fournisseur GTB (Siemens, Johnson Controls, ABB, Niagara, ou équivalent).
+Chacune de ces parties a un intérêt légitime à protéger la fiabilité du système : le fournisseur GTB
+garantit le temps de fonctionnement ; l'ingénieur de mise en service a conçu les séquences de contrôle ; l'opérateur du bâtiment
+est légalement responsable du confort des occupants.
+Aucun d'entre eux n'autorisera volontiers une partie externe à écrire des consignes arbitraires dans leur système
+sans un accord formel et une frontière technique claire.
+Il en résulte que chaque inscription d'un bâtiment commercial aujourd'hui nécessite un projet de négociation et d'intégration
+personnalisé, bâtiment par bâtiment \cite{DOE_VPP2025}.
+Le rapport Liftoff des centrales électriques virtuelles du DOE identifie qu'il n'existe aucune standardisation industrielle.
+Les fournisseurs de centrales électriques virtuelles ont construit leurs solutions de zéro, puis
+ont travaillé au cas par cas avec les services publics pour développer des solutions personnalisées, résultant en des systèmes rigides
+qui ne peuvent pas être facilement répliqués dans de nouveaux domaines~\cite{DOE_VPP2025}.
+
+\textbf{Comment une ontologie ASHRAE 223P change la logistique.}
+Un modèle sémantique ASHRAE 223P d'un bâtiment n'est pas un remplacement du système de contrôle, c'est un
+contrat lisible par machine qui décrit ce qui est contrôlable, comment y accéder, et dans quelles
+conditions.
+Considérez la chaîne opérationnelle qu'il permet :
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+  \item \textbf{Découverte des actifs.} L'ontologie déclare chaque composant contrôlable (ventilateurs, bobines,
+        boîtes VAV, registres) comme une entité typée avec sa position dans la topologie CVC.
+        Un agrégateur peut l'interroger pour répondre à \og quelles charges ce bâtiment contient et quelles sont
+        leurs capacités nominales ? \fg{} sans visite sur site ni révision manuelle de la documentation.
+  \item \textbf{Accès à la télémétrie en direct.} Le mécanisme de \emph{référence externe} d'ASHRAE 223P relie
+        chaque propriété sémantique directement à son adresse d'objet BACnet.
+        Un capteur de température de l'air soufflé dans le modèle porte l'adresse du point BACnet physique
+        qui signale sa valeur.
+        L'agrégateur lit les données de capteurs en direct en suivant ces références, sans code d'intégration
+        personnalisé par bâtiment.
+  \item \textbf{Estimation de la flexibilité.} Avec la topologie et la télémétrie en direct disponibles, un
+        algorithme peut calculer combien de charge le bâtiment peut délester, pendant combien de temps, et avec quel
+        décalage thermique, avant que les contraintes de confort ne soient violées.
+        Cette estimation alimente directement l'optimisation de la répartition de l'agrégateur.
+  \item \textbf{Répartition contrôlée.} L'ontologie identifie également les adresses BACnet des
+        consignes contrôlables (consigne de température de l'air soufflé, commande de vitesse du ventilateur, consigne de refroidissement).
+        Lorsque l'opérateur de réseau envoie un signal de délestage OpenADR, l'agrégateur le traduit
+        en écritures BACnet ciblées précisément aux adresses que spécifie l'ontologie, dans
+        les limites convenues contractuellement avec le propriétaire du bâtiment.
+        Le GTB continue d'exécuter sa logique de fiabilité ; l'agrégateur ajuste uniquement les consignes
+        qui ont été explicitement autorisées dans le cadre de l'accord.
+\end{enumerate}
+

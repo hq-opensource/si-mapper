@@ -1,0 +1,66 @@
+\documentclass[11pt, a4paper]{article}
+
+% Typography and layout
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+
+% Figures
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+
+% Colors and links
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=true, linkcolor=NavyBlue, citecolor=ForestGreen, urlcolor=NavyBlue]{hyperref}
+
+% Bibliography
+\usepackage[numbers,sort&compress]{natbib}
+
+% Lists
+\usepackage{enumitem}
+
+% Captions
+\usepackage[font=small, labelfont=bf]{caption}
+
+% Section styling
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+
+% Custom TODO command (visible red markers for placeholder data)
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+\title{SI-Mapper : Intelligence artificielle agentique pour la modélisation sémantique automatisée des systèmes CVC\\[0.5em]
+\large Des données BACnet et des plans d'ingénierie aux ontologies ASHRAE 223P}
+\author{Juan [Nom de famille] \\ \textit{[Affiliation]}}
+\date{Mars 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Ce rapport présente SI-Mapper, un système d'intelligence artificielle agentique qui automatise la création de modèles sémantiques de bâtiments conformes à ASHRAE 223P à partir de plans d'ingénierie CVC (HVAC) et de données de points BACnet. Nous décrivons le problème du mappage manuel des points BACnet --- un processus coûteux et intensif en main-d'œuvre qui bloque l'interopérabilité des logiciels de bâtiment et l'intégration au réseau électrique --- et présentons une solution basée sur l'IA qui remplace des semaines de travail d'ingénierie experte. Le rapport retrace le développement à travers neuf itérations expérimentales, depuis les approches simples d'appels de fonctions jusqu'à l'architecture finale à agent maître unique basée sur les compétences. Deux expériences sur des installations réelles d'unités de traitement d'air démontrent l'efficacité du système : le Système 1 (21 composants CVC, 44 points BACnet) a produit un modèle ASHRAE 223P validé en 17 minutes pour un coût estimé de 11,30\,\$ USD ; le Système 3 (27 composants, 34 points BACnet) a été complété en 12 minutes pour 10,85\,\$ USD. Dans les deux cas, l'agent a corrigé ses propres erreurs d'ontologie sans intervention humaine. Une comparaison avec un ingénieur humain comme référence est en cours.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\input{sections/01-introduction}
+\input{sections/02-problem}
+\input{sections/03-solution}
+\input{sections/04-experiment}
+\input{sections/05-conclusions}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

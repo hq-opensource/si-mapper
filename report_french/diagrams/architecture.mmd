@@ -1,0 +1,57 @@
+flowchart LR
+
+    subgraph AGENT["Agent IA  ·  Google ADK  ·  FastAPI :8001"]
+        direction TB
+        MA["MasterLlmAgent\nGemini 3.1 Pro  ·  T=1.0\nThinking natif HIGH\nMasterMainLoopAgent  ·  100 iter. max"]
+        ASKILLS["skill-ductwork — Identification & tracé des gaines CVC\nskill-hvac-equipments — Placement des équipements sur la grille\nskill-bacnet-points — Extraction & mapping des points BACnet CSV\nskill-ontology-generation — Génération de l'ontologie ASHRAE 223P (Python)\nskill-ontology-validation — Validation & correction itérative du TTL\nskill-ontology-lessons — Base de connaissances des erreurs passées\nskill-control-points — Extraction des points de contrôle"]
+        ATOOLS["Grille interne (7)  ·  add/delete_component(s)_batch  ·  read_internal_grid  ·  update_metadata_batch\nSync GraphiVAC (2)  ·  sync_graphivac_to_agent  ·  sync_agent_to_graphivac\nNeo4j (5)  ·  execute_cypher(_batch)  ·  get_graph_schema  ·  search_graph_entities  ·  load_ttl_to_neo4j\nOntologie (6)  ·  write_ontology  ·  execute_ontology  ·  search_class_mapping  ·  extract_lessons\nGestion (5)  ·  ingest_category_files  ·  update_step/status  ·  save/get_agent_state  ·  exit_with_success/failure"]
+        MA --> ASKILLS
+        MA --> ATOOLS
+    end
+
+    subgraph EXT["Services externes"]
+        direction TB
+        LLM["Google Gemini 3.1 Pro\nCloud LLM  ·  ThinkingConfig natif  ·  raisonnement HIGH"]
+        GVAC["GraphiVAC Platform\nREST API (format EDN)  ·  Interface de rendu CVC"]
+        NEOJS["Neo4j + Neosemantics n10s\nBase de graphes (Bolt :7687)  ·  import TTL (ASHRAE 223P)"]
+        FILES["Fichiers locaux\nuploads/ hvac  ·  bacnet  ·  pdf\nuploads/python/latest_ontology.py\nuploads/ttl/latest_ontology.ttl"]
+    end
+
+    subgraph FRONTEND["Interface  ·  CopilotKit + Next.js  ·  Mapper"]
+        direction TB
+        FHU["Chat HUD CopilotKit\nSplitSidebar  ·  Contrôles & Statut"]
+        FTABS["Onglets : Thoughts (raisonnement LLM)  ·  Files (upload HVAC/BACnet)  ·  View (GraphiVAC canvas)\nGraph (React Sigma / Neo4j)  ·  Python/TTL (code ontologie)  ·  Debug/State (log outils & état)"]
+        FAPI["/api/copilotkit  →  proxy vers FastAPI :8001\n/api/graph  →  Neo4j vers Sigma.js\n/api/files  →  upload & lecture fichiers"]
+    end
+
+    %% Agent ↔ Frontend
+    MA <-->|"WebSocket streaming\nthoughts · events · state"| FHU
+    MA <-.->|"Polling fallback\n/session_state (2 s)"| FAPI
+
+    %% Agent → LLM
+    MA ==>|"Google ADK"| LLM
+
+    %% Agent ↔ External Services
+    ATOOLS <-->|"GET / PUT EDN\n(grille CVC)"| GVAC
+    ATOOLS -->|"Cypher · import TTL\n(Neo4j + n10s)"| NEOJS
+    ATOOLS -->|"write · execute\ningest · read"| FILES
+
+    %% Frontend ↔ External Services
+    FTABS -->|"iframe\n(rendu visuel)"| GVAC
+    FAPI -->|"Cypher (Bolt :7687)"| NEOJS
+    FAPI <-->|"lecture / écriture"| FILES
+
+    %% Styles
+    style AGENT fill:#E3F2FD,stroke:#1565C0,color:#0D1B2A
+    style MA fill:#1565C0,color:#FFFFFF,stroke:#0D47A1
+    style ASKILLS fill:#E8F5E9,stroke:#2E7D32,color:#0D1B2A
+    style ATOOLS fill:#FFF8E1,stroke:#F57F17,color:#0D1B2A
+    style FRONTEND fill:#F3E5F5,stroke:#6A1B9A,color:#0D1B2A
+    style FHU fill:#7B1FA2,color:#FFFFFF,stroke:#4A148C
+    style FTABS fill:#EDE7F6,stroke:#7B1FA2,color:#0D1B2A
+    style FAPI fill:#EDE7F6,stroke:#7B1FA2,color:#0D1B2A
+    style EXT fill:#FCE4EC,stroke:#880E4F,color:#0D1B2A
+    style LLM fill:#4285F4,color:#FFFFFF,stroke:#0D47A1
+    style GVAC fill:#FFEEF1,stroke:#AD1457,color:#0D1B2A
+    style NEOJS fill:#FFEEF1,stroke:#AD1457,color:#0D1B2A
+    style FILES fill:#FBE9E7,stroke:#BF360C,color:#0D1B2A

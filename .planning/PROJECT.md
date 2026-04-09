@@ -26,3 +26,9 @@ Engineers can upload a drawing and related technical files (Excel, BACnet, PDFs)
 - **Multi-modal Complexity**: Data sources may be contradictory or incomplete; the agent must handle "best-guess" engineering logic.
 - **Alignment Accuracy**: Components must stay within the bounds of their parent ducts (Y-coordinate alignment).
 - **No Stack Changes**: Maintain the current Python (FastAPI/GenAI) and TypeScript (Next.js) stack.
+
+## Current State
+
+Phase 24 complete (2026-04-04) — Playwright screenshot verification mechanism removed entirely. `capture_frontend_state_tool.py` and both test files deleted, `playwright>=1.40.0` removed from pyproject.toml, agent registration stripped from `create_master_agent.py`. Both `skill-ductwork` and `skill-hvac-equipments` SKILL.md simplified — exit summaries now require component count + sync confirmation only. Regression guard added to `test_create_master_agent.py`.
+
+**Last updated:** 2026-04-04

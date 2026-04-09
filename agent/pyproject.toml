@@ -16,7 +16,6 @@ dependencies = [
     "google-genai>=1.56.0",
     "httpx>=0.28.1",
     "neo4j>=5.0.0",
-    "playwright>=1.40.0",
     "psycopg>=3.3.2",
     "psycopg-binary>=3.3.2",
     "pydantic>=2.12.5",
@@ -40,6 +39,6 @@ asyncio_mode = "auto"
 packages = []
 
 [tool.uv.sources]
-bob = { path = "../223p/bin/bob-0.99.8.tar.gz" }
-scratch = { path = "../223p/bin/scratch-0.2.tar.gz" }
+bob = { path = "223p/bin/bob-0.99.8.tar.gz" }
+scratch = { path = "223p/bin/scratch-0.2.tar.gz" }
 
