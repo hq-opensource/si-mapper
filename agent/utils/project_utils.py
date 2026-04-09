@@ -33,8 +33,11 @@ Fallback behaviour:
 
 from __future__ import annotations
 
+import logging
 import os
 import pathlib
+
+logger = logging.getLogger(__name__)
 
 
 # ── Field-level state accessors ───────────────────────────────────────────────
@@ -66,11 +69,39 @@ def get_graphivac_grid_id(tool_context) -> str:
     return os.getenv("GRAPHIVAC_GRID_ID", "")
 
 
+VALID_GRAPH_BACKENDS = {"neo4j_single", "neo4j_prefix", "neo4j_enterprise", "graphdb"}
+
+
+def get_graph_backend() -> str:
+    """
+    Returns the active graph backend mode from the GRAPH_BACKEND environment
+    variable.  Defaults to 'neo4j_single' when the variable is unset or empty.
+
+    Valid values: neo4j_single | neo4j_prefix | neo4j_enterprise | graphdb
+    """
+    backend = os.getenv("GRAPH_BACKEND", "neo4j_single").strip().lower()
+    if backend not in VALID_GRAPH_BACKENDS:
+        logger.warning(
+            "Unknown GRAPH_BACKEND value '%s'; falling back to 'neo4j_single'", backend
+        )
+        return "neo4j_single"
+    return backend
+
+
 def get_neo4j_db_name(tool_context) -> str:
     """
     Returns the Neo4j database name for the active system.
-    Raises a ValueError when the property is absent.
+
+    - neo4j_single mode: always returns 'neo4j' (Community Edition compatible).
+    - neo4j_prefix mode: always returns 'neo4j' (single shared DB, ns-filtered).
+    - neo4j_enterprise mode: reads neo4j_db_name from active_system state.
+                             Each system gets its own named database.
+                             CREATE DATABASE is managed automatically.
     """
+    backend = get_graph_backend()
+    if backend in ("neo4j_single", "neo4j_prefix"):
+        return "neo4j"
+    # neo4j_enterprise / legacy: read from state
     if tool_context is not None:
         active_system = tool_context.state.get("active_system") or {}
         db_name = active_system.get("neo4j_db_name", "")
@@ -78,7 +109,8 @@ def get_neo4j_db_name(tool_context) -> str:
             return db_name
     raise ValueError(
         "Neo4j database name not found. "
-        "Ensure 'neo4j_db_name' is set on the active system in the tool context."
+        "Ensure 'neo4j_db_name' is set on the active system in the tool context, "
+        "or set GRAPH_BACKEND=neo4j_single."
     )
 
 

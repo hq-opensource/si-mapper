@@ -29,7 +29,14 @@ function localName(uri: string | null | undefined): string {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const db = searchParams.get('db') ?? 'neo4j';
+  const graphBackend = (process.env.GRAPH_BACKEND ?? "neo4j_single").trim().toLowerCase();
+
+  // In neo4j_single and neo4j_prefix modes the entire graph lives in the
+  // single "neo4j" database; ignore any ?db= param for the DB name.
+  const db =
+    graphBackend === "neo4j_single" || graphBackend === "neo4j_prefix"
+      ? "neo4j"
+      : (searchParams.get("db") ?? "neo4j");
 
   try {
     // Query all nodes — use coalesce for blank nodes that may lack uri

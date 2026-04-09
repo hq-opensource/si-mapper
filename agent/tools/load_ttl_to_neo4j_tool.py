@@ -10,7 +10,7 @@ from google.adk.tools import BaseTool, ToolContext
 from google.genai import types
 from neo4j import GraphDatabase
 
-from utils.project_utils import get_system_path, get_neo4j_db_name
+from utils.project_utils import get_system_path, get_neo4j_db_name, get_graph_backend
 
 logger = logging.getLogger(__name__)
 
@@ -57,33 +57,36 @@ class LoadTtlToNeo4jTool(BaseTool):
         logger.info(f"Using Neo4j database: {db_name}")
 
         try:
-            with GraphDatabase.driver(uri, auth=(user, password)) as driver:
-                # Step 1: Create the database if it does not yet exist
-                existing, _, _ = driver.execute_query(
-                    "SHOW DATABASES YIELD name WHERE name = $name RETURN name",
-                    {"name": db_name},
-                    database_="system",
-                )
-                db_exists = len(existing) > 0
+            backend = get_graph_backend()
 
-                if not db_exists:
-                    logger.info(f"Database '{db_name}' not found — creating it")
-                    driver.execute_query(
-                        f"CREATE DATABASE `{db_name}`",
+            with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+                if backend not in ("neo4j_single", "neo4j_prefix"):
+                    # --- Enterprise / future modes: create DB if missing ---
+                    existing, _, _ = driver.execute_query(
+                        "SHOW DATABASES YIELD name WHERE name = $name RETURN name",
+                        {"name": db_name},
                         database_="system",
                     )
-                    logger.info(f"Database '{db_name}' created")
+                    db_exists = len(existing) > 0
+                    if not db_exists:
+                        logger.info("Database '%s' not found — creating it", db_name)
+                        driver.execute_query(
+                            f"CREATE DATABASE `{db_name}`",
+                            database_="system",
+                        )
+                        logger.info("Database '%s' created", db_name)
+                    else:
+                        # Wipe all existing data
+                        driver.execute_query("MATCH (n) DETACH DELETE n", database_=db_name)
+                        driver.execute_query("CALL n10s.graphconfig.drop()", database_=db_name)
+                        driver.execute_query("DROP CONSTRAINT n10s_unique_uri IF EXISTS", database_=db_name)
                 else:
-                    # Step 2: Wipe all existing data
+                    # --- Community Edition modes: wipe single shared DB ---
                     driver.execute_query("MATCH (n) DETACH DELETE n", database_=db_name)
-
-                    # Step 3: Drop existing n10s config (handles missing gracefully)
-                    driver.execute_query(
-                        "CALL n10s.graphconfig.drop()",
-                        database_=db_name,
-                    )
-
-                    # Step 4: Drop and recreate uniqueness constraint
+                    try:
+                        driver.execute_query("CALL n10s.graphconfig.drop()", database_=db_name)
+                    except Exception:
+                        pass  # config may not exist yet on first run
                     driver.execute_query("DROP CONSTRAINT n10s_unique_uri IF EXISTS", database_=db_name)
 
                 driver.execute_query(
