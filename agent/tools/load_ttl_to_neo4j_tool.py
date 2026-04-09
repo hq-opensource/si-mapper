@@ -10,7 +10,7 @@ from google.adk.tools import BaseTool, ToolContext
 from google.genai import types
 from neo4j import GraphDatabase
 
-from utils.project_utils import get_system_path
+from utils.project_utils import get_system_path, get_neo4j_db_name
 
 logger = logging.getLogger(__name__)
 
@@ -53,48 +53,67 @@ class LoadTtlToNeo4jTool(BaseTool):
         uri = os.getenv("NEO4J_BOLT_URI", "bolt://localhost:7687")
         user = os.getenv("NEO4J_USER", "neo4j")
         password = os.getenv("NEO4J_PASSWORD", "neo4j_password")
+        db_name = get_neo4j_db_name(tool_context)
+        logger.info(f"Using Neo4j database: {db_name}")
 
         try:
             with GraphDatabase.driver(uri, auth=(user, password)) as driver:
-                # Step 1: Wipe all existing data
-                driver.execute_query("MATCH (n) DETACH DELETE n", database_="neo4j")
-
-                # Step 2: Drop existing n10s config (handles missing gracefully)
-                driver.execute_query(
-                    "CALL n10s.graphconfig.drop()",
-                    database_="neo4j",
+                # Step 1: Create the database if it does not yet exist
+                existing, _, _ = driver.execute_query(
+                    "SHOW DATABASES YIELD name WHERE name = $name RETURN name",
+                    {"name": db_name},
+                    database_="system",
                 )
+                db_exists = len(existing) > 0
 
-                # Step 3: Drop and recreate uniqueness constraint
-                driver.execute_query("DROP CONSTRAINT n10s_unique_uri IF EXISTS", database_="neo4j")
+                if not db_exists:
+                    logger.info(f"Database '{db_name}' not found — creating it")
+                    driver.execute_query(
+                        f"CREATE DATABASE `{db_name}`",
+                        database_="system",
+                    )
+                    logger.info(f"Database '{db_name}' created")
+                else:
+                    # Step 2: Wipe all existing data
+                    driver.execute_query("MATCH (n) DETACH DELETE n", database_=db_name)
+
+                    # Step 3: Drop existing n10s config (handles missing gracefully)
+                    driver.execute_query(
+                        "CALL n10s.graphconfig.drop()",
+                        database_=db_name,
+                    )
+
+                    # Step 4: Drop and recreate uniqueness constraint
+                    driver.execute_query("DROP CONSTRAINT n10s_unique_uri IF EXISTS", database_=db_name)
+
                 driver.execute_query(
                     "CREATE CONSTRAINT n10s_unique_uri FOR (r:Resource) REQUIRE r.uri IS UNIQUE",
-                    database_="neo4j",
+                    database_=db_name,
                 )
 
-                # Step 4: Initialize n10s graph config
+                # Step 5: Initialize n10s graph config
                 driver.execute_query(
                     "CALL n10s.graphconfig.init({handleVocabUris: 'IGNORE'})",
-                    database_="neo4j",
+                    database_=db_name,
                 )
 
-                # Step 5: Import TTL inline
+                # Step 6: Import TTL inline
                 records, _, _ = driver.execute_query(
                     "CALL n10s.rdf.import.inline($ttl_content, 'Turtle') "
                     "YIELD terminationStatus, triplesLoaded, triplesParsed "
                     "RETURN terminationStatus, triplesLoaded, triplesParsed",
                     {"ttl_content": ttl_content},
-                    database_="neo4j",
+                    database_=db_name,
                 )
                 triples_loaded = records[0]["triplesLoaded"] if records else 0
                 termination = records[0]["terminationStatus"] if records else "unknown"
 
-                # Step 6: Count nodes and relationships for the return value
+                # Step 7: Count nodes and relationships for the return value
                 node_records, _, _ = driver.execute_query(
-                    "MATCH (n) RETURN count(n) AS cnt", database_="neo4j"
+                    "MATCH (n) RETURN count(n) AS cnt", database_=db_name
                 )
                 rel_records, _, _ = driver.execute_query(
-                    "MATCH ()-[r]->() RETURN count(r) AS cnt", database_="neo4j"
+                    "MATCH ()-[r]->() RETURN count(r) AS cnt", database_=db_name
                 )
                 node_count = node_records[0]["cnt"] if node_records else 0
                 rel_count = rel_records[0]["cnt"] if rel_records else 0

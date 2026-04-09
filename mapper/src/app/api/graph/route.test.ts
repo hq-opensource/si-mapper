@@ -58,7 +58,7 @@ describe("GET /api/graph", () => {
       ],
     });
 
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/graph?db=neo4j'));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -82,7 +82,7 @@ describe("GET /api/graph", () => {
     const exec = getExecMock();
     exec.mockRejectedValueOnce(new Error("ServiceUnavailable"));
 
-    const response = await GET();
+    const response = await GET(new Request('http://localhost/api/graph?db=neo4j'));
     const body = await response.json();
 
     expect(response.status).toBe(500);

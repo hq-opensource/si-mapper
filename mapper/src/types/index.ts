@@ -40,6 +40,11 @@ export interface System {
     name: string;
     folder_path: string;
     graphivac_grid_id: string;
+    /**
+     * Neo4j database name for this system's graph data.
+     * Automatically set to the system's `id` at creation time.
+     */
+    neo4j_db_name: string;
     thread_id?: string;
     sessions?: Session[];
     created_at: string;

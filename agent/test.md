@@ -34,16 +34,27 @@ Please be aware that there are only 2 vertical ducts on the image. And there are
 
 ---
 
+## 📡 BACnet
+
+```
+Extract the BACnet information from the available data source. Read and understand the BACnet addressing, device identifiers, and object references. Associate each BACnet point to its corresponding equipment already present on the grid.
+```
+
+---
+
 ## 💻 Code Generation
 
 ```
 I want that you create the code for the grid that exists here in the front end. Create the ontology Python code.
 ```
+```
+I want that you validate the ontology Python code.
+```
 
 ---
 
-## 📡 BACnet
+## 🗄️ Neo4j
 
 ```
-Extract the BACnet information from the available data source. Read and understand the BACnet addressing, device identifiers, and object references. Associate each BACnet point to its corresponding equipment already present on the grid.
+Export the current grid to the Neo4j database.
 ```

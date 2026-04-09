@@ -56,6 +56,11 @@ export interface System {
   name: string;
   folder_path: string;
   graphivac_grid_id: string;
+  /**
+   * Neo4j database name for this system's graph data.
+   * Automatically set to the system's `id` at creation time.
+   */
+  neo4j_db_name?: string;
   /** CopilotKit thread ID of the last active conversation for this system. */
   thread_id?: string;
   /** Named conversation sessions for this system. */
@@ -251,6 +256,7 @@ export async function createSystemOnDisk(
   const system: System = {
     id,
     folder_path: id,
+    neo4j_db_name: id,
     created_at: now,
     updated_at: now,
     ...partial,

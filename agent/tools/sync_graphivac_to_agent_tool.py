@@ -17,6 +17,7 @@ from google.adk.tools import ToolContext
 
 from utils.edn_to_mutable import edn_to_mutable
 from utils.grid_edn_translator import edn_comps_to_internal_grid
+from utils.project_utils import get_graphivac_project_id, get_graphivac_grid_id
 
 logger = logging.getLogger(__name__)
 
@@ -66,10 +67,8 @@ async def sync_graphivac_to_agent(tool_context: ToolContext) -> dict:
     """
     # State-first: prefer IDs injected by the frontend (13-09).
     # Fall back to env vars so dev/test environments continue to work unchanged.
-    active_project = tool_context.state.get("active_project") or {}
-    active_system  = tool_context.state.get("active_system") or {}
-    project_id = active_project.get("graphivac_project_id") or os.getenv("GRAPHIVAC_PROJECT_ID", "")
-    grid_id    = active_system.get("graphivac_grid_id")     or os.getenv("GRAPHIVAC_GRID_ID", "")
+    project_id = get_graphivac_project_id(tool_context)
+    grid_id    = get_graphivac_grid_id(tool_context)
 
     try:
         internal_grid, raw_edn_text = await asyncio.to_thread(

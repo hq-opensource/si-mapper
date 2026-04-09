@@ -5,6 +5,7 @@ import { ZoomIn, ZoomOut, RotateCcw, Network, Info, Activity } from "lucide-reac
 import { useTheme } from "next-themes";
 import "vis-network/styles/vis-network.css";
 import { StatusPlaceholder } from "./StatusPlaceholder";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
 
@@ -102,7 +103,8 @@ export function GraphWindow() {
   const containerRef = useRef<HTMLDivElement>(null);
   const networkRef = useRef<any>(null);
   const { theme } = useTheme();
-  
+  const { activeSystem } = useWorkspace();
+
   const [data, setData] = useState<GraphData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -110,15 +112,19 @@ export function GraphWindow() {
   const [stabilizationProgress, setStabilizationProgress] = useState<{current: number, total: number} | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch data
+  // Fetch data — re-runs whenever the active system's Neo4j database changes
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/graph")
+    const db = encodeURIComponent(activeSystem?.neo4j_db_name ?? 'neo4j');
+    setData(null);
+    setLoading(true);
+    setError(null);
+    fetch(`/api/graph?db=${db}`)
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() as Promise<GraphData>; })
       .then((json) => { if (!cancelled) { setData(json); setLoading(false); } })
       .catch((err: Error) => { if (!cancelled) { setError(err.message); setLoading(false); } });
     return () => { cancelled = true; };
-  }, []);
+  }, [activeSystem?.neo4j_db_name]);
 
   // Initialize Network
   useEffect(() => {

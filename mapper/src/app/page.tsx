@@ -35,6 +35,7 @@ type AgentState = {
     name: string;
     folder_path: string;
     graphivac_grid_id: string;
+    neo4j_db_name: string;
   } | null;
 };
 
@@ -147,6 +148,7 @@ export default function CopilotKitPage() {
         name: activeSystem.name,
         folder_path: activeSystem.folder_path,
         graphivac_grid_id: activeSystem.graphivac_grid_id,
+        neo4j_db_name: activeSystem.neo4j_db_name
       } : null,
   } as AgentState;
 
@@ -170,10 +172,9 @@ export default function CopilotKitPage() {
         name: activeSystem.name,
         folder_path: activeSystem.folder_path,
         graphivac_grid_id: activeSystem.graphivac_grid_id,
+        neo4j_db_name: activeSystem.neo4j_db_name,
       } : null,
     });
-    console.log("agentState", agentState)
-    console.log("setAgentState:", activeSystem);
   }, [activeSystem]); // Re-stamp after CopilotKit resets agentState on thread switch
 
   const prevActiveSystemRef = useRef(agentState.active_system);

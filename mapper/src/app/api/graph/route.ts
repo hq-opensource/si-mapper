@@ -27,20 +27,23 @@ function localName(uri: string | null | undefined): string {
   return pos >= 0 ? uri.slice(pos + 1) : uri;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const db = searchParams.get('db') ?? 'neo4j';
+
   try {
     // Query all nodes — use coalesce for blank nodes that may lack uri
     const { records: nodeRecords } = await driver.executeQuery(
       "MATCH (n) RETURN coalesce(n.uri, toString(id(n))) AS uri, labels(n) AS labels, properties(n) AS props",
       {},
-      { database: "neo4j" }
+      { database: db }
     );
 
     // Query all relationships
     const { records: edgeRecords } = await driver.executeQuery(
       "MATCH (a)-[r]->(b) RETURN coalesce(a.uri, toString(id(a))) AS source, coalesce(b.uri, toString(id(b))) AS target, type(r) AS label, coalesce(r.uri, toString(id(r))) AS id",
       {},
-      { database: "neo4j" }
+      { database: db }
     );
 
     const GENERIC_LABELS = new Set(["Resource", "owl__Class", "owl__NamedIndividual", "owl__Ontology"]);

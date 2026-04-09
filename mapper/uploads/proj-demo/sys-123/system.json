@@ -3,6 +3,7 @@
   "name": "Demo HVAC System",
   "folder_path": "sys-123",
   "graphivac_grid_id": "G-KrQikAPDsL",
+  "neo4j_db_name": "sys-123",
   "created_at": "2026-03-25T10:00:00.000Z",
   "updated_at": "2026-04-02T21:18:09.700Z",
   "thread_id": "6483324d-76c4-4071-b7e1-9b947448e5dd",

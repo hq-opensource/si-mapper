@@ -15,9 +15,9 @@ import requests
 from edn_format import Keyword
 from google.adk.tools import ToolContext
 
-from tools.state_tools import get_active_project, get_active_system
 from utils.edn_to_mutable import edn_to_mutable
 from utils.grid_edn_translator import internal_grid_to_edn_comps
+from utils.project_utils import get_graphivac_project_id, get_graphivac_grid_id
 
 logger = logging.getLogger(__name__)
 
@@ -59,10 +59,8 @@ async def sync_agent_to_graphivac(tool_context: ToolContext) -> dict:
         return "No pending grid changes to sync. Internal grid state of the agent is already up to date."
 
     # State-first: prefer IDs injected by the frontend (13-09).
-    active_project = get_active_project(tool_context)
-    active_system  = get_active_system(tool_context)
-    project_id = active_project.get("graphivac_project_id") or os.getenv("GRAPHIVAC_PROJECT_ID", "")
-    grid_id    = active_system.get("graphivac_grid_id")     or os.getenv("GRAPHIVAC_GRID_ID", "")
+    project_id = get_graphivac_project_id(tool_context)
+    grid_id    = get_graphivac_grid_id(tool_context)
 
     internal_grid = state.get("internal_grid", {"components": []})
     raw_edn_str = state.get("_raw_edn_grid", "")

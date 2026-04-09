@@ -19,6 +19,8 @@ from neo4j import GraphDatabase
 from neo4j.graph import Node, Relationship, Path
 from typing_extensions import override
 
+from utils.project_utils import get_neo4j_db_name
+
 logger = logging.getLogger(__name__)
 
 ROW_LIMIT = 500
@@ -53,13 +55,13 @@ def _serialize(value: Any) -> Any:
     return value
 
 
-def _run_query(driver: Any, query: str) -> dict:
+def _run_query(driver: Any, query: str, database: str = "neo4j") -> dict:
     """Execute a single Cypher query and return a normalised result dict.
 
     Thread-safe: called from ThreadPoolExecutor workers in batch mode.
     """
     try:
-        records, _, _ = driver.execute_query(query, database_="neo4j")
+        records, _, _ = driver.execute_query(query, database_=database)
         rows = [_serialize(dict(r)) for r in records]
         truncated = len(rows) > ROW_LIMIT
         return {
@@ -113,8 +115,9 @@ class ExecuteCypherTool(BaseTool):
             return {"query": query, "result": None, "error": "query is required"}
 
         uri, user, password = _get_neo4j_config()
+        db_name = get_neo4j_db_name(tool_context)
         with GraphDatabase.driver(uri, auth=(user, password)) as driver:
-            return _run_query(driver, query)
+            return _run_query(driver, query, database=db_name)
 
 
 # ---------------------------------------------------------------------------
@@ -160,12 +163,13 @@ class ExecuteCypherBatchTool(BaseTool):
             return {"status": "success", "results": []}
 
         uri, user, password = _get_neo4j_config()
+        db_name = get_neo4j_db_name(tool_context)
         with GraphDatabase.driver(uri, auth=(user, password)) as driver:
             ordered: list[dict | None] = [None] * len(queries)
             max_workers = min(len(queries), 8)
             with ThreadPoolExecutor(max_workers=max_workers) as pool:
                 future_to_index = {
-                    pool.submit(_run_query, driver, q): i
+                    pool.submit(_run_query, driver, q, db_name): i
                     for i, q in enumerate(queries)
                 }
                 for future in as_completed(future_to_index):
@@ -214,21 +218,22 @@ class GetGraphSchemaTool(BaseTool):
     @override
     async def run_async(self, *, args: dict[str, Any], tool_context: ToolContext) -> dict[str, Any]:
         uri, user, password = _get_neo4j_config()
+        db_name = get_neo4j_db_name(tool_context)
         try:
             with GraphDatabase.driver(uri, auth=(user, password)) as driver:
                 label_records, _, _ = driver.execute_query(
                     "CALL db.labels() YIELD label RETURN collect(label) AS labels",
-                    database_="neo4j",
+                    database_=db_name,
                 )
                 rel_records, _, _ = driver.execute_query(
                     "CALL db.relationshipTypes() YIELD relationshipType "
                     "RETURN collect(relationshipType) AS relationship_types",
-                    database_="neo4j",
+                    database_=db_name,
                 )
                 prop_records, _, _ = driver.execute_query(
                     "CALL db.propertyKeys() YIELD propertyKey "
                     "RETURN collect(propertyKey) AS property_keys",
-                    database_="neo4j",
+                    database_=db_name,
                 )
 
             labels = label_records[0]["labels"] if label_records else []
@@ -293,16 +298,17 @@ class SearchGraphEntitiesTool(BaseTool):
             }
 
         uri, user, password = _get_neo4j_config()
+        db_name = get_neo4j_db_name(tool_context)
         try:
             with GraphDatabase.driver(uri, auth=(user, password)) as driver:
                 label_records, _, _ = driver.execute_query(
                     "CALL db.labels() YIELD label RETURN collect(label) AS labels",
-                    database_="neo4j",
+                    database_=db_name,
                 )
                 rel_records, _, _ = driver.execute_query(
                     "CALL db.relationshipTypes() YIELD relationshipType "
                     "RETURN collect(relationshipType) AS relationship_types",
-                    database_="neo4j",
+                    database_=db_name,
                 )
 
             all_labels: list[str] = label_records[0]["labels"] if label_records else []

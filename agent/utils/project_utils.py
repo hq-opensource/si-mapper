@@ -17,6 +17,7 @@ State shape expected (set by the frontend via 13-07):
           "name": "Chilled Water Plant",
           "folder_path": "sys-aaa111",
           "graphivac_grid_id": "G-LAiRS3mgp6",
+          "neo4j_db_name": "sys-aaa111",
           "ai_model_name": "gemini-3.1-pro",
       }
     }
@@ -34,6 +35,54 @@ from __future__ import annotations
 
 import os
 import pathlib
+
+
+# ── Field-level state accessors ───────────────────────────────────────────────
+
+
+def get_graphivac_project_id(tool_context) -> str:
+    """
+    Returns the Graphivac project ID for the active project.
+    Falls back to the GRAPHIVAC_PROJECT_ID environment variable.
+    """
+    if tool_context is not None:
+        active_project = tool_context.state.get("active_project") or {}
+        project_id = active_project.get("graphivac_project_id", "")
+        if project_id:
+            return project_id
+    return os.getenv("GRAPHIVAC_PROJECT_ID", "")
+
+
+def get_graphivac_grid_id(tool_context) -> str:
+    """
+    Returns the Graphivac grid ID for the active system.
+    Falls back to the GRAPHIVAC_GRID_ID environment variable.
+    """
+    if tool_context is not None:
+        active_system = tool_context.state.get("active_system") or {}
+        grid_id = active_system.get("graphivac_grid_id", "")
+        if grid_id:
+            return grid_id
+    return os.getenv("GRAPHIVAC_GRID_ID", "")
+
+
+def get_neo4j_db_name(tool_context) -> str:
+    """
+    Returns the Neo4j database name for the active system.
+    Raises a ValueError when the property is absent.
+    """
+    if tool_context is not None:
+        active_system = tool_context.state.get("active_system") or {}
+        db_name = active_system.get("neo4j_db_name", "")
+        if db_name:
+            return db_name
+    raise ValueError(
+        "Neo4j database name not found. "
+        "Ensure 'neo4j_db_name' is set on the active system in the tool context."
+    )
+
+
+# ── Path helpers ──────────────────────────────────────────────────────────────
 
 
 def get_system_path(tool_context, relative: str) -> str:
@@ -90,5 +139,4 @@ def get_project_path(tool_context, relative: str) -> str:
 
     # Fallback: caller should detect this via os.path.isabs() returning False
     return relative
-
 
