@@ -108,8 +108,8 @@ export default function CopilotKitPage() {
   const pollingConfig = useMemo(() => ({
     baseUrl: process.env.NEXT_PUBLIC_AGENT_BACKEND_URL ?? "http://localhost:8001",
     interval: (agentState.status === "idle" || agentState.status === "complete")
-      ? 60_000
-      : 30_000,
+      ? 10_000
+      : 5_000,
   }), [agentState.status]);
 
   const { pooledState, error: pollingError } = useAgentPolling<AgentState>(pollingConfig);
@@ -177,14 +177,50 @@ export default function CopilotKitPage() {
     });
   }, [activeSystem]); // Re-stamp after CopilotKit resets agentState on thread switch
 
-  const prevActiveSystemRef = useRef(agentState.active_system);
+  // ── PATCH: guard against CopilotKit stream wiping active_system ──────────────
+  // CopilotKit can re-hydrate agent state from a stale Agent-session snapshot,
+  // emitting null / undefined / {} for `active_system` (and `active_project`).
+  // Whenever that happens, immediately re-stamp the CopilotKit state with the
+  // workspace values that the frontend owns authoritatively.
+  // Refs capture the latest workspace selection so the effect only needs to run
+  // when `agentState.active_system` changes — NOT when the workspace changes.
+  const activeProjectPatchRef = useRef(activeProject);
+  activeProjectPatchRef.current = activeProject;
+  const activeSystemPatchRef = useRef(activeSystem);
+  activeSystemPatchRef.current = activeSystem;
+
   useEffect(() => {
-    console.log("Agent state updated - active_system changed:", {
-      prev: prevActiveSystemRef.current,
-      next: agentState.active_system,
-    });
-    prevActiveSystemRef.current = agentState.active_system;
-  }, [agentState.active_system]);
+    const sys = agentState.active_system;
+    const isBlank = !sys || Object.keys(sys as object).length === 0;
+    if (!isBlank) return; // active_system is valid — nothing to fix
+
+    const proj = activeProjectPatchRef.current;
+    const wsSystem = activeSystemPatchRef.current;
+    if (!proj && !wsSystem) return; // no workspace selected yet — nothing to restore
+
+    setAgentState(prev => ({
+      ...prev,
+      active_project: proj
+        ? {
+            id: proj.id,
+            name: proj.name,
+            folder_path: proj.folder_path,
+            graphivac_project_id: proj.graphivac_project_id,
+          }
+        : null,
+      active_system: wsSystem
+        ? {
+            id: wsSystem.id,
+            name: wsSystem.name,
+            folder_path: wsSystem.folder_path,
+            graphivac_grid_id: wsSystem.graphivac_grid_id,
+            neo4j_db_name: wsSystem.neo4j_db_name,
+          }
+        : null,
+    }) as AgentState);
+    console.info('[page] CopilotKit stream wiped active_system, restoring from workspace:', { 'project': proj?.id, 'system': wsSystem?.id });
+  }, [agentState.active_system]); // eslint-disable-line react-hooks/exhaustive-deps
+  // ── END PATCH ─────────────────────────────────────────────────────────────
 
   useCopilotAction({
     name: "setThemeColor",
