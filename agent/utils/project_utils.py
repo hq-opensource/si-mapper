@@ -114,9 +114,9 @@ def get_neo4j_db_name(tool_context) -> str:
     )
 
 
-def get_graph_namespace(tool_context) -> str | None:
+def get_graph_system_namespace(tool_context) -> str | None:
     """
-    Returns the graph namespace (= system ID) used to tag nodes in
+    Returns the graph system namespace (= system ID) used to tag nodes in
     neo4j_prefix mode.
 
     - neo4j_prefix mode: returns active_system.id (never empty string).
@@ -136,6 +136,35 @@ def get_graph_namespace(tool_context) -> str | None:
     raise ValueError(
         "Graph namespace not found. "
         "Ensure 'id' is set on the active_system in the tool context "
+        "when using GRAPH_BACKEND=neo4j_prefix."
+    )
+
+
+def get_graph_project_namespace(tool_context) -> str | None:
+    """
+    Returns the graph project namespace (= project ID) used as a secondary
+    tag on nodes in neo4j_prefix mode.
+
+    Together with get_graph_system_namespace() (system-level), this lets consumers
+    filter or group nodes by project as well as by system.
+
+    - neo4j_prefix mode: returns active_project.id (never empty string).
+    - All other modes: returns None (namespacing not applicable).
+
+    Raises ValueError if backend is neo4j_prefix but no project ID is
+    available in the tool context.
+    """
+    backend = get_graph_backend()
+    if backend != "neo4j_prefix":
+        return None
+    if tool_context is not None:
+        active_project = tool_context.state.get("active_project") or {}
+        proj_id = active_project.get("id", "").strip()
+        if proj_id:
+            return proj_id
+    raise ValueError(
+        "Graph project namespace not found. "
+        "Ensure 'id' is set on the active_project in the tool context "
         "when using GRAPH_BACKEND=neo4j_prefix."
     )
 

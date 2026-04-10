@@ -45,9 +45,9 @@ export async function GET(request: Request) {
     : null;
 
   try {
-    // Node query — filtered by namespace when in prefix mode
+    // Node query — filtered by system namespace when in prefix mode
     const nodeQuery = ns
-      ? "MATCH (n {_graph_ns: $ns}) RETURN coalesce(n.uri, toString(id(n))) AS uri, labels(n) AS labels, properties(n) AS props"
+      ? "MATCH (n {_graph_ns_system: $ns}) RETURN coalesce(n.uri, toString(id(n))) AS uri, labels(n) AS labels, properties(n) AS props"
       : "MATCH (n) RETURN coalesce(n.uri, toString(id(n))) AS uri, labels(n) AS labels, properties(n) AS props";
 
     const { records: nodeRecords } = await driver.executeQuery(
@@ -56,9 +56,9 @@ export async function GET(request: Request) {
       { database: db }
     );
 
-    // Edge query — filtered by namespace when in prefix mode
+    // Edge query — filtered by system namespace when in prefix mode
     const edgeQuery = ns
-      ? "MATCH (a {_graph_ns: $ns})-[r]->(b {_graph_ns: $ns}) RETURN coalesce(a.uri, toString(id(a))) AS source, coalesce(b.uri, toString(id(b))) AS target, type(r) AS label, coalesce(r.uri, toString(id(r))) AS id"
+      ? "MATCH (a {_graph_ns_system: $ns})-[r]->(b {_graph_ns_system: $ns}) RETURN coalesce(a.uri, toString(id(a))) AS source, coalesce(b.uri, toString(id(b))) AS target, type(r) AS label, coalesce(r.uri, toString(id(r))) AS id"
       : "MATCH (a)-[r]->(b) RETURN coalesce(a.uri, toString(id(a))) AS source, coalesce(b.uri, toString(id(b))) AS target, type(r) AS label, coalesce(r.uri, toString(id(r))) AS id";
 
     const { records: edgeRecords } = await driver.executeQuery(

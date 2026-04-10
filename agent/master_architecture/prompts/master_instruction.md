@@ -119,17 +119,19 @@ The agent may query the Neo4j graph directly using four Cypher query tools. Thes
 
 When `get_graph_schema` returns `"graph_backend": "neo4j_prefix"`, all
 systems share a single `"neo4j"` database.  Each system's nodes carry a
-`_graph_ns` property equal to the system ID returned in `"graph_namespace"`.
+`_graph_ns_system` property equal to the system ID returned in `"graph_namespace_system"`.
 
 **Mandatory rule:** When `get_graph_schema` returns `"graph_backend": "neo4j_prefix"`, every Cypher `MATCH` clause you write **must** include
-a `_graph_ns` filter:
+a `_graph_ns_system` filter:
 ```cypher
-MATCH (n {_graph_ns: "<graph_namespace>"})
+MATCH (n {_graph_ns_system: "<graph_namespace_system>"})
 -- or --
-MATCH (n) WHERE n._graph_ns = "<graph_namespace>"
+MATCH (n) WHERE n._graph_ns_system = "<graph_namespace_system>"
 ```
 
 When `get_graph_schema` returns `"graph_backend": "neo4j_prefix"`, failure to add this filter will return nodes from all systems, not just
 the active one.  Always call `get_graph_schema` first to confirm the
-current `graph_namespace` value before writing Cypher queries.
+current `graph_namespace_system` value before writing Cypher queries.
+
+Nodes also carry a `_graph_ns_project` property (equal to `"graph_namespace_project"` from `get_graph_schema`) for future project-level filtering, but queries only **need** to filter on `_graph_ns_system`.
 

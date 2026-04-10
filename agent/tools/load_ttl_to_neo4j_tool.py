@@ -10,7 +10,7 @@ from google.adk.tools import BaseTool, ToolContext
 from google.genai import types
 from neo4j import GraphDatabase
 
-from utils.project_utils import get_system_path, get_neo4j_db_name, get_graph_backend, get_graph_namespace
+from utils.project_utils import get_system_path, get_neo4j_db_name, get_graph_backend, get_graph_system_namespace, get_graph_project_namespace
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +54,13 @@ class LoadTtlToNeo4jTool(BaseTool):
         user = os.getenv("NEO4J_USER", "neo4j")
         password = os.getenv("NEO4J_PASSWORD", "neo4j_password")
         db_name = get_neo4j_db_name(tool_context)
-        ns = get_graph_namespace(tool_context)  # None unless neo4j_prefix mode
-        logger.info(f"Using Neo4j database: {db_name}" + (f" (namespace: {ns})" if ns else ""))
+        ns_system = get_graph_system_namespace(tool_context)        # system ID  (used for deletion scope + stamping)
+        ns_project = get_graph_project_namespace(tool_context)  # project ID (stamping only)
+        logger.info(
+            f"Using Neo4j database: {db_name}"
+            + (f" (ns_system: {ns_system})" if ns_system else "")
+            + (f" (ns_project: {ns_project})" if ns_project else "")
+        )
 
         try:
             backend = get_graph_backend()
@@ -83,18 +88,18 @@ class LoadTtlToNeo4jTool(BaseTool):
                         driver.execute_query("DROP CONSTRAINT n10s_unique_uri IF EXISTS", database_=db_name)
                 else:
                     # --- Community Edition modes ---
-                    if ns:
-                        # neo4j_prefix: only delete this system's nodes
+                    if ns_system:
+                        # neo4j_prefix: only delete this system's nodes (scoped by system ID)
                         driver.execute_query(
-                            "MATCH (n {_graph_ns: $ns}) DETACH DELETE n",
-                            {"ns": ns}, database_=db_name,
+                            "MATCH (n {_graph_ns_system: $ns}) DETACH DELETE n",
+                            {"ns": ns_system}, database_=db_name,
                         )
                     else:
                         # neo4j_single: wipe entire database
                         driver.execute_query("MATCH (n) DETACH DELETE n", database_=db_name)
 
                     # n10s config drop — only touch when no namespace isolation is active
-                    if not ns:
+                    if not ns_system:
                         try:
                             driver.execute_query("CALL n10s.graphconfig.drop()", database_=db_name)
                         except Exception:
@@ -104,7 +109,7 @@ class LoadTtlToNeo4jTool(BaseTool):
                         )
 
                 # Step 5: n10s constraint + init
-                if not ns:
+                if not ns_system:
                     # neo4j_single / enterprise: safe to reinit every time
                     driver.execute_query(
                         "CREATE CONSTRAINT n10s_unique_uri IF NOT EXISTS "
@@ -141,13 +146,21 @@ class LoadTtlToNeo4jTool(BaseTool):
                 triples_loaded = records[0]["triplesLoaded"] if records else 0
                 termination = records[0]["terminationStatus"] if records else "unknown"
 
-                # Step 6b (prefix mode only): stamp newly-imported nodes with the namespace
-                if ns:
+                # Step 6b (prefix mode only): stamp newly-imported nodes with both namespaces
+                if ns_system:
                     driver.execute_query(
-                        "MATCH (n) WHERE n._graph_ns IS NULL SET n._graph_ns = $ns",
-                        {"ns": ns}, database_=db_name,
+                        "MATCH (n) WHERE n._graph_ns_system IS NULL "
+                        "SET n._graph_ns_system = $ns_system",
+                        {"ns_system": ns_system}, database_=db_name,
                     )
-                    logger.info("Stamped imported nodes with _graph_ns='%s'", ns)
+                    logger.info("Stamped imported nodes with _graph_ns_system='%s'", ns_system)
+                if ns_project:
+                    driver.execute_query(
+                        "MATCH (n) WHERE n._graph_ns_project IS NULL "
+                        "SET n._graph_ns_project = $ns_project",
+                        {"ns_project": ns_project}, database_=db_name,
+                    )
+                    logger.info("Stamped imported nodes with _graph_ns_project='%s'", ns_project)
 
                 # Step 7: Count nodes and relationships for the return value
                 node_records, _, _ = driver.execute_query(
@@ -159,7 +172,10 @@ class LoadTtlToNeo4jTool(BaseTool):
                 node_count = node_records[0]["cnt"] if node_records else 0
                 rel_count = rel_records[0]["cnt"] if rel_records else 0
 
-            ns_suffix = f" (namespace: {ns})" if ns else ""
+            ns_suffix = (
+                (f" (ns_system: {ns_system})" if ns_system else "")
+                + (f" (ns_project: {ns_project})" if ns_project else "")
+            )
             logger.info(f"Neo4j import complete: {triples_loaded} triples, {node_count} nodes, {rel_count} relationships{ns_suffix}")
             return {
                 "status": "success",
