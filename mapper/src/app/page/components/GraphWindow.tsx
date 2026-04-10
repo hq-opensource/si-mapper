@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { ZoomIn, ZoomOut, RotateCcw, Network, Info, Activity, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import "vis-network/styles/vis-network.css";
@@ -50,6 +50,14 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 const DEFAULT_COLOR = "#64748b";
+
+// ─── Search Highlight Constants ───────────────────────────────────────────────
+const SEARCH_HIGHLIGHT_DURATION = 2000;
+const SEARCH_HIGHLIGHT_START_FACTOR = 10;
+const SEARCH_HIGHLIGHT_FINAL_FACTOR = 3.5;
+const SEARCH_HIGHLIGHT_COLOR = "rgba(255, 215, 0, 0.5)";
+const SEARCH_DEBOUNCE_DELAY = 300;
+const SEARCH_MIN_CHARS = 2;
 
 function getNodeColor(type: string): string {
   if (TYPE_COLORS[type]) return TYPE_COLORS[type];
@@ -119,6 +127,49 @@ export function GraphWindow() {
   const highlightNodeRef = useRef<((nodeId: string) => void) | null>(null);
   const resetHighlightRef = useRef<(() => void) | null>(null);
 
+  // Search highlight animation state
+  const searchHighlightRef = useRef<{ nodes: Array<{ nodeId: string; nodeSize: number }>; startTime: number } | null>(null);
+  const searchAnimRafRef = useRef<number | null>(null);
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nodeSizeMapRef = useRef<Map<string, number>>(new Map());
+
+  const cancelDebounce = useCallback(() => {
+    if (searchDebounceRef.current !== null) {
+      clearTimeout(searchDebounceRef.current);
+      searchDebounceRef.current = null;
+    }
+  }, []);
+
+  const clearSearchHighlight = useCallback(() => {
+    searchHighlightRef.current = null;
+    if (searchAnimRafRef.current !== null) {
+      cancelAnimationFrame(searchAnimRafRef.current);
+      searchAnimRafRef.current = null;
+    }
+    networkRef.current?.redraw();
+  }, []);
+
+  const startSearchHighlight = useCallback((nodeIds: string[]) => {
+    const nodes = nodeIds.map(nodeId => ({ nodeId, nodeSize: nodeSizeMapRef.current.get(nodeId) ?? 15 }));
+    searchHighlightRef.current = { nodes, startTime: performance.now() };
+    if (searchAnimRafRef.current !== null) {
+      cancelAnimationFrame(searchAnimRafRef.current);
+      searchAnimRafRef.current = null;
+    }
+    const animate = () => {
+      if (!searchHighlightRef.current) return;
+      networkRef.current?.redraw();
+      const elapsed = performance.now() - searchHighlightRef.current.startTime;
+      if (elapsed < SEARCH_HIGHLIGHT_DURATION) {
+        searchAnimRafRef.current = requestAnimationFrame(animate);
+      } else {
+        searchAnimRafRef.current = null;
+        networkRef.current?.redraw(); // settle at final state
+      }
+    };
+    searchAnimRafRef.current = requestAnimationFrame(animate);
+  }, [SEARCH_HIGHLIGHT_DURATION]);
+
   // Fetch data — re-runs whenever the active system changes
   useEffect(() => {
     let cancelled = false;
@@ -141,6 +192,13 @@ export function GraphWindow() {
     // We import vis-network dynamically or assume it's available via npm
     // Using vis-network directly as it was installed
     const vis = require("vis-network/standalone");
+
+    // Cancel any in-flight search animation from a previous render
+    if (searchAnimRafRef.current !== null) {
+      cancelAnimationFrame(searchAnimRafRef.current);
+      searchAnimRafRef.current = null;
+    }
+    searchHighlightRef.current = null;
 
     const visNodes = data.nodes.map(n => ({
       id: n.id,
@@ -166,6 +224,10 @@ export function GraphWindow() {
       originalColor: getNodeColor(n.type),
       originalLabel: n.label
     }));
+
+    // Populate node size map for the search highlight animation
+    nodeSizeMapRef.current.clear();
+    visNodes.forEach(n => nodeSizeMapRef.current.set(n.id as string, n.size as number));
 
     const visEdges = data.edges.map(e => {
       // Logic to match ontology.html styles
@@ -253,6 +315,37 @@ export function GraphWindow() {
     const network = new vis.Network(containerRef.current, networkData, options);
     networkRef.current = network;
 
+    // Search result highlight: yellow circles drawn behind all matched nodes
+    network.on("beforeDrawing", (ctx: CanvasRenderingContext2D) => {
+      const highlight = searchHighlightRef.current;
+      if (!highlight) return;
+
+      const elapsed = Math.min(performance.now() - highlight.startTime, SEARCH_HIGHLIGHT_DURATION);
+      const t = elapsed / SEARCH_HIGHLIGHT_DURATION;
+      const eased = 1 - Math.pow(1 - t, 3);
+
+      const nodeIds = highlight.nodes.map(n => n.nodeId);
+      const positions = network.getPositions(nodeIds);
+
+      for (const { nodeId, nodeSize } of highlight.nodes) {
+        const pos = positions[nodeId];
+        if (!pos) continue;
+
+        const startRadius = nodeSize * SEARCH_HIGHLIGHT_START_FACTOR;
+        const finalRadius = nodeSize * SEARCH_HIGHLIGHT_FINAL_FACTOR;
+
+        // Ease-out cubic: fast initial shrink, settles gently at final size
+        const radius = startRadius + (finalRadius - startRadius) * eased;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = SEARCH_HIGHLIGHT_COLOR;
+        ctx.fill();
+        ctx.restore();
+      }
+    });
+
     // Neighbourhood Highlight Logic
     let highlightActive = false;
 
@@ -307,10 +400,6 @@ export function GraphWindow() {
       }
     });
 
-    network.on("deselectNode", () => {
-      // Handled by selectNode with empty array
-    });
-
     network.on("stabilizationProgress", (params: {iterations: number, total: number}) => {
       setStabilizationProgress({ current: params.iterations, total: params.total });
     });
@@ -321,6 +410,10 @@ export function GraphWindow() {
     });
 
     return () => {
+      if (searchAnimRafRef.current !== null) {
+        cancelAnimationFrame(searchAnimRafRef.current);
+        searchAnimRafRef.current = null;
+      }
       if (networkRef.current) {
         networkRef.current.destroy();
       }
@@ -333,6 +426,7 @@ export function GraphWindow() {
   const handleReset = () => {
     networkRef.current?.fit();
     resetHighlightRef.current?.();
+    clearSearchHighlight();
     setActiveNode(null);
     setSearchQuery("");
   };
@@ -341,18 +435,16 @@ export function GraphWindow() {
   // (avoids stale closure when onKeyDown fires before the state re-render completes)
   const doSearch = (query: string) => {
     if (!query.trim() || !networkRef.current || !data) return;
-    const matchedNode = data.nodes.find(n =>
-      n.label.toLowerCase().includes(query.toLowerCase()) ||
-      n.id.toLowerCase().includes(query.toLowerCase())
+    const lq = query.toLowerCase();
+    const matchedNodes = data.nodes.filter(n =>
+      n.label.toLowerCase().includes(lq) ||
+      n.id.toLowerCase().includes(lq) ||
+      n.allLabels.some(l => l.toLowerCase().includes(lq))
     );
-    if (matchedNode) {
-      networkRef.current.selectNodes([matchedNode.id]);
-      networkRef.current.focus(matchedNode.id, {
-        scale: 1.0,
-        animation: { duration: 500, easingFunction: "easeInOutQuad" }
-      });
-      setActiveNode(matchedNode.id);
-      highlightNodeRef.current?.(matchedNode.id);
+    if (matchedNodes.length > 0) {
+      startSearchHighlight(matchedNodes.map(n => n.id));
+    } else {
+      clearSearchHighlight();
     }
   };
 
@@ -379,23 +471,26 @@ export function GraphWindow() {
             onChange={(e) => {
               const val = e.target.value;
               setSearchQuery(val);
-              if (!val) {
-                // Clear selection when input is emptied
-                networkRef.current?.selectNodes([]);
-                resetHighlightRef.current?.();
-                setActiveNode(null);
+              cancelDebounce();
+              if (val.length < SEARCH_MIN_CHARS) {
+                clearSearchHighlight();
               } else {
-                doSearch(val); // pass fresh DOM value directly — no stale closure
+                searchDebounceRef.current = setTimeout(() => {
+                  searchDebounceRef.current = null;
+                  doSearch(val);
+                }, SEARCH_DEBOUNCE_DELAY);
               }
             }}
             onKeyDown={(e) => {
               e.stopPropagation(); // prevent vis-network from intercepting keys
-              if (e.key === "Enter") doSearch((e.target as HTMLInputElement).value);
+              if (e.key === "Enter") {
+                cancelDebounce();
+                doSearch((e.target as HTMLInputElement).value);
+              }
               if (e.key === "Escape") {
+                cancelDebounce();
                 setSearchQuery("");
-                networkRef.current?.selectNodes([]);
-                resetHighlightRef.current?.();
-                setActiveNode(null);
+                clearSearchHighlight();
               }
             }}
             onPointerDown={(e) => e.stopPropagation()}
@@ -405,27 +500,15 @@ export function GraphWindow() {
         </div>
         <div className="w-[1px] h-6 bg-[var(--muted-foreground)]/10 mx-1" />
         <div className="flex items-center gap-1">
-          <button 
-            className="p-2 rounded-xl text-sm transition-all duration-300 flex items-center justify-center border border-[var(--muted-foreground)]/10 text-[var(--muted-foreground)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 hover:border-[var(--accent)]/20 shadow-sm active:scale-90 group"
-            onClick={handleZoomIn}
-            title="Zoom In"
-          >
+          <ToolbarButton onClick={handleZoomIn} title="Zoom In">
             <ZoomIn size={18} className="group-hover:scale-110 transition-transform" />
-          </button>
-          <button 
-            className="p-2 rounded-xl text-sm transition-all duration-300 flex items-center justify-center border border-[var(--muted-foreground)]/10 text-[var(--muted-foreground)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 hover:border-[var(--accent)]/20 shadow-sm active:scale-90 group"
-            onClick={handleZoomOut}
-            title="Zoom Out"
-          >
+          </ToolbarButton>
+          <ToolbarButton onClick={handleZoomOut} title="Zoom Out">
             <ZoomOut size={18} className="group-hover:scale-110 transition-transform" />
-          </button>
-          <button 
-            className="p-2 rounded-xl text-sm transition-all duration-300 flex items-center justify-center border border-[var(--muted-foreground)]/10 text-[var(--muted-foreground)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 hover:border-[var(--accent)]/20 shadow-sm active:scale-90 group"
-            onClick={handleReset}
-            title="Reset View"
-          >
+          </ToolbarButton>
+          <ToolbarButton onClick={handleReset} title="Reset View">
             <RotateCcw size={18} className="group-hover:rotate-[-45deg] transition-transform" />
-          </button>
+          </ToolbarButton>
         </div>
       </div>
 
@@ -445,6 +528,9 @@ export function GraphWindow() {
           networkRef.current?.selectNodes([]);
           resetHighlightRef.current?.();
           setActiveNode(null);
+        }} onLabelClick={(label) => {
+          setSearchQuery(label);
+          doSearch(label);
         }} />
       )}
 
@@ -496,7 +582,19 @@ export function GraphWindow() {
   );
 }
 
-function NodeInfoCard({ nodes, activeNodeId, onClose }: { nodes: GraphNode[], activeNodeId: string, onClose: () => void }) {
+function ToolbarButton({ onClick, title, children }: { onClick: () => void; title: string; children: React.ReactNode }) {
+  return (
+    <button
+      className="p-2 rounded-xl text-sm transition-all duration-300 flex items-center justify-center border border-[var(--muted-foreground)]/10 text-[var(--muted-foreground)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 hover:border-[var(--accent)]/20 shadow-sm active:scale-90 group"
+      onClick={onClick}
+      title={title}
+    >
+      {children}
+    </button>
+  );
+}
+
+function NodeInfoCard({ nodes, activeNodeId, onClose, onLabelClick }: { nodes: GraphNode[], activeNodeId: string, onClose: () => void, onLabelClick: (label: string) => void }) {
   const node = nodes.find(n => n.id === activeNodeId);
   if (!node) return null;
 
@@ -552,9 +650,14 @@ function NodeInfoCard({ nodes, activeNodeId, onClose }: { nodes: GraphNode[], ac
               <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Labels</span>
               <div className="flex flex-wrap gap-1">
                 {node.allLabels.map((l) => (
-                  <span key={l} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 text-[var(--foreground)]">
+                  <button
+                    key={l}
+                    onClick={() => onLabelClick(l)}
+                    title={`Search for others like ${l}`}
+                    className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 text-[var(--foreground)] cursor-pointer transition-all duration-150 hover:bg-[var(--accent)]/15 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                  >
                     {l}
-                  </span>
+                  </button>
                 ))}
               </div>
             </div>
