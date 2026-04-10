@@ -108,8 +108,8 @@ export default function CopilotKitPage() {
   const pollingConfig = useMemo(() => ({
     baseUrl: process.env.NEXT_PUBLIC_AGENT_BACKEND_URL ?? "http://localhost:8001",
     interval: (agentState.status === "idle" || agentState.status === "complete")
-      ? 10_000
-      : 5_000,
+      ? 5_000
+      : 2_000,
   }), [agentState.status]);
 
   const { pooledState, error: pollingError } = useAgentPolling<AgentState>(pollingConfig);
