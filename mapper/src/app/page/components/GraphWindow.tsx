@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { ZoomIn, ZoomOut, RotateCcw, Network, Info, Activity } from "lucide-react";
+import { ZoomIn, ZoomOut, RotateCcw, Network, Info, Activity, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import "vis-network/styles/vis-network.css";
 import { StatusPlaceholder } from "./StatusPlaceholder";
@@ -13,6 +13,7 @@ interface GraphNode {
   id: string;
   label: string;
   type: string;
+  allLabels: string[];
   properties: Record<string, unknown>;
 }
 
@@ -85,7 +86,8 @@ function getNodeSize(type: string): number {
 
 function generateTooltip(node: GraphNode): string {
   const props = node.properties || {};
-  let tooltip = `Label : ${node.label}\n=======\nURI : ${node.id}\nTypes: ${node.type}`;
+  const labelsList = (node.allLabels ?? [node.type]).join(", ");
+  let tooltip = `Label : ${node.label}\n=======\nURI : ${node.id}\nTypes: ${labelsList}`;
   
   const entries = Object.entries(props).filter(([k]) => k !== 'uri' && k !== 'label');
   if (entries.length > 0) {
@@ -111,6 +113,11 @@ export function GraphWindow() {
   const [activeNode, setActiveNode] = useState<string | null>(null);
   const [stabilizationProgress, setStabilizationProgress] = useState<{current: number, total: number} | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Refs so toolbar handlers can trigger highlight/reset without needing the selectNode event
+  // (vis-network's selectNodes() does NOT fire selectNode events)
+  const highlightNodeRef = useRef<((nodeId: string) => void) | null>(null);
+  const resetHighlightRef = useRef<(() => void) | null>(null);
 
   // Fetch data — re-runs whenever the active system changes
   useEffect(() => {
@@ -246,65 +253,56 @@ export function GraphWindow() {
     const network = new vis.Network(containerRef.current, networkData, options);
     networkRef.current = network;
 
-    // Neighbourhood Highlight Logic (ported from ontology.html)
+    // Neighbourhood Highlight Logic
     let highlightActive = false;
 
-    network.on("selectNode", (params: any) => {
+    // Store as refs so handleSearch / handleReset can call them directly
+    // (vis-network's selectNodes() does NOT fire the selectNode event)
+    highlightNodeRef.current = (selectedNode: string) => {
       const nodes = networkData.nodes;
       const allNodes = nodes.get({ returnType: "Object" }) as any;
-      
+      highlightActive = true;
+      const connectedNodes = network.getConnectedNodes(selectedNode) as string[];
+      const neighbors = new Set(connectedNodes);
+      for (let nodeId in allNodes) {
+        const isSelected = nodeId === selectedNode;
+        const isNeighbor = neighbors.has(nodeId);
+        if (isSelected) {
+          allNodes[nodeId].color = { background: allNodes[nodeId].originalColor, border: "#ffffff" };
+          allNodes[nodeId].borderWidth = 4;
+          allNodes[nodeId].shadow = { enabled: true, color: "rgba(99, 102, 241, 0.8)", size: 10 };
+        } else if (isNeighbor) {
+          allNodes[nodeId].color = { background: allNodes[nodeId].originalColor, border: theme === "dark" ? "#ffffff" : "#000000" };
+          allNodes[nodeId].borderWidth = 2;
+        } else {
+          allNodes[nodeId].color = { background: allNodes[nodeId].originalColor, border: allNodes[nodeId].originalColor, opacity: 0.3 };
+          allNodes[nodeId].font = { color: theme === "dark" ? "rgba(226, 232, 240, 0.2)" : "rgba(30, 41, 59, 0.2)" };
+        }
+      }
+      nodes.update(Object.values(allNodes));
+    };
+
+    resetHighlightRef.current = () => {
+      if (!highlightActive) return;
+      const nodes = networkData.nodes;
+      const allNodes = nodes.get({ returnType: "Object" }) as any;
+      for (let nodeId in allNodes) {
+        allNodes[nodeId].color = { background: allNodes[nodeId].originalColor, border: allNodes[nodeId].originalColor };
+        allNodes[nodeId].borderWidth = 1;
+        allNodes[nodeId].shadow = { enabled: false };
+        allNodes[nodeId].font = { color: theme === "dark" ? "#e2e8f0" : "#1e293b" };
+      }
+      nodes.update(Object.values(allNodes));
+      highlightActive = false;
+    };
+
+    network.on("selectNode", (params: any) => {
       if (params.nodes.length > 0) {
-        highlightActive = true;
         const selectedNode = params.nodes[0];
         setActiveNode(selectedNode);
-
-        // Highlight additive
-        const connectedNodes = network.getConnectedNodes(selectedNode) as string[];
-        const neighbors = new Set(connectedNodes);
-
-        for (let nodeId in allNodes) {
-          const isSelected = nodeId === selectedNode;
-          const isNeighbor = neighbors.has(nodeId);
-
-          if (isSelected) {
-            allNodes[nodeId].color = {
-              background: allNodes[nodeId].originalColor,
-              border: "#ffffff"
-            };
-            allNodes[nodeId].borderWidth = 4;
-            allNodes[nodeId].shadow = { enabled: true, color: "rgba(99, 102, 241, 0.8)", size: 10 };
-          } else if (isNeighbor) {
-            allNodes[nodeId].color = {
-              background: allNodes[nodeId].originalColor,
-              border: theme === "dark" ? "#ffffff" : "#000000"
-            };
-            allNodes[nodeId].borderWidth = 2;
-          } else {
-            // Very subtle dimming instead of hard removal
-            allNodes[nodeId].color = {
-              background: allNodes[nodeId].originalColor,
-              border: allNodes[nodeId].originalColor,
-              opacity: 0.3 // Vis.js supports opacity in some versions or via rgba
-            };
-            allNodes[nodeId].font = { color: theme === "dark" ? "rgba(226, 232, 240, 0.2)" : "rgba(30, 41, 59, 0.2)" };
-          }
-        }
-        nodes.update(Object.values(allNodes));
+        highlightNodeRef.current?.(selectedNode);
       } else {
-        if (highlightActive) {
-          // Reset
-          for (let nodeId in allNodes) {
-             allNodes[nodeId].color = {
-               background: allNodes[nodeId].originalColor,
-               border: allNodes[nodeId].originalColor
-             };
-             allNodes[nodeId].borderWidth = 1;
-             allNodes[nodeId].shadow = { enabled: false };
-             allNodes[nodeId].font = { color: theme === "dark" ? "#e2e8f0" : "#1e293b" };
-          }
-          nodes.update(Object.values(allNodes));
-          highlightActive = false;
-        }
+        resetHighlightRef.current?.();
         setActiveNode(null);
       }
     });
@@ -334,25 +332,27 @@ export function GraphWindow() {
   const handleZoomOut = () => networkRef.current?.moveTo({ scale: networkRef.current.getScale() / 1.2 });
   const handleReset = () => {
     networkRef.current?.fit();
+    resetHighlightRef.current?.();
     setActiveNode(null);
+    setSearchQuery("");
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery || !networkRef.current || !data) return;
-    
-    const matchedNode = data.nodes.find(n => 
-      n.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      n.id.toLowerCase().includes(searchQuery.toLowerCase())
+  // Accepts the query string directly — never relies on the React state value
+  // (avoids stale closure when onKeyDown fires before the state re-render completes)
+  const doSearch = (query: string) => {
+    if (!query.trim() || !networkRef.current || !data) return;
+    const matchedNode = data.nodes.find(n =>
+      n.label.toLowerCase().includes(query.toLowerCase()) ||
+      n.id.toLowerCase().includes(query.toLowerCase())
     );
-
     if (matchedNode) {
       networkRef.current.selectNodes([matchedNode.id]);
       networkRef.current.focus(matchedNode.id, {
         scale: 1.0,
-        animation: { duration: 1000, easingFunction: "easeInOutQuad" }
+        animation: { duration: 500, easingFunction: "easeInOutQuad" }
       });
       setActiveNode(matchedNode.id);
+      highlightNodeRef.current?.(matchedNode.id);
     }
   };
 
@@ -367,20 +367,42 @@ export function GraphWindow() {
 
       {/* Toolbar */}
       <div className="absolute top-6 left-6 z-20 flex items-center gap-3 p-2 rounded-2xl border border-[var(--muted-foreground)]/10 bg-[var(--background)]/60 backdrop-blur-xl shadow-[0_15px_30px_rgba(0,0,0,0.05)]">
-        <form onSubmit={handleSearch} className="flex items-center pl-2">
+        <div className="flex items-center pl-2">
           {stabilizationProgress ? (
             <Activity className="w-4 h-4 text-[var(--primary)] animate-spin mr-2" />
           ) : (
             <Network className="w-4 h-4 text-[var(--muted-foreground)] mr-2" />
           )}
-          <input 
+          <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSearchQuery(val);
+              if (!val) {
+                // Clear selection when input is emptied
+                networkRef.current?.selectNodes([]);
+                resetHighlightRef.current?.();
+                setActiveNode(null);
+              } else {
+                doSearch(val); // pass fresh DOM value directly — no stale closure
+              }
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation(); // prevent vis-network from intercepting keys
+              if (e.key === "Enter") doSearch((e.target as HTMLInputElement).value);
+              if (e.key === "Escape") {
+                setSearchQuery("");
+                networkRef.current?.selectNodes([]);
+                resetHighlightRef.current?.();
+                setActiveNode(null);
+              }
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
             placeholder={stabilizationProgress ? `Stabilizing (${stabilizationProgress.current})...` : "Search graph..."}
             className="w-40 px-1 py-1.5 bg-transparent border-none rounded-xl text-[11px] font-bold focus:outline-none transition-all placeholder:text-[var(--muted-foreground)]/40"
           />
-        </form>
+        </div>
         <div className="w-[1px] h-6 bg-[var(--muted-foreground)]/10 mx-1" />
         <div className="flex items-center gap-1">
           <button 
@@ -419,7 +441,11 @@ export function GraphWindow() {
 
       {/* Details Card (Reusing InfoCard logic but for vis-network) */}
       {activeNode && (
-        <NodeInfoCard nodes={data.nodes} activeNodeId={activeNode} />
+        <NodeInfoCard nodes={data.nodes} activeNodeId={activeNode} onClose={() => {
+          networkRef.current?.selectNodes([]);
+          resetHighlightRef.current?.();
+          setActiveNode(null);
+        }} />
       )}
 
       {/* Universal Legend (Bottom Center) */}
@@ -470,7 +496,7 @@ export function GraphWindow() {
   );
 }
 
-function NodeInfoCard({ nodes, activeNodeId }: { nodes: GraphNode[], activeNodeId: string }) {
+function NodeInfoCard({ nodes, activeNodeId, onClose }: { nodes: GraphNode[], activeNodeId: string, onClose: () => void }) {
   const node = nodes.find(n => n.id === activeNodeId);
   if (!node) return null;
 
@@ -494,12 +520,21 @@ function NodeInfoCard({ nodes, activeNodeId }: { nodes: GraphNode[], activeNodeI
               {node.label}
             </span>
           </div>
+          <div className="flex items-center gap-2 shrink-0">
           <span
             className="text-[10px] font-bold uppercase tracking-[0.2em] shrink-0 px-3 py-1 rounded-full border border-current"
             style={{ backgroundColor: `${getNodeColor(type)}15`, color: getNodeColor(type), borderColor: `${getNodeColor(type)}30` }}
           >
             {type.split("__").pop()?.replace(/_/g, " ") ?? type}
           </span>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/10 transition-all duration-200 active:scale-90"
+            title="Close"
+          >
+            <X size={14} />
+          </button>
+          </div>
         </div>
 
         <div className="space-y-4 relative z-10">
@@ -511,6 +546,19 @@ function NodeInfoCard({ nodes, activeNodeId }: { nodes: GraphNode[], activeNodeI
               {uri}
             </span>
           </div>
+
+          {node.allLabels && node.allLabels.length > 0 && (
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Labels</span>
+              <div className="flex flex-wrap gap-1">
+                {node.allLabels.map((l) => (
+                  <span key={l} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 text-[var(--foreground)]">
+                    {l}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           {Object.entries(node.properties).length > 0 && (
             <div className="flex flex-col gap-1 border-t border-[var(--foreground)]/5 pt-4 mt-2">

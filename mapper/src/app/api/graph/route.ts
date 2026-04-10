@@ -27,6 +27,35 @@ function localName(uri: string | null | undefined): string {
   return pos >= 0 ? uri.slice(pos + 1) : uri;
 }
 
+const EXCLUDED_LABELS = ["resource", "equipment", "connectable", "controller"];
+
+/**
+ * Choose the best display label for a node.
+ * Uses rdfsLabel when present; otherwise picks the longest Neo4j label that
+ * is not excluded (case-insensitive): not 'Resource', 'Equipement',
+ * 'Connectable', 'Controller', or any string containing 'property'.
+ * Falls back to localName(uri) if no suitable label is found.
+ */
+function chooseLabel(
+  rdfsLabel: string | undefined,
+  labels: string[],
+  uri: string
+): string {
+  if (rdfsLabel) return rdfsLabel;
+
+  const candidates = labels.filter((l) => {
+    const lower = l.toLowerCase();
+    return (
+      !EXCLUDED_LABELS.includes(lower) &&
+      !lower.includes("property")
+    );
+  });
+
+  if (candidates.length === 0) return labels[0] ?? localName(uri);
+
+  return candidates.reduce((best, l) => (l.length > best.length ? l : best));
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const graphBackend = (process.env.GRAPH_BACKEND ?? "neo4j_single").trim().toLowerCase();
@@ -67,20 +96,19 @@ export async function GET(request: Request) {
       { database: db }
     );
 
-    const GENERIC_LABELS = new Set(["Resource", "owl__Class", "owl__NamedIndividual", "owl__Ontology"]);
     const nodes = nodeRecords.map((r) => {
       const props = r.get("props") as Record<string, unknown>;
       const labels = (r.get("labels") as string[]) ?? [];
       const uri = r.get("uri") as string;
 
       const rdfsLabel = props["rdfs__label"] as string | undefined;
-      const classLabel = labels.find((l) => !GENERIC_LABELS.has(l) && !l.startsWith("n10s"));
-      const label = rdfsLabel ?? classLabel ?? localName(uri);
+      const label = chooseLabel(rdfsLabel, labels, uri);
 
       return {
         id: uri,
         label,
         type: labels.find((l) => l !== "Resource") ?? "Resource",
+        allLabels: labels,
         properties: props,
       };
     });
