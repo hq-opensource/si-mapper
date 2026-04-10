@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Download the Graphivac server JAR at image-build time.
 # Bump GRAPHIVAC_VERSION + rebuild to upgrade (data in /data volume is unaffected).
-ARG GRAPHIVAC_VERSION=1.1.6
+ARG GRAPHIVAC_VERSION=1.1.9
 RUN curl -fSL "https://hvac.io/graphivac/graphivac-${GRAPHIVAC_VERSION}-standalone.jar" \
     -o graphivac-server.jar
 
@@ -23,7 +23,7 @@ HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
 
 # Graphivac writes its working files relative to the current directory.
 # Set WORKDIR to /data so all persistent state lands in the mounted volume.
-WORKDIR /data
+WORKDIR /
 
-CMD ["java", "-jar", "/app/graphivac-server.jar", "-p", "8888"]
+CMD ["java", "-jar", "/app/graphivac-server.jar"]
 

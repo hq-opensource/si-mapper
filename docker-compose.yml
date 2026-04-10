@@ -29,14 +29,32 @@ services:
       - deploy
       - graph
 
+#  # Use the official Graphivac image from GitHub Container Registry.  #
+#  graphivac:
+#    image: ghcr.io/frozenlock/graphivac:latest
+#    container_name: si-mapper-graphivac
+#    ports:
+#      - "8888:3000"
+#    volumes:
+#      - graphivac_data:/app/data
+#    profiles:
+#      - deploy
+#      - build
 
+  # Build Graphivac from an officially released server (as a jar file).  Use when Image is not available.
   graphivac:
-    image: ghcr.io/frozenlock/graphivac:latest
+    build:
+      context: ./graphivac
+      dockerfile: Dockerfile
+      args:
+        GRAPHIVAC_VERSION: "1.1.9"
+    image: si-mapper-graphivac:latest
     container_name: si-mapper-graphivac
+#    working_dir: /data
     ports:
       - "8888:3000"
     volumes:
-      - graphivac_data:/app/data
+      - graphivac_data:/data
     profiles:
       - deploy
       - build

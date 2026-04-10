@@ -37,7 +37,7 @@ from pathlib import Path
 # Snapshot date: 2026-03-30
 # ──────────────────────────────────────────────────────────────────────────────
 
-DEFAULT_VOLUME = "si-mapper-2_graphivac_data"
+DEFAULT_VOLUME = "si-mapper_graphivac_data"
 
 # Binary Fressian databases ────────────────────────────────────────────────────
 
